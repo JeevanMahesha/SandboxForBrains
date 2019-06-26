@@ -1,10 +1,4 @@
-"""
-Given the names and grades for each student in a Physics class of N students,
-store them in a nested list and print the name(s) of any student(s)
-having the second lowest grade.
-
-"""
-n = eval(input("Enter the Number of Student along with there name and marks\n"))
+n = eval(input())
 arr=[]
 lst=[]
 lst1=[]
@@ -31,3 +25,5 @@ for i in range (len(arr)):
 rlst.sort()
 for i in range (len(rlst)):
     print(rlst[i][0])
+        
+

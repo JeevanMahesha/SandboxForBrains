@@ -15,3 +15,4 @@ for i in binary_string:
     else:
         print('its not binary number')
 
+

@@ -51,7 +51,8 @@ if n>=0 and n<=4:
             view_items(items_list)
         elif n == 3:
              bill(items_list)
-                
+        elif n >4 or n<= 0:
+            print('wong')
     print('Thanks')
 else:
     print('f')

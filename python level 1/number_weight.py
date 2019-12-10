@@ -1,6 +1,6 @@
 import math as m 
 
-n = [25,16,24,21,19]
+n = [25,17,0,18]
 temp_weight_list,val_list,weight_list = [],[],[]
 
 for i in range(len(n)):
@@ -20,6 +20,4 @@ for i in range(len(n)):
 mapped = zip(weight_list,val_list)
 mapped = list(mapped)
 mapped.sort()
-for i in range(len(mapped)):
-    print(mapped[i][1],end=" ")
-
+print(mapped)

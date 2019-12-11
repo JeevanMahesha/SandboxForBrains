@@ -22,9 +22,7 @@ school = {'class_A':{'jeevan':{'eng':80,'math':90,'tamil':99},
 def topper_in_perticular_subject():
         subject = 'eng'
         clss = 'class_C'
-        marks_dict = { clss_k : subject_v
-         for school_k,school_v in school.items()
-          if school_k == clss 
+        marks_dict = { clss_k : subject_v for school_k,school_v in school.items() if school_k == clss 
           for clss_k,clss_v in school_v.items() for subject_k,subject_v in clss_v.items() if subject_k == subject }
         marks_dict = [v for k,v in marks_dict.items()]
         avg = sum(marks_dict)/len(marks_dict)
@@ -49,7 +47,24 @@ def view_marks_of_perticualar_subject():
 
 #overall topper in class
 def overall_topper_in_class():
-    topper_in_class = { for school_k,school_v in school.items() for clss_k,clss_v in school_v.items() for subject_k,subject_v in clss_v.items()  }
+        print(school)
+
+
+# overall topper in school
+def overall_topper_in_school():
+        topper_in_class = { nk:nv for clsk,clsv in school.items() for nk,nv in clsv.items() }
+        l = {}
+        a = 0
+        for nk,nv in topper_in_class.items():
+                for sk,sv in nv.items():
+                        a += sv
+                l[nk] = a
+                a = 0
+        l = {k:v  for k,v in sorted(l.items() , key=lambda kv: (kv[1],kv[0]),reverse = True)}
+        print()
+        print('Topper of the school is ', list(l)[0])
+        print()
+
 
 option = 0
 while(option != 5):
@@ -57,11 +72,11 @@ while(option != 5):
         option = int(input())
         if option == 1:
                 topper_in_perticular_subject()
-        elif option == 2 :
+        elif option == 2:
                 view_marks_of_perticualar_subject()
         elif option == 3:
                 overall_topper_in_class()
-        elif option == 4 :
+        elif option == 4:
                 overall_topper_in_school()
         elif(option > 5 or option<=0):
                 print('wrong input')

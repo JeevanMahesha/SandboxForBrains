@@ -32,7 +32,13 @@ def topper_in_perticular_subject():
         print(marks_dict[0])
         
 
-
+"""
+tp = {nk:nv 
+for clsk,clsv in school.items()
+for nk,nv in clsv.items() 
+ }
+print(tp)  
+"""
 
 
 

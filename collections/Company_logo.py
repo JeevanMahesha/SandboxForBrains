@@ -1,5 +1,5 @@
 import collections as c
-val = 'bbbaaaccde'
+val = 'bbbccaaadeeee'
 val = sorted(val)
 val = dict(c.Counter(val))
 val = [(k, v)

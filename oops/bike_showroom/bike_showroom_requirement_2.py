@@ -1,5 +1,4 @@
 import re 
-
 class Main:
     def __init__(self,vin):
         self.__VIN = vin

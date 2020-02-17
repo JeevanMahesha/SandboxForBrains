@@ -23,17 +23,15 @@ class Showroom:
         self.__City = city
     
     def cityWiseShowroomCount(self,showroom_list):
-        if showroom_list.__City not in self.count_showroom.keys():
-            self.count_showroom[showroom_list.__City] = 1
-        else:
-            v = self.count_showroom.get(showroom_list.__City)
-            v += 1
-            self.count_showroom[showroom_list.__City] = v 
-        print(self.count_showroom)
-
+        showroom_list = {k:v for k,v in sorted(showroom_list.items())}
+        print('{} {:>15}'.format('city','Count'))
+        for k,v in showroom_list.items():
+            print('{} {:>15}'.format(k,v))
 
 if __name__ == "__main__":
+
     showroom_list = []
+    count_showroom = {}
 
     for i in range(int(input())):
         user_input_showroom = input().split(",")
@@ -41,5 +39,12 @@ if __name__ == "__main__":
         showroom_list.append(user_input_showroom)
     
     for i in range(len(showroom_list)):
-        showroom_list[i].cityWiseShowroomCount(showroom_list[i])
+        #print(showroom_list[i]._Showroom__City)
+        if showroom_list[i]._Showroom__City not in count_showroom.keys():
+            count_showroom[showroom_list[i]._Showroom__City] = 1
+        else:
+            v = count_showroom.get(showroom_list[i]._Showroom__City)
+            v += 1
+            count_showroom[showroom_list[i]._Showroom__City] = v 
     
+    showroom_list[i].cityWiseShowroomCount(count_showroom)

@@ -16,3 +16,11 @@ name_list = 'Mike Jhon Mike Anna Mike Jhon Jhon Mike Mike Britney Smith Anna Smi
 for name in name_list:
     count[name] +=1
 print('Executed')
+
+#==================================================
+dic1 = {'a':1,'b':2}
+dic2 = {'b':3,'c':4}
+chain = c.ChainMap(dic1,dic2)
+print(list(chain.keys()))
+print(list(chain.values()))
+

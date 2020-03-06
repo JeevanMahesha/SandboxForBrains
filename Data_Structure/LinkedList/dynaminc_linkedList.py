@@ -25,13 +25,21 @@ class LinkedList():
             self.HeadValue.NextValue = temp
 
     def PushBetween(self):
-        AfterValue = input()
-        NewValue   = Node(input())
-        TempValue = self.HeadValue
-        while (TempValue.DataValue!=AfterValue):
-            TempValue = TempValue.NextValue
-        NewValue.NextValue = TempValue.NextValue
-        TempValue.NextValue = NewValue
+        if self.HeadValue is not None :
+            AfterValue = input()
+            NewValue   = Node(input())
+            TempValue = self.HeadValue
+            while (TempValue.DataValue!=AfterValue):
+                TempValue = TempValue.NextValue
+                if TempValue.NextValue is None:
+                    break
+            if TempValue.NextValue is not None:
+                NewValue.NextValue = TempValue.NextValue
+                TempValue.NextValue = NewValue
+            else:
+                print('No Recored Found Link',AfterValue)
+        else:
+            print('Linked List is Empty')
 
 
     def Append(self):
@@ -43,6 +51,23 @@ class LinkedList():
                 temp = temp.NextValue
             temp.NextValue = Node(input())
 
+    def DeleteHead(self):
+        if self.HeadValue is not None:
+            TempValue = self.HeadValue.NextValue
+            self.HeadValue = TempValue 
+        else:
+            print('Linked List is Empty')
+    
+    def DeletePeek(self):
+        if self.HeadValue is not None:
+            TempValue = self.HeadValue
+            while TempValue.NextValue.NextValue is not None:
+
+                TempValue = TempValue.NextValue
+            TempValue.NextValue = None            
+        else:
+            print('Linked List is Empty')
+
     def listprint(self):
         printval = self.HeadValue
         while printval is not None:
@@ -53,8 +78,10 @@ class LinkedList():
 if __name__ == "__main__":    
     LinkedListObject = LinkedList()
     option = 0 
-    while option <=5:
-        option = int(input(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display \n 6.exit \n 5.TempCreate \n '))
+    while option <=7:
+        print()
+        option = int(input(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display  \n 5.TempCreate \n 6.Delete Head \n 7.Delete Peek \n 8.exit \n '))
+        print()
         if option == 1:
             LinkedListObject.Push()
         elif option == 2:
@@ -65,3 +92,8 @@ if __name__ == "__main__":
             LinkedListObject.listprint()
         elif option == 5:
             LinkedListObject.TempCreate()
+        elif option == 6:
+            LinkedListObject.DeleteHead()
+        elif option == 7:
+            LinkedListObject.DeletePeek()
+    print('Thank You')

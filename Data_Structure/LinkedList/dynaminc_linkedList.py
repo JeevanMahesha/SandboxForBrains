@@ -88,12 +88,28 @@ class LinkedList():
     
     def ReverseLinkedList(self):
         print()
-        TempValue = self.HeadValue
-        while TempValue.NextValue is not None:
-            print(TempValue.DataValue)
-            TempValue = TempValue.NextValue
+        CurrentValue  = self.HeadValue
+        PreviousValue = None
+        
+        while CurrentValue is not None:
+            NextValue = CurrentValue.NextValue
+            CurrentValue.NextValue = PreviousValue
+            PreviousValue = CurrentValue
+            CurrentValue = NextValue
+        self.HeadValue = PreviousValue
     
-    
+    def SortLinkedlist(self):
+        print()
+        CurrentValue  = self.HeadValue
+        PreviousValue = None
+        c = 0
+        while c!=1:
+            while CurrentValue is not None:
+                if CurrentValue.NextValue is not None:
+                    print(CurrentValue.DataValue,CurrentValue.NextValue.DataValue)
+                    CurrentValue = CurrentValue.NextValue
+
+
     def listprint(self):
         printval = self.HeadValue
         while printval is not None:
@@ -102,16 +118,14 @@ class LinkedList():
 
             
 if __name__ == "__main__":
-
     while True:
         try:
-
+            print('====================================================')
             print()
             print(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display',end="")
             print('\n 5.TempCreate \n 6.Delete Head \n 7.Delete Peek \n 8.Delete Any \n 9.Reverse Linked List',end="")
             print('\n 10.exit \n')
             option = int(input())
-            
             print()
             if option == 1:
                 LinkedListObject = LinkedList()
@@ -123,6 +137,7 @@ if __name__ == "__main__":
             elif option == 4:
                 LinkedListObject.listprint()
             elif option == 5:
+                LinkedListObject = LinkedList()
                 LinkedListObject.TempCreate()
             elif option == 6:
                 LinkedListObject.DeleteHead()
@@ -131,10 +146,16 @@ if __name__ == "__main__":
             elif option == 8:
                 LinkedListObject.DeleteAny()
             elif option == 9:
-                print('Thank You')
+                LinkedListObject.ReverseLinkedList()
+            elif option == 10:
+                print()
+                print('========  Thank You  ========')
+                print()
                 break
             else: 
+                print()
                 print('Wrong Input')
+                print()
         except:
             print('================ Please Create Linked List ===========================')
             

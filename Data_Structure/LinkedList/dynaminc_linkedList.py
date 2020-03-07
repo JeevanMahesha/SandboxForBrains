@@ -62,12 +62,31 @@ class LinkedList():
         if self.HeadValue is not None:
             TempValue = self.HeadValue
             while TempValue.NextValue.NextValue is not None:
-
                 TempValue = TempValue.NextValue
             TempValue.NextValue = None            
         else:
             print('Linked List is Empty')
-
+    
+    def DeleteAny(self):
+        if self.HeadValue is not None:
+            FindValue = input()
+            if self.HeadValue.DataValue == FindValue:
+                self.HeadValue = self.HeadValue.NextValue
+            else:        
+                TempValue = self.HeadValue
+                while TempValue.NextValue.DataValue != FindValue:
+                    TempValue = TempValue.NextValue
+                    if TempValue.NextValue is None:
+                        break
+                if TempValue.NextValue is not None:    
+                    PreviousValue = TempValue
+                    PreviousValue.NextValue = TempValue.NextValue.NextValue
+                else:
+                    TempValue.NextValue.NextValue = None
+        else:
+            print('Linked List is Empty')
+    
+    
     def listprint(self):
         printval = self.HeadValue
         while printval is not None:
@@ -78,9 +97,9 @@ class LinkedList():
 if __name__ == "__main__":    
     LinkedListObject = LinkedList()
     option = 0 
-    while option <=7:
+    while option <=9:
         print()
-        option = int(input(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display  \n 5.TempCreate \n 6.Delete Head \n 7.Delete Peek \n 8.exit \n '))
+        option = int(input(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display  \n 5.TempCreate \n 6.Delete Head \n 7.Delete Peek \n 8.Delete Any \n 9.exit \n '))
         print()
         if option == 1:
             LinkedListObject.Push()
@@ -96,4 +115,10 @@ if __name__ == "__main__":
             LinkedListObject.DeleteHead()
         elif option == 7:
             LinkedListObject.DeletePeek()
-    print('Thank You')
+        elif option == 8:
+            LinkedListObject.DeleteAny()
+        elif option == 9:
+            print('Thank You')
+            break
+        elif option > 9 or option < 0:
+            print('Wrong Input')

@@ -86,6 +86,13 @@ class LinkedList():
         else:
             print('Linked List is Empty')
     
+    def ReverseLinkedList(self):
+        print()
+        TempValue = self.HeadValue
+        while TempValue.NextValue is not None:
+            print(TempValue.DataValue)
+            TempValue = TempValue.NextValue
+    
     
     def listprint(self):
         printval = self.HeadValue
@@ -94,31 +101,40 @@ class LinkedList():
             printval = printval.NextValue
 
             
-if __name__ == "__main__":    
-    LinkedListObject = LinkedList()
-    option = 0 
-    while option <=9:
-        print()
-        option = int(input(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display  \n 5.TempCreate \n 6.Delete Head \n 7.Delete Peek \n 8.Delete Any \n 9.exit \n '))
-        print()
-        if option == 1:
-            LinkedListObject.Push()
-        elif option == 2:
-           LinkedListObject.PushBetween()
-        elif option == 3:
-            LinkedListObject.Append()
-        elif option == 4:
-            LinkedListObject.listprint()
-        elif option == 5:
-            LinkedListObject.TempCreate()
-        elif option == 6:
-            LinkedListObject.DeleteHead()
-        elif option == 7:
-            LinkedListObject.DeletePeek()
-        elif option == 8:
-            LinkedListObject.DeleteAny()
-        elif option == 9:
-            print('Thank You')
-            break
-        elif option > 9 or option < 0:
-            print('Wrong Input')
+if __name__ == "__main__":
+
+    while True:
+        try:
+
+            print()
+            print(' 1.Add Beging \n 2.Add inBetween \n 3.Add End \n 4.display',end="")
+            print('\n 5.TempCreate \n 6.Delete Head \n 7.Delete Peek \n 8.Delete Any \n 9.Reverse Linked List',end="")
+            print('\n 10.exit \n')
+            option = int(input())
+            
+            print()
+            if option == 1:
+                LinkedListObject = LinkedList()
+                LinkedListObject.Push()
+            elif option == 2:
+                LinkedListObject.PushBetween()
+            elif option == 3:
+                LinkedListObject.Append()
+            elif option == 4:
+                LinkedListObject.listprint()
+            elif option == 5:
+                LinkedListObject.TempCreate()
+            elif option == 6:
+                LinkedListObject.DeleteHead()
+            elif option == 7:
+                LinkedListObject.DeletePeek()
+            elif option == 8:
+                LinkedListObject.DeleteAny()
+            elif option == 9:
+                print('Thank You')
+                break
+            else: 
+                print('Wrong Input')
+        except:
+            print('================ Please Create Linked List ===========================')
+            

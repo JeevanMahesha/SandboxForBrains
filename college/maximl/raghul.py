@@ -1,13 +1,14 @@
 from itertools import groupby
-def longest(x):
-         if x in long:
+def substring(value):
+         if value in long:
              long.clear()
              return False
-         long.add(x)
+         long.add(value)
          return True
-def find_longest(string):
-    return len(max((list(j) for i,j in groupby(string, key=longest)),key=len))    
+def find_substring(input_value):
+    return len(max((list(j) for i,j in groupby(input_value, key=substring)),key=len))    
 
-string= input()
-long = set()
-print (find_longest(string))
+if __name__ == "__main__":
+    input_value= input()
+    long = set()
+    print (find_substring(input_value))

@@ -7,13 +7,11 @@ for i in range(6):
     l = ''.join(l)
     d[val]=l
 print(d)
-
-""" ans = dict()
-
+ans = dict()
 for k,v in d.items():
     for tk,tv in d.items():
         if k == tk :
            total =  int(v)+int(tv)
            ans[k]=total
 ans = {k:v for k,v in sorted(ans.items())}
-print(ans) """
+print(ans)

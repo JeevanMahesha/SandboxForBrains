@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Codingmart Spin Wheel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<span id="app">
+    <div v-for="(item,index) in score"
+    :key="index">
+        <h1>
+            {{ item.Result }}
+           </h1>
+    </div>
+   <div class="wheel-wrapper">
+    <div
+      class="wheel-pointer"
+      @click="onClickRotate"
+    >
+      Start
+    </div>
+    <div
+      class="wheel-bg"
+      :class="{freeze: freeze}"
+      :style="`transform: rotate(${wheelDeg}deg)`"
+    >
+      <div class="prize-list">
+        <div
+          class="prize-item-wrapper"
+          v-for="(item,index) in prizeList"
+          :key="index"
+        >
+          <div
+            class="prize-item"
+            :style="`transform: rotate(${(360/ prizeList.length) * index}deg)`"
+          >
+            <div class="prize-name">
+              {{ item.name }}
+            </div>
+            <div class="prize-icon">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- script Link -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.common.dev.js"></script>
+  <script  src="./script.js"></script>
+  
+
+</body>
+</html>

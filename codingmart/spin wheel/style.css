@@ -11,6 +11,34 @@ html {
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
 }
+li{
+  width: 50px;
+  height: auto;
+  font-size: 150%;
+  position: relative;
+  padding-left: 10rem;
+  padding-top: 1rem;
+}
+h1{
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 8rem;
+}
+hr{
+  border: none;
+  height: 10px;
+  background: linear-gradient(-135deg, #fff 5px, transparent 0) 0 5px, linear-gradient(135deg, #fff 5px, #8c8c8c 0) 0 5px;
+  background-color: #fff;
+  background-position: left bottom;
+  background-repeat: repeat-x;
+  background-size: 10px 10px;
+}
+p{
+  padding-top: 3rem;
+  padding-left: 5rem;
+  font-size: 250%;
+}
+
 
 .wheel-pointer {
   width: 60px;

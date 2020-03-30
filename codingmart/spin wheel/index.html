@@ -8,14 +8,15 @@
 
 </head>
 <body>
+    <h1>Spinning Wheel</h1>
+    <br>
+    <hr>
 <span id="app">
-    <div v-for="(item,index) in score"
-    :key="index">
-        <h1>
-            {{ item.Result }}
-           </h1>
+    <p>Lucky Nunber :</p>
+    <div  v-for="(item,index) in score" :key="index">
+        <ul><li>{{ item.Result }}</li></ul>
     </div>
-   <div class="wheel-wrapper">
+   <div class="wheel-wrapper ">
     <div
       class="wheel-pointer"
       @click="onClickRotate"
@@ -51,7 +52,6 @@
 <!-- script Link -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.common.dev.js"></script>
   <script  src="./script.js"></script>
-  
-
+ 
 </body>
 </html>

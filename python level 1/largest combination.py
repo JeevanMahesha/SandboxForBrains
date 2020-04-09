@@ -1,5 +1,4 @@
 def permute(seq):
-
     if len(seq) <= 1:
         perms = [seq]
     else:

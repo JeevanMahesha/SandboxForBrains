@@ -2,19 +2,17 @@ from flask import Flask,request
 from flask_restful import Resource,Api
 
 app = Flask(__name__)
-
-items_list = []
-
 API = Api(app)
+items_list = []
 
 class Items(Resource):
     def get(self,name):
-        for i in items_list:
-            if i['name'] == name:
-                return i
-        return {'Error Message' : f'No item found link {name}'},404
+        items = next(filter(lambda item_name: item_name['name'] == name,items_list),None)
+        return{'items':items} ,200 if items else  404
     
     def post(self,name):
+        if next(filter(lambda item_name: item_name['name'] == name,items_list),None):
+            return {'Message':f'The item with name {name} is already exisit'},400
         request_data = request.get_json()
         items_list.append({'name':name,'Price':request_data['Price']})
         return items_list,201

@@ -2,7 +2,7 @@ from flask import Flask,request
 from flask_restful import Resource,Api,reqparse
 from flask_jwt import jwt_required,JWT
 from security import authenticate,identity
-
+from user import UserRegister
 
 app = Flask(__name__)
 API = Api(app)
@@ -54,5 +54,7 @@ class ItemsList(Resource):
 
 API.add_resource(Items,'/item/<string:name>')
 API.add_resource(ItemsList,'/items')
+API.add_resource(UserRegister,'/register')
+
 
 app.run(debug=True)

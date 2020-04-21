@@ -29,6 +29,17 @@ class Items(Resource):
         items_list = list(filter(lambda  x: x['name'] != name,items_list))
         return {'Message':'Items Deleted'}
 
+    def put(self,name):
+        request_data = request.get_json()
+        item = next(filter(lambda it: it['name'] == name,items_list),None)
+        if item is None:
+            item = {'name':name,'Price':request_data['Price']}
+            items_list.append(item)
+        else:
+            items_list.append(request_data)
+        return item
+
+
 class ItemsList(Resource):
     def get(self):
         return {'All items':items_list}

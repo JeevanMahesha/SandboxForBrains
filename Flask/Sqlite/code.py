@@ -17,8 +17,8 @@ ul =[
 ]
 cursor.executemany(insert_query,ul)
 
-# truncate_query="DELETE FROM user"
-# cursor.execute(truncate_query)
+# Delete_all_record="DELETE FROM user"
+# cursor.execute(Delete_all_record)
 
 select_query = "SELECT * FROM user"
 for row in cursor.execute(select_query):

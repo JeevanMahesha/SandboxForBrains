@@ -1,3 +1,5 @@
+import copy
+
 #LEVEL-1:
 maze = [
     [0,0,0,0,0],
@@ -38,6 +40,7 @@ else:
     print("no solution")  
 
 #LEVEL-3
+
 maze = [
     [0,0,0,0,0],
     [0,1,0,1,0],
@@ -91,7 +94,7 @@ else:
         
 #LEVEL-4
 
-import copy
+
 maze = [
     [0,0,1,0,0],
     [0,1,0,0,0],

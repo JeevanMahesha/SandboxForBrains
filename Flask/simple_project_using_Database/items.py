@@ -12,6 +12,13 @@ class Items(Resource):
     )
     @jwt_required()
     def get(self,name):
+        items = self.find_items_by_name(name)
+        if items:
+            return items        
+        return {'message':'No Record Found in Data Base'},400
+    
+    @classmethod
+    def find_items_by_name(cls,name):
         connection = sqlite3.connect('Flask/simple_project_using_Database/data.db')
         cursor = connection.cursor()
         select_query = "SELECT * FROM items WHERE name =?"
@@ -20,31 +27,59 @@ class Items(Resource):
         connection.close()
         if row:
             return {'items': {'name':row[0],'Price':row[1]}},200
-        return {'message':'No Record Found in Data Base'},400
-    
+
+    @classmethod
+    def insert(self,items_list):
+        connection = sqlite3.connect('Flask/simple_project_using_Database/data.db')
+        cursor = connection.cursor()
+        insert_query = "INSERT INTO items VALUES (?,?)"
+        cursor.execute(insert_query,(items_list['name'],items_list['Price']))
+        connection.commit() 
+        connection.close()
+
+
     def post(self,name):
-        if next(filter(lambda item_name: item_name['name'] == name,items_list),None):
+        if self.find_items_by_name(name):
             return {'Message':f'The item with name {name} is already exisit'},400
-        
         request_data = Items.parser.parse_args()
-        items_list.append({'name':name,'Price':request_data['Price']})
-        return items_list,201
+        items_list = {'name':name,'Price':request_data['Price']}
+        try:
+            self.insert(items_list)
+        except:
+            return {'message':'An error occurred inserting an item'},500
+        return items_list
 
     def delete(self,name):
-        global items_list
-        items_list = list(filter(lambda  x: x['name'] != name,items_list))
-        return {'Message':'Items Deleted'}
+        if self.find_items_by_name(name) :
+            connection = sqlite3.connect('Flask/simple_project_using_Database/data.db')
+            cursor = connection.cursor()
+            delete_query = "DELETE FROM items WHERE name=?"
+            cursor.execute(delete_query,(name,))
+            connection.commit()
+            connection.close()
+            return {'Message':f'Item {name} is Deleted'}
+        return {'Message':f'The Item {name} is not in the database'}
+        
 
     def put(self,name):
         request_data = Items.parser.parse_args()
-        item = next(filter(lambda it: it['name'] == name,items_list),None)
-        if item is None:
+        if self.find_items_by_name(name):
             item = {'name':name,'Price':request_data['Price']}
-            items_list.append(item)
-        else:
-            items_list.append(request_data)
-        return item
+            try:
+                self.update(item)
+                return item
+            except:
+                return {'message':'An error occurred inserting an item'},500
+        return {'Message':'No Record Found in DataBase To update'},400
 
+    @classmethod
+    def update(cls,item):
+        connection = sqlite3.connect('Flask/simple_project_using_Database/data.db')
+        cursor = connection.cursor()
+        delete_query = "UPDATE items SET Price=? WHERE name=?"
+        cursor.execute(delete_query,(item['Price'],item['name']))
+        connection.commit()
+        connection.close()
 
 class ItemsList(Resource):
     def get(self):

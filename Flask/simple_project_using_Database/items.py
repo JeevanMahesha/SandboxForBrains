@@ -76,11 +76,18 @@ class Items(Resource):
     def update(cls,item):
         connection = sqlite3.connect('Flask/simple_project_using_Database/data.db')
         cursor = connection.cursor()
-        delete_query = "UPDATE items SET Price=? WHERE name=?"
-        cursor.execute(delete_query,(item['Price'],item['name']))
+        update_query = "UPDATE items SET Price=? WHERE name=?"
+        cursor.execute(update_query,(item['Price'],item['name']))
         connection.commit()
         connection.close()
 
 class ItemsList(Resource):
     def get(self):
-        return {'All items':items_list}
+        connection = sqlite3.connect('Flask/simple_project_using_Database/data.db')
+        cursor = connection.cursor()
+        selete_query = "SELECT * FROM items"
+        result = cursor.execute(selete_query)
+        all_items = []
+        for i in result:
+            all_items.append({'name':i[0],'Price':i[1]})
+        return {'All items':all_items}

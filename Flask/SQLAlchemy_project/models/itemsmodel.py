@@ -9,6 +9,7 @@ class ItemsModel(db.Model):
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
     store = db.relationship('StoreModel')
 
+
     def __init__(self,name,price,store_id):
         self.name = name
         self.price = price

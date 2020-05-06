@@ -13,5 +13,5 @@ def countCurrency(amount):
             j = amount // i 
             amount = amount - j * i 
             print (i ," : ", j) 
-amount = 868
+amount = 30
 countCurrency(amount)

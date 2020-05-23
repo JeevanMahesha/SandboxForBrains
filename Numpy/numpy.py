@@ -23,6 +23,33 @@ print(num) # [3, 4, 5]
 #power
 
 l2 = [e**2 for e in l]
-print(l2)
+print(l2) #[1, 4, 9]
 
-num =  
+num =  a**2
+print(num)  # [1, 4, 9]
+
+print(np.sqrt(a)) # give the squrt of all element in array
+print(np.exp(a)) # give the exponential of all element of array
+print(np.log(a)) # give the logarithmic of all element of array
+print(np.tan(a)) # give the tan of all element of array
+
+#========================================================================
+
+# Dot Product
+a1 = np.array([1,2,3])
+b1= np.array([4,5,6])
+d = 0
+for i,j in zip(a1,b1):
+    d+=i*j
+print(d) #32
+
+
+d = sum(a1*b1)
+print(d) #32 
+    #or
+dd = (a1*b1).sum()
+print(dd) #32
+  #or 
+print(a1.dot(b1)) #32
+    #or
+print(a1 @ b1)   #32

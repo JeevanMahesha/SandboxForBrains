@@ -31,15 +31,15 @@ def storeImage(name,  frame):
     # path to image folder
     path = './dataset/'
 
-    # Get the current time for image
-    t = time.localtime()
-    current_time = time.strftime("%H:%M:%S", t).replace(':', '_')
+    # Get the current date for image
+    current_date = datetime.now().strftime("%d-%m-%Y")
 
     if(os.path.isdir(path+name)):
-        cv2.imwrite(path+name+'/'+name+current_time+'.jpg', frame)
+        cv2.imwrite(path+name+'/'+name+'_'+current_date+'_'+'.jpg', frame)
     else:
         os.mkdir(path+name)
-        cv2.imwrite(path+name+'/'+name+current_time+'.jpg', frame)
+        cv2.imwrite(path+name+'/'+name+'_'+current_date+'_'+'.jpg', frame)
+
 
 
 def attendancelist(request):

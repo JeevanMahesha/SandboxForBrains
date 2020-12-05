@@ -45,38 +45,6 @@ def storeImage(name,  frame):
         os.mkdir(path+name)
         cv2.imwrite(path+name+'/'+name+'_'+current_date+'_'+'.jpg', frame)
 
-# Image Encodeing function
-
-
-def faceEncodeing():
-    encodedJsonData = dict()
-    File_Dir_names = []
-    for (dirpath, dirnames, filenames) in walk("images"):
-        File_Dir_names.extend(dirnames)
-        break
-    # known_face_encodings = []
-    # known_names = []
-    for dirname in File_Dir_names:
-        Image_path = []
-        for (dirpath, dirnames, filenames) in walk("images/"+str(dirname)):
-            Image_path.extend(filenames)
-        for image in Image_path:
-            Training_Image_path = "images/"+str(dirname)+"/"+str(image)
-            train_image = fr.load_image_file(Training_Image_path)
-            train_image_encoding = fr.face_encodings(train_image)[0]
-            encodedJsonData[dirname] = list(train_image_encoding)
-            # print(train_image_encoding)
-            # known_face_encodings.append(train_image_encoding)
-            # known_names.append(dirname)
-        print()
-        print(dirname)
-        print()
-    print("Face Encoding Done ...")
-    json_object = json.dumps(encodedJsonData, indent=4)
-    with open("Face_Encoding_Data.json", "w") as outfile:
-        outfile.write(json_object)
-    print('Exported as Json')
-
 
 def attendancelist(request):
     date = datetime.now().strftime("%d-%m-%Y")
@@ -152,8 +120,6 @@ def face_reg_attendance(request, slug):
             print("Database Updated ...")
         return str(Name), str(Time)
     video = cv2.VideoCapture(0)
-    # calling the encoding function
-    # faceEncodeing()
     while True:
         ret, frame = video.read()
         # The image transforms to the colour RGB order
@@ -162,6 +128,7 @@ def face_reg_attendance(request, slug):
         face_encodings = fr.face_encodings(rgb_frame, face_locations)
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
             name = "Unknown"
+
             matches = fr.compare_faces(
                 known_face_encodings, face_encoding, tolerance=0.5)
             face_distances = fr.face_distance(

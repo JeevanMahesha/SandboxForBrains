@@ -2,10 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from pymongo import MongoClient
-from datetime import datetime
 from os import walk
-from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import redirect
 import csv
 import os
@@ -26,8 +24,8 @@ print("Database Connected ...")
 # Get the Encoded value from json file.
 with open('Face_Encoding_Data.json') as f:
     EncodeJsonData = json.load(f)
-known_face_encodings = list(EncodeJsonData.values())
-known_names = list(EncodeJsonData.keys())
+    known_face_encodings = list(EncodeJsonData.values())
+    known_names = list(EncodeJsonData.keys())
 
 
 # store the image function
@@ -120,7 +118,11 @@ def face_reg_attendance(request, slug):
             print("Database Updated ...")
         return str(Name), str(Time)
     video = cv2.VideoCapture(0)
+    checkTime = datetime.now() + timedelta(minutes=1)
     while True:
+        if datetime.now().strftime("%H:%M") == checkTime.strftime("%H:%M"):
+            print('Camera offed')
+            break
         ret, frame = video.read()
         # The image transforms to the colour RGB order
         rgb_frame = frame[:, :, ::-1]
@@ -128,7 +130,6 @@ def face_reg_attendance(request, slug):
         face_encodings = fr.face_encodings(rgb_frame, face_locations)
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
             name = "Unknown"
-
             matches = fr.compare_faces(
                 known_face_encodings, face_encoding, tolerance=0.5)
             face_distances = fr.face_distance(
@@ -138,6 +139,7 @@ def face_reg_attendance(request, slug):
                 name = known_names[best_match_index]
                 Name_ID, Time_ID = Attendance(name)
                 storeImage(name, frame)
+                checkTime = datetime.now() + timedelta(minutes=1)
                 Dbdata = list(records.find({'Name': Name_ID, 'Date': Date}))
                 if str(slug) == "check_in":
                     message = "Checked in."

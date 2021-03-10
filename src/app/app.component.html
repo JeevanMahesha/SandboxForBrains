@@ -1,0 +1,9 @@
+<div *ngIf="userStatus" fxLayoutAlign="center center" fxFlexFill>
+    <mat-card fxFlex="25">
+        <h1 [style.color]="userStatus?.status == true ? 'green' : 'red'">{{userStatus?.data}}</h1>
+        <a mat-fab color="primary" href="http://localhost:4200/">
+            <mat-icon>home</mat-icon>
+        </a>
+    </mat-card>
+</div>
+<app-login *ngIf="!userStatus" [userDetailsDB]="userDetails" (userStatusEmit)="getUserDetails($event)"></app-login>

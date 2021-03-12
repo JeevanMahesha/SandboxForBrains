@@ -12,8 +12,9 @@ export class LoginComponent implements OnInit {
   userPassword: string
   userRole: string
   userStatus: object
-  @Input() userDetailsDB: any
-  @Output() userStatusEmit: any = new EventEmitter()
+  @Input() userDetailsDB: any;
+  @Output() userStatusEmit: any = new EventEmitter();
+
   constructor() { }
 
   ngOnInit(): void {

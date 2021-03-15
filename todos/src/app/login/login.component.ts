@@ -10,8 +10,8 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('loginForm') loginForm :ElementRef
 
-  userEmail:string
-  userPassword:string
+  userEmail:string = 'test@test.com'
+  userPassword:string = 'Test@123'
   message:string
   constructor(
     private router:Router

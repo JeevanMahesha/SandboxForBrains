@@ -1,4 +1,4 @@
-package com.example.Students;
+package com.example.Students.entity;
 
 public class Student {
     String studentRollNumber;

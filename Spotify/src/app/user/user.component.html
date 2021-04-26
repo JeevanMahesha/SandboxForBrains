@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="col-5 ms-5 mt-3">
+          <mat-card class="card">
+            <mat-card-content>
+                <mat-form-field >
+                    <mat-label>User ID</mat-label>
+                    <input type="text" matInput [(ngModel)]="userID" placeholder="User Name" required>
+                </mat-form-field>
+                <mat-card-actions>
+                    <button mat-raised-button color="primary" *ngIf="userID" (click)="getUserInfo()">Get Details</button>&nbsp;
+                </mat-card-actions>
+            </mat-card-content>
+        </mat-card>
+        </div>
+        <div class="col-5 ms-5 mt-3 ">
+          <mat-card class="card" *ngIf="this.userDetails">
+              <mat-card-content>
+                      <img class="text-center" [src]="userDetails.userProfileAvatar || avater" width="150px" height="70px" alt="User Profile Image">
+                          <h1>{{ userDetails.userName }}</h1>
+                          <p>Followers : <mark>{{ userDetails.userFolloers }}</mark></p>
+                          <button mat-raised-button color="primary"> <a href="{{ userDetails.userProfileLink }}" target="_blank"> Open In  Spotify</a> &nbsp; <mat-icon>open_in_new</mat-icon></button>
+              </mat-card-content>
+          </mat-card>
+      </div>
+    </div>
+</div>

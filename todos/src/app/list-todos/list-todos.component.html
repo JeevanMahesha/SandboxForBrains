@@ -1,1 +1,40 @@
-<p>list-todos works!</p>
+<div class="container-fluid mt-5">
+    <h3 class="text-center" >List of Todos</h3>
+    <div class="row justify-content-center">
+        <div class="col-5">
+            <input class="form-control mr-sm-2" [(ngModel)]="searchKey" type="search" placeholder="Search" aria-label="Search">
+        </div>
+        <div class="col-2">
+            <button class="btn btn-outline-secondary my-2 my-sm-0" [disabled]="todosList" (click)="getData()">GetData</button>
+        </div>
+        <div class="col-2">
+          <a class="btn btn-outline-success my-2 my-sm-0" routerLink="/create">Create</a>
+      </div>
+      <div class="col-2">
+        <a class="btn btn-outline-info my-2 my-sm-0" routerLink="/">Logout</a>
+    </div>
+        
+    </div>
+    <div class="row mt-3" *ngIf="todosList">
+        <table class="table table-secondary">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">UserID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Completed</th>
+                <th scope="col">Edit</th>
+              </tr>
+            </thead>
+            <tbody >
+              <tr *ngFor="let eachItem of todosList | filter:searchKey;let i=index" >
+                  <th scope="row">{{eachItem.id}}</th>
+                <td>{{eachItem.userId}}</td>
+                <td>{{eachItem.title}}</td>
+                <td>{{eachItem.completed}}</td>
+               <td><a class="btn btn-link" (click)="editItem(i)">Edit</a></td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+</div>

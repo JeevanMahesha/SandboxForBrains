@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class ApiService {
 
   constructor(private http: HttpClient) { }
-  myToken: string = 'Bearer BQCHaHXe8zV6kbq0LAyyBs9JHgwlBgTJhL5ftDfcioj65QmthCHYDxpW9sTShbINqBKa0xrd5vZJG7C6liyllegiv3V7g7Tv4uews153fBzRF1KalLFJIQsGZ4zfqsJS0ihte5Q08ZgVBsIUAV-sn9oLPxgGfl9Ch5A7RioSsskuF98ob72ariPoq9_oChjkpHUsRfM3anbIuF1rHtJdOhmsfe82E9nFLeHN7AnRJ9bat7-WRrdmrJlCHDgjq18hz3ogR6ZmfSFwvcOorDVNpSIZVDBfc6465xWC2065';
+  myToken: string = "<YOUR TOKEN>";
   headers = new HttpHeaders().set('Authorization', `${this.myToken}`)
 
   getUserInfo(userID: string): any {

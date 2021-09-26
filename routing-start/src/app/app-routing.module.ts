@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { AuthGuard } from "./auth.guard";
+import { ErrorPageComponent } from "./error-page/error-page.component";
 import { HomeComponent } from "./home/home.component";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
 import { CanDeactivateGuardService } from "./servers/can-deactivate-guard.service";
@@ -34,6 +35,11 @@ const appRouting: Routes = [
   {
     path: "not-found",
     component: PageNotFoundComponent,
+  },
+  {
+    path: "error",
+    component: ErrorPageComponent,
+    data: { errorMessage: "Having an error in page loading.....!" },
   },
   // {
   //   path: "**",

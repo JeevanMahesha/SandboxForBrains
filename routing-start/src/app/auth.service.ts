@@ -11,9 +11,9 @@ export class AuthService {
   }
 
   login() {
-    this.loginStatus = !this.loginStatus;
+    this.loginStatus = true;
   }
   logout() {
-    this.loginStatus = !this.loginStatus;
+    this.loginStatus = false;
   }
 }

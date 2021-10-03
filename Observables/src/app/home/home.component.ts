@@ -26,12 +26,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     const obs = Observable.create((observer: Observer<any>) => {
       let count = 0;
       setInterval(() => {
+        if (count > 3) {
+          observer.error("Count greater than 3");
+        }
+        if (count === 3) {
+          observer.complete();
+        }
         observer.next(count);
         count++;
       }, 1000);
     });
-    this.customObservableValue = obs.subscribe((data) => {
-      console.log(data);
-    });
+    this.customObservableValue = obs.subscribe(
+      (data) => {
+        console.log(data);
+      },
+      (error) => {
+        alert(error);
+        console.log(error);
+      },
+      () => {
+        console.log("Observable Completed");
+      }
+    );
   }
 }

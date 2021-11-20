@@ -5,7 +5,8 @@
                 <div id="user-data">
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input ngModel name="username" type="text" id="username" class="form-control" required>
+                        <input ngModel name="username" type="text" id="username" class="form-control" required #username="ngModel">
+                        <span class="help-block" *ngIf="!username.valid && username.touched">Please enter the valid value</span>
                     </div>
                     <button class="btn btn-default" type="button">Suggest an Username</button>
                     <div class="form-group">
@@ -15,7 +16,7 @@
                 </div>
                 <div class="form-group">
                     <label for="secret">Secret Questions</label>
-                    <select id="secret" ngModel name="secret" class="form-control">
+                    <select id="secret" [ngModel]="defaultQuestion" name="secret" class="form-control">
             <option value="pet">Your first Pet?</option>
             <option value="teacher">Your first teacher?</option>
           </select>

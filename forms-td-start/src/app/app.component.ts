@@ -7,14 +7,14 @@ import { NgForm } from "@angular/forms";
   styleUrls: ["./app.component.css"],
 })
 export class AppComponent {
-  @ViewChild("form") signUpForm: NgForm;
+  // @ViewChild("form") signUpForm: NgForm;
 
   suggestUserName() {
     const suggestedName = "Superuser";
   }
 
   onSubmit(form: NgForm): void {
-    // console.log(form);
-    console.log(this.signUpForm);
+    console.log(form);
+    // console.log(this.signUpForm);
   }
 }

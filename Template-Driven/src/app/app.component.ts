@@ -19,7 +19,7 @@ export class AppComponent {
     gender: "",
   };
   submitted = false;
-
+  
   suggestUserName() {
     const suggestedName = "Superuser";
     // this will clear all the value in the form controller
@@ -43,6 +43,7 @@ export class AppComponent {
 
   onSubmit(form: NgForm): void {
     console.log(form);
+
     this.submitted = true;
     this.user.username = this.signUpForm.value.userData.username;
     this.user.email = this.signUpForm.value.userData.email;
@@ -51,5 +52,6 @@ export class AppComponent {
     this.user.answer = this.signUpForm.value.questionAnswer;
     // console.log(this.signUpForm);
     this.signUpForm.reset();
+    // console.log(this.signUpForm);
   }
 }

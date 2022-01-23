@@ -14,6 +14,23 @@ export class AppComponent {
 
   suggestUserName() {
     const suggestedName = "Superuser";
+    // this will clear all the value in the form controller
+    // this.signUpForm.setValue({
+    //   userData: {
+    //     username: suggestedName,
+    //     email: "",
+    //   },
+    //   secret: "",
+    //   questionAnswer: "",
+    //   gender: "",
+    // });
+
+    // this will overrides the specific value alone
+    this.signUpForm.form.patchValue({
+      userData: {
+        username: suggestedName,
+      },
+    });
   }
 
   onSubmit(form: NgForm): void {

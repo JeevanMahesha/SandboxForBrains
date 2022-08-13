@@ -16,6 +16,9 @@ export class AppComponent implements OnInit {
       userName: new FormControl(null, Validators.required),
       email: new FormControl(null, [Validators.required, Validators.email]),
       gender: new FormControl(this.genders[0]),
+      passwordForm: new FormGroup({
+        password: new FormControl(null, Validators.required),
+      }),
     });
   }
 

@@ -10,6 +10,9 @@
             formControlName="userName"
             class="form-control"
           />
+          <span *ngIf="checkFormControlIsValid('userName')">
+            Please Enter the Username
+          </span>
         </div>
         <div class="form-group">
           <label for="email">email</label>
@@ -19,6 +22,9 @@
             formControlName="email"
             class="form-control"
           />
+          <span *ngIf="checkFormControlIsValid('email')">
+            Please Enter the email
+          </span>
         </div>
         <div class="radio" *ngFor="let gender of genders">
           <label>

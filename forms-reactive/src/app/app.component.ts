@@ -22,4 +22,11 @@ export class AppComponent implements OnInit {
   onSubmit(): void {
     console.log(this.signUpForm);
   }
+
+  checkFormControlIsValid(controlName: string): boolean {
+    return (
+      !this.signUpForm.get(controlName).valid &&
+      this.signUpForm.get(controlName).touched
+    );
+  }
 }

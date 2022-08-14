@@ -14,12 +14,14 @@ import {
 })
 export class AppComponent implements OnInit {
   genders = ["male", "female"];
-
   signUpForm: FormGroup;
 
   ngOnInit(): void {
     this.signUpForm = new FormGroup({
-      userName: new FormControl(null, Validators.required),
+      userName: new FormControl(null, [
+        Validators.required,
+        this.checkUserNameLength.bind(this),
+      ]),
       email: new FormControl(null, [Validators.required, Validators.email]),
       gender: new FormControl(this.genders[0]),
       passwordForm: new FormGroup({
@@ -47,5 +49,12 @@ export class AppComponent implements OnInit {
 
   get getHobbyControls(): AbstractControl[] {
     return (<FormArray>this.signUpForm.get("hobbies")).controls;
+  }
+
+  checkUserNameLength(controlName: FormControl): { [str: string]: boolean } {
+    if (controlName.value?.length > 10) {
+      return { "User Name have more than 10 char": true };
+    }
+    return null;
   }
 }

@@ -6,6 +6,7 @@ import {
   FormGroup,
   Validators,
 } from "@angular/forms";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -22,7 +23,11 @@ export class AppComponent implements OnInit {
         Validators.required,
         this.checkUserNameLength.bind(this),
       ]),
-      email: new FormControl(null, [Validators.required, Validators.email]),
+      email: new FormControl(
+        null,
+        [Validators.required, Validators.email],
+        this.checkFakeEmail
+      ),
       gender: new FormControl(this.genders[0]),
       passwordForm: new FormGroup({
         password: new FormControl(null, Validators.required),
@@ -56,5 +61,17 @@ export class AppComponent implements OnInit {
       return { invalidUserNameLength: true };
     }
     return null;
+  }
+
+  checkFakeEmail(controlName: FormControl): Promise<any> | Observable<any> {
+    return new Promise<any>((resolve, reject) => {
+      setTimeout(() => {
+        if (controlName.value === "test@test.com") {
+          resolve({ invalidEmail: true });
+        } else {
+          resolve(null);
+        }
+      }, 2000);
+    });
   }
 }

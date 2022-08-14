@@ -99,6 +99,11 @@ export class AppComponent implements OnInit {
   }
 
   reactiveFormPatchValue(): void {
-    this.signUpForm.patchValue({ gender: "female" });
+    this.signUpForm.patchValue({
+      gender: "female",
+      hobbies: (<FormArray>this.signUpForm.get("hobbies")).push(
+        new FormControl("running")
+      ),
+    });
   }
 }

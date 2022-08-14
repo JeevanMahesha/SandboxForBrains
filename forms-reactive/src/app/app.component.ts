@@ -35,6 +35,7 @@ export class AppComponent implements OnInit {
       hobbies: new FormArray([]),
     });
     this.reactiveFormHooks();
+    this.reactiveFormSetValue();
   }
 
   onSubmit(): void {
@@ -82,5 +83,17 @@ export class AppComponent implements OnInit {
     };
     this.signUpForm.valueChanges.subscribe(logValue);
     this.signUpForm.statusChanges.subscribe(logValue);
+  }
+
+  reactiveFormSetValue(): void {
+    this.signUpForm.setValue({
+      userName: "jeevan",
+      email: "jeevan@gmail.com",
+      gender: "male",
+      passwordForm: {
+        password: "123",
+      },
+      hobbies: [],
+    });
   }
 }

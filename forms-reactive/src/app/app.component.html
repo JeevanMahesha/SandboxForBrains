@@ -11,7 +11,14 @@
             class="form-control"
           />
           <span *ngIf="checkFormControlIsValid('userName')">
-            Please Enter the Username
+            <span
+              *ngIf="signUpForm.get('userName').errors['invalidUserNameLength']"
+            >
+              The user name length should be less than or equal to 10
+            </span>
+            <span *ngIf="signUpForm.get('userName').errors['required']">
+              This field is required
+            </span>
           </span>
         </div>
         <div class="form-group">

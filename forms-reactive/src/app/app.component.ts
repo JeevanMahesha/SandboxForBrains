@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
 
   checkUserNameLength(controlName: FormControl): { [str: string]: boolean } {
     if (controlName.value?.length > 10) {
-      return { "User Name have more than 10 char": true };
+      return { invalidUserNameLength: true };
     }
     return null;
   }

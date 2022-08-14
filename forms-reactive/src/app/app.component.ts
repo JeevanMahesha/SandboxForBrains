@@ -34,8 +34,9 @@ export class AppComponent implements OnInit {
       }),
       hobbies: new FormArray([]),
     });
-    this.reactiveFormHooks();
-    this.reactiveFormSetValue();
+    // this.reactiveFormHooks();
+    // this.reactiveFormSetValue();
+    this.reactiveFormPatchValue();
   }
 
   onSubmit(): void {
@@ -95,5 +96,9 @@ export class AppComponent implements OnInit {
       },
       hobbies: [],
     });
+  }
+
+  reactiveFormPatchValue(): void {
+    this.signUpForm.patchValue({ gender: "female" });
   }
 }

@@ -34,6 +34,7 @@ export class AppComponent implements OnInit {
       }),
       hobbies: new FormArray([]),
     });
+    this.reactiveFormHooks();
   }
 
   onSubmit(): void {
@@ -73,5 +74,13 @@ export class AppComponent implements OnInit {
         }
       }, 2000);
     });
+  }
+
+  reactiveFormHooks(): void {
+    const logValue = (value: unknown) => {
+      console.log(value);
+    };
+    this.signUpForm.valueChanges.subscribe(logValue);
+    this.signUpForm.statusChanges.subscribe(logValue);
   }
 }

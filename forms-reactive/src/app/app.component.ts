@@ -1,5 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 
 @Component({
   selector: "app-root",
@@ -19,6 +25,7 @@ export class AppComponent implements OnInit {
       passwordForm: new FormGroup({
         password: new FormControl(null, Validators.required),
       }),
+      hobbies: new FormArray([]),
     });
   }
 
@@ -31,5 +38,14 @@ export class AppComponent implements OnInit {
       !this.signUpForm.get(controlName).valid &&
       this.signUpForm.get(controlName).touched
     );
+  }
+
+  onAddHobby(): void {
+    const hobbyController = new FormControl(null, Validators.required);
+    (<FormArray>this.signUpForm.get("hobbies")).push(hobbyController);
+  }
+
+  get getHobbyControls(): AbstractControl[] {
+    return (<FormArray>this.signUpForm.get("hobbies")).controls;
   }
 }

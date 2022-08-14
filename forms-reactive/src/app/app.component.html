@@ -44,7 +44,24 @@
             Please Enter the password
           </span>
         </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <div class="form-group" formArrayName="hobbies">
+          <button class="btn btn-primary" type="button" (click)="onAddHobby()">
+            Add Hobby
+          </button>
+          <div
+            class="form-group"
+            *ngFor="let eachHobbyController of getHobbyControls; let i = index"
+          >
+            <input type="text" [formControlName]="i" class="form-control" />
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="!signUpForm.valid"
+        >
+          Submit
+        </button>
       </form>
     </div>
   </div>

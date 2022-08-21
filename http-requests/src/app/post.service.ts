@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
@@ -26,20 +26,24 @@ export class PostService {
 	}
 
 	fetchAllPosts(): Observable<IPostDataAPIResponse[]> {
-		return this.http.get<IFireBaseResponse>(this.getUrl("posts")).pipe(
-			map((response): IPostDataAPIResponse[] => {
-				return Object.entries(response).map(([id, value]) => ({
-					id,
-					...value,
-				}));
-			}),
-			catchError((errorMessage) => {
-				// send data to analytics server
-				// do your operation when error occurs
-				console.log(errorMessage);
-				return throwError(errorMessage.error.error);
+		return this.http
+			.get<IFireBaseResponse>(this.getUrl("posts"), {
+				headers: new HttpHeaders({ "custom-header": "jeevan" }),
 			})
-		);
+			.pipe(
+				map((response): IPostDataAPIResponse[] => {
+					return Object.entries(response).map(([id, value]) => ({
+						id,
+						...value,
+					}));
+				}),
+				catchError((errorMessage) => {
+					// send data to analytics server
+					// do your operation when error occurs
+					console.log(errorMessage);
+					return throwError(errorMessage.error.error);
+				})
+			);
 	}
 
 	deleteAllPosts(): Observable<unknown> {

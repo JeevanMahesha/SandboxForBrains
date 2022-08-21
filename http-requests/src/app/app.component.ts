@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { map } from "rxjs/operators";
 
 @Component({
 	selector: "app-root",
@@ -37,9 +38,19 @@ export class AppComponent implements OnInit {
 	}
 
 	private fetchAllPosts() {
-		this.http.get(this.getUrl("posts")).subscribe((response) => {
-			console.log(response);
-		});
+		this.http
+			.get(this.getUrl("posts"))
+			.pipe(
+				map((response) => {
+					return Object.entries(response).map(([id, value]) => ({
+						id,
+						...value,
+					}));
+				})
+			)
+			.subscribe((response) => {
+				console.log(response);
+			});
 	}
 
 	private getUrl(path: string): string {

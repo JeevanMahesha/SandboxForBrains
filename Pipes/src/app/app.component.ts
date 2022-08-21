@@ -44,4 +44,5 @@ export class AppComponent {
 			"list-group-item-danger": server.status === "critical",
 		};
 	}
+	filteredStatus = null;
 }

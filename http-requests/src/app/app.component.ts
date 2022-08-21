@@ -1,6 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
+import {
+	IFireBaseResponse,
+	IPostData,
+	IPostDataAPIResponse,
+} from "./app.model";
 
 @Component({
 	selector: "app-root",
@@ -19,11 +24,11 @@ export class AppComponent implements OnInit {
 		this.fetchAllPosts();
 	}
 
-	onCreatePost(postData: { title: string; content: string }) {
+	onCreatePost(postData: IPostData) {
 		// Send Http request
 		console.log(postData);
 		const url = this.getUrl("posts");
-		this.http.post(url, postData).subscribe((response) => {
+		this.http.post<{ name: string }>(url, postData).subscribe((response) => {
 			console.log(response);
 		});
 	}
@@ -39,16 +44,16 @@ export class AppComponent implements OnInit {
 
 	private fetchAllPosts() {
 		this.http
-			.get(this.getUrl("posts"))
+			.get<IFireBaseResponse>(this.getUrl("posts"))
 			.pipe(
-				map((response) => {
+				map((response): IPostDataAPIResponse[] => {
 					return Object.entries(response).map(([id, value]) => ({
 						id,
 						...value,
 					}));
 				})
 			)
-			.subscribe((response) => {
+			.subscribe((response: IPostDataAPIResponse[]) => {
 				console.log(response);
 			});
 	}

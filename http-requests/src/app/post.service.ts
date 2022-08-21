@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
@@ -26,9 +26,16 @@ export class PostService {
 	}
 
 	fetchAllPosts(): Observable<IPostDataAPIResponse[]> {
+		let searchParams = new HttpParams();
+		// if you want multiple params
+		searchParams = searchParams.append("print", "pretty");
+		searchParams = searchParams.append("key", "value");
+		console.log(searchParams);
+
 		return this.http
 			.get<IFireBaseResponse>(this.getUrl("posts"), {
 				headers: new HttpHeaders({ "custom-header": "jeevan" }),
+				params: new HttpParams().set("print", "pretty"),
 			})
 			.pipe(
 				map((response): IPostDataAPIResponse[] => {

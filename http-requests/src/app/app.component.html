@@ -55,6 +55,11 @@
 			<div *ngIf="error" class="alert alert-danger">
 				<h1>Error</h1>
 				<p>{{ error }}</p>
+				<button
+					class="btn btn-danger"
+					type="button"
+					(click)="onHandleError()"
+				></button>
 			</div>
 			<p *ngIf="loadedPosts.length < 1 && !isLoading">No posts available!</p>
 			<ul class="list-group" *ngIf="loadedPosts.length && !isLoading">

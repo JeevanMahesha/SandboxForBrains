@@ -13,7 +13,7 @@ import {
 	styleUrls: ["./app.component.css"],
 })
 export class AppComponent implements OnInit {
-	loadedPosts = [];
+	loadedPosts: IPostData[] = [];
 	fireBaseURL =
 		"https://angulardemoapi-4fa31-default-rtdb.asia-southeast1.firebasedatabase.app/";
 	jsonFileName = ".json";
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
 				})
 			)
 			.subscribe((response: IPostDataAPIResponse[]) => {
-				console.log(response);
+				this.loadedPosts = response;
 			});
 	}
 

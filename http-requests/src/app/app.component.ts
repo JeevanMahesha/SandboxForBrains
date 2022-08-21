@@ -14,7 +14,9 @@ export class AppComponent implements OnInit {
 
 	constructor(private http: HttpClient) {}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.fetchAllPosts();
+	}
 
 	onCreatePost(postData: { title: string; content: string }) {
 		// Send Http request
@@ -27,10 +29,17 @@ export class AppComponent implements OnInit {
 
 	onFetchPosts() {
 		// Send Http request
+		this.fetchAllPosts();
 	}
 
 	onClearPosts() {
 		// Send Http request
+	}
+
+	private fetchAllPosts() {
+		this.http.get(this.getUrl("posts")).subscribe((response) => {
+			console.log(response);
+		});
 	}
 
 	private getUrl(path: string): string {

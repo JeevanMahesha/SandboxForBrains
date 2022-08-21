@@ -10,7 +10,7 @@ import { PostService } from "./post.service";
 })
 export class AppComponent implements OnInit {
 	loadedPosts: IPostData[] = [];
-
+	error = null;
 	isLoading = false;
 
 	constructor(private http: HttpClient, private postService: PostService) {}
@@ -29,12 +29,16 @@ export class AppComponent implements OnInit {
 	onFetchPosts() {
 		// Send Http request
 		this.isLoading = true;
-		this.postService
-			.fetchAllPosts()
-			.subscribe((response: IPostDataAPIResponse[]) => {
+		this.postService.fetchAllPosts().subscribe(
+			(response: IPostDataAPIResponse[]) => {
 				this.loadedPosts = response;
 				this.isLoading = false;
-			});
+			},
+			(error) => {
+				this.error = error.error.error;
+				console.log(error.error.error);
+			}
+		);
 	}
 
 	onClearPosts() {

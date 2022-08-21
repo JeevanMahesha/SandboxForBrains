@@ -1,11 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
-import {
-	IFireBaseResponse,
-	IPostData,
-	IPostDataAPIResponse,
-} from "./app.model";
+import { IPostData, IPostDataAPIResponse } from "./app.model";
+import { PostService } from "./post.service";
 
 @Component({
 	selector: "app-root",
@@ -14,54 +10,34 @@ import {
 })
 export class AppComponent implements OnInit {
 	loadedPosts: IPostData[] = [];
-	fireBaseURL =
-		"https://angulardemoapi-4fa31-default-rtdb.asia-southeast1.firebasedatabase.app/";
-	jsonFileName = ".json";
+
 	isLoading = false;
 
-	constructor(private http: HttpClient) {}
+	constructor(private http: HttpClient, private postService: PostService) {}
 
 	ngOnInit() {
-		this.fetchAllPosts();
+		this.onFetchPosts();
 	}
 
 	onCreatePost(postData: IPostData) {
 		// Send Http request
-		console.log(postData);
-		const url = this.getUrl("posts");
-		this.http.post<{ name: string }>(url, postData).subscribe((response) => {
+		this.postService.createNewPost(postData).subscribe((response) => {
 			console.log(response);
 		});
 	}
 
 	onFetchPosts() {
 		// Send Http request
-		this.fetchAllPosts();
-	}
-
-	onClearPosts() {
-		// Send Http request
-	}
-
-	private fetchAllPosts() {
 		this.isLoading = true;
-		this.http
-			.get<IFireBaseResponse>(this.getUrl("posts"))
-			.pipe(
-				map((response): IPostDataAPIResponse[] => {
-					return Object.entries(response).map(([id, value]) => ({
-						id,
-						...value,
-					}));
-				})
-			)
+		this.postService
+			.fetchAllPosts()
 			.subscribe((response: IPostDataAPIResponse[]) => {
 				this.loadedPosts = response;
 				this.isLoading = false;
 			});
 	}
 
-	private getUrl(path: string): string {
-		return this.fireBaseURL + path + this.jsonFileName;
+	onClearPosts() {
+		// Send Http request
 	}
 }

@@ -35,4 +35,8 @@ export class PostService {
 			})
 		);
 	}
+
+	deleteAllPosts(): Observable<unknown> {
+		return this.http.delete(this.getUrl("posts"));
+	}
 }

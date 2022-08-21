@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
 
 	constructor(private http: HttpClient, private postService: PostService) {}
 
-	ngOnInit() {
+	ngOnInit(): void {
 		this.onFetchPosts();
 	}
 
@@ -39,5 +39,8 @@ export class AppComponent implements OnInit {
 
 	onClearPosts() {
 		// Send Http request
+		this.postService.deleteAllPosts().subscribe(() => {
+			this.loadedPosts = [];
+		});
 	}
 }

@@ -4,9 +4,9 @@ import { Pipe, PipeTransform } from "@angular/core";
 	name: "shorten",
 })
 export class ShortenPipe implements PipeTransform {
-	transform(value: any): string {
-		if (value.length > 10) {
-			return value.substring(0, 10) + "...";
+	transform(value: string, limit = 10): string {
+		if (value.length > limit) {
+			return value.substring(0, limit) + "...";
 		}
 		return value;
 	}

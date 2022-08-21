@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
 	fireBaseURL =
 		"https://angulardemoapi-4fa31-default-rtdb.asia-southeast1.firebasedatabase.app/";
 	jsonFileName = ".json";
+	isLoading = false;
 
 	constructor(private http: HttpClient) {}
 
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit {
 	}
 
 	private fetchAllPosts() {
+		this.isLoading = true;
 		this.http
 			.get<IFireBaseResponse>(this.getUrl("posts"))
 			.pipe(
@@ -55,6 +57,7 @@ export class AppComponent implements OnInit {
 			)
 			.subscribe((response: IPostDataAPIResponse[]) => {
 				this.loadedPosts = response;
+				this.isLoading = false;
 			});
 	}
 

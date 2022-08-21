@@ -6,6 +6,11 @@ import { Component } from "@angular/core";
 	styleUrls: ["./app.component.css"],
 })
 export class AppComponent {
+	appStatus = new Promise<string>((resolve, reject) => {
+		setTimeout(() => {
+			resolve("stable");
+		}, 3000);
+	});
 	filteredStatus = null;
 	servers = [
 		{

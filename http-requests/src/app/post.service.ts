@@ -20,9 +20,11 @@ export class PostService {
 		return this.fireBaseURL + path + this.jsonFileName;
 	}
 
-	createNewPost(newPost: IPostData): Observable<{ name: string }> {
+	createNewPost(newPost: IPostData) {
 		const url = this.getUrl("posts");
-		return this.http.post<{ name: string }>(url, newPost);
+		return this.http.post<{ name: string }>(url, newPost, {
+			observe: "response",
+		});
 	}
 
 	fetchAllPosts(): Observable<IPostDataAPIResponse[]> {

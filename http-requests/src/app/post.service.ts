@@ -1,7 +1,12 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import {
+	HttpClient,
+	HttpEventType,
+	HttpHeaders,
+	HttpParams,
+} from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 import {
 	IFireBaseResponse,
 	IPostData,
@@ -56,6 +61,19 @@ export class PostService {
 	}
 
 	deleteAllPosts(): Observable<unknown> {
-		return this.http.delete(this.getUrl("posts"));
+		// observe: "body" gives only response body
+		return this.http
+			.delete(this.getUrl("posts"), {
+				observe: "events",
+			})
+			.pipe(
+				tap((event: any) => {
+					// import HttpEventType
+					// Type enumeration for the different kinds of HttpEvent / Response
+					if (event.type === HttpEventType.Sent) {
+						console.log(event.type);
+					}
+				})
+			);
 	}
 }

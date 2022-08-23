@@ -1,6 +1,5 @@
 import {
 	HttpEvent,
-	HttpEventType,
 	HttpHandler,
 	HttpHeaders,
 	HttpInterceptor,
@@ -18,14 +17,6 @@ export class AuthInterceptorsService implements HttpInterceptor {
 		const modifiedRequest = req.clone({
 			headers: new HttpHeaders().append("Auth", "XYZ"),
 		});
-		return next.handle(modifiedRequest).pipe(
-			tap((event) => {
-				if (event.type === HttpEventType.Response) {
-					console.log(event.body);
-				} else {
-					console.log(event);
-				}
-			})
-		);
+		return next.handle(modifiedRequest);
 	}
 }

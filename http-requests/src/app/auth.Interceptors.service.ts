@@ -1,6 +1,7 @@
 import {
 	HttpEvent,
 	HttpHandler,
+	HttpHeaders,
 	HttpInterceptor,
 	HttpRequest,
 } from "@angular/common/http";
@@ -12,6 +13,9 @@ export class AuthInterceptorsService implements HttpInterceptor {
 		next: HttpHandler
 	): Observable<HttpEvent<any>> {
 		console.log("Request is on the way");
-		return next.handle(req);
+		const modifiedRequest = req.clone({
+			headers: new HttpHeaders().append("Auth", "XYZ"),
+		});
+		return next.handle(modifiedRequest);
 	}
 }

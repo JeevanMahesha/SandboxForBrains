@@ -43,6 +43,7 @@ export class PostService {
 			.get<IFireBaseResponse>(this.getUrl("posts"), {
 				headers: new HttpHeaders({ "custom-header": "jeevan" }),
 				params: new HttpParams().set("print", "pretty"),
+				responseType: "json",
 			})
 			.pipe(
 				map((response): IPostDataAPIResponse[] => {
@@ -62,9 +63,11 @@ export class PostService {
 
 	deleteAllPosts(): Observable<unknown> {
 		// observe: "body" gives only response body
+		// responseType by default it will be as json we can change the Response Body Type
 		return this.http
 			.delete(this.getUrl("posts"), {
 				observe: "events",
+				responseType: "text",
 			})
 			.pipe(
 				tap((event: any) => {

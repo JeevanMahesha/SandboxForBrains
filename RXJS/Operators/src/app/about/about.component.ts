@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { noop, Observable } from "rxjs";
+import { Component, OnInit } from "@angular/core";
+import { noop } from "rxjs";
+import { map } from "rxjs/operators";
+import { createHttpObservable } from "../common/util";
 
 @Component({
 	selector: "about",
@@ -10,18 +12,10 @@ export class AboutComponent implements OnInit {
 	constructor() {}
 
 	ngOnInit() {
-		// RXJS stands for reactive ex
-		const http$ = new Observable((observer) => {
-			fetch("/api/courses")
-				.then((res) => res.json())
-				.then((jsonValue) => {
-					observer.next(jsonValue);
-					observer.complete();
-				})
-				.catch((err) => observer.error(err));
-		});
-
-		http$.subscribe(
+		// RXJS stands for Reactive Extensions for JavaScript
+		const http$ = createHttpObservable("/api/courses");
+		const courses$ = http$.pipe(map((res) => res["payload"]));
+		courses$.subscribe(
 			(arg: any) => console.log(arg),
 			noop,
 			() => console.log("completed")

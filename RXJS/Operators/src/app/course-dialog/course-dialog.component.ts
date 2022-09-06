@@ -50,10 +50,20 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
 	}
 
 	ngOnInit() {
+		/* 	
+		! this is used for concatMap
+
 		this.form.valueChanges
 			.pipe(
 				filter(() => this.form.valid),
 				concatMap(this.saveCourse.bind(this))
+			)
+			.subscribe(); */
+
+		this.form.valueChanges
+			.pipe(
+				filter(() => this.form.valid),
+				mergeMap(this.saveCourse.bind(this))
 			)
 			.subscribe();
 	}

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { noop, Observable } from "rxjs";
-import { map, shareReplay, tap } from "rxjs/operators";
+import { noop, Observable, throwError } from "rxjs";
+import { catchError, finalize, map, shareReplay, tap } from "rxjs/operators";
 import { createHttpObservable } from "../common/util";
 import { Course } from "../model/course";
 
@@ -20,6 +20,13 @@ export class HomeComponent implements OnInit {
 		// ! shareReplay will make a call once to take the data and give the subscribe variable when every / how many times they subscribe
 		const http$ = createHttpObservable("/api/courses");
 		const courses$: Observable<Course[]> = http$.pipe(
+			catchError((err) => {
+				console.log(err);
+				return throwError(err);
+			}),
+			finalize(() => {
+				console.log("Finalize ...!");
+			}),
 			tap(() => console.info("HTTP Execution Done")),
 			map((res) => res["payload"]),
 			shareReplay()

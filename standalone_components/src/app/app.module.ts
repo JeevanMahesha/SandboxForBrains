@@ -8,8 +8,8 @@ import { WelcomeComponent } from "./welcome/welcome.component";
 you need to import the component if it's stand alone component 
 */
 @NgModule({
-  declarations: [AppComponent, WelcomeComponent],
-  imports: [BrowserModule, DetailsComponent],
+  declarations: [AppComponent],
+  imports: [BrowserModule, WelcomeComponent /*  */],
   providers: [],
   bootstrap: [AppComponent],
 })

@@ -1,23 +1,27 @@
-import { NgModule } from '@angular/core';
-import { Route, RouterModule } from '@angular/router';
-import { AboutComponent } from './about/about.component';
+import { NgModule } from "@angular/core";
+import { Route, RouterModule } from "@angular/router";
+import { AboutComponent } from "./about/about.component";
 
-import { WelcomeComponent } from './welcome/welcome.component';
+import { WelcomeComponent } from "./welcome/welcome.component";
 
 const routes: Route[] = [
   {
-    path: '',
+    path: "",
     component: WelcomeComponent,
   },
   {
-    path: 'about',
-    component: AboutComponent,
+    path: "about",
+    // component: AboutComponent,
+    // this will work only for standalone components
+    loadComponent: () => {
+      return import("./about/about.component").then((m) => m.AboutComponent);
+    },
   },
   {
-    path: 'dashboard',
+    path: "dashboard",
     loadChildren: () =>
-      import('./dashboard/dashboard-routing.module').then(
-        (mod) => mod.DashboardRoutingModule
+      import("./dashboard/dashboard-routing.module").then(
+        (mod) => mod.dashboardComponentRoutes
       ),
   },
 ];

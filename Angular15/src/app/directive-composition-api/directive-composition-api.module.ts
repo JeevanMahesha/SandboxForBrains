@@ -11,7 +11,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [DirectiveCompositionAPIComponent],
+  declarations: [],
   imports: [CommonModule, RouterModule.forChild(routes)],
 })
 export class DirectiveCompositionAPIModule {}

@@ -9,10 +9,10 @@ const routes: Routes = [
   },
   {
     path: 'dc-api',
-    loadChildren: () =>
+    loadComponent: () =>
       import(
-        '../app/directive-composition-api/directive-composition-api.module'
-      ).then((m) => m.DirectiveCompositionAPIModule),
+        '../app/directive-composition-api/directive-composition-api.component'
+      ).then((m) => m.DirectiveCompositionAPIComponent),
   },
 ];
 

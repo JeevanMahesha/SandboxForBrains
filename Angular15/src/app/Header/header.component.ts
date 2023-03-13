@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-header',
   template: `<div class="toolbar" role="banner">
-    <a href="/" rel="noopener noreferrer">
+    <a rel="noopener noreferrer">
       <img
         width="40"
         alt="Angular Logo"
@@ -17,6 +17,5 @@ import { Component } from '@angular/core';
   </div>`,
   standalone: true,
   styleUrls: ['../home/home.component.css'],
-  imports: [CommonModule],
 })
 export class HeaderComponent {}

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../Header/header.component';
 
 @Component({
@@ -6,6 +7,6 @@ import { HeaderComponent } from '../Header/header.component';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   standalone: true,
-  imports: [HeaderComponent],
+  imports: [HeaderComponent, RouterModule],
 })
 export class HomeComponent {}

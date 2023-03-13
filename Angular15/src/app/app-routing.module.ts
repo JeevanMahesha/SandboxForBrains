@@ -15,6 +15,13 @@ const routes: Routes = [
       ).then((c) => c.DirectiveCompositionAPIComponent),
   },
   {
+    path: 'paa',
+    loadComponent: () =>
+      import(
+        '../app/performant-angular-applications/performant-angular-applications.component'
+      ).then((c) => c.PerformantAngularApplicationsComponent),
+  },
+  {
     path: 'frg',
     canActivate: [() => true],
     loadComponent: () =>

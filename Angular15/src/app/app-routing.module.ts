@@ -16,6 +16,7 @@ const routes: Routes = [
   },
   {
     path: 'frg',
+    canActivate: [() => true],
     loadComponent: () =>
       import(
         './functional-route-guards/functional-route-guards.component'

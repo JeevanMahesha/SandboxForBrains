@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   template: `<div class="toolbar" role="banner">
-    <a rel="noopener noreferrer">
+    <a routerLink="/" rel="noopener noreferrer">
       <img
         width="40"
         alt="Angular Logo"
@@ -17,5 +17,6 @@ import { Component } from '@angular/core';
   </div>`,
   standalone: true,
   styleUrls: ['../home/home.component.css'],
+  imports: [RouterModule],
 })
 export class HeaderComponent {}

@@ -12,7 +12,14 @@ const routes: Routes = [
     loadComponent: () =>
       import(
         '../app/directive-composition-api/directive-composition-api.component'
-      ).then((m) => m.DirectiveCompositionAPIComponent),
+      ).then((c) => c.DirectiveCompositionAPIComponent),
+  },
+  {
+    path: 'frg',
+    loadComponent: () =>
+      import(
+        './functional-route-guards/functional-route-guards.component'
+      ).then((c) => c.FunctionalRouteGuardsComponent),
   },
 ];
 

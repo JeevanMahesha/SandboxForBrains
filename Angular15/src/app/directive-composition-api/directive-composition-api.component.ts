@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { HeaderComponent } from '../Standalone-component/header.component';
+import { HeaderComponent } from '../Header/header.component';
 import { StyleDirective } from './style.directive';
 
 @Component({

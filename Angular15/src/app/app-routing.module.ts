@@ -29,6 +29,13 @@ const routes: Routes = [
         './functional-route-guards/functional-route-guards.component'
       ).then((c) => c.FunctionalRouteGuardsComponent),
   },
+  {
+    path: 'NgOptimizedImage',
+    loadComponent: () =>
+      import('../app/ng-optimized-image/ng-optimized-image.component').then(
+        (c) => c.NgOptimizedImageComponent
+      ),
+  },
 ];
 
 @NgModule({

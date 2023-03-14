@@ -8,26 +8,26 @@ const routes: Routes = [
       import('../app/home/home.component').then((c) => c.HomeComponent),
   },
   {
-    path: 'dc-api',
+    path: 'Directive-Composition-API',
     loadComponent: () =>
       import(
         '../app/directive-composition-api/directive-composition-api.component'
       ).then((c) => c.DirectiveCompositionAPIComponent),
   },
   {
-    path: 'paa',
-    loadComponent: () =>
-      import(
-        '../app/performant-angular-applications/performant-angular-applications.component'
-      ).then((c) => c.PerformantAngularApplicationsComponent),
-  },
-  {
-    path: 'frg',
+    path: 'Functional-Route-Guards',
     canActivate: [() => true],
     loadComponent: () =>
       import(
         './functional-route-guards/functional-route-guards.component'
       ).then((c) => c.FunctionalRouteGuardsComponent),
+  },
+  {
+    path: 'Performant-Angular-Applications',
+    loadComponent: () =>
+      import(
+        '../app/performant-angular-applications/performant-angular-applications.component'
+      ).then((c) => c.PerformantAngularApplicationsComponent),
   },
   {
     path: 'NgOptimizedImage',

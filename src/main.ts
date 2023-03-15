@@ -1,7 +1,8 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { importProvidersFrom } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppRoutingModule } from './app/app-routing.module';
+import { MealFormComponent } from './app/meal-form/meal-form.component';
 
-import { AppModule } from './app/app.module';
-
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(MealFormComponent, {
+  providers: [importProvidersFrom(AppRoutingModule)],
+});

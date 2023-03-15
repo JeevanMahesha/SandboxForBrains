@@ -30,7 +30,6 @@ import { IPexels } from './ng-optimized-image.model';
             class="img-thumbnail"
             width="800"
             height="1200"
-            priority
           />
         </div>
       </div>

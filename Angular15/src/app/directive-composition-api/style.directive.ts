@@ -1,13 +1,13 @@
-import { Directive, Input } from '@angular/core';
-import { FontClassDirective } from './font-class.directive';
+import { Directive } from '@angular/core';
 import { ColorDirective } from './color.directive';
+import { FontWtDirective } from './font-class.directive';
 
 @Directive({
   selector: '[appStyle]',
   standalone: true,
   hostDirectives: [
     { directive: ColorDirective, inputs: ['color: myColor'] },
-    { directive: FontClassDirective, inputs: ['fontClass: myClass'] },
+    { directive: FontWtDirective, inputs: ['weight: myClass'] },
   ],
 })
 export class StyleDirective {}

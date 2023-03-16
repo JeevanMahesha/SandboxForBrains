@@ -16,6 +16,8 @@ export class ColorDirective implements OnChanges {
   constructor(private element: ElementRef, private renderer: Renderer2) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['color']) {
+      console.log(changes);
+
       this.renderer.setStyle(this.element.nativeElement, 'color', this.color);
     }
   }

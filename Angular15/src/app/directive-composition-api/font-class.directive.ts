@@ -8,15 +8,19 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[appFont]',
+  selector: '[appBold]',
   standalone: true,
 })
-export class FontClassDirective implements OnChanges {
-  @Input() fontClass!: string;
+export class FontWtDirective implements OnChanges {
+  @Input() weight!: string;
   constructor(private element: ElementRef, private renderer: Renderer2) {}
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['fontClass']) {
-      this.renderer.addClass(this.element.nativeElement, 'h2');
+    if (changes['weight']) {
+      this.renderer.setStyle(
+        this.element.nativeElement,
+        'font-weight',
+        this.weight
+      );
     }
   }
 }

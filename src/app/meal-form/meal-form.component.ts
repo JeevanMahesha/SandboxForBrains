@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArray } from './meal-form.model';
 
 @Component({
@@ -25,6 +26,7 @@ import { IMealForm, IMealsConsumptionArray } from './meal-form.model';
     MatNativeDateModule,
     MatSelectModule,
     MatRadioModule,
+    HeaderComponent,
   ],
   templateUrl: './meal-form.component.html',
 })

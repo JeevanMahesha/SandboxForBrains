@@ -16,7 +16,7 @@ import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArray } from './meal-form.model';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-meal-form',
   standalone: true,
   imports: [
     CommonModule,

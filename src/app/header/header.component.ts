@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `<div class="container-fluid text-center mt-5">
     <div class="row">
       <div class="col-md-5"></div>
@@ -27,6 +28,7 @@ import { CommonModule } from '@angular/common';
               type="button"
               role="tab"
               aria-selected="true"
+              routerLink="/"
             >
               Meal
             </button>
@@ -39,6 +41,7 @@ import { CommonModule } from '@angular/common';
               type="button"
               role="tab"
               aria-selected="false"
+              routerLink="/total"
             >
               Total Count
             </button>

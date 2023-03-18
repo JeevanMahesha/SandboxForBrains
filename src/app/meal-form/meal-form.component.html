@@ -11,8 +11,9 @@
         <mat-form-field appearance="fill">
           <input
             matInput
+            (dateChange)="updateMealDataValue()"
             [matDatepicker]="picker1"
-            formControlName="mealDate"
+            formControlName="today"
           />
           <mat-datepicker-toggle
             matIconSuffix

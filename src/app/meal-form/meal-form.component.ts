@@ -12,8 +12,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { ToastrService } from 'ngx-toastr';
+import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
-import { IMealForm, IMealsConsumptionArray } from './meal-form.model';
+import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
 
 @Component({
   selector: 'app-meal-form',
@@ -28,6 +30,7 @@ import { IMealForm, IMealsConsumptionArray } from './meal-form.model';
     MatRadioModule,
     HeaderComponent,
   ],
+  providers: [DbAccess],
   templateUrl: './meal-form.component.html',
 })
 export class MealFormComponent {
@@ -36,23 +39,27 @@ export class MealFormComponent {
   mealsConsumedOptions = ['yes', 'No'];
   mealForm: FormGroup<IMealForm>;
 
-  constructor(private _fb: FormBuilder) {
-    this.mealForm = this.constructMealForm();
-    console.log(this.mealForm);
+  constructor(
+    private _fb: FormBuilder,
+    private _db: DbAccess,
+    private toastr: ToastrService
+  ) {
+    this.mealForm = this.constructMealForm;
   }
 
   get getMealsConsumptionArrayControls() {
     return (this.mealForm.get('mealsConsumptionArray') as FormArray).controls;
   }
 
-  submitTheForm(): void {
-    this.mealForm.enable();
-    console.log(this.mealForm.value);
+  updateMealDataValue(): void {
+    const { today } = this.mealForm.value;
+    const control = this.mealForm.get('mealDate');
+    control?.patchValue(today?.toLocaleDateString()!);
   }
 
-  private constructMealForm(): FormGroup<IMealForm> {
+  private get constructMealForm(): FormGroup<IMealForm> {
     const mealsConsumptionArray = this.userNameList.map((eachUserName) =>
-      this._fb.group<IMealsConsumptionArray>({
+      this._fb.group<IMealsConsumptionArrayForm>({
         mealsConsumedUser: this._fb.control<null | string>(
           { value: eachUserName, disabled: true },
           Validators.required
@@ -65,11 +72,47 @@ export class MealFormComponent {
     );
     return this._fb.group({
       mealTime: this._fb.control(this.mealTime[0], Validators.required),
-      mealDate: this._fb.control(new Date(), Validators.required),
+      today: this._fb.control(new Date(), Validators.required),
+      mealDate: this._fb.control(
+        new Date().toLocaleDateString(),
+        Validators.required
+      ),
       mealsConsumptionArray: this._fb.array(
         mealsConsumptionArray,
         Validators.required
       ),
     });
+  }
+
+  async submitTheForm(): Promise<void> {
+    this.mealForm.enable();
+    const mealFormValue = this.mealForm.value;
+    const { mealDate = null, mealTime = null } = mealFormValue;
+    const dataExist = await this._db.checkDataExistForToday({
+      mealDate,
+      mealTime,
+    });
+    if (dataExist.result.length) {
+      this.toastr.error(`${mealTime} is already Updated`);
+      return;
+    }
+    this._db
+      .insertTheMealDetail(mealFormValue)
+      .then((res) => {
+        if (res.result.insertedId) {
+          this.toastr.success(
+            `${mealTime} on ${mealDate} is saved`,
+            'Successfully'
+          );
+          this.mealForm = this.constructMealForm;
+        } else {
+          this.toastr.error('Unable to save the record');
+        }
+      })
+      .catch((error) => {
+        if (error) {
+          console.log(error);
+        }
+      });
   }
 }

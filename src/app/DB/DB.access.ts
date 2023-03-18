@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { App, Credentials } from 'realm-web';
 import { environmentValues } from 'src/environment/environment';
 import { IMeal } from '../meal-form/meal-form.model';
+import { ITotal } from '../total/total.model';
 
 @Injectable()
 export class DbAccess {
@@ -31,6 +32,19 @@ export class DbAccess {
       'checkDataExistForToday',
       { mealDate, mealTime }
     );
+  }
+
+  restructureTheData(mealArray: IMeal[]): ITotal[] {
+    const totalMealDetails: ITotal[] = [];
+    mealArray.forEach(({ mealDate, mealTime, mealsConsumptionArray }) => {
+      const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
+        ...eachUser,
+        mealDate,
+        mealTime,
+      }));
+      totalMealDetails.push(...totalEachDate);
+    });
+    return totalMealDetails;
   }
 
   private async getCredentials() {

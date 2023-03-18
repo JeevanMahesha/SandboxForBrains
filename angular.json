@@ -21,7 +21,8 @@
             "assets": ["src/favicon.ico", "src/assets", "src/environment"],
             "styles": [
               "@angular/material/prebuilt-themes/purple-green.css",
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },

@@ -46,6 +46,19 @@ import { RouterModule } from '@angular/router';
               Total Count
             </button>
           </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link rounded-5"
+              id="contact-tab2"
+              data-bs-toggle="tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              routerLink="/detail-view"
+            >
+              Detail
+            </button>
+          </li>
         </ul>
       </div>
       <div class="col-md-5"></div>

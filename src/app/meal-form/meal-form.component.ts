@@ -36,7 +36,7 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
 export class MealFormComponent {
   userNameList = ['Jeevan', 'Dharamraj', 'Praveen', 'Deepak', 'SaravanaKumar'];
   mealTime = ['BreakFast', 'Lunch', 'Dinner'];
-  mealsConsumedOptions = ['yes', 'No'];
+  mealsConsumedOptions = ['yes', 'no'];
   mealForm: FormGroup<IMealForm>;
 
   constructor(

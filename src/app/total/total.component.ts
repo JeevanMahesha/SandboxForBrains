@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { IMeal, ITotal } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
-import { IMeal } from '../meal-form/meal-form.model';
-import { ITotal } from './total.model';
 
 @Component({
   selector: 'app-total',

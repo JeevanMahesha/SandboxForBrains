@@ -11,15 +11,3 @@ export interface IMealsConsumptionArrayForm {
   mealsConsumedUser: FormControl<null | string>;
   mealsConsumed: FormControl<null | string>;
 }
-
-export interface IMeal {
-  mealTime: string | null;
-  today: Date | null;
-  mealDate: string | null;
-  mealsConsumptionArray: IMealsConsumptionArray[];
-}
-
-export interface IMealsConsumptionArray {
-  mealsConsumedUser: string;
-  mealsConsumed: string;
-}

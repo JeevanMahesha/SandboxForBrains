@@ -5,29 +5,10 @@ import { IMeal } from '../meal-form/meal-form.model';
 
 @Injectable()
 export class DbAccess {
-  private allMealDetails: IMeal[] = [];
-
-  constructor() {
-    this.getAllRecords();
-  }
-
-  get getAllMealDetails(): IMeal[] {
-    return this.allMealDetails;
-  }
-
-  private async getCredentials() {
-    const app = new App({ id: environmentValues.REALM_APP_ID });
-    const credentials = Credentials.apiKey(environmentValues.REALM_API_KEY);
-    return await app.logIn(credentials);
-  }
-
-  private async getAllRecords() {
+  async getAllRecords() {
     try {
       const userConnection = await this.getCredentials();
-      const allMealDetailsValue = await userConnection.functions.callFunction(
-        'getAllMealDetails'
-      );
-      this.allMealDetails = allMealDetailsValue;
+      return userConnection.functions.callFunction('getAllMealDetails');
     } catch (error) {
       console.error(error);
     }
@@ -50,5 +31,11 @@ export class DbAccess {
       'checkDataExistForToday',
       { mealDate, mealTime }
     );
+  }
+
+  private async getCredentials() {
+    const app = new App({ id: environmentValues.REALM_APP_ID });
+    const credentials = Credentials.apiKey(environmentValues.REALM_API_KEY);
+    return await app.logIn(credentials);
   }
 }

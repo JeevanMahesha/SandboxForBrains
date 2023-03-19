@@ -10,11 +10,7 @@ export enum MealsConsumed {
 }
 
 export interface IUserObjectData {
-  Jeevan: ITotal[];
-  Dharamraj: ITotal[];
-  Praveen: ITotal[];
-  Deepak: ITotal[];
-  SaravanaKumar: ITotal[];
+  [key: string]: ITotal[];
 }
 
 export interface ITotal {

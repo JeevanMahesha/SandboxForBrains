@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { App, Credentials } from 'realm-web';
 import { environmentValues } from 'src/environment/environment';
-import { IMeal } from '../meal-form/meal-form.model';
-import { ITotal } from '../total/total.model';
+import { IMeal, ITotal, IUserObjectData } from '../app.model';
 
 @Injectable()
 export class DbAccess {
@@ -45,6 +44,18 @@ export class DbAccess {
       totalMealDetails.push(...totalEachDate);
     });
     return totalMealDetails;
+  }
+
+  restructureDataAsObject(mealData: ITotal[]): IUserObjectData {
+    const userData: IUserObjectData = {};
+    mealData.forEach((eachData) => {
+      if (userData.hasOwnProperty(eachData.mealsConsumedUser)) {
+        userData[eachData.mealsConsumedUser].push(eachData);
+      } else {
+        userData[eachData.mealsConsumedUser] = [eachData];
+      }
+    });
+    return userData;
   }
 
   private async getCredentials() {

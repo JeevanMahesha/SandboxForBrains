@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
+import { MealTime } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
@@ -34,7 +35,13 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
   templateUrl: './meal-form.component.html',
 })
 export class MealFormComponent {
-  userNameList = ['Jeevan', 'Dharamraj', 'Praveen', 'Deepak', 'SaravanaKumar'];
+  userNameList = [
+    'Jeevan',
+    'Dharamraj',
+    'Praveen',
+    'Deepak',
+    'SaravanaKumaran',
+  ];
   mealTime = ['BreakFast', 'Lunch', 'Dinner'];
   mealsConsumedOptions = ['yes', 'no'];
   mealForm: FormGroup<IMealForm>;
@@ -49,6 +56,16 @@ export class MealFormComponent {
 
   get getMealsConsumptionArrayControls() {
     return (this.mealForm.get('mealsConsumptionArray') as FormArray).controls;
+  }
+
+  mealTimeChanged(value: MealTime): void {
+    let amountPerMeal = 0;
+    if (value === MealTime.BreakFast || value === MealTime.Dinner) {
+      amountPerMeal = 50;
+    } else {
+      amountPerMeal = 60;
+    }
+    this.mealForm.get('amountPerMeal')?.patchValue(amountPerMeal);
   }
 
   updateMealDataValue(): void {
@@ -73,6 +90,11 @@ export class MealFormComponent {
     return this._fb.group({
       mealTime: this._fb.control(this.mealTime[0], Validators.required),
       today: this._fb.control(new Date(), Validators.required),
+      amountPerMeal: this._fb.control(50, Validators.required),
+      mealCount: this._fb.control(
+        this.userNameList.length,
+        Validators.required
+      ),
       mealDate: this._fb.control(
         new Date().toLocaleDateString(),
         Validators.required

@@ -13,7 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
-import { MealTime, weekDaysList } from '../app.model';
+import { MealsConsumed, MealTime, weekDaysList } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
@@ -44,6 +44,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         bottom: 0;
         left: 0;
         right: 0;
+      }
+    `,
+    `
+      .mg-rt {
+        margin-right: 5px;
       }
     `,
   ],
@@ -91,6 +96,17 @@ export class MealFormComponent {
     mealDateControl?.patchValue(todayDate?.toLocaleDateString()!);
   }
 
+  mealsConsumedValueChanged(): void {
+    const mealsConsumedTotalCount =
+      this.mealForm.value.mealsConsumptionArray?.filter(
+        (eachValue) => eachValue.mealsConsumed === MealsConsumed.Yes
+      ).length;
+    const mealsConsumedTotalCountControl = this.mealForm.get(
+      'mealsConsumedTotalCount'
+    );
+    mealsConsumedTotalCountControl?.patchValue(mealsConsumedTotalCount!);
+  }
+
   private get constructMealForm(): FormGroup<IMealForm> {
     const mealsConsumptionArray = this.userNameList.map((eachUserName) =>
       this._fb.group<IMealsConsumptionArrayForm>({
@@ -110,9 +126,12 @@ export class MealFormComponent {
         { value: weekDaysList[new Date().getDay()], disabled: true },
         Validators.required
       ),
+      mealsConsumedTotalCount: this._fb.control(
+        { disabled: true, value: this.userNameList.length },
+        [Validators.required, Validators.min(1)]
+      ),
       todayDate: this._fb.control(new Date(), Validators.required),
       amountPerMeal: this._fb.control(50, Validators.required),
-      mealCount: this._fb.control(0, [Validators.required, Validators.min(1)]),
       mealDate: this._fb.control(
         new Date().toLocaleDateString(),
         Validators.required

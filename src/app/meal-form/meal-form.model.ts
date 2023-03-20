@@ -6,7 +6,7 @@ export interface IMealForm {
   todayDate: FormControl<Date | null>;
   mealDate: FormControl<string | null>;
   amountPerMeal: FormControl<number | null>;
-  mealCount: FormControl<number | null>;
+  mealsConsumedTotalCount: FormControl<number | null>;
   mealsConsumptionArray: FormArray<FormGroup<IMealsConsumptionArrayForm>>;
 }
 

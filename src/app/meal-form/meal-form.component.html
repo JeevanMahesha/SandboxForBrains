@@ -49,25 +49,24 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-4">
+          <mat-form-field>
+            <mat-label>Total meal Consumed Count</mat-label>
+            <input
+              matInput
+              placeholder="10"
+              formControlName="mealsConsumedTotalCount"
+              type="number"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
           <mat-form-field>
             <mat-label>Amount per meal</mat-label>
             <input
               matInput
               placeholder="50"
               formControlName="amountPerMeal"
-              type="number"
-            />
-          </mat-form-field>
-        </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-5">
-          <mat-form-field>
-            <mat-label>Meal Count</mat-label>
-            <input
-              matInput
-              placeholder="5"
-              formControlName="mealCount"
               type="number"
             />
           </mat-form-field>
@@ -87,6 +86,7 @@
           <mat-radio-group
             aria-label="Select an option"
             formControlName="mealsConsumed"
+            (change)="mealsConsumedValueChanged()"
           >
             <mat-radio-button
               *ngFor="let eachMealOption of mealsConsumedOptions"

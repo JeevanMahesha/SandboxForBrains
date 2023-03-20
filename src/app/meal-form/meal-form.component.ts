@@ -13,10 +13,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
-import { MealsConsumed, MealTime, weekDaysList } from '../app.model';
+import { MealTime, weekDaysList } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-meal-form',
@@ -30,9 +31,22 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
     MatSelectModule,
     MatRadioModule,
     HeaderComponent,
+    MatProgressSpinnerModule,
   ],
   providers: [DbAccess],
   templateUrl: './meal-form.component.html',
+  styles: [
+    `
+      .spinner {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    `,
+  ],
 })
 export class MealFormComponent {
   userNameList = [
@@ -45,6 +59,7 @@ export class MealFormComponent {
   mealTime = ['BreakFast', 'Lunch', 'Dinner'];
   mealsConsumedOptions = ['yes', 'no'];
   mealForm: FormGroup<IMealForm>;
+  pageLoading = false;
 
   constructor(
     private _fb: FormBuilder,
@@ -110,6 +125,7 @@ export class MealFormComponent {
   }
 
   async submitTheForm(): Promise<void> {
+    this.pageLoading = true;
     this.mealForm.enable();
     const mealFormValue = this.mealForm.value;
     const { mealDate = null, mealTime = null } = mealFormValue;
@@ -119,6 +135,8 @@ export class MealFormComponent {
     });
     if (dataExist.result.length) {
       this.toastr.error(`${mealTime} is already Updated`);
+      this.pageLoading = false;
+      this.mealForm = this.constructMealForm;
       return;
     }
     this._db
@@ -130,6 +148,7 @@ export class MealFormComponent {
             'Successfully'
           );
           this.mealForm = this.constructMealForm;
+          this.pageLoading = false;
         } else {
           this.toastr.error('Unable to save the record');
         }

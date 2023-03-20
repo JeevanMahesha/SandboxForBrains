@@ -2,7 +2,8 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 export interface IMealForm {
   mealTime: FormControl<string | null>;
-  today: FormControl<Date | null>;
+  day: FormControl<string | null>;
+  todayDate: FormControl<Date | null>;
   mealDate: FormControl<string | null>;
   amountPerMeal: FormControl<number | null>;
   mealCount: FormControl<number | null>;

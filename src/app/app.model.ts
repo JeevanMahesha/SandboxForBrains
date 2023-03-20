@@ -22,7 +22,8 @@ export interface ITotal {
 
 export interface IMeal {
   mealTime: string | null;
-  today: Date | null;
+  todayDate: Date | null;
+  day: string | null;
   mealDate: string | null;
   mealsConsumptionArray: IMealsConsumptionArray[];
 }
@@ -31,3 +32,13 @@ export interface IMealsConsumptionArray {
   mealsConsumedUser: string;
   mealsConsumed: string;
 }
+
+export const weekDaysList = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];

@@ -13,7 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
-import { MealTime } from '../app.model';
+import { MealsConsumed, MealTime, weekDaysList } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
@@ -69,9 +69,11 @@ export class MealFormComponent {
   }
 
   updateMealDataValue(): void {
-    const { today } = this.mealForm.value;
-    const control = this.mealForm.get('mealDate');
-    control?.patchValue(today?.toLocaleDateString()!);
+    const { todayDate } = this.mealForm.value;
+    const mealDateControl = this.mealForm.get('mealDate');
+    const dayControl = this.mealForm.get('day');
+    dayControl?.patchValue(weekDaysList.at(todayDate?.getDay()!)!);
+    mealDateControl?.patchValue(todayDate?.toLocaleDateString()!);
   }
 
   private get constructMealForm(): FormGroup<IMealForm> {
@@ -89,12 +91,13 @@ export class MealFormComponent {
     );
     return this._fb.group({
       mealTime: this._fb.control(this.mealTime[0], Validators.required),
-      today: this._fb.control(new Date(), Validators.required),
-      amountPerMeal: this._fb.control(50, Validators.required),
-      mealCount: this._fb.control(
-        this.userNameList.length,
+      day: this._fb.control(
+        { value: weekDaysList[new Date().getDay()], disabled: true },
         Validators.required
       ),
+      todayDate: this._fb.control(new Date(), Validators.required),
+      amountPerMeal: this._fb.control(50, Validators.required),
+      mealCount: this._fb.control(0, [Validators.required, Validators.min(1)]),
       mealDate: this._fb.control(
         new Date().toLocaleDateString(),
         Validators.required

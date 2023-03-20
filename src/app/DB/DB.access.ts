@@ -25,7 +25,7 @@ export class DbAccess {
   async checkDataExistForToday({
     mealDate,
     mealTime,
-  }: Omit<IMeal, 'mealsConsumptionArray' | 'today'>) {
+  }: Omit<IMeal, 'mealsConsumptionArray' | 'todayDate' | 'day'>) {
     const userConnection = await this.getCredentials();
     return await userConnection.functions.callFunction(
       'checkDataExistForToday',

@@ -1,61 +1,77 @@
 <app-header></app-header>
 <div class="container-fluid text-center mt-5">
   <div class="row">
-    <div class="col-md-4"></div>
+    <div class="col-md-3"></div>
     <form
-      class="col-md-4 bg-secondary bg-gradient"
+      class="col-md-6 bg-secondary bg-gradient"
       [formGroup]="mealForm"
       (ngSubmit)="submitTheForm()"
     >
-      <div class="mt-2">
-        <mat-form-field appearance="fill">
-          <input
-            matInput
-            (dateChange)="updateMealDataValue()"
-            [matDatepicker]="picker1"
-            formControlName="today"
-          />
-          <mat-datepicker-toggle
-            matIconSuffix
-            [for]="picker1"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #picker1></mat-datepicker>
-        </mat-form-field>
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <mat-form-field appearance="fill">
+            <input
+              matInput
+              (dateChange)="updateMealDataValue()"
+              [matDatepicker]="picker1"
+              formControlName="todayDate"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker1"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field>
+            <mat-label>Day</mat-label>
+            <input
+              matInput
+              placeholder="Sunday"
+              formControlName="day"
+              type="text"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="fill">
+            <mat-label>Meal Time</mat-label>
+            <mat-select
+              formControlName="mealTime"
+              (valueChange)="mealTimeChanged($event)"
+            >
+              <mat-option *ngFor="let eachMeal of mealTime" [value]="eachMeal">
+                {{ eachMeal }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Meal Time</mat-label>
-          <mat-select
-            formControlName="mealTime"
-            (valueChange)="mealTimeChanged($event)"
-          >
-            <mat-option *ngFor="let eachMeal of mealTime" [value]="eachMeal">
-              {{ eachMeal }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <mat-label>Amount per meal</mat-label>
-          <input
-            matInput
-            placeholder="50"
-            formControlName="amountPerMeal"
-            type="number"
-          />
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <mat-label>Meal Count</mat-label>
-          <input
-            matInput
-            placeholder="5"
-            formControlName="mealCount"
-            type="number"
-          />
-        </mat-form-field>
+      <div class="row">
+        <div class="col-md-5">
+          <mat-form-field>
+            <mat-label>Amount per meal</mat-label>
+            <input
+              matInput
+              placeholder="50"
+              formControlName="amountPerMeal"
+              type="number"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+          <mat-form-field>
+            <mat-label>Meal Count</mat-label>
+            <input
+              matInput
+              placeholder="5"
+              formControlName="mealCount"
+              type="number"
+            />
+          </mat-form-field>
+        </div>
       </div>
       <div
         *ngFor="

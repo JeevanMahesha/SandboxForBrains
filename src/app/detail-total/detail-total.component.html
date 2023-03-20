@@ -3,42 +3,34 @@
   <div class="row">
     <div
       class="col-md-4 mt-3"
-      *ngFor="let eachValue of userObjectData | keyvalue; let objInd = index"
+      *ngFor="let eachValue of userObjectData | keyvalue"
     >
       <div class="card text-center">
         <div class="card-header h3">{{ eachValue.key }}</div>
         <div class="card-body">
-          <ul
-            class="list-group list-group-flush"
-            *ngFor="let eachMealTime of mealTime"
-          >
-            <li class="list-group-item">
-              {{ eachMealTime }} For
-              <strong>
-                {{ getMealTimeAmount(eachMealTime, eachValue.value) }}
-              </strong>
-              Days total amount
-              <strong>
-                {{ getMealTimeAmount(eachMealTime, eachValue.value) * 50 }}
-              </strong>
-            </li>
-          </ul>
           <div class="accordion accordion-flush" id="accordionFlushExample">
-            <div class="accordion-item">
+            <div
+              class="accordion-item"
+              *ngFor="
+                let eachMealValue of eachValue.value | keyvalue;
+                let objInd = index
+              "
+            >
               <h2 class="accordion-header" id="flush-headingOne">
                 <a
                   class="accordion-button collapsed text-center"
                   type="button"
                   data-bs-toggle="collapse"
-                  [href]="'#' + objInd"
+                  [href]="'#' + objInd + eachValue.key"
                   aria-expanded="false"
                   aria-controls="flush-collapseOne"
                 >
-                  Day Details
+                  {{ eachMealValue.key }} total amount
+                  {{ eachMealValue.value.total }}
                 </a>
               </h2>
               <div
-                [id]="objInd"
+                [id]="objInd + eachValue.key"
                 class="accordion-collapse collapse"
                 aria-labelledby="flush-headingOne"
                 data-bs-parent="#accordionFlushExample"
@@ -49,19 +41,24 @@
                       <th scope="col">#</th>
                       <th scope="col">Date</th>
                       <th scope="col">Meal Time</th>
+                      <th scope="col">Day</th>
+                      <th scope="col">Meal Amount</th>
+
                       <th scope="col">Meal Consumed</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
                       *ngFor="
-                        let eachMealDetail of eachValue.value;
+                        let eachMealDetail of eachMealValue.value.valueList;
                         let ind = index
                       "
                     >
                       <th scope="row">{{ ind + 1 }}</th>
                       <td>{{ eachMealDetail.mealDate }}</td>
                       <td>{{ eachMealDetail.mealTime }}</td>
+                      <td>{{ eachMealDetail.day }}</td>
+                      <td>{{ eachMealDetail.amountPerMeal }}</td>
                       <td>
                         <img
                           class="text-success-emphasis"
@@ -82,7 +79,7 @@
           </div>
         </div>
         <div class="card-footer text-muted">
-          Total {{ eachValue.value.length }} Days
+          Total Amount {{ getGrandTotalAmount(eachValue.value) }}
         </div>
       </div>
     </div>

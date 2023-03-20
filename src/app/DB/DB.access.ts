@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { App, Credentials } from 'realm-web';
 import { environmentValues } from 'src/environment/environment';
-import { IMeal, ITotal, IUserObjectData } from '../app.model';
+import {
+  IEachMealDetail,
+  IFinalDataList,
+  IMeal,
+  ITotal,
+  IUserObjectData,
+  MealsConsumed,
+  MealTime,
+  MealTimeDetail,
+} from '../app.model';
 
 @Injectable()
 export class DbAccess {
@@ -36,21 +45,13 @@ export class DbAccess {
   restructureTheData(mealArray: IMeal[]): ITotal[] {
     const totalMealDetails: ITotal[] = [];
     mealArray.forEach(
-      ({
-        mealDate,
-        mealTime,
-        mealsConsumptionArray,
-        day,
-        amountPerMeal,
-        mealCount,
-      }) => {
+      ({ mealDate, mealTime, mealsConsumptionArray, day, amountPerMeal }) => {
         const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
           ...eachUser,
           mealDate,
           mealTime,
           day,
           amountPerMeal,
-          mealCount,
         }));
         totalMealDetails.push(...totalEachDate);
       }
@@ -58,8 +59,9 @@ export class DbAccess {
     return totalMealDetails;
   }
 
-  restructureDataAsObject(mealData: ITotal[]): IUserObjectData {
+  restructureDataAsObject(mealData: ITotal[]): IFinalDataList {
     const userData: IUserObjectData = {};
+    const userDataFinal: IFinalDataList = {};
     mealData.forEach((eachData) => {
       if (userData.hasOwnProperty(eachData.mealsConsumedUser)) {
         userData[eachData.mealsConsumedUser].push(eachData);
@@ -67,9 +69,59 @@ export class DbAccess {
         userData[eachData.mealsConsumedUser] = [eachData];
       }
     });
-    console.log(userData);
+    Object.entries(userData).forEach(([key, value]) => {
+      const tempObj: MealTimeDetail = {
+        [MealTime.BreakFast]: {
+          total: 0,
+          valueList: [],
+        },
+        [MealTime.Dinner]: {
+          total: 0,
+          valueList: [],
+        },
+        [MealTime.Lunch]: {
+          total: 0,
+          valueList: [],
+        },
+        allDetail: {
+          total: 0,
+          valueList: [],
+        },
+      };
+      tempObj.BreakFast = this.getSpecificMealList(value, MealTime.BreakFast);
+      tempObj.Lunch = this.getSpecificMealList(value, MealTime.Lunch);
+      tempObj.Dinner = this.getSpecificMealList(value, MealTime.Dinner);
+      tempObj.allDetail.valueList = value;
 
-    return userData;
+      userDataFinal[key] = {
+        ...tempObj,
+      };
+    });
+
+    return userDataFinal;
+  }
+
+  private getSpecificMealList(
+    mealValueList: ITotal[],
+    mealTime: MealTime
+  ): IEachMealDetail<ITotal[]> {
+    const tempObj: IEachMealDetail<ITotal[]> = {
+      total: 0,
+      valueList: [],
+    };
+    tempObj.valueList = mealValueList.filter(
+      (eachMealValue) =>
+        eachMealValue.mealTime === MealTime[mealTime] &&
+        eachMealValue.mealsConsumed === MealsConsumed.Yes
+    );
+    tempObj.total =
+      tempObj.valueList
+        .map(({ amountPerMeal }) => amountPerMeal)
+        .reduce(
+          (previousValue, currentValue) => currentValue! + previousValue!,
+          0
+        ) || 0;
+    return tempObj;
   }
 
   private async getCredentials() {

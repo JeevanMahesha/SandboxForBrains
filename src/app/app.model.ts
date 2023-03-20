@@ -13,6 +13,10 @@ export interface IUserObjectData {
   [key: string]: ITotal[];
 }
 
+export interface IFinalDataList {
+  [k: string]: MealTimeDetail;
+}
+
 export type ITotal = Omit<IMeal, 'mealsConsumptionArray' | 'todayDate'> &
   IMealsConsumptionArray;
 
@@ -23,7 +27,6 @@ export interface IMeal {
   mealDate: string | null;
   mealsConsumptionArray: IMealsConsumptionArray[];
   amountPerMeal: number | null;
-  mealCount: number | null;
 }
 
 export interface IMealsConsumptionArray {
@@ -40,3 +43,14 @@ export const weekDaysList = [
   'Friday',
   'Saturday',
 ];
+
+type allDetailEnum = 'allDetail';
+
+export type MealTimeDetail = {
+  [key in MealTime | allDetailEnum]: IEachMealDetail<ITotal[]>;
+};
+
+export interface IEachMealDetail<VL> {
+  total: number;
+  valueList: VL;
+}

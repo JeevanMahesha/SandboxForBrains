@@ -25,7 +25,7 @@ export class DbAccess {
   async checkDataExistForToday({
     mealDate,
     mealTime,
-  }: Omit<IMeal, 'mealsConsumptionArray' | 'todayDate' | 'day'>) {
+  }: Pick<IMeal, 'mealDate' | 'mealTime'>) {
     const userConnection = await this.getCredentials();
     return await userConnection.functions.callFunction(
       'checkDataExistForToday',
@@ -35,14 +35,26 @@ export class DbAccess {
 
   restructureTheData(mealArray: IMeal[]): ITotal[] {
     const totalMealDetails: ITotal[] = [];
-    mealArray.forEach(({ mealDate, mealTime, mealsConsumptionArray }) => {
-      const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
-        ...eachUser,
+    mealArray.forEach(
+      ({
         mealDate,
         mealTime,
-      }));
-      totalMealDetails.push(...totalEachDate);
-    });
+        mealsConsumptionArray,
+        day,
+        amountPerMeal,
+        mealCount,
+      }) => {
+        const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
+          ...eachUser,
+          mealDate,
+          mealTime,
+          day,
+          amountPerMeal,
+          mealCount,
+        }));
+        totalMealDetails.push(...totalEachDate);
+      }
+    );
     return totalMealDetails;
   }
 
@@ -55,6 +67,8 @@ export class DbAccess {
         userData[eachData.mealsConsumedUser] = [eachData];
       }
     });
+    console.log(userData);
+
     return userData;
   }
 

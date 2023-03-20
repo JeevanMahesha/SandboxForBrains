@@ -13,12 +13,8 @@ export interface IUserObjectData {
   [key: string]: ITotal[];
 }
 
-export interface ITotal {
-  mealsConsumedUser: string;
-  mealsConsumed: string;
-  mealDate: string | null;
-  mealTime: string | null;
-}
+export type ITotal = Omit<IMeal, 'mealsConsumptionArray' | 'todayDate'> &
+  IMealsConsumptionArray;
 
 export interface IMeal {
   mealTime: string | null;
@@ -26,6 +22,8 @@ export interface IMeal {
   day: string | null;
   mealDate: string | null;
   mealsConsumptionArray: IMealsConsumptionArray[];
+  amountPerMeal: number | null;
+  mealCount: number | null;
 }
 
 export interface IMealsConsumptionArray {

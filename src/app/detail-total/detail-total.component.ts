@@ -24,7 +24,6 @@ export class DetailTotalComponent implements OnInit {
     this.userObjectData = this._db.restructureDataAsObject(
       this.totalMealDetails
     );
-    console.log(this.totalMealDetails);
   }
 
   getMealTimeAmount(mealTime: string, userValue: ITotal[]) {

@@ -17,7 +17,7 @@ export interface IFinalDataList {
   [k: string]: MealTimeDetail;
 }
 
-export type ITotal = Omit<IMeal, 'mealsConsumptionArray' | 'todayDate'> &
+export type ITotal = Omit<IMeal, 'mealsConsumptionArray'> &
   IMealsConsumptionArray;
 
 export interface IMeal {

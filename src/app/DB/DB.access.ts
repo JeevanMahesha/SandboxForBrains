@@ -50,13 +50,21 @@ export class DbAccess {
   restructureTheData(mealArray: IMeal[]): ITotal[] {
     const totalMealDetails: ITotal[] = [];
     mealArray.forEach(
-      ({ mealDate, mealTime, mealsConsumptionArray, day, amountPerMeal }) => {
+      ({
+        mealDate,
+        mealTime,
+        mealsConsumptionArray,
+        day,
+        amountPerMeal,
+        todayDate,
+      }) => {
         const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
           ...eachUser,
           mealDate,
           mealTime,
           day,
           amountPerMeal,
+          todayDate,
         }));
         totalMealDetails.push(...totalEachDate);
       }
@@ -96,7 +104,9 @@ export class DbAccess {
       tempObj.BreakFast = this.getSpecificMealList(value, MealTime.BreakFast);
       tempObj.Lunch = this.getSpecificMealList(value, MealTime.Lunch);
       tempObj.Dinner = this.getSpecificMealList(value, MealTime.Dinner);
-      tempObj.allDetail.valueList = value;
+      tempObj.allDetail.valueList = value.sort(
+        (a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!
+      );
 
       userDataFinal[key] = {
         ...tempObj,
@@ -114,11 +124,13 @@ export class DbAccess {
       total: 0,
       valueList: [],
     };
-    tempObj.valueList = mealValueList.filter(
-      (eachMealValue) =>
-        eachMealValue.mealTime === MealTime[mealTime] &&
-        eachMealValue.mealsConsumed === MealsConsumed.Yes
-    );
+    tempObj.valueList = mealValueList
+      .filter(
+        (eachMealValue) =>
+          eachMealValue.mealTime === MealTime[mealTime] &&
+          eachMealValue.mealsConsumed === MealsConsumed.Yes
+      )
+      .sort((a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!);
     tempObj.total =
       tempObj.valueList
         .map(({ amountPerMeal }) => amountPerMeal)

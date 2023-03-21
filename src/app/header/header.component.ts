@@ -41,9 +41,9 @@ import { RouterModule } from '@angular/router';
               type="button"
               role="tab"
               aria-selected="false"
-              routerLink="/total"
+              routerLink="/delete"
             >
-              Total Count
+              Delete Records
             </button>
           </li>
           <li class="nav-item" role="presentation">

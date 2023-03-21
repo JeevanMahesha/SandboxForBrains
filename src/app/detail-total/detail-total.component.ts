@@ -17,7 +17,6 @@ export class DetailTotalComponent implements OnInit {
   totalMealDetails: ITotal[] = [];
   pageLoading = true;
   userObjectData: IFinalDataList = {};
-  mealTime = ['BreakFast', 'Dinner'];
   constructor(private _db: DbAccess) {}
 
   async ngOnInit(): Promise<void> {

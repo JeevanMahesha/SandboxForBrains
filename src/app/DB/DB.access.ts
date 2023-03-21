@@ -42,6 +42,11 @@ export class DbAccess {
     );
   }
 
+  async deleteAllRecords() {
+    const userConnection = await this.getCredentials();
+    return await userConnection.functions.callFunction('deleteAllRecords');
+  }
+
   restructureTheData(mealArray: IMeal[]): ITotal[] {
     const totalMealDetails: ITotal[] = [];
     mealArray.forEach(

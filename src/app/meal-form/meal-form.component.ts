@@ -37,16 +37,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './meal-form.component.html',
   styles: [
     `
-      .spinner {
-        position: absolute;
-        margin: auto;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-    `,
-    `
       .mg-rt {
         margin-right: 5px;
       }

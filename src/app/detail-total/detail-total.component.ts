@@ -1,25 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  IEachMealDetail,
-  IFinalDataList,
-  ITotal,
-  MealsConsumed,
-  MealTimeDetail,
-} from '../app.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { IFinalDataList, ITotal, MealTimeDetail } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-detail-total',
   standalone: true,
-  imports: [CommonModule, HeaderComponent],
+  imports: [CommonModule, HeaderComponent, MatProgressSpinnerModule],
   providers: [DbAccess],
   templateUrl: './detail-total.component.html',
   styleUrls: ['./detail-total.component.css'],
 })
 export class DetailTotalComponent implements OnInit {
   totalMealDetails: ITotal[] = [];
+  pageLoading = true;
   userObjectData: IFinalDataList = {};
   mealTime = ['BreakFast', 'Dinner'];
   constructor(private _db: DbAccess) {}
@@ -30,6 +26,7 @@ export class DetailTotalComponent implements OnInit {
     this.userObjectData = this._db.restructureDataAsObject(
       this.totalMealDetails
     );
+    this.pageLoading = false;
   }
 
   getGrandTotalAmount(allMealDetail: MealTimeDetail): number {

@@ -1,11 +1,29 @@
 import { Component } from "@angular/core";
-import { UntypedFormBuilder, Validators } from "@angular/forms";
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { DataPointService } from "../data-point.service";
+import { RouterLink, RouterModule } from "@angular/router";
+import { NgIf } from "@angular/common";
+import { HttpClientModule } from "@angular/common/http";
 
 @Component({
   selector: "app-create",
   templateUrl: "./create.component.html",
   styleUrls: ["./create.component.css"],
+  standalone: true,
+  imports: [
+    NgIf,
+    RouterLink,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    HttpClientModule,
+  ],
+  providers: [DataPointService],
 })
 export class CreateComponent {
   newData = this.reactiveForm.group({

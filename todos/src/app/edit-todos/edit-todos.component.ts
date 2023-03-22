@@ -1,12 +1,27 @@
+import { CommonModule } from "@angular/common";
+import { HttpClientModule } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { UntypedFormBuilder } from "@angular/forms";
-import { Router } from "@angular/router";
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+} from "@angular/forms";
+import { Router, RouterModule } from "@angular/router";
 import { DataPointService } from "../data-point.service";
 
 @Component({
   selector: "app-edit-todos",
   templateUrl: "./edit-todos.component.html",
   styleUrls: ["./edit-todos.component.css"],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    HttpClientModule,
+  ],
+  providers: [DataPointService],
 })
 export class EditTodosComponent implements OnInit {
   data: any;

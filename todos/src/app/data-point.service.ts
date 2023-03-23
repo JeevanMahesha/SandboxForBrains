@@ -1,28 +1,24 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class DataPointService {
-
-  listOfTodos:any
+  listOfTodos: any;
   editIndex = {
-    index:null,
-    showData:false
-  }
-  
-  constructor(
-    private httpCall:HttpClient
-  ) { }
+    index: null,
+    showData: false,
+  };
 
+  constructor(private httpCall: HttpClient) {}
 
-  getTodos(){
+  getTodos() {
     return this.httpCall.get("https://jsonplaceholder.typicode.com/todos");
   }
 
-  createTodos(body){
-    return this.httpCall.post('https://jsonplaceholder.typicode.com/posts',body);
+  createTodos(body) {
+    return this.httpCall.post(
+      "https://jsonplaceholder.typicode.com/posts",
+      body
+    );
   }
-
 }

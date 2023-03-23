@@ -1,110 +1,113 @@
 <app-header></app-header>
 <div *ngIf="!pageLoading" class="container-fluid text-center mt-5">
   <div class="row">
-    <div class="col-md-3"></div>
-    <form
-      class="col-md-6 bg-secondary bg-gradient"
-      [formGroup]="mealForm"
-      (ngSubmit)="submitTheForm()"
-    >
-      <div class="row mt-2">
-        <div class="col-md-4">
-          <mat-form-field appearance="fill">
-            <input
-              matInput
-              (dateChange)="updateMealDataValue()"
-              [matDatepicker]="picker1"
-              formControlName="todayDate"
-            />
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="picker1"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker1></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div class="col-md-4">
-          <mat-form-field>
-            <mat-label>Day</mat-label>
-            <input
-              matInput
-              placeholder="Sunday"
-              formControlName="day"
-              type="text"
-            />
-          </mat-form-field>
-        </div>
-        <div class="col-md-4">
-          <mat-form-field appearance="fill">
-            <mat-label>Meal Time</mat-label>
-            <mat-select
-              formControlName="mealTime"
-              (valueChange)="mealTimeChanged($event)"
-            >
-              <mat-option *ngFor="let eachMeal of mealTime" [value]="eachMeal">
-                {{ eachMeal }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+    <div class="col-md-12 col-lg-12">
+      <div class="form-section bg-secondary bg-gradient">
+        <form [formGroup]="mealForm" (ngSubmit)="submitTheForm()">
+          <div class="row mt-2">
+            <div class="col-lg-4 col-md-6 col-xs-6">
+              <mat-form-field appearance="fill">
+                <input
+                  matInput
+                  (dateChange)="updateMealDataValue()"
+                  [matDatepicker]="picker1"
+                  formControlName="todayDate"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="picker1"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-md-6 col-xs-6">
+              <mat-form-field>
+                <mat-label>Day</mat-label>
+                <input
+                  matInput
+                  placeholder="Sunday"
+                  formControlName="day"
+                  type="text"
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-md-6 col-xs-6">
+              <mat-form-field appearance="fill">
+                <mat-label>Meal Time</mat-label>
+                <mat-select
+                  formControlName="mealTime"
+                  (valueChange)="mealTimeChanged($event)"
+                >
+                  <mat-option
+                    *ngFor="let eachMeal of mealTime"
+                    [value]="eachMeal"
+                  >
+                    {{ eachMeal }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-md-6 col-xs-6">
+              <mat-form-field>
+                <mat-label>Total meal Consumed Count</mat-label>
+                <input
+                  matInput
+                  placeholder="10"
+                  formControlName="mealsConsumedTotalCount"
+                  type="number"
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-md-6 col-xs-6">
+              <mat-form-field>
+                <mat-label>Amount per meal</mat-label>
+                <input
+                  matInput
+                  placeholder="50"
+                  formControlName="amountPerMeal"
+                  type="number"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div
+                *ngFor="
+                  let eachUser of getMealsConsumptionArrayControls;
+                  let indexValue = index
+                "
+                formArrayName="mealsConsumptionArray"
+              >
+                <div [formGroupName]="indexValue">
+                  <mat-form-field>
+                    <input matInput formControlName="mealsConsumedUser" />
+                  </mat-form-field>
+                  <mat-radio-group
+                    aria-label="Select an option"
+                    formControlName="mealsConsumed"
+                    (change)="mealsConsumedValueChanged()"
+                  >
+                    <mat-radio-button
+                      *ngFor="let eachMealOption of mealsConsumedOptions"
+                      [value]="eachMealOption"
+                      >{{ eachMealOption }}</mat-radio-button
+                    >
+                  </mat-radio-group>
+                </div>
+              </div>
+              <button
+                class="btn btn-primary m-3"
+                [disabled]="mealForm.invalid"
+                type="submit"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-      <div class="row">
-        <div class="col-md-4">
-          <mat-form-field>
-            <mat-label>Total meal Consumed Count</mat-label>
-            <input
-              matInput
-              placeholder="10"
-              formControlName="mealsConsumedTotalCount"
-              type="number"
-            />
-          </mat-form-field>
-        </div>
-        <div class="col-md-4">
-          <mat-form-field>
-            <mat-label>Amount per meal</mat-label>
-            <input
-              matInput
-              placeholder="50"
-              formControlName="amountPerMeal"
-              type="number"
-            />
-          </mat-form-field>
-        </div>
-      </div>
-      <div
-        *ngFor="
-          let eachUser of getMealsConsumptionArrayControls;
-          let indexValue = index
-        "
-        formArrayName="mealsConsumptionArray"
-      >
-        <div [formGroupName]="indexValue">
-          <mat-form-field>
-            <input matInput formControlName="mealsConsumedUser" />
-          </mat-form-field>
-          <mat-radio-group
-            aria-label="Select an option"
-            formControlName="mealsConsumed"
-            (change)="mealsConsumedValueChanged()"
-          >
-            <mat-radio-button
-              *ngFor="let eachMealOption of mealsConsumedOptions"
-              [value]="eachMealOption"
-              >{{ eachMealOption }}</mat-radio-button
-            >
-          </mat-radio-group>
-        </div>
-      </div>
-      <button
-        class="btn btn-primary m-3"
-        [disabled]="mealForm.invalid"
-        type="submit"
-      >
-        Submit
-      </button>
-    </form>
-    <div class="col-md-3"></div>
+    </div>
   </div>
 </div>
 

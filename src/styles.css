@@ -18,3 +18,10 @@ body {
   left: 0;
   right: 0;
 }
+
+.form-section {
+  width: 70%;
+  display: block;
+  margin: 0 auto;
+  padding: 20px;
+}

@@ -10,6 +10,7 @@ import {
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
@@ -17,7 +18,6 @@ import { MealsConsumed, MealTime, weekDaysList } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-meal-form',
@@ -97,18 +97,31 @@ export class MealFormComponent {
     mealsConsumedTotalCountControl?.patchValue(mealsConsumedTotalCount!);
   }
 
+  addNewUser(): void {
+    const newData = this.addUserToMealsConsumptionArray(null);
+    newData.get('mealsConsumedUser')?.enable();
+    (this.mealForm.get('mealsConsumptionArray') as FormArray).push(newData);
+    this.mealsConsumedValueChanged();
+  }
+
+  private addUserToMealsConsumptionArray(
+    userName: string | null
+  ): FormGroup<IMealsConsumptionArrayForm> {
+    return this._fb.group<IMealsConsumptionArrayForm>({
+      mealsConsumedUser: this._fb.control<null | string>(
+        { value: userName, disabled: true },
+        Validators.required
+      ),
+      mealsConsumed: this._fb.control<null | string>(
+        this.mealsConsumedOptions[0],
+        Validators.required
+      ),
+    });
+  }
+
   private get constructMealForm(): FormGroup<IMealForm> {
-    const mealsConsumptionArray = this.userNameList.map((eachUserName) =>
-      this._fb.group<IMealsConsumptionArrayForm>({
-        mealsConsumedUser: this._fb.control<null | string>(
-          { value: eachUserName, disabled: true },
-          Validators.required
-        ),
-        mealsConsumed: this._fb.control<null | string>(
-          this.mealsConsumedOptions[0],
-          Validators.required
-        ),
-      })
+    const mealsConsumptionArray = this.userNameList.map(
+      this.addUserToMealsConsumptionArray.bind(this)
     );
     return this._fb.group({
       mealTime: this._fb.control(this.mealTime[0], Validators.required),

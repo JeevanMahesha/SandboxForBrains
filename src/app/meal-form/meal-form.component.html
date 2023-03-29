@@ -69,8 +69,17 @@
                 />
               </mat-form-field>
             </div>
+            <div class="col-lg-4 col-md-6 col-xs-6">
+              <button
+                class="btn btn-primary"
+                type="button"
+                (click)="addNewUser()"
+              >
+                Add Additional user
+              </button>
+            </div>
           </div>
-          <div class="row">
+          <div class="row mb-2">
             <div class="col-md-12">
               <div
                 *ngFor="
@@ -81,7 +90,11 @@
               >
                 <div [formGroupName]="indexValue">
                   <mat-form-field>
-                    <input matInput formControlName="mealsConsumedUser" />
+                    <input
+                      matInput
+                      formControlName="mealsConsumedUser"
+                      placeholder="Name"
+                    />
                   </mat-form-field>
                   <mat-radio-group
                     aria-label="Select an option"
@@ -97,8 +110,8 @@
                 </div>
               </div>
               <button
-                class="btn btn-primary m-3"
-                [disabled]="mealForm.invalid"
+                class="btn btn-primary"
+                [disabled]="!mealForm.valid"
                 type="submit"
               >
                 Submit

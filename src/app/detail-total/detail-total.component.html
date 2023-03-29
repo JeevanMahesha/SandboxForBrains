@@ -7,7 +7,7 @@
       *ngFor="let eachValue of userObjectData | keyvalue"
     >
       <div class="card text-center">
-        <div class="card-header h3">{{ eachValue.key }}</div>
+        <div class="card-header h4">{{ eachValue.key }}</div>
         <div class="card-body">
           <div class="accordion accordion-flush" id="accordionFlushExample">
             <div
@@ -79,7 +79,7 @@
             </div>
           </div>
         </div>
-        <div class="card-footer text-muted">
+        <div class="card-footer h5 text-muted">
           Total Amount {{ getGrandTotalAmount(eachValue.value) }}
         </div>
       </div>

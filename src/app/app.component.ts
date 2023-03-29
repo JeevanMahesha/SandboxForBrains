@@ -1,6 +1,3 @@
-import * as Realm from 'realm-web';
-import { environmentValues } from 'src/environment/environment';
-
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -10,6 +7,4 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule],
 })
-export class AppComponent {
-  title = 'roomFoodApp';
-}
+export class AppComponent {}

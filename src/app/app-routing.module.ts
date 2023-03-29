@@ -4,6 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'meal-form',
+    pathMatch: 'full',
+  },
+  {
+    path: 'meal-form',
     loadComponent: () =>
       import('../app/meal-form/meal-form.component').then(
         (c) => c.MealFormComponent

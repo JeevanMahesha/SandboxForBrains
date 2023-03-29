@@ -8,8 +8,8 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `<div class="container-fluid text-center mt-5">
     <div class="row">
-      <div class="col-md-5"></div>
-      <div class="col-md-2">
+      <div class="col-lg-4"></div>
+      <div class="col-lg-4">
         <ul
           class="nav nav-pills nav-fill gap-2 p-1 small bg-secondary rounded-5 shadow-sm"
           id="pillNav2"
@@ -22,13 +22,14 @@ import { RouterModule } from '@angular/router';
         >
           <li class="nav-item" role="presentation">
             <button
-              class="nav-link active rounded-5"
+              class="nav-link  rounded-5"
               id="home-tab2"
               data-bs-toggle="tab"
               type="button"
               role="tab"
               aria-selected="true"
-              routerLink="/"
+              routerLink="/meal-form"
+              routerLinkActive="active"
             >
               Meal
             </button>
@@ -42,6 +43,7 @@ import { RouterModule } from '@angular/router';
               role="tab"
               aria-selected="false"
               routerLink="/delete"
+              routerLinkActive="active"
             >
               Delete Records
             </button>
@@ -55,13 +57,14 @@ import { RouterModule } from '@angular/router';
               role="tab"
               aria-selected="false"
               routerLink="/detail-view"
+              routerLinkActive="active"
             >
               Detail
             </button>
           </li>
         </ul>
       </div>
-      <div class="col-md-5"></div>
+      <div class="col-lg-4"></div>
     </div>
   </div> `,
 })

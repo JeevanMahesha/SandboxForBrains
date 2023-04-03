@@ -42,6 +42,20 @@ import { RouterModule } from '@angular/router';
               type="button"
               role="tab"
               aria-selected="false"
+              routerLink="/all"
+              routerLinkActive="active"
+            >
+              All Meal Records
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link rounded-5"
+              id="profile-tab2"
+              data-bs-toggle="tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
               routerLink="/delete"
               routerLinkActive="active"
             >

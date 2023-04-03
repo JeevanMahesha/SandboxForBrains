@@ -28,6 +28,13 @@ const routes: Routes = [
         (c) => c.DeleteRecordComponent
       ),
   },
+  {
+    path: 'all',
+    loadComponent: () =>
+      import('../app/allmealrecords/allmealrecords.component').then(
+        (c) => c.AllmealrecordsComponent
+      ),
+  },
 ];
 
 @NgModule({

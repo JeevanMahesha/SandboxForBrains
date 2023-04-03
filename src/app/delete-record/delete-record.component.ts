@@ -95,7 +95,7 @@ export class DeleteRecordComponent {
       .catch((error) => {
         if (error) {
           console.log(error);
-          this.toaster.error('Somthing went Wrong');
+          this.toaster.error('Something went Wrong');
         }
       });
   }

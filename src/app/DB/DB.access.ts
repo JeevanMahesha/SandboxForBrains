@@ -11,9 +11,16 @@ import {
   MealTime,
   MealTimeDetail,
 } from '../app.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class DbAccess {
+  constructor(private toaster: ToastrService) {}
+
+  async deleteOneRecord(params: any) {
+    console.log(params);
+  }
+
   async getAllRecords() {
     try {
       const userConnection = await this.getCredentials();
@@ -42,7 +49,7 @@ export class DbAccess {
     );
   }
 
-  async deleteAllRecords() {
+  private async deleteAllRecordsFromDb() {
     const userConnection = await this.getCredentials();
     return await userConnection.functions.callFunction('deleteAllRecords');
   }
@@ -57,6 +64,7 @@ export class DbAccess {
         day,
         amountPerMeal,
         todayDate,
+        _id,
       }) => {
         const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
           ...eachUser,
@@ -65,6 +73,7 @@ export class DbAccess {
           day,
           amountPerMeal,
           todayDate,
+          _id,
         }));
         totalMealDetails.push(...totalEachDate);
       }
@@ -145,5 +154,27 @@ export class DbAccess {
     const app = new App({ id: environmentValues.REALM_APP_ID });
     const credentials = Credentials.apiKey(environmentValues.REALM_API_KEY);
     return await app.logIn(credentials);
+  }
+
+  async deleteAllRecords(): Promise<void> {
+    const allData = await this.getAllRecords();
+    if (!allData.result.length) {
+      this.toaster.info('No Records to Delete');
+      return;
+    }
+    this.deleteAllRecordsFromDb()
+      .then((res) => {
+        if (res.result.deletedCount) {
+          this.toaster.success(
+            `${res.result.deletedCount} records are Deleted Successfully`
+          );
+        }
+      })
+      .catch((error) => {
+        if (error) {
+          console.log(error);
+          this.toaster.error('Something went Wrong');
+        }
+      });
   }
 }

@@ -31,7 +31,13 @@
             />
           </td>
           <td>{{ eachDetail.amountPerMeal }}</td>
-          <td><Button class="btn btn-danger">X</Button></td>
+          <td>
+            <Button
+              class="btn btn-danger"
+              (click)="deleteRecord(eachDetail._id!)"
+              >X</Button
+            >
+          </td>
         </tr>
       </tbody>
     </table>

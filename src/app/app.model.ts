@@ -27,6 +27,7 @@ export interface IMeal {
   mealDate: string | null;
   mealsConsumptionArray: IMealsConsumptionArray[];
   amountPerMeal: number | null;
+  _id?: string;
 }
 
 export interface IMealsConsumptionArray {

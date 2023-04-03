@@ -22,13 +22,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'delete',
-    loadComponent: () =>
-      import('../app/delete-record/delete-record.component').then(
-        (c) => c.DeleteRecordComponent
-      ),
-  },
-  {
     path: 'all',
     loadComponent: () =>
       import('../app/allmealrecords/allmealrecords.component').then(

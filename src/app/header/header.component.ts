@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DeleteRecordComponent } from '../delete-record/delete-record.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatDialogModule, DeleteRecordComponent],
   template: `<div class="container-fluid text-center mt-5">
     <div class="row">
       <div class="col-lg-4"></div>
@@ -56,8 +58,8 @@ import { RouterModule } from '@angular/router';
               type="button"
               role="tab"
               aria-selected="false"
-              routerLink="/delete"
               routerLinkActive="active"
+              (click)="deleteAllRecords()"
             >
               Delete Records
             </button>
@@ -82,4 +84,13 @@ import { RouterModule } from '@angular/router';
     </div>
   </div> `,
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  constructor(public dialog: MatDialog) {}
+
+  deleteAllRecords() {
+    this.dialog
+      .open(DeleteRecordComponent, { width: '500px' })
+      .afterClosed()
+      .subscribe(console.log);
+  }
+}

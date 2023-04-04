@@ -24,8 +24,8 @@ const routes: Routes = [
   {
     path: 'all',
     loadComponent: () =>
-      import('../app/allmealrecords/allmealrecords.component').then(
-        (c) => c.AllmealrecordsComponent
+      import('../app/all-meal-records/all-meal-records.component').then(
+        (c) => c.AllMealRecordsComponent
       ),
   },
 ];

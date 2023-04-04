@@ -1,20 +1,19 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../header/header.component';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { DbAccess } from '../DB/DB.access';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ITotal } from '../app.model';
 import { DeleteRecordComponent } from '../delete-record/delete-record.component';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
-  selector: 'app-allmealrecords',
+  selector: 'app-all-meal-records',
   standalone: true,
   imports: [CommonModule, HeaderComponent, MatDialogModule],
   providers: [DbAccess],
-  templateUrl: './allmealrecords.component.html',
-  styleUrls: ['./allmealrecords.component.css'],
+  templateUrl: './all-meal-records.component.html',
 })
-export class AllmealrecordsComponent {
+export class AllMealRecordsComponent {
   totalMealDetails: ITotal[] = [];
   pageLoading = true;
   constructor(private _db: DbAccess, private dialog: MatDialog) {}
@@ -27,7 +26,7 @@ export class AllmealrecordsComponent {
     this.pageLoading = false;
   }
 
-  deleteRecord(_id: string) {
+  deleteRecord(_id: string): void {
     this.dialog
       .open(DeleteRecordComponent, { width: '400px' })
       .afterClosed()

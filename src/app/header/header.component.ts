@@ -93,7 +93,7 @@ export class HeaderComponent {
 
   deleteAllRecords() {
     this.dialog
-      .open(DeleteRecordComponent, { width: '500px' })
+      .open(DeleteRecordComponent, { width: '500px', disableClose: true })
       .afterClosed()
       .pipe(take(1))
       .subscribe((res: `${MealsConsumed}`) => {

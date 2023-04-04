@@ -36,7 +36,7 @@ export class AllMealRecordsComponent {
 
   deleteRecord(mealDetail: ITotal): void {
     this.dialog
-      .open(DeleteRecordComponent, { width: '400px' })
+      .open(DeleteRecordComponent, { width: '400px', disableClose: true })
       .afterClosed()
       .pipe(take(1))
       .subscribe((res: `${MealsConsumed}`) => {

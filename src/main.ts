@@ -14,6 +14,7 @@ bootstrapApplication(AppComponent, {
       ToastrModule.forRoot({
         positionClass: 'toast-top-center',
         closeButton: true,
+        disableTimeOut: true,
       })
     ),
     importProvidersFrom(

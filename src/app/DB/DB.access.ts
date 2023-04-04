@@ -12,10 +12,11 @@ import {
   MealTimeDetail,
 } from '../app.model';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class DbAccess {
-  constructor(private toaster: ToastrService) {}
+  constructor(private toaster: ToastrService, private router: Router) {}
 
   async deleteOneRecord(_id: string) {
     try {
@@ -165,6 +166,7 @@ export class DbAccess {
     const allData = await this.getAllRecords();
     if (!allData.result.length) {
       this.toaster.info('No Records to Delete');
+      this.router.navigate(['meal-form']);
       return;
     }
     this.deleteAllRecordsFromDb()
@@ -173,6 +175,7 @@ export class DbAccess {
           this.toaster.success(
             `${res.result.deletedCount} records are Deleted Successfully`
           );
+          this.router.navigate(['meal-form']);
         }
       })
       .catch((error) => {

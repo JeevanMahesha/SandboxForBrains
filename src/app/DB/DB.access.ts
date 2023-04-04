@@ -17,8 +17,13 @@ import { ToastrService } from 'ngx-toastr';
 export class DbAccess {
   constructor(private toaster: ToastrService) {}
 
-  async deleteOneRecord(params: any) {
-    console.log(params);
+  async deleteOneRecord(_id: string) {
+    try {
+      const userConnection = await this.getCredentials();
+      return userConnection.functions.callFunction('deleteOneRecord', _id);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getAllRecords() {

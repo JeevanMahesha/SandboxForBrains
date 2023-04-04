@@ -104,6 +104,17 @@ export class MealFormComponent {
     this.mealsConsumedValueChanged();
   }
 
+  checkMealsConsumedUserDisabled(index: number): boolean {
+    return (this.mealForm.get('mealsConsumptionArray') as FormArray)
+      .at(index)
+      .get('mealsConsumedUser')?.enabled!;
+  }
+
+  removeMealsConsumedUser(index: number): void {
+    (this.mealForm.get('mealsConsumptionArray') as FormArray).removeAt(index);
+    this.mealsConsumedValueChanged();
+  }
+
   private addUserToMealsConsumptionArray(
     userName: string | null
   ): FormGroup<IMealsConsumptionArrayForm> {

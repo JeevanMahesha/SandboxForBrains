@@ -107,6 +107,14 @@
                       >{{ eachMealOption }}</mat-radio-button
                     >
                   </mat-radio-group>
+                  <button
+                    *ngIf="checkMealsConsumedUserDisabled(indexValue)"
+                    type="button"
+                    (click)="removeMealsConsumedUser(indexValue)"
+                    class="m-2 btn btn-danger"
+                  >
+                    X
+                  </button>
                 </div>
               </div>
               <button

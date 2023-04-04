@@ -44,8 +44,8 @@ export class AllMealRecordsComponent {
           this._db.deleteOneRecord(mealDetail._id!).then((res) => {
             if (res.result.deletedCount) {
               this.toaster.success(
-                `Record Deleted successfully. Date  ${mealDetail.mealDate}, meal time ${mealDetail.mealTime}, meal day
-                ${mealDetail.day}`
+                `Record Deleted successfully.
+                ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
               );
               this.getAllData();
             } else {

@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { IUserForm } from './app.model';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ControlValueAccessor';
+  userForm: FormGroup<IUserForm>;
+  constructor(private _fb: FormBuilder) {
+    this.userForm = this._fb.group({
+      email: this._fb.control<null | string>(null),
+      userName: this._fb.control<null | string>(null),
+    });
+  }
 }

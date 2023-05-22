@@ -1,5 +1,9 @@
 import { Component, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  FormControl,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-email',
@@ -14,23 +18,16 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 export class EmailComponent implements ControlValueAccessor {
-  onChange: any = () => {};
+  propagateChange: any = () => {};
   onTouch: any = () => {};
-  val: any;
+  emailValue = new FormControl<string | null>(null);
 
-  set value(val: any) {
-    if (val !== undefined && this.val !== val) {
-      this.value = val;
-      this.onChange(val);
-      this.onTouch(val);
-    }
-  }
-
-  writeValue(value: any): void {
-    this.value = value;
+  writeValue(writeValue: string): void {
+    this.emailValue.setValue(writeValue);
   }
   registerOnChange(fn: any): void {
-    this.onChange = fn;
+    this.emailValue.valueChanges.subscribe(fn);
+    this.propagateChange = fn;
   }
   registerOnTouched(fn: any): void {
     this.onTouch = fn;

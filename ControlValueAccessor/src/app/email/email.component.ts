@@ -4,6 +4,7 @@ import {
   FormControl,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+import { valueChangeType } from './email.model';
 
 @Component({
   selector: 'app-email',
@@ -18,21 +19,49 @@ import {
   ],
 })
 export class EmailComponent implements ControlValueAccessor {
-  propagateChange: any = () => {};
-  onTouch: any = () => {};
-  emailValue = new FormControl<string | null>(null);
+  email: string | null = null;
+  disabled = false;
+  private onChange: valueChangeType;
+  private onTouched: valueChangeType;
 
-  writeValue(writeValue: string): void {
-    this.emailValue.setValue(writeValue);
+  constructor() {
+    this.onChange = () => {};
+    this.onTouched = () => {};
   }
-  registerOnChange(fn: any): void {
-    this.emailValue.valueChanges.subscribe(fn);
-    this.propagateChange = fn;
+  /*
+This will get the initial value from ngModel or formControl
+*/
+  writeValue(obj: string): void {
+    this.email = obj;
   }
-  registerOnTouched(fn: any): void {
-    this.onTouch = fn;
+
+  /*
+  This will update the value when it change
+  */
+  registerOnChange(fn: valueChangeType): void {
+    this.onChange = fn;
   }
+
+  /*
+  This will update (touch property) the fromControl when it touch
+  */
+  registerOnTouched(fn: valueChangeType): void {
+    this.onTouched = fn;
+  }
+
+  /*
+  This will update disable state
+  */
   setDisabledState?(isDisabled: boolean): void {
-    throw new Error('Method not implemented.');
+    this.disabled = isDisabled;
+  }
+
+  /*
+When every value change we have to call the onChange and onTouched method then only formControl will
+update it state
+*/
+  valueChangeEvent() {
+    this.onChange(this.email as string);
+    this.onTouched(null);
   }
 }

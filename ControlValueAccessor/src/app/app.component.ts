@@ -11,12 +11,23 @@ export class AppComponent {
   userForm: FormGroup<IUserForm>;
   constructor(private _fb: FormBuilder) {
     this.userForm = this._fb.group({
-      email: this._fb.control<null | string>('jeevan'),
+      email: this._fb.control<null | string>({
+        value: 'jeevan',
+        disabled: true,
+      }),
       userName: this._fb.control<null | string>(null),
     });
   }
 
   saveUser() {
-    console.log(this.userForm.value);
+    /*
+    this is for reactive form
+    */
+    // console.log(this.userForm.value);
+    // ==================================================== //
+    /*
+    this is for ngmodel
+    */
+    // console.log(this.title);
   }
 }

@@ -60,7 +60,10 @@ export class AllMealRecordsComponent {
     const allData = await this._db.getAllRecords();
     this.totalMealDetails = this._db
       .restructureTheData(allData.result)
-      .sort((a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!);
+      .sort((a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!)
+      .filter(
+        (eachMealDetail) => eachMealDetail.mealsConsumed === MealsConsumed.Yes
+      );
     this.pageLoading = false;
   }
 }

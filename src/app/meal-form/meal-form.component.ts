@@ -51,7 +51,7 @@ export class MealFormComponent {
     'Deepak',
     'SaravanaKumaran',
     'RajKumar',
-    'suriyaRaj'
+    'Suryaraj',
   ];
   mealTime = ['BreakFast', 'Lunch', 'Dinner'];
   mealsConsumedOptions = ['yes', 'no'];

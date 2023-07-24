@@ -50,6 +50,8 @@ export class MealFormComponent {
     'Praveen',
     'Deepak',
     'SaravanaKumaran',
+    'RajKumar',
+    'suriyaRaj'
   ];
   mealTime = ['BreakFast', 'Lunch', 'Dinner'];
   mealsConsumedOptions = ['yes', 'no'];
@@ -71,7 +73,7 @@ export class MealFormComponent {
   mealTimeChanged(value: MealTime): void {
     let amountPerMeal = 0;
     if (value === MealTime.BreakFast || value === MealTime.Dinner) {
-      amountPerMeal = 50;
+      amountPerMeal = 40;
     } else {
       amountPerMeal = 60;
     }
@@ -145,7 +147,7 @@ export class MealFormComponent {
         [Validators.required, Validators.min(1)]
       ),
       todayDate: this._fb.control(new Date(), Validators.required),
-      amountPerMeal: this._fb.control(50, Validators.required),
+      amountPerMeal: this._fb.control(40, Validators.required),
       mealDate: this._fb.control(
         new Date().toLocaleDateString(),
         Validators.required

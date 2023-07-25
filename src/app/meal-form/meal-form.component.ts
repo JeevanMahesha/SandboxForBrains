@@ -2,20 +2,25 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   FormArray,
-  FormBuilder,
   FormGroup,
+  NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_FORMATS, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
-import { MealsConsumed, MealTime, weekDaysList } from '../app.model';
 import { DbAccess } from '../DB/DB.access';
+import {
+  MY_FORMATS,
+  MealTime,
+  MealsConsumed_Copy,
+  weekDaysList,
+} from '../app.model';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
 
@@ -33,7 +38,7 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
     HeaderComponent,
     MatProgressSpinnerModule,
   ],
-  providers: [DbAccess],
+  providers: [{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
   templateUrl: './meal-form.component.html',
   styles: [
     `
@@ -54,12 +59,12 @@ export class MealFormComponent {
     'Suryaraj',
   ];
   mealTime = ['BreakFast', 'Lunch', 'Dinner'];
-  mealsConsumedOptions = ['yes', 'no'];
+  mealsConsumedOptions = Object.values(MealsConsumed_Copy);
   mealForm: FormGroup<IMealForm>;
   pageLoading = false;
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: NonNullableFormBuilder,
     private _db: DbAccess,
     private toastr: ToastrService
   ) {
@@ -85,13 +90,13 @@ export class MealFormComponent {
     const mealDateControl = this.mealForm.get('mealDate');
     const dayControl = this.mealForm.get('day');
     dayControl?.patchValue(weekDaysList.at(todayDate?.getDay()!)!);
-    mealDateControl?.patchValue(todayDate?.toLocaleDateString()!);
+    // mealDateControl?.patchValue(todayDate?.toLocaleDateString()!);
   }
 
   mealsConsumedValueChanged(): void {
     const mealsConsumedTotalCount =
       this.mealForm.value.mealsConsumptionArray?.filter(
-        (eachValue) => eachValue.mealsConsumed === MealsConsumed.Yes
+        (eachValue) => eachValue.mealsConsumed === 'Yes'
       ).length;
     const mealsConsumedTotalCountControl = this.mealForm.get(
       'mealsConsumedTotalCount'
@@ -125,8 +130,8 @@ export class MealFormComponent {
         { value: userName, disabled: true },
         Validators.required
       ),
-      mealsConsumed: this._fb.control<null | string>(
-        this.mealsConsumedOptions[0],
+      mealsConsumed: this._fb.control<null | keyof typeof MealsConsumed_Copy>(
+        MealsConsumed_Copy.Yes as keyof typeof MealsConsumed_Copy,
         Validators.required
       ),
     });
@@ -137,21 +142,21 @@ export class MealFormComponent {
       this.addUserToMealsConsumptionArray.bind(this)
     );
     return this._fb.group({
-      mealTime: this._fb.control(this.mealTime[0], Validators.required),
-      day: this._fb.control(
+      mealTime: this._fb.control<null | string>(
+        this.mealTime[0],
+        Validators.required
+      ),
+      day: this._fb.control<null | string>(
         { value: weekDaysList[new Date().getDay()], disabled: true },
         Validators.required
       ),
-      mealsConsumedTotalCount: this._fb.control(
+      mealsConsumedTotalCount: this._fb.control<null | number>(
         { disabled: true, value: this.userNameList.length },
         [Validators.required, Validators.min(1)]
       ),
-      todayDate: this._fb.control(new Date(), Validators.required),
-      amountPerMeal: this._fb.control(40, Validators.required),
-      mealDate: this._fb.control(
-        new Date().toLocaleDateString(),
-        Validators.required
-      ),
+      todayDate: this._fb.control<null | Date>(new Date(), Validators.required),
+      amountPerMeal: this._fb.control<null | number>(40, Validators.required),
+      mealDate: this._fb.control<null | Date>(new Date(), Validators.required),
       mealsConsumptionArray: this._fb.array(
         mealsConsumptionArray,
         Validators.required
@@ -164,16 +169,16 @@ export class MealFormComponent {
     this.mealForm.enable();
     const mealFormValue = this.mealForm.value;
     const { mealDate = null, mealTime = null } = mealFormValue;
-    const dataExist = await this._db.checkDataExistForToday({
-      mealDate,
-      mealTime,
-    });
-    if (dataExist.result.length) {
-      this.toastr.error(`${mealTime} is already Updated`);
-      this.pageLoading = false;
-      this.mealForm = this.constructMealForm;
-      return;
-    }
+    // const dataExist = await this._db.checkDataExistForToday({
+    //   mealDate,
+    //   mealTime,
+    // });
+    // if (dataExist.result.length) {
+    //   this.toastr.error(`${mealTime} is already Updated`);
+    //   this.pageLoading = false;
+    //   this.mealForm = this.constructMealForm;
+    //   return;
+    // }
     this._db
       .insertTheMealDetail(mealFormValue)
       .then((res) => {

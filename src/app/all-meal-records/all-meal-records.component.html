@@ -1,46 +1,118 @@
 <app-header></app-header>
 <mat-spinner class="spinner" *ngIf="pageLoading"></mat-spinner>
 
-<div *ngIf="!pageLoading" class="container-fluid text-center mt-5">
-  <div class="row">
-    <div class="col-lg-1"></div>
-    <table class="table table-info table-striped-columns table-hover">
-      <thead>
-        <tr class="table-info">
-          <th>#</th>
-          <th>Name</th>
-          <th>Day</th>
-          <th>Date</th>
-          <th>Meal Time</th>
-          <th>meal Consumed Status</th>
-          <th>per meal amount</th>
-          <th>Delete Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let eachDetail of totalMealDetails; let ind = index">
-          <th scope="row">{{ ind + 1 }}</th>
-          <td>{{ eachDetail.mealsConsumedUser }}</td>
-          <td>{{ eachDetail.day }}</td>
-          <td>{{ eachDetail.mealDate }}</td>
-
-          <td>{{ eachDetail.mealTime }}</td>
-          <td>
-            <img
-              class="text-success-emphasis"
-              src="../../assets/{{ eachDetail.mealsConsumed }}.svg"
-              [alt]="eachDetail.mealsConsumedUser + eachDetail.mealDate"
-            />
-          </td>
-          <td>{{ eachDetail.amountPerMeal }}</td>
-          <td>
-            <Button class="btn btn-danger" (click)="deleteRecord(eachDetail)"
-              >X</Button
+<div class="container-fluid text-center mt-5">
+  <div
+    class="accordion"
+    id="accordionExample"
+    *ngIf="this.totalMealDetails$ | async as totalMealDetails"
+  >
+    <div
+      class="accordion-item"
+      *ngFor="
+        let weekMealDetail of totalMealDetails | keyvalue;
+        let weekMealIndex = index
+      "
+    >
+      <h2 class="accordion-header">
+        <a
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          [href]="'#' + weekMealIndex + weekMealDetail.key"
+          aria-expanded="false"
+          aria-controls="collapseOne"
+        >
+          {{ weekMealDetail.key }}
+        </a>
+      </h2>
+      <div
+        [id]="weekMealIndex + weekMealDetail.key"
+        class="accordion-collapse collapse show"
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+          <div class="accordion" id="#accordionExampleMeal">
+            <div
+              class="accordion-item"
+              *ngFor="
+                let mealTimeDetail of weekMealDetail.value | keyvalue;
+                let mealTimeIndex = index
+              "
             >
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="col-lg-1"></div>
+              <h2 class="accordion-header">
+                <a
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  [href]="
+                    '#' + mealTimeDetail.key + mealTimeIndex + weekMealIndex
+                  "
+                  aria-expanded="false"
+                  aria-controls="collapseTwo"
+                >
+                  {{ mealTimeDetail.key }} -->
+                  {{ mealTimeDetail.value.length }}
+                </a>
+              </h2>
+              <div
+                [id]="mealTimeDetail.key + mealTimeIndex + weekMealIndex"
+                class="accordion-collapse collapse"
+                data-bs-parent="#accordionExampleMeal"
+              >
+                <div class="accordion-body">
+                  <table
+                    class="table table-info table-striped-columns table-hover"
+                  >
+                    <thead>
+                      <tr class="table-info">
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>meal Consumed Status</th>
+                        <th>per meal amount</th>
+                        <th>Delete Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let eachDetail of mealTimeDetail.value;
+                          let ind = index
+                        "
+                      >
+                        <th scope="row">{{ ind + 1 }}</th>
+                        <td>{{ eachDetail.mealsConsumedUser }}</td>
+                        <td>{{ eachDetail.mealDate | date }}</td>
+
+                        <td>
+                          <img
+                            class="text-success-emphasis"
+                            src="../../assets/{{
+                              eachDetail.mealsConsumed.toLocaleLowerCase()
+                            }}.svg"
+                            [alt]="
+                              eachDetail.mealsConsumedUser + eachDetail.mealDate
+                            "
+                          />
+                        </td>
+                        <td>{{ eachDetail.amountPerMeal }}</td>
+                        <td>
+                          <Button
+                            class="btn btn-danger"
+                            (click)="deleteRecord(eachDetail)"
+                            >X</Button
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

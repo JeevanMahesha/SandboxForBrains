@@ -1,3 +1,5 @@
+import { MatDateFormats } from '@angular/material/core';
+
 export enum MealTime {
   BreakFast = 'BreakFast',
   Dinner = 'Dinner',
@@ -55,3 +57,68 @@ export interface IEachMealDetail<VL> {
   total: number;
   valueList: VL;
 }
+
+export interface IMealsConsumptionDetail {
+  _id: string;
+  mealTime: string;
+  day: keyof typeof weekDays;
+  mealsConsumedTotalCount: number;
+  todayDate: Date;
+  amountPerMeal: number;
+  mealDate: string;
+  mealsConsumptionArray: IMealsConsumptionArray_Copy[];
+}
+
+export interface IMealsConsumptionArray_Copy {
+  mealsConsumedUser: string;
+  mealsConsumed: keyof typeof MealsConsumed_Copy;
+}
+
+export const MealsConsumed_Copy = {
+  Yes: 'Yes',
+  No: 'No',
+};
+
+export const weekDays = {
+  Monday: 'Monday',
+  Sunday: 'Sunday',
+  Tuesday: 'Tuesday',
+  Wednesday: 'Wednesday',
+  Thursday: 'Thursday',
+  Friday: 'Friday',
+  Saturday: 'Saturday',
+};
+
+export type mealDetailByDayWise = Record<string, IMealsConsumptionDetail[]>;
+
+export type mealDetailByWeekWise = {
+  [key in string]: Record<string, mealConsumptionDetailsWithUser[]>;
+};
+
+export const MY_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'DD/MM/YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
+export interface mealConsumptionDetailsWithUser
+  extends IMealsConsumptionDetail,
+    IMealsConsumptionArray_Copy {}

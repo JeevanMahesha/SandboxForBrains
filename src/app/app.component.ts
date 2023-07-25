@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DbAccess } from './DB/DB.access';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule],
 })
-export class AppComponent {}
+export class AppComponent {
+  private _db = inject(DbAccess);
+  constructor() {
+    this._db.getCredentials_Copy();
+  }
+}

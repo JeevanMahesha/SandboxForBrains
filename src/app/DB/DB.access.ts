@@ -1,21 +1,32 @@
 import { Injectable } from '@angular/core';
-import { App, Credentials } from 'realm-web';
+import { App, Credentials, User } from 'realm-web';
 import { environmentValues } from 'src/environment/environment';
 import {
   IEachMealDetail,
   IFinalDataList,
   IMeal,
+  IMealsConsumptionDetail,
   ITotal,
   IUserObjectData,
+  mealConsumptionDetailsWithUser,
+  mealDetailByDayWise,
+  mealDetailByWeekWise,
   MealsConsumed,
   MealTime,
   MealTimeDetail,
+  weekDays,
 } from '../app.model';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { Observable, from, map } from 'rxjs';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DbAccess {
+  userDetail: User<
+    Realm.DefaultFunctionsFactory,
+    SimpleObject,
+    Realm.DefaultUserProfileData
+  > | null = null;
   constructor(private toaster: ToastrService, private router: Router) {}
 
   async deleteOneRecord(_id: string) {
@@ -184,5 +195,88 @@ export class DbAccess {
           this.toaster.error('Something went Wrong');
         }
       });
+  }
+
+  getCredentials_Copy(): void {
+    const app = new App({ id: environmentValues.REALM_APP_ID });
+    const credentials = Credentials.apiKey(environmentValues.REALM_API_KEY);
+    app
+      .logIn(credentials)
+      .then((userResponse) => (this.userDetail = userResponse));
+  }
+
+  getAllMealDetails_Copy(): Observable<IMealsConsumptionDetail[]> {
+    return from(
+      this.userDetail?.functions.callFunction('getAllMealDetails')!
+    ).pipe(map((response) => response.result));
+  }
+
+  getMealDetailByDayWise(
+    mealConsumptionDetails: IMealsConsumptionDetail[]
+  ): mealDetailByDayWise {
+    return mealConsumptionDetails.reduce((previousValue, eachDbValue) => {
+      if (previousValue.hasOwnProperty(eachDbValue.day)) {
+        previousValue[eachDbValue.day].push(eachDbValue);
+      } else {
+        previousValue[eachDbValue.day] = [eachDbValue];
+      }
+      return previousValue;
+    }, {} as mealDetailByDayWise);
+  }
+
+  getMealDetailByWeek(
+    mealDayWiseDetails: mealDetailByDayWise
+  ): mealDetailByWeekWise {
+    return Object.entries(mealDayWiseDetails).reduce(
+      (previousValue, [weekDayValue, mealDetail]) => {
+        const keyData = weekDayValue as keyof typeof weekDays;
+        const data = this.filterMealsConsumptionArray(mealDetail);
+        const value = this.filterMealDetailByUser(data);
+        previousValue[keyData] = value;
+        return previousValue;
+      },
+      {} as mealDetailByWeekWise
+    );
+  }
+
+  private filterMealDetailByUser(
+    mealsConsumptionDetail: Record<string, IMealsConsumptionDetail[]>
+  ): Record<string, mealConsumptionDetailsWithUser[]> {
+    return Object.entries(mealsConsumptionDetail).reduce(
+      (pre, [key, value]) => {
+        pre[key] = value
+          .map((eachMealValue) => {
+            const mealsConsumptionArray = eachMealValue.mealsConsumptionArray
+              .filter((eachUser) => eachUser.mealsConsumed === 'Yes')
+              .map((eachUserDetail) => ({
+                ...eachMealValue,
+                ...eachUserDetail,
+              }));
+            return mealsConsumptionArray;
+          })
+          .flat();
+        return pre;
+      },
+      {} as Record<string, mealConsumptionDetailsWithUser[]>
+    );
+  }
+
+  private filterMealsConsumptionArray(
+    mealsConsumptionDetail: IMealsConsumptionDetail[]
+  ): Record<string, IMealsConsumptionDetail[]> {
+    return mealsConsumptionDetail.reduce(
+      (
+        per: Record<string, IMealsConsumptionDetail[]>,
+        cur: IMealsConsumptionDetail
+      ) => {
+        if (per.hasOwnProperty(cur.mealTime)) {
+          per[cur.mealTime].push(cur);
+        } else {
+          per[cur.mealTime] = [cur];
+        }
+        return per;
+      },
+      {} as Record<string, IMealsConsumptionDetail[]>
+    );
   }
 }

@@ -11,7 +11,6 @@ import { DeleteRecordComponent } from '../delete-record/delete-record.component'
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule, MatDialogModule, DeleteRecordComponent],
-  providers: [DbAccess],
   template: `<div class="container-fluid text-center mt-5">
     <div class="row">
       <div class="col-lg-4"></div>
@@ -96,8 +95,8 @@ export class HeaderComponent {
       .open(DeleteRecordComponent, { width: '500px', disableClose: true })
       .afterClosed()
       .pipe(take(1))
-      .subscribe((res: `${MealsConsumed}`) => {
-        if (res === MealsConsumed.Yes) {
+      .subscribe((res: keyof typeof MealsConsumed) => {
+        if (res === 'Yes') {
           this._db.deleteAllRecords();
         }
       });

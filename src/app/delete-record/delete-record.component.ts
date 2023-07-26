@@ -27,13 +27,13 @@ import { MealsConsumed } from '../app.model';
         />
       </mat-form-field>
       <br />
-      <button class="btn btn-secondary" (click)="closeDialog('no')">
+      <button class="btn btn-secondary" (click)="closeDialog('No')">
         Close
       </button>
       &nbsp;
       <button
         *ngIf="!password.invalid"
-        (click)="closeDialog('yes')"
+        (click)="closeDialog('Yes')"
         class="btn btn-danger"
       >
         Delete all records
@@ -58,7 +58,7 @@ export class DeleteRecordComponent {
       : { error: true };
   }
 
-  closeDialog(closeType: `${MealsConsumed}`) {
+  closeDialog(closeType: keyof typeof MealsConsumed) {
     this.dialogRef.close(closeType);
   }
 }

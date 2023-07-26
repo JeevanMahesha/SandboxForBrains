@@ -1,88 +1,50 @@
 <app-header></app-header>
-<mat-spinner class="spinner" *ngIf="pageLoading"></mat-spinner>
-<div *ngIf="!pageLoading" class="container-fluid text-center mt-5">
-  <div class="row">
-    <div
-      class="col-md-4 mt-3"
-      *ngFor="let eachValue of userObjectData | keyvalue"
-    >
-      <div class="card text-center">
-        <div class="card-header h4">{{ eachValue.key }}</div>
-        <div class="card-body">
-          <div class="accordion accordion-flush" id="accordionFlushExample">
-            <div
-              class="accordion-item"
-              *ngFor="
-                let eachMealValue of eachValue.value | keyvalue;
-                let objInd = index
-              "
-            >
-              <h2 class="accordion-header" id="flush-headingOne">
-                <a
-                  class="accordion-button collapsed text-center"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  [href]="'#' + objInd + eachValue.key"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseOne"
-                >
-                  {{ eachMealValue.key }} total amount
-                  {{ eachMealValue.value.total }}
-                </a>
-              </h2>
-              <div
-                [id]="objInd + eachValue.key"
-                class="accordion-collapse collapse"
-                aria-labelledby="flush-headingOne"
-                data-bs-parent="#accordionFlushExample"
-              >
-                <table class="table table-primary table-striped-columns">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Meal Time</th>
-                      <th scope="col">Day</th>
-                      <th scope="col">Meal Amount</th>
 
-                      <th scope="col">Meal Consumed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      *ngFor="
-                        let eachMealDetail of eachMealValue.value.valueList;
-                        let ind = index
-                      "
-                    >
-                      <th scope="row">{{ ind + 1 }}</th>
-                      <td>{{ eachMealDetail.mealDate }}</td>
-                      <td>{{ eachMealDetail.mealTime }}</td>
-                      <td>{{ eachMealDetail.day }}</td>
-                      <td>{{ eachMealDetail.amountPerMeal }}</td>
-                      <td>
-                        <img
-                          class="text-success-emphasis"
-                          src="../../assets/{{
-                            eachMealDetail.mealsConsumed
-                          }}.svg"
-                          [alt]="
-                            eachMealDetail.mealsConsumedUser +
-                            eachMealDetail.mealDate
-                          "
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-footer h5 text-muted">
-          Total Amount {{ getGrandTotalAmount(eachValue.value) }}
-        </div>
-      </div>
+<div class="container text-center">
+  <div
+    class="row align-items-center mt-3"
+    *ngIf="totalMealDetails$ | async as totalMealDetails; else pageLoading"
+  >
+    <div class="col align-self-center">
+      <table class="table table-info table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Break Fast</th>
+            <th scope="col">Lunch</th>
+            <th scope="col">Dinner</th>
+            <th scope="col">Total Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="table-info"
+            *ngFor="let eachMealDetail of totalMealDetails; let objInd = index"
+          >
+            <th scope="row">{{ objInd + 1 }}</th>
+            <td class="table-info">{{ eachMealDetail.mealsConsumedUser }}</td>
+            <td class="table-info">{{ eachMealDetail.BreakFast || "--" }}</td>
+            <td class="table-info">{{ eachMealDetail.Lunch || "--" }}</td>
+            <td class="table-info">{{ eachMealDetail.Dinner || "--" }}</td>
+            <td class="table-info h6">
+              {{ eachMealDetail.totalMealAmount }}
+              <span>&#8377;</span>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="table-success h4" colspan="6">
+              {{ totalAmount }} &#8377;
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   </div>
 </div>
+
+<ng-template #pageLoading>
+  <mat-spinner class="spinner"></mat-spinner>
+</ng-template>

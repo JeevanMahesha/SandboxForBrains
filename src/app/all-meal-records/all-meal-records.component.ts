@@ -1,13 +1,18 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, map, mergeMap, of, take, tap } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
-import { ITotal, MealsConsumed } from '../app.model';
+import {
+  IDeletedCount,
+  MealsConsumed,
+  mealConsumptionDetailsWithUser,
+  mealDetailByWeekWise,
+} from '../app.model';
 import { DeleteRecordComponent } from '../delete-record/delete-record.component';
 import { HeaderComponent } from '../header/header.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { take } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-all-meal-records',
@@ -18,52 +23,50 @@ import { ToastrService } from 'ngx-toastr';
     MatProgressSpinnerModule,
     MatDialogModule,
   ],
-  providers: [DbAccess],
   templateUrl: './all-meal-records.component.html',
 })
 export class AllMealRecordsComponent {
-  totalMealDetails: ITotal[] = [];
-  pageLoading = true;
+  totalMealDetails$: Observable<mealDetailByWeekWise | null> = of(null);
   constructor(
     private _db: DbAccess,
     private dialog: MatDialog,
     private toaster: ToastrService
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    this.getAllData();
+  ngOnInit(): void {
+    this.totalMealDetails$ = this._db
+      .getAllMealDetails()
+      .pipe(
+        map(this._db.getMealDetailByDayWise.bind(this._db)),
+        map(this._db.getMealDetailByWeek.bind(this._db))
+      );
   }
 
-  deleteRecord(mealDetail: ITotal): void {
+  deleteRecord(mealDetail: mealConsumptionDetailsWithUser): void {
     this.dialog
       .open(DeleteRecordComponent, { width: '400px', disableClose: true })
       .afterClosed()
-      .pipe(take(1))
-      .subscribe((res: `${MealsConsumed}`) => {
-        if (res === MealsConsumed.Yes) {
-          this._db.deleteOneRecord(mealDetail._id!).then((res) => {
-            if (res.result.deletedCount) {
-              this.toaster.success(
-                `Record Deleted successfully.
-                ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
-              );
-              this.getAllData();
-            } else {
-              console.log(res);
-            }
-          });
+      .pipe(
+        take(1),
+        mergeMap((deleteActionRes: keyof typeof MealsConsumed) => {
+          return deleteActionRes === 'Yes'
+            ? this._db.deleteOneRecord(mealDetail._id!)
+            : of(null);
+        })
+      )
+      .subscribe((res: IDeletedCount | null) => {
+        if (res?.deletedCount) {
+          this.toaster.success(
+            `Record Deleted successfully.
+                  ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
+          );
+          this.totalMealDetails$ = this._db
+            .getAllMealDetails()
+            .pipe(
+              map(this._db.getMealDetailByDayWise.bind(this._db)),
+              map(this._db.getMealDetailByWeek.bind(this._db))
+            );
         }
       });
-  }
-
-  private async getAllData(): Promise<void> {
-    const allData = await this._db.getAllRecords();
-    this.totalMealDetails = this._db
-      .restructureTheData(allData.result)
-      .sort((a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!)
-      .filter(
-        (eachMealDetail) => eachMealDetail.mealsConsumed === MealsConsumed.Yes
-      );
-    this.pageLoading = false;
   }
 }

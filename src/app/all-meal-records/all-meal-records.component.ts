@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, map, mergeMap, of, take } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
 import {
+  IDeletedCount,
   MealsConsumed_Copy,
   mealConsumptionDetailsWithUser,
   mealDetailByWeekWise,
@@ -55,25 +56,19 @@ export class AllMealRecordsComponent {
             : of(null);
         })
       )
-      .subscribe(
-        (
-          res: {
-            deletedCount: number;
-          } | null
-        ) => {
-          if (res?.deletedCount) {
-            this.toaster.success(
-              `Record Deleted successfully.
+      .subscribe((res: IDeletedCount | null) => {
+        if (res?.deletedCount) {
+          this.toaster.success(
+            `Record Deleted successfully.
                   ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
+          );
+          this.totalMealDetails$ = this._db
+            .getAllMealDetails_Copy()
+            .pipe(
+              map(this._db.getMealDetailByDayWise.bind(this._db)),
+              map(this._db.getMealDetailByWeek.bind(this._db))
             );
-            this.totalMealDetails$ = this._db
-              .getAllMealDetails_Copy()
-              .pipe(
-                map(this._db.getMealDetailByDayWise.bind(this._db)),
-                map(this._db.getMealDetailByWeek.bind(this._db))
-              );
-          }
         }
-      );
+      });
   }
 }

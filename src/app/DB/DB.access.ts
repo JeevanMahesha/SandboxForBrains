@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { App, Credentials, User } from 'realm-web';
 import { environmentValues } from 'src/environment/environment';
 import {
+  IDeletedCount,
   IEachMealDetail,
   IFinalDataList,
   IMeal,
@@ -18,7 +19,7 @@ import {
 } from '../app.model';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Observable, from, map } from 'rxjs';
+import { Observable, from, map, mergeMap, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DbAccess {
@@ -27,7 +28,11 @@ export class DbAccess {
     SimpleObject,
     Realm.DefaultUserProfileData
   > | null = null;
-  constructor(private toaster: ToastrService, private router: Router) {}
+  constructor(private toaster: ToastrService, private router: Router) {
+    if (!this.userDetail) {
+      this.router.navigate(['meal-form']);
+    }
+  }
 
   async deleteOneRecord(_id: string) {
     try {
@@ -64,11 +69,6 @@ export class DbAccess {
       'checkDataExistForToday',
       { mealDate, mealTime }
     );
-  }
-
-  private async deleteAllRecordsFromDb() {
-    const userConnection = await this.getCredentials();
-    return await userConnection.functions.callFunction('deleteAllRecords');
   }
 
   restructureTheData(mealArray: IMeal[]): ITotal[] {
@@ -173,30 +173,6 @@ export class DbAccess {
     return await app.logIn(credentials);
   }
 
-  async deleteAllRecords(): Promise<void> {
-    const allData = await this.getAllRecords();
-    if (!allData.result.length) {
-      this.toaster.info('No Records to Delete');
-      this.router.navigate(['meal-form']);
-      return;
-    }
-    this.deleteAllRecordsFromDb()
-      .then((res) => {
-        if (res.result.deletedCount) {
-          this.toaster.success(
-            `${res.result.deletedCount} records are Deleted Successfully`
-          );
-          this.router.navigate(['meal-form']);
-        }
-      })
-      .catch((error) => {
-        if (error) {
-          console.log(error);
-          this.toaster.error('Something went Wrong');
-        }
-      });
-  }
-
   getCredentials_Copy(): void {
     const app = new App({ id: environmentValues.REALM_APP_ID });
     const credentials = Credentials.apiKey(environmentValues.REALM_API_KEY);
@@ -211,10 +187,32 @@ export class DbAccess {
     ).pipe(map((response) => response.result));
   }
 
-  deleteOneRecord__Copy(_id: string): Observable<{ deletedCount: number }> {
+  deleteOneRecord__Copy(_id: string): Observable<IDeletedCount> {
     return from(
       this.userDetail?.functions.callFunction('deleteOneRecord', _id)!
     ).pipe(map((response) => response.result));
+  }
+
+  deleteAllRecords__Copy() {
+    this.getAllMealDetails_Copy()
+      .pipe(
+        mergeMap((mealDetailRes) => {
+          return mealDetailRes.length
+            ? this.deleteAllRecordsFromDb__Copy()
+            : of(null);
+        })
+      )
+      .subscribe((deleteResp) => {
+        if (deleteResp?.deletedCount) {
+          this.toaster.success(
+            `${deleteResp.deletedCount} records are Deleted Successfully`
+          );
+          this.router.navigate(['meal-form']);
+        } else {
+          this.toaster.info('No Records to Delete');
+          this.router.navigate(['meal-form']);
+        }
+      });
   }
 
   getMealDetailByDayWise(
@@ -311,5 +309,11 @@ export class DbAccess {
       },
       {} as Record<string, IMealsConsumptionDetail[]>
     );
+  }
+
+  private deleteAllRecordsFromDb__Copy(): Observable<IDeletedCount> {
+    return from(
+      this.userDetail?.functions.callFunction('deleteAllRecords')!
+    ).pipe(map((response) => response.result));
   }
 }

@@ -2,16 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { take } from 'rxjs';
+import { mergeMap, of, take } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
-import { MealsConsumed } from '../app.model';
+import { MealsConsumed_Copy } from '../app.model';
 import { DeleteRecordComponent } from '../delete-record/delete-record.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule, MatDialogModule, DeleteRecordComponent],
-  providers: [DbAccess],
   template: `<div class="container-fluid text-center mt-5">
     <div class="row">
       <div class="col-lg-4"></div>
@@ -96,9 +95,9 @@ export class HeaderComponent {
       .open(DeleteRecordComponent, { width: '500px', disableClose: true })
       .afterClosed()
       .pipe(take(1))
-      .subscribe((res: `${MealsConsumed}`) => {
-        if (res === MealsConsumed.Yes) {
-          this._db.deleteAllRecords();
+      .subscribe((res: keyof typeof MealsConsumed_Copy) => {
+        if (res === 'Yes') {
+          this._db.deleteAllRecords__Copy();
         }
       });
   }

@@ -143,3 +143,7 @@ export interface ITotalMealAmountDetail extends Partial<IMealAmountDetail> {
   mealsConsumedUser: string;
   totalMealAmount: number;
 }
+
+export interface IDeletedCount {
+  deletedCount: number;
+}

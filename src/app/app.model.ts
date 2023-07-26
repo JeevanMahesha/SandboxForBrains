@@ -23,7 +23,7 @@ export type ITotal = Omit<IMeal, 'mealsConsumptionArray'> &
 export interface IMeal {
   mealTime: string | null;
   day: string | null;
-  todayDate: Date | null;
+  mealConsumedDate: string | null;
   mealDate: Date | null;
   amountPerMeal: number | null;
   mealsConsumedTotalCount: number | null;
@@ -62,7 +62,7 @@ export interface IMealsConsumptionDetail {
   mealTime: keyof typeof MealTime_Copy;
   day: keyof typeof weekDays;
   mealsConsumedTotalCount: number;
-  todayDate: Date;
+  mealConsumedDate: string;
   amountPerMeal: number;
   mealDate: Date;
   mealsConsumptionArray: IMealsConsumptionArray_Copy[];

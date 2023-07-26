@@ -87,6 +87,8 @@ export class MealFormComponent {
   updateMealDataValue(): void {
     const mealDateControl = this.mealForm.get('mealDate')?.value;
     const dayControl = this.mealForm.get('day');
+    const mealConsumedDateControl = this.mealForm.get('mealConsumedDate');
+    mealConsumedDateControl?.patchValue(mealDateControl?.toLocaleDateString()!);
     dayControl?.patchValue(weekDaysList.at(mealDateControl?.getDay()!)!);
   }
 
@@ -151,7 +153,10 @@ export class MealFormComponent {
         { disabled: true, value: this.userNameList.length },
         [Validators.required, Validators.min(1)]
       ),
-      todayDate: this._fb.control<null | Date>(new Date(), Validators.required),
+      mealConsumedDate: this._fb.control<null | string>(
+        new Date().toLocaleDateString(),
+        Validators.required
+      ),
       amountPerMeal: this._fb.control<null | number>(
         MealCost_Copy.BreakFast,
         Validators.required
@@ -164,37 +169,39 @@ export class MealFormComponent {
     });
   }
 
-  // FIXME need to fix the checkDataExistForToday__Copy
   submitTheForm() {
     this.pageLoading = false;
     const mealFormValue = this.mealForm.getRawValue();
-    const mealDate = mealFormValue.mealDate!;
+    const mealConsumedDate = mealFormValue.mealConsumedDate!;
     const mealTime = mealFormValue.mealTime! as keyof typeof MealTime_Copy;
     this._db
       .checkDataExistForToday__Copy({
-        mealDate,
+        mealConsumedDate,
         mealTime,
       })
-      .subscribe((existDataRes) => {
-        if (existDataRes.length) {
-          this.toastr.error(`${mealTime} is already Updated`);
-          this.pageLoading = false;
-        } else {
-          this._db
-            .insertTheMealDetail__Copy(mealFormValue)
-            .subscribe((insertRes) => {
-              if (insertRes.insertedId) {
-                this.toastr.success(
-                  `${mealTime} on ${mealDate} is saved`,
-                  'Successfully'
-                );
-                this.mealForm = this.constructMealForm;
-                this.pageLoading = false;
-              } else {
-                this.toastr.error('Unable to save the record');
-              }
-            });
-        }
+      .subscribe({
+        next: (existDataRes) => {
+          if (existDataRes.length) {
+            this.toastr.error(`${mealTime} is already Updated`);
+            this.pageLoading = false;
+          } else {
+            this._db
+              .insertTheMealDetail__Copy(mealFormValue)
+              .subscribe((insertRes) => {
+                if (insertRes.insertedId) {
+                  this.toastr.success(
+                    `${mealTime} on ${mealConsumedDate} is saved`,
+                    'Successfully'
+                  );
+                  this.mealForm = this.constructMealForm;
+                  this.pageLoading = false;
+                } else {
+                  this.toastr.error('Unable to save the record');
+                }
+              });
+          }
+        },
+        error: console.log,
       });
   }
 }

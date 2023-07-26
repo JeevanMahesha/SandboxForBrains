@@ -4,7 +4,7 @@ import { MealsConsumed_Copy } from '../app.model';
 export interface IMealForm {
   mealTime: FormControl<string | null>;
   day: FormControl<string | null>;
-  todayDate: FormControl<Date | null>;
+  mealConsumedDate: FormControl<string | null>;
   mealDate: FormControl<Date | null>;
   amountPerMeal: FormControl<number | null>;
   mealsConsumedTotalCount: FormControl<number | null>;

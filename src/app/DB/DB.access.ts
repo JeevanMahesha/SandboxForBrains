@@ -197,14 +197,15 @@ export class DbAccess {
   }
 
   checkDataExistForToday__Copy({
-    mealDate,
+    mealConsumedDate,
     mealTime,
-  }: Pick<IMealsConsumptionDetail, 'mealDate' | 'mealTime'>): Observable<
-    IMealsConsumptionDetail[]
-  > {
+  }: Pick<
+    IMealsConsumptionDetail,
+    'mealConsumedDate' | 'mealTime'
+  >): Observable<IMealsConsumptionDetail[]> {
     return from(
       this.userDetail?.functions.callFunction('checkDataExistForToday', {
-        mealDate,
+        mealConsumedDate,
         mealTime,
       })!
     ).pipe(map((response) => response.result));

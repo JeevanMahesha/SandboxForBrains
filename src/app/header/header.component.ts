@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { mergeMap, of, take } from 'rxjs';
+import { take } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
 import { MealsConsumed_Copy } from '../app.model';
 import { DeleteRecordComponent } from '../delete-record/delete-record.component';

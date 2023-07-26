@@ -4,7 +4,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, map, of, tap } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
 import {
-  IFinalDataList,
   ITotalMealAmountDetail,
   MealCost_Copy,
   MealTime_Copy,
@@ -17,7 +16,6 @@ import { HeaderComponent } from '../header/header.component';
   standalone: true,
   imports: [CommonModule, HeaderComponent, MatProgressSpinnerModule],
   templateUrl: './detail-total.component.html',
-  styleUrls: ['./detail-total.component.css'],
 })
 export class DetailTotalComponent implements OnInit {
   totalMealDetails$: Observable<ITotalMealAmountDetail[] | null> = of(null);

@@ -9,7 +9,7 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { environmentValues } from 'src/environment/environment';
-import { MealsConsumed, MealsConsumed_Copy } from '../app.model';
+import { MealsConsumed_Copy } from '../app.model';
 
 @Component({
   selector: 'app-delete-record',

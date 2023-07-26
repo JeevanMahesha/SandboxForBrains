@@ -1,25 +1,3 @@
-export enum MealTime {
-  BreakFast = 'BreakFast',
-  Dinner = 'Dinner',
-  Lunch = 'Lunch',
-}
-
-export enum MealsConsumed {
-  No = 'no',
-  Yes = 'yes',
-}
-
-export interface IUserObjectData {
-  [key: string]: ITotal[];
-}
-
-export interface IFinalDataList {
-  [k: string]: MealTimeDetail;
-}
-
-export type ITotal = Omit<IMeal, 'mealsConsumptionArray'> &
-  IMealsConsumptionArray;
-
 export interface IMeal {
   mealTime: string | null;
   day: string | null;
@@ -34,27 +12,6 @@ export interface IMeal {
 export interface IMealsConsumptionArray {
   mealsConsumedUser: string | null;
   mealsConsumed: string | null;
-}
-
-export const weekDaysList = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-
-type allDetailEnum = 'allDetail';
-
-export type MealTimeDetail = {
-  [key in MealTime | allDetailEnum]: IEachMealDetail<ITotal[]>;
-};
-
-export interface IEachMealDetail<VL> {
-  total: number;
-  valueList: VL;
 }
 
 export interface IMealsConsumptionDetail {
@@ -126,3 +83,5 @@ export interface IDeletedCount {
 export interface IInsertDetail {
   insertedId: string;
 }
+
+export const weekDaysList = Object.values(weekDays);

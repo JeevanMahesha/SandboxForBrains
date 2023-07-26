@@ -11,6 +11,6 @@ import { DbAccess } from './DB/DB.access';
 export class AppComponent {
   private _db = inject(DbAccess);
   constructor() {
-    this._db.getCredentials_Copy();
+    this._db.getCredentials();
   }
 }

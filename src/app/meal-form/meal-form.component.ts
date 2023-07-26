@@ -15,12 +15,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { DbAccess } from '../DB/DB.access';
-import {
-  MealCost_Copy,
-  MealTime_Copy,
-  MealsConsumed_Copy,
-  weekDaysList,
-} from '../app.model';
+import { MealCost, MealTime, MealsConsumed, weekDaysList } from '../app.model';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
 
@@ -57,8 +52,8 @@ export class MealFormComponent {
     'RajKumar',
     'Suryaraj',
   ];
-  mealTime = Object.values(MealTime_Copy);
-  mealsConsumedOptions = Object.values(MealsConsumed_Copy);
+  mealTime = Object.values(MealTime);
+  mealsConsumedOptions = Object.values(MealsConsumed);
   mealForm: FormGroup<IMealForm>;
   pageLoading = false;
 
@@ -74,12 +69,12 @@ export class MealFormComponent {
     return (this.mealForm.get('mealsConsumptionArray') as FormArray).controls;
   }
 
-  mealTimeChanged(value: keyof typeof MealTime_Copy): void {
+  mealTimeChanged(value: keyof typeof MealTime): void {
     let amountPerMeal = 0;
     if (value === 'BreakFast' || value === 'Dinner') {
-      amountPerMeal = MealCost_Copy.BreakFast;
+      amountPerMeal = MealCost.BreakFast;
     } else {
-      amountPerMeal = MealCost_Copy.Lunch;
+      amountPerMeal = MealCost.Lunch;
     }
     this.mealForm.get('amountPerMeal')?.patchValue(amountPerMeal);
   }
@@ -129,8 +124,8 @@ export class MealFormComponent {
         { value: userName, disabled: true },
         Validators.required
       ),
-      mealsConsumed: this._fb.control<null | keyof typeof MealsConsumed_Copy>(
-        MealsConsumed_Copy.Yes as keyof typeof MealsConsumed_Copy,
+      mealsConsumed: this._fb.control<null | keyof typeof MealsConsumed>(
+        MealsConsumed.Yes as keyof typeof MealsConsumed,
         Validators.required
       ),
     });
@@ -142,7 +137,7 @@ export class MealFormComponent {
     );
     return this._fb.group({
       mealTime: this._fb.control<null | string>(
-        MealTime_Copy.BreakFast,
+        MealTime.BreakFast,
         Validators.required
       ),
       day: this._fb.control<null | string>(
@@ -158,7 +153,7 @@ export class MealFormComponent {
         Validators.required
       ),
       amountPerMeal: this._fb.control<null | number>(
-        MealCost_Copy.BreakFast,
+        MealCost.BreakFast,
         Validators.required
       ),
       mealDate: this._fb.control<null | Date>(new Date(), Validators.required),
@@ -173,7 +168,7 @@ export class MealFormComponent {
     this.pageLoading = false;
     const mealFormValue = this.mealForm.getRawValue();
     const mealConsumedDate = mealFormValue.mealConsumedDate!;
-    const mealTime = mealFormValue.mealTime! as keyof typeof MealTime_Copy;
+    const mealTime = mealFormValue.mealTime! as keyof typeof MealTime;
     this._db
       .checkDataExistForToday__Copy({
         mealConsumedDate,
@@ -186,7 +181,7 @@ export class MealFormComponent {
             this.pageLoading = false;
           } else {
             this._db
-              .insertTheMealDetail__Copy(mealFormValue)
+              .insertTheMealDetail(mealFormValue)
               .subscribe((insertRes) => {
                 if (insertRes.insertedId) {
                   this.toastr.success(

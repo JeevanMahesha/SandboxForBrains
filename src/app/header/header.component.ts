@@ -4,7 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
-import { MealsConsumed_Copy } from '../app.model';
+import { MealsConsumed } from '../app.model';
 import { DeleteRecordComponent } from '../delete-record/delete-record.component';
 
 @Component({
@@ -95,9 +95,9 @@ export class HeaderComponent {
       .open(DeleteRecordComponent, { width: '500px', disableClose: true })
       .afterClosed()
       .pipe(take(1))
-      .subscribe((res: keyof typeof MealsConsumed_Copy) => {
+      .subscribe((res: keyof typeof MealsConsumed) => {
         if (res === 'Yes') {
-          this._db.deleteAllRecords__Copy();
+          this._db.deleteAllRecords();
         }
       });
   }

@@ -5,8 +5,8 @@ import { Observable, map, of, tap } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
 import {
   ITotalMealAmountDetail,
-  MealCost_Copy,
-  MealTime_Copy,
+  MealCost,
+  MealTime,
   mealConsumptionDetailsWithUser,
 } from '../app.model';
 import { HeaderComponent } from '../header/header.component';
@@ -23,7 +23,7 @@ export class DetailTotalComponent implements OnInit {
   private _db = inject(DbAccess);
 
   ngOnInit(): void {
-    this.totalMealDetails$ = this._db.getAllMealDetails_Copy().pipe(
+    this.totalMealDetails$ = this._db.getAllMealDetails().pipe(
       map(this._db.filterMealConsumedUserAndFlatValue.bind(this._db)),
       map(
         this._db.filterMealsConsumptionByKey.bind(this._db, 'mealsConsumedUser')
@@ -73,13 +73,12 @@ export class DetailTotalComponent implements OnInit {
     return Object.entries(mealDetail).reduce(
       (pre, [mealTime, mealsConsumedDetail]) => {
         switch (mealTime) {
-          case MealTime_Copy.BreakFast:
-          case MealTime_Copy.Dinner:
-            pre[mealTime] =
-              mealsConsumedDetail.length * MealCost_Copy.BreakFast;
+          case MealTime.BreakFast:
+          case MealTime.Dinner:
+            pre[mealTime] = mealsConsumedDetail.length * MealCost.BreakFast;
             break;
-          case MealTime_Copy.Lunch:
-            pre[mealTime] = mealsConsumedDetail.length * MealCost_Copy.Dinner;
+          case MealTime.Lunch:
+            pre[mealTime] = mealsConsumedDetail.length * MealCost.Dinner;
             break;
         }
         return pre;

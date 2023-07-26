@@ -7,7 +7,7 @@ import { Observable, map, mergeMap, of, take, tap } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
 import {
   IDeletedCount,
-  MealsConsumed_Copy,
+  MealsConsumed,
   mealConsumptionDetailsWithUser,
   mealDetailByWeekWise,
 } from '../app.model';
@@ -35,7 +35,7 @@ export class AllMealRecordsComponent {
 
   ngOnInit(): void {
     this.totalMealDetails$ = this._db
-      .getAllMealDetails_Copy()
+      .getAllMealDetails()
       .pipe(
         map(this._db.getMealDetailByDayWise.bind(this._db)),
         map(this._db.getMealDetailByWeek.bind(this._db))
@@ -48,9 +48,9 @@ export class AllMealRecordsComponent {
       .afterClosed()
       .pipe(
         take(1),
-        mergeMap((deleteActionRes: keyof typeof MealsConsumed_Copy) => {
+        mergeMap((deleteActionRes: keyof typeof MealsConsumed) => {
           return deleteActionRes === 'Yes'
-            ? this._db.deleteOneRecord__Copy(mealDetail._id!)
+            ? this._db.deleteOneRecord(mealDetail._id!)
             : of(null);
         })
       )
@@ -61,7 +61,7 @@ export class AllMealRecordsComponent {
                   ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
           );
           this.totalMealDetails$ = this._db
-            .getAllMealDetails_Copy()
+            .getAllMealDetails()
             .pipe(
               map(this._db.getMealDetailByDayWise.bind(this._db)),
               map(this._db.getMealDetailByWeek.bind(this._db))

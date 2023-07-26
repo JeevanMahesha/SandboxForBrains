@@ -1,5 +1,5 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { MealsConsumed_Copy } from '../app.model';
+import { MealsConsumed } from '../app.model';
 
 export interface IMealForm {
   mealTime: FormControl<string | null>;
@@ -13,5 +13,5 @@ export interface IMealForm {
 
 export interface IMealsConsumptionArrayForm {
   mealsConsumedUser: FormControl<null | string>;
-  mealsConsumed: FormControl<null | keyof typeof MealsConsumed_Copy>;
+  mealsConsumed: FormControl<null | keyof typeof MealsConsumed>;
 }

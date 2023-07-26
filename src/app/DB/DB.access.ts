@@ -28,7 +28,7 @@ export class DbAccess {
     }
   }
 
-  getCredentials_Copy(): void {
+  getCredentials(): void {
     const app = new App({ id: environmentValues.REALM_APP_ID });
     const credentials = Credentials.apiKey(environmentValues.REALM_API_KEY);
     app
@@ -36,19 +36,19 @@ export class DbAccess {
       .then((userResponse) => (this.userDetail = userResponse));
   }
 
-  getAllMealDetails_Copy(): Observable<IMealsConsumptionDetail[]> {
+  getAllMealDetails(): Observable<IMealsConsumptionDetail[]> {
     return from(
       this.userDetail?.functions.callFunction('getAllMealDetails')!
     ).pipe(map((response) => response.result));
   }
 
-  deleteOneRecord__Copy(_id: string): Observable<IDeletedCount> {
+  deleteOneRecord(_id: string): Observable<IDeletedCount> {
     return from(
       this.userDetail?.functions.callFunction('deleteOneRecord', _id)!
     ).pipe(map((response) => response.result));
   }
 
-  insertTheMealDetail__Copy(data: IMeal): Observable<IInsertDetail> {
+  insertTheMealDetail(data: IMeal): Observable<IInsertDetail> {
     return from(
       this.userDetail?.functions.callFunction('insertTheMealDetail', data)!
     ).pipe(map((response) => response.result));
@@ -69,12 +69,12 @@ export class DbAccess {
     ).pipe(map((response) => response.result));
   }
 
-  deleteAllRecords__Copy() {
-    this.getAllMealDetails_Copy()
+  deleteAllRecords() {
+    this.getAllMealDetails()
       .pipe(
         mergeMap((mealDetailRes) => {
           return mealDetailRes.length
-            ? this.deleteAllRecordsFromDb__Copy()
+            ? this.deleteAllRecordsFromDb()
             : of(null);
         })
       )
@@ -195,7 +195,7 @@ export class DbAccess {
     );
   }
 
-  private deleteAllRecordsFromDb__Copy(): Observable<IDeletedCount> {
+  private deleteAllRecordsFromDb(): Observable<IDeletedCount> {
     return from(
       this.userDetail?.functions.callFunction('deleteAllRecords')!
     ).pipe(map((response) => response.result));

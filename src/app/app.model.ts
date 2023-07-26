@@ -5,32 +5,32 @@ export interface IMeal {
   mealDate: Date | null;
   amountPerMeal: number | null;
   mealsConsumedTotalCount: number | null;
-  mealsConsumptionArray: IMealsConsumptionArray[];
+  mealsConsumptionArray: IMealsConsumptionValue[];
   _id?: string;
 }
 
-export interface IMealsConsumptionArray {
+export interface IMealsConsumptionValue {
   mealsConsumedUser: string | null;
   mealsConsumed: string | null;
 }
 
 export interface IMealsConsumptionDetail {
   _id?: string;
-  mealTime: keyof typeof MealTime_Copy;
+  mealTime: keyof typeof MealTime;
   day: keyof typeof weekDays;
   mealsConsumedTotalCount: number;
   mealConsumedDate: string;
   amountPerMeal: number;
   mealDate: Date;
-  mealsConsumptionArray: IMealsConsumptionArray_Copy[];
+  mealsConsumptionArray: IMealsConsumptionArray[];
 }
 
-export interface IMealsConsumptionArray_Copy {
+export interface IMealsConsumptionArray {
   mealsConsumedUser: string;
-  mealsConsumed: keyof typeof MealsConsumed_Copy;
+  mealsConsumed: keyof typeof MealsConsumed;
 }
 
-export const MealsConsumed_Copy = {
+export const MealsConsumed = {
   Yes: 'Yes',
   No: 'No',
 };
@@ -53,22 +53,22 @@ export type mealDetailByWeekWise = {
 
 export interface mealConsumptionDetailsWithUser
   extends IMealsConsumptionDetail,
-    IMealsConsumptionArray_Copy {}
+    IMealsConsumptionArray {}
 
-export const MealTime_Copy = {
+export const MealTime = {
   BreakFast: 'BreakFast',
   Dinner: 'Dinner',
   Lunch: 'Lunch',
 };
 
-export const MealCost_Copy = {
+export const MealCost = {
   BreakFast: 40,
   Dinner: 40,
   Lunch: 60,
 };
 
 export type IMealAmountDetail = {
-  [k in keyof typeof MealTime_Copy]: number;
+  [k in keyof typeof MealTime]: number;
 };
 
 export interface ITotalMealAmountDetail extends Partial<IMealAmountDetail> {

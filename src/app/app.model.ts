@@ -1,5 +1,3 @@
-import { MatDateFormats } from '@angular/material/core';
-
 export enum MealTime {
   BreakFast = 'BreakFast',
   Dinner = 'Dinner',
@@ -24,17 +22,18 @@ export type ITotal = Omit<IMeal, 'mealsConsumptionArray'> &
 
 export interface IMeal {
   mealTime: string | null;
-  todayDate: Date | null;
   day: string | null;
-  mealDate: string | null;
-  mealsConsumptionArray: IMealsConsumptionArray[];
+  todayDate: Date | null;
+  mealDate: Date | null;
   amountPerMeal: number | null;
+  mealsConsumedTotalCount: number | null;
+  mealsConsumptionArray: IMealsConsumptionArray[];
   _id?: string;
 }
 
 export interface IMealsConsumptionArray {
-  mealsConsumedUser: string;
-  mealsConsumed: string;
+  mealsConsumedUser: string | null;
+  mealsConsumed: string | null;
 }
 
 export const weekDaysList = [
@@ -59,13 +58,13 @@ export interface IEachMealDetail<VL> {
 }
 
 export interface IMealsConsumptionDetail {
-  _id: string;
-  mealTime: string;
+  _id?: string;
+  mealTime: keyof typeof MealTime_Copy;
   day: keyof typeof weekDays;
   mealsConsumedTotalCount: number;
   todayDate: Date;
   amountPerMeal: number;
-  mealDate: string;
+  mealDate: Date;
   mealsConsumptionArray: IMealsConsumptionArray_Copy[];
 }
 
@@ -95,30 +94,6 @@ export type mealDetailByWeekWise = {
   [key in string]: Record<string, mealConsumptionDetailsWithUser[]>;
 };
 
-export const MY_DATE_FORMATS: MatDateFormats = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
-
-export const MY_FORMATS = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'DD/MM/YYYY',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
-
 export interface mealConsumptionDetailsWithUser
   extends IMealsConsumptionDetail,
     IMealsConsumptionArray_Copy {}
@@ -146,4 +121,8 @@ export interface ITotalMealAmountDetail extends Partial<IMealAmountDetail> {
 
 export interface IDeletedCount {
   deletedCount: number;
+}
+
+export interface IInsertDetail {
+  insertedId: string;
 }

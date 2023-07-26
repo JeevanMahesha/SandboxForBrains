@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MAT_DATE_FORMATS, MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -16,8 +16,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { DbAccess } from '../DB/DB.access';
 import {
-  MY_FORMATS,
-  MealTime,
+  MealCost_Copy,
+  MealTime_Copy,
   MealsConsumed_Copy,
   weekDaysList,
 } from '../app.model';
@@ -38,7 +38,6 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
     HeaderComponent,
     MatProgressSpinnerModule,
   ],
-  providers: [{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
   templateUrl: './meal-form.component.html',
   styles: [
     `
@@ -58,7 +57,7 @@ export class MealFormComponent {
     'RajKumar',
     'Suryaraj',
   ];
-  mealTime = ['BreakFast', 'Lunch', 'Dinner'];
+  mealTime = Object.values(MealTime_Copy);
   mealsConsumedOptions = Object.values(MealsConsumed_Copy);
   mealForm: FormGroup<IMealForm>;
   pageLoading = false;
@@ -75,22 +74,20 @@ export class MealFormComponent {
     return (this.mealForm.get('mealsConsumptionArray') as FormArray).controls;
   }
 
-  mealTimeChanged(value: MealTime): void {
+  mealTimeChanged(value: keyof typeof MealTime_Copy): void {
     let amountPerMeal = 0;
-    if (value === MealTime.BreakFast || value === MealTime.Dinner) {
-      amountPerMeal = 40;
+    if (value === 'BreakFast' || value === 'Dinner') {
+      amountPerMeal = MealCost_Copy.BreakFast;
     } else {
-      amountPerMeal = 60;
+      amountPerMeal = MealCost_Copy.Lunch;
     }
     this.mealForm.get('amountPerMeal')?.patchValue(amountPerMeal);
   }
 
   updateMealDataValue(): void {
-    const { todayDate } = this.mealForm.value;
-    const mealDateControl = this.mealForm.get('mealDate');
+    const mealDateControl = this.mealForm.get('mealDate')?.value;
     const dayControl = this.mealForm.get('day');
-    dayControl?.patchValue(weekDaysList.at(todayDate?.getDay()!)!);
-    // mealDateControl?.patchValue(todayDate?.toLocaleDateString()!);
+    dayControl?.patchValue(weekDaysList.at(mealDateControl?.getDay()!)!);
   }
 
   mealsConsumedValueChanged(): void {
@@ -143,7 +140,7 @@ export class MealFormComponent {
     );
     return this._fb.group({
       mealTime: this._fb.control<null | string>(
-        this.mealTime[0],
+        MealTime_Copy.BreakFast,
         Validators.required
       ),
       day: this._fb.control<null | string>(
@@ -155,7 +152,10 @@ export class MealFormComponent {
         [Validators.required, Validators.min(1)]
       ),
       todayDate: this._fb.control<null | Date>(new Date(), Validators.required),
-      amountPerMeal: this._fb.control<null | number>(40, Validators.required),
+      amountPerMeal: this._fb.control<null | number>(
+        MealCost_Copy.BreakFast,
+        Validators.required
+      ),
       mealDate: this._fb.control<null | Date>(new Date(), Validators.required),
       mealsConsumptionArray: this._fb.array(
         mealsConsumptionArray,
@@ -164,38 +164,36 @@ export class MealFormComponent {
     });
   }
 
-  async submitTheForm(): Promise<void> {
-    this.pageLoading = true;
-    this.mealForm.enable();
-    const mealFormValue = this.mealForm.value;
-    const { mealDate = null, mealTime = null } = mealFormValue;
-    // const dataExist = await this._db.checkDataExistForToday({
-    //   mealDate,
-    //   mealTime,
-    // });
-    // if (dataExist.result.length) {
-    //   this.toastr.error(`${mealTime} is already Updated`);
-    //   this.pageLoading = false;
-    //   this.mealForm = this.constructMealForm;
-    //   return;
-    // }
+  // FIXME need to fix the checkDataExistForToday__Copy
+  submitTheForm() {
+    this.pageLoading = false;
+    const mealFormValue = this.mealForm.getRawValue();
+    const mealDate = mealFormValue.mealDate!;
+    const mealTime = mealFormValue.mealTime! as keyof typeof MealTime_Copy;
     this._db
-      .insertTheMealDetail(mealFormValue)
-      .then((res) => {
-        if (res.result.insertedId) {
-          this.toastr.success(
-            `${mealTime} on ${mealDate} is saved`,
-            'Successfully'
-          );
-          this.mealForm = this.constructMealForm;
+      .checkDataExistForToday__Copy({
+        mealDate,
+        mealTime,
+      })
+      .subscribe((existDataRes) => {
+        if (existDataRes.length) {
+          this.toastr.error(`${mealTime} is already Updated`);
           this.pageLoading = false;
         } else {
-          this.toastr.error('Unable to save the record');
-        }
-      })
-      .catch((error) => {
-        if (error) {
-          console.log(error);
+          this._db
+            .insertTheMealDetail__Copy(mealFormValue)
+            .subscribe((insertRes) => {
+              if (insertRes.insertedId) {
+                this.toastr.success(
+                  `${mealTime} on ${mealDate} is saved`,
+                  'Successfully'
+                );
+                this.mealForm = this.constructMealForm;
+                this.pageLoading = false;
+              } else {
+                this.toastr.error('Unable to save the record');
+              }
+            });
         }
       });
   }

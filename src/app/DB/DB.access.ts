@@ -1,25 +1,23 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { App, Credentials, User } from 'realm-web';
+import { Observable, from, map, mergeMap, of } from 'rxjs';
 import { environmentValues } from 'src/environment/environment';
 import {
   IDeletedCount,
   IEachMealDetail,
-  IFinalDataList,
+  IInsertDetail,
   IMeal,
   IMealsConsumptionDetail,
   ITotal,
-  IUserObjectData,
+  MealTime,
+  MealsConsumed,
   mealConsumptionDetailsWithUser,
   mealDetailByDayWise,
   mealDetailByWeekWise,
-  MealsConsumed,
-  MealTime,
-  MealTimeDetail,
   weekDays,
 } from '../app.model';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
-import { Observable, from, map, mergeMap, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DbAccess {
@@ -71,76 +69,76 @@ export class DbAccess {
     );
   }
 
-  restructureTheData(mealArray: IMeal[]): ITotal[] {
-    const totalMealDetails: ITotal[] = [];
-    mealArray.forEach(
-      ({
-        mealDate,
-        mealTime,
-        mealsConsumptionArray,
-        day,
-        amountPerMeal,
-        todayDate,
-        _id,
-      }) => {
-        const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
-          ...eachUser,
-          mealDate,
-          mealTime,
-          day,
-          amountPerMeal,
-          todayDate,
-          _id,
-        }));
-        totalMealDetails.push(...totalEachDate);
-      }
-    );
-    return totalMealDetails;
-  }
+  // restructureTheData(mealArray: IMeal[]): ITotal[] {
+  //   const totalMealDetails: ITotal[] = [];
+  //   mealArray.forEach(
+  //     ({
+  //       mealDate,
+  //       mealTime,
+  //       mealsConsumptionArray,
+  //       day,
+  //       amountPerMeal,
+  //       todayDate,
+  //       _id,
+  //     }) => {
+  //       const totalEachDate = mealsConsumptionArray.map((eachUser) => ({
+  //         ...eachUser,
+  //         mealDate,
+  //         mealTime,
+  //         day,
+  //         amountPerMeal,
+  //         todayDate,
+  //         _id,
+  //       }));
+  //       totalMealDetails.push(...totalEachDate);
+  //     }
+  //   );
+  //   return totalMealDetails;
+  // }
 
-  restructureDataAsObject(mealData: ITotal[]): IFinalDataList {
-    const userData: IUserObjectData = {};
-    const userDataFinal: IFinalDataList = {};
-    mealData.forEach((eachData) => {
-      if (userData.hasOwnProperty(eachData.mealsConsumedUser)) {
-        userData[eachData.mealsConsumedUser].push(eachData);
-      } else {
-        userData[eachData.mealsConsumedUser] = [eachData];
-      }
-    });
-    Object.entries(userData).forEach(([key, value]) => {
-      const tempObj: MealTimeDetail = {
-        [MealTime.BreakFast]: {
-          total: 0,
-          valueList: [],
-        },
-        [MealTime.Dinner]: {
-          total: 0,
-          valueList: [],
-        },
-        [MealTime.Lunch]: {
-          total: 0,
-          valueList: [],
-        },
-        allDetail: {
-          total: 0,
-          valueList: [],
-        },
-      };
-      tempObj.BreakFast = this.getSpecificMealList(value, MealTime.BreakFast);
-      tempObj.Lunch = this.getSpecificMealList(value, MealTime.Lunch);
-      tempObj.Dinner = this.getSpecificMealList(value, MealTime.Dinner);
-      tempObj.allDetail.valueList = value.sort(
-        (a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!
-      );
+  // restructureDataAsObject(mealData: ITotal[]): IFinalDataList {
+  //   const userData: IUserObjectData = {};
+  //   const userDataFinal: IFinalDataList = {};
+  //   mealData.forEach((eachData) => {
+  //     if (userData.hasOwnProperty(eachData.mealsConsumedUser)) {
+  //       userData[eachData.mealsConsumedUser].push(eachData);
+  //     } else {
+  //       userData[eachData.mealsConsumedUser] = [eachData];
+  //     }
+  //   });
+  //   Object.entries(userData).forEach(([key, value]) => {
+  //     const tempObj: MealTimeDetail = {
+  //       [MealTime.BreakFast]: {
+  //         total: 0,
+  //         valueList: [],
+  //       },
+  //       [MealTime.Dinner]: {
+  //         total: 0,
+  //         valueList: [],
+  //       },
+  //       [MealTime.Lunch]: {
+  //         total: 0,
+  //         valueList: [],
+  //       },
+  //       allDetail: {
+  //         total: 0,
+  //         valueList: [],
+  //       },
+  //     };
+  //     tempObj.BreakFast = this.getSpecificMealList(value, MealTime.BreakFast);
+  //     tempObj.Lunch = this.getSpecificMealList(value, MealTime.Lunch);
+  //     tempObj.Dinner = this.getSpecificMealList(value, MealTime.Dinner);
+  //     // tempObj.allDetail.valueList = value.sort(
+  //     //   (a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!
+  //     // );
 
-      userDataFinal[key] = {
-        ...tempObj,
-      };
-    });
+  //     userDataFinal[key] = {
+  //       ...tempObj,
+  //     };
+  //   });
 
-    return userDataFinal;
-  }
+  //   return userDataFinal;
+  // }
 
   private getSpecificMealList(
     mealValueList: ITotal[],
@@ -150,13 +148,12 @@ export class DbAccess {
       total: 0,
       valueList: [],
     };
-    tempObj.valueList = mealValueList
-      .filter(
-        (eachMealValue) =>
-          eachMealValue.mealTime === MealTime[mealTime] &&
-          eachMealValue.mealsConsumed === MealsConsumed.Yes
-      )
-      .sort((a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!);
+    tempObj.valueList = mealValueList.filter(
+      (eachMealValue) =>
+        eachMealValue.mealTime === MealTime[mealTime] &&
+        eachMealValue.mealsConsumed === MealsConsumed.Yes
+    );
+    // .sort((a, b) => a.todayDate?.getUTCDate()! - b.todayDate?.getUTCDate()!);
     tempObj.total =
       tempObj.valueList
         .map(({ amountPerMeal }) => amountPerMeal)
@@ -190,6 +187,26 @@ export class DbAccess {
   deleteOneRecord__Copy(_id: string): Observable<IDeletedCount> {
     return from(
       this.userDetail?.functions.callFunction('deleteOneRecord', _id)!
+    ).pipe(map((response) => response.result));
+  }
+
+  insertTheMealDetail__Copy(data: IMeal): Observable<IInsertDetail> {
+    return from(
+      this.userDetail?.functions.callFunction('insertTheMealDetail', data)!
+    ).pipe(map((response) => response.result));
+  }
+
+  checkDataExistForToday__Copy({
+    mealDate,
+    mealTime,
+  }: Pick<IMealsConsumptionDetail, 'mealDate' | 'mealTime'>): Observable<
+    IMealsConsumptionDetail[]
+  > {
+    return from(
+      this.userDetail?.functions.callFunction('checkDataExistForToday', {
+        mealDate,
+        mealTime,
+      })!
     ).pipe(map((response) => response.result));
   }
 

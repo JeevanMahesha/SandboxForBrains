@@ -52,7 +52,7 @@ export class AllMealRecordsComponent {
         take(1),
         mergeMap((deleteActionRes: keyof typeof MealsConsumed_Copy) => {
           return deleteActionRes === 'Yes'
-            ? this._db.deleteOneRecord__Copy(mealDetail._id)
+            ? this._db.deleteOneRecord__Copy(mealDetail._id!)
             : of(null);
         })
       )

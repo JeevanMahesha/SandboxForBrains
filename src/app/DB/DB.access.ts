@@ -211,6 +211,12 @@ export class DbAccess {
     ).pipe(map((response) => response.result));
   }
 
+  deleteOneRecord__Copy(_id: string): Observable<{ deletedCount: number }> {
+    return from(
+      this.userDetail?.functions.callFunction('deleteOneRecord', _id)!
+    ).pipe(map((response) => response.result));
+  }
+
   getMealDetailByDayWise(
     mealConsumptionDetails: IMealsConsumptionDetail[]
   ): mealDetailByDayWise {

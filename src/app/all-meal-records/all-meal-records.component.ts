@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, map, mergeMap, of, take } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
-import { MealsConsumed, mealDetailByWeekWise } from '../app.model';
+import {
+  MealsConsumed_Copy,
+  mealConsumptionDetailsWithUser,
+  mealDetailByWeekWise,
+} from '../app.model';
 import { DeleteRecordComponent } from '../delete-record/delete-record.component';
 import { HeaderComponent } from '../header/header.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Observable, map, of, take, tap } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-all-meal-records',
@@ -39,25 +43,37 @@ export class AllMealRecordsComponent {
       );
   }
 
-  deleteRecord(mealDetail: any): void {
-    // this.dialog
-    //   .open(DeleteRecordComponent, { width: '400px', disableClose: true })
-    //   .afterClosed()
-    //   .pipe(take(1))
-    //   .subscribe((res: `${MealsConsumed}`) => {
-    //     if (res === MealsConsumed.Yes) {
-    //       this._db.deleteOneRecord(mealDetail._id!).then((res) => {
-    //         if (res.result.deletedCount) {
-    //           this.toaster.success(
-    //             `Record Deleted successfully.
-    //             ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
-    //           );
-    //           // this.getAllData();
-    //         } else {
-    //           console.log(res);
-    //         }
-    //       });
-    //     }
-    //   });
+  deleteRecord(mealDetail: mealConsumptionDetailsWithUser): void {
+    this.dialog
+      .open(DeleteRecordComponent, { width: '400px', disableClose: true })
+      .afterClosed()
+      .pipe(
+        take(1),
+        mergeMap((deleteActionRes: keyof typeof MealsConsumed_Copy) => {
+          return deleteActionRes === 'Yes'
+            ? this._db.deleteOneRecord__Copy(mealDetail._id)
+            : of(null);
+        })
+      )
+      .subscribe(
+        (
+          res: {
+            deletedCount: number;
+          } | null
+        ) => {
+          if (res?.deletedCount) {
+            this.toaster.success(
+              `Record Deleted successfully.
+                  ${mealDetail.mealDate} - ${mealDetail.day} - ${mealDetail.mealTime}`
+            );
+            this.totalMealDetails$ = this._db
+              .getAllMealDetails_Copy()
+              .pipe(
+                map(this._db.getMealDetailByDayWise.bind(this._db)),
+                map(this._db.getMealDetailByWeek.bind(this._db))
+              );
+          }
+        }
+      );
   }
 }

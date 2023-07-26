@@ -1,39 +1,92 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { IFinalDataList, ITotal, MealTimeDetail } from '../app.model';
+import { Observable, map, of, tap } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
+import {
+  IFinalDataList,
+  ITotalMealAmountDetail,
+  MealCost_Copy,
+  MealTime_Copy,
+  mealConsumptionDetailsWithUser,
+} from '../app.model';
 import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-detail-total',
   standalone: true,
   imports: [CommonModule, HeaderComponent, MatProgressSpinnerModule],
-  providers: [DbAccess],
   templateUrl: './detail-total.component.html',
   styleUrls: ['./detail-total.component.css'],
 })
 export class DetailTotalComponent implements OnInit {
-  totalMealDetails: ITotal[] = [];
-  pageLoading = true;
-  userObjectData: IFinalDataList = {};
-  constructor(private _db: DbAccess) {}
+  totalMealDetails$: Observable<ITotalMealAmountDetail[] | null> = of(null);
+  totalAmount: number | null = 0;
+  private _db = inject(DbAccess);
 
-  async ngOnInit(): Promise<void> {
-    const allData = await this._db.getAllRecords();
-    this.totalMealDetails = this._db.restructureTheData(allData.result);
-    this.userObjectData = this._db.restructureDataAsObject(
-      this.totalMealDetails
+  ngOnInit(): void {
+    this.totalMealDetails$ = this._db.getAllMealDetails_Copy().pipe(
+      map(this._db.filterMealConsumedUserAndFlatValue.bind(this._db)),
+      map(
+        this._db.filterMealsConsumptionByKey.bind(this._db, 'mealsConsumedUser')
+      ),
+      map((mealDetail) => {
+        return Object.entries(mealDetail).reduce(
+          (pre, [userName, mealDetail]) => {
+            const value = this._db.filterMealsConsumptionByKey(
+              'mealTime',
+              mealDetail
+            );
+            const totalMealTimeAmount = this.getTotalAmountForMealTime(value);
+
+            pre[userName] = { ...totalMealTimeAmount };
+            return pre;
+          },
+          {} as Record<string, Record<string, number>>
+        );
+      }),
+      map((totalMealAmountDetailByUser) => {
+        return Object.entries(totalMealAmountDetailByUser).map(
+          ([key, value]) => {
+            const totalMealAmount = Object.values(value).reduce(
+              (accumulator, currentValue) => accumulator + currentValue,
+              0
+            );
+            const dataValue = {
+              ...value,
+              mealsConsumedUser: key,
+              totalMealAmount,
+            };
+            return dataValue;
+          }
+        );
+      }),
+      tap((mealDetail) => {
+        this.totalAmount = mealDetail
+          .map((each) => each.totalMealAmount)
+          .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+      })
     );
-    this.pageLoading = false;
   }
 
-  getGrandTotalAmount(allMealDetail: MealTimeDetail): number {
-    return Object.values(allMealDetail)
-      .map(({ total }) => total)
-      .reduce(
-        (previousValue, currentValue) => currentValue! + previousValue!,
-        0
-      );
+  private getTotalAmountForMealTime(
+    mealDetail: Record<string, mealConsumptionDetailsWithUser[]>
+  ): Record<string, number> {
+    return Object.entries(mealDetail).reduce(
+      (pre, [mealTime, mealsConsumedDetail]) => {
+        switch (mealTime) {
+          case MealTime_Copy.BreakFast:
+          case MealTime_Copy.Dinner:
+            pre[mealTime] =
+              mealsConsumedDetail.length * MealCost_Copy.BreakFast;
+            break;
+          case MealTime_Copy.Lunch:
+            pre[mealTime] = mealsConsumedDetail.length * MealCost_Copy.Dinner;
+            break;
+        }
+        return pre;
+      },
+      {} as Record<string, number>
+    );
   }
 }

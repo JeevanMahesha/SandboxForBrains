@@ -239,22 +239,49 @@ export class DbAccess {
     );
   }
 
+  filterMealConsumedUserAndFlatValue(
+    mealValue: IMealsConsumptionDetail[]
+  ): mealConsumptionDetailsWithUser[] {
+    return mealValue
+      .map((eachMealValue) => {
+        const mealsConsumptionArray = eachMealValue.mealsConsumptionArray
+          .filter((eachUser) => eachUser.mealsConsumed === 'Yes')
+          .map((eachUserDetail) => ({
+            ...eachMealValue,
+            ...eachUserDetail,
+          }));
+        return mealsConsumptionArray;
+      })
+      .flat();
+  }
+
+  filterMealsConsumptionByKey(
+    keyValue: keyof mealConsumptionDetailsWithUser,
+    mealsConsumptionDetail: mealConsumptionDetailsWithUser[]
+  ): Record<string, mealConsumptionDetailsWithUser[]> {
+    return mealsConsumptionDetail.reduce(
+      (
+        per: Record<string, mealConsumptionDetailsWithUser[]>,
+        cur: mealConsumptionDetailsWithUser
+      ) => {
+        const propKey = cur[keyValue] as string;
+        if (per.hasOwnProperty(propKey)) {
+          per[propKey].push(cur);
+        } else {
+          per[propKey] = [cur];
+        }
+        return per;
+      },
+      {} as Record<string, mealConsumptionDetailsWithUser[]>
+    );
+  }
+
   private filterMealDetailByUser(
     mealsConsumptionDetail: Record<string, IMealsConsumptionDetail[]>
   ): Record<string, mealConsumptionDetailsWithUser[]> {
     return Object.entries(mealsConsumptionDetail).reduce(
       (pre, [key, value]) => {
-        pre[key] = value
-          .map((eachMealValue) => {
-            const mealsConsumptionArray = eachMealValue.mealsConsumptionArray
-              .filter((eachUser) => eachUser.mealsConsumed === 'Yes')
-              .map((eachUserDetail) => ({
-                ...eachMealValue,
-                ...eachUserDetail,
-              }));
-            return mealsConsumptionArray;
-          })
-          .flat();
+        pre[key] = this.filterMealConsumedUserAndFlatValue(value);
         return pre;
       },
       {} as Record<string, mealConsumptionDetailsWithUser[]>

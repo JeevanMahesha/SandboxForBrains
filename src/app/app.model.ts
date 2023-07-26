@@ -122,3 +122,24 @@ export const MY_FORMATS = {
 export interface mealConsumptionDetailsWithUser
   extends IMealsConsumptionDetail,
     IMealsConsumptionArray_Copy {}
+
+export const MealTime_Copy = {
+  BreakFast: 'BreakFast',
+  Dinner: 'Dinner',
+  Lunch: 'Lunch',
+};
+
+export const MealCost_Copy = {
+  BreakFast: 40,
+  Dinner: 40,
+  Lunch: 60,
+};
+
+export type IMealAmountDetail = {
+  [k in keyof typeof MealTime_Copy]: number;
+};
+
+export interface ITotalMealAmountDetail extends Partial<IMealAmountDetail> {
+  mealsConsumedUser: string;
+  totalMealAmount: number;
+}

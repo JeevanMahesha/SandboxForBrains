@@ -23,7 +23,9 @@
           aria-expanded="false"
           aria-controls="collapseOne"
         >
-          {{ weekMealDetail.key }}
+          {{ weekMealDetail.key.split("$").at(0) }}
+          &nbsp; &nbsp;
+          {{ weekMealDetail.key.split("$").at(1) }}
         </a>
       </h2>
       <div
@@ -68,10 +70,6 @@
                       <tr class="table-info">
                         <th>#</th>
                         <th>Name</th>
-                        <th>Date</th>
-                        <th>meal Consumed Status</th>
-                        <th>per meal amount</th>
-                        <th>Delete Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -83,25 +81,13 @@
                       >
                         <th scope="row">{{ ind + 1 }}</th>
                         <td>{{ eachDetail.mealsConsumedUser }}</td>
-                        <td>{{ eachDetail.mealDate | date }}</td>
-
-                        <td>
-                          <img
-                            class="text-success-emphasis"
-                            src="../../assets/{{
-                              eachDetail.mealsConsumed.toLocaleLowerCase()
-                            }}.svg"
-                            [alt]="
-                              eachDetail.mealsConsumedUser + eachDetail.mealDate
-                            "
-                          />
-                        </td>
-                        <td>{{ eachDetail.amountPerMeal }}</td>
-                        <td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
                           <Button
                             class="btn btn-danger"
-                            (click)="deleteRecord(eachDetail)"
-                            >X</Button
+                            (click)="deleteRecord(mealTimeDetail.value.at(0)!)"
+                            >Delete {{ mealTimeDetail.key }} Records</Button
                           >
                         </td>
                       </tr>

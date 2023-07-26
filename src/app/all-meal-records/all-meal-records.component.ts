@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, map, mergeMap, of, take } from 'rxjs';
+import { Observable, map, mergeMap, of, take, tap } from 'rxjs';
 import { DbAccess } from '../DB/DB.access';
 import {
   IDeletedCount,

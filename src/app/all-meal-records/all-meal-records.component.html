@@ -1,11 +1,9 @@
 <app-header></app-header>
-<mat-spinner class="spinner" *ngIf="pageLoading"></mat-spinner>
-
 <div class="container-fluid text-center mt-5">
   <div
     class="accordion"
     id="accordionExample"
-    *ngIf="this.totalMealDetails$ | async as totalMealDetails"
+    *ngIf="this.totalMealDetails$ | async as totalMealDetails; else pageLoading"
   >
     <div
       class="accordion-item"
@@ -102,3 +100,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #pageLoading>
+  <mat-spinner class="spinner"></mat-spinner>
+</ng-template>

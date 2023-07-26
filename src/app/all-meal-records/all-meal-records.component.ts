@@ -27,8 +27,6 @@ import { HeaderComponent } from '../header/header.component';
 })
 export class AllMealRecordsComponent {
   totalMealDetails$: Observable<mealDetailByWeekWise | null> = of(null);
-
-  pageLoading = true;
   constructor(
     private _db: DbAccess,
     private dialog: MatDialog,

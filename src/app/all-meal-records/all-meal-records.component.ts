@@ -35,8 +35,7 @@ export class AllMealRecordsComponent {
       .getAllMealDetails_Copy()
       .pipe(
         map(this._db.getMealDetailByDayWise.bind(this._db)),
-        map(this._db.getMealDetailByWeek.bind(this._db)),
-        tap(console.log)
+        map(this._db.getMealDetailByWeek.bind(this._db))
       );
   }
 

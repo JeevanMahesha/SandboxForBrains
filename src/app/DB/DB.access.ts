@@ -95,18 +95,10 @@ export class DbAccess {
     mealConsumptionDetails: IMealsConsumptionDetail[]
   ): mealDetailByDayWise {
     return mealConsumptionDetails.reduce((previousValue, eachDbValue) => {
-      if (
-        previousValue.hasOwnProperty(
-          eachDbValue.day.concat('$', eachDbValue.mealConsumedDate)
-        )
-      ) {
-        previousValue[
-          eachDbValue.day.concat('$', eachDbValue.mealConsumedDate)
-        ].push(eachDbValue);
+      if (previousValue.hasOwnProperty(eachDbValue.day)) {
+        previousValue[eachDbValue.day].push(eachDbValue);
       } else {
-        previousValue[
-          eachDbValue.day.concat('$', eachDbValue.mealConsumedDate)
-        ] = [eachDbValue];
+        previousValue[eachDbValue.day] = [eachDbValue];
       }
       return previousValue;
     }, {} as mealDetailByDayWise);

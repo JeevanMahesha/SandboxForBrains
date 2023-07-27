@@ -36,8 +36,8 @@ export const MealsConsumed = {
 };
 
 export const weekDays = {
-  Monday: 'Monday',
   Sunday: 'Sunday',
+  Monday: 'Monday',
   Tuesday: 'Tuesday',
   Wednesday: 'Wednesday',
   Thursday: 'Thursday',
@@ -57,8 +57,8 @@ export interface mealConsumptionDetailsWithUser
 
 export const MealTime = {
   BreakFast: 'BreakFast',
-  Dinner: 'Dinner',
   Lunch: 'Lunch',
+  Dinner: 'Dinner',
 };
 
 export const MealCost = {
@@ -85,3 +85,12 @@ export interface IInsertDetail {
 }
 
 export const weekDaysList = Object.values(weekDays);
+
+// export type IReport = Pick<
+//   IMealsConsumptionDetail,
+//   'mealTime' | 'mealsConsumedTotalCount' | 'day'
+// >;
+
+export interface IReport
+  extends IMealAmountDetail,
+    Pick<IMealsConsumptionDetail, 'day'> {}

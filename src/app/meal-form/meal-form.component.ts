@@ -36,8 +36,8 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
   templateUrl: './meal-form.component.html',
   styles: [
     `
-      .mg-rt {
-        margin-right: 5px;
+      .mg-all {
+        margin: 5% 5%;
       }
     `,
   ],

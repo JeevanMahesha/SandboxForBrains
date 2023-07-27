@@ -18,6 +18,7 @@ import { DbAccess } from '../DB/DB.access';
 import { MealCost, MealTime, MealsConsumed, weekDaysList } from '../app.model';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
+import { TrimWhitespaceDirective } from '../Directive/trim-whitespace';
 
 @Component({
   selector: 'app-meal-form',
@@ -32,6 +33,7 @@ import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
     MatRadioModule,
     HeaderComponent,
     MatProgressSpinnerModule,
+    TrimWhitespaceDirective,
   ],
   templateUrl: './meal-form.component.html',
   styles: [
@@ -122,7 +124,7 @@ export class MealFormComponent {
     return this._fb.group<IMealsConsumptionArrayForm>({
       mealsConsumedUser: this._fb.control<null | string>(
         { value: userName, disabled: true },
-        Validators.required
+        [Validators.required]
       ),
       mealsConsumed: this._fb.control<null | keyof typeof MealsConsumed>(
         MealsConsumed.Yes as keyof typeof MealsConsumed,
@@ -167,6 +169,8 @@ export class MealFormComponent {
   submitTheForm() {
     this.pageLoading = false;
     const mealFormValue = this.mealForm.getRawValue();
+    console.log(mealFormValue);
+    return;
     const mealConsumedDate = mealFormValue.mealConsumedDate!;
     const mealTime = mealFormValue.mealTime! as keyof typeof MealTime;
     this._db

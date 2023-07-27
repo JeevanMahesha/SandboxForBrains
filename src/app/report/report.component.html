@@ -1,0 +1,66 @@
+<app-header></app-header>
+<div class="container text-center">
+  <div class="row align-items-center mt-3">
+    <div class="col align-self-center">
+      <table
+        class="table table-info table-striped"
+        *ngIf="report$ | async as report"
+      >
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Day</th>
+            <th scope="col">Break Fast</th>
+            <th scope="col">Lunch</th>
+            <th scope="col">Dinner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="table-info"
+            *ngFor="let eachMealDetail of report; let objInd = index"
+          >
+            <th scope="row">{{ objInd + 1 }}</th>
+            <td class="table-info">{{ eachMealDetail.day }}</td>
+            <td class="table-info">{{ eachMealDetail.BreakFast || "--" }}</td>
+            <td class="table-info">{{ eachMealDetail.Lunch || "--" }}</td>
+            <td class="table-info">{{ eachMealDetail.Dinner || "--" }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="table-secondary h6" colspan="2">
+              total Meal Consumed Count
+            </td>
+            <td class="table-secondary h6">
+              {{ totalMealConsumedCount.BreakFast }}
+            </td>
+            <td class="table-secondary h6">
+              {{ totalMealConsumedCount.Lunch }}
+            </td>
+            <td class="table-secondary h6">
+              {{ totalMealConsumedCount.Dinner }}
+            </td>
+          </tr>
+          <tr>
+            <td class="table-light h5" colspan="2">total Meal Amount</td>
+            <td class="table-light h5">
+              {{ totalMealTimeAmount.BreakFast }} &#8377;
+            </td>
+            <td class="table-light h5">
+              {{ totalMealTimeAmount.Lunch }} &#8377;
+            </td>
+            <td class="table-light h5">
+              {{ totalMealTimeAmount.Dinner }} &#8377;
+            </td>
+          </tr>
+          <tr>
+            <td class="table-success h4" colspan="5">
+              {{ totalAmount }} &#8377;
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

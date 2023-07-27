@@ -81,6 +81,20 @@ import { DeleteRecordComponent } from '../delete-record/delete-record.component'
               Detail
             </button>
           </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link rounded-5"
+              id="contact-tab2"
+              data-bs-toggle="tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              routerLink="/report"
+              routerLinkActive="active"
+            >
+              Report
+            </button>
+          </li>
         </ul>
       </div>
       <div class="col-lg-4"></div>

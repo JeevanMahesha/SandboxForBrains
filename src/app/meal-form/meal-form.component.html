@@ -71,7 +71,7 @@
             </div>
             <div class="col-lg-4 col-md-6 col-xs-6">
               <button
-                class="btn btn-primary"
+                class="btn btn-primary mg-all"
                 type="button"
                 (click)="addNewUser()"
               >
@@ -97,6 +97,7 @@
                     />
                   </mat-form-field>
                   <mat-radio-group
+                    class="mg-all"
                     aria-label="Select an option"
                     formControlName="mealsConsumed"
                     (change)="mealsConsumedValueChanged()"
@@ -118,7 +119,7 @@
                 </div>
               </div>
               <button
-                class="btn btn-primary"
+                class="btn btn-primary mg-all"
                 [disabled]="!mealForm.valid"
                 type="submit"
               >

@@ -28,6 +28,10 @@ const routes: Routes = [
         (c) => c.AllMealRecordsComponent
       ),
   },
+  {
+    path: 'report',
+    loadComponent: () => import('./report/report.component'),
+  },
 ];
 
 @NgModule({

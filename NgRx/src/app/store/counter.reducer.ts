@@ -3,4 +3,4 @@ import { incrementAction } from "./counter.actions";
 
 const initialState = 0;
 
-export const counterReducer = createReducer(initialState, on(incrementAction, (state) => state++))
+export const counterReducer = createReducer(initialState, on(incrementAction, (state) => state + 1))

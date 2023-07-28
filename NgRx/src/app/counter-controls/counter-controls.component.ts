@@ -13,7 +13,7 @@ export class CounterControlsComponent {
   private store = inject(Store)
 
   increment() {
-    this.store.dispatch(incrementAction())
+    this.store.dispatch(incrementAction({ value: 2 }))
   }
 
   decrement() {

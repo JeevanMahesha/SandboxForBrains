@@ -36,7 +36,6 @@ export class DetailTotalComponent implements OnInit {
               mealDetail
             );
             const totalMealTimeAmount = this.getTotalAmountForMealTime(value);
-
             pre[userName] = { ...totalMealTimeAmount };
             return pre;
           },
@@ -78,7 +77,7 @@ export class DetailTotalComponent implements OnInit {
             pre[mealTime] = mealsConsumedDetail.length * MealCost.BreakFast;
             break;
           case MealTime.Lunch:
-            pre[mealTime] = mealsConsumedDetail.length * MealCost.Dinner;
+            pre[mealTime] = mealsConsumedDetail.length * MealCost.Lunch;
             break;
         }
         return pre;

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { TodoStore } from './todo.store';
 
 @Component({
   selector: 'app-todo-list',
@@ -6,14 +7,18 @@ import { Component } from '@angular/core';
   styleUrls: ['./todo-list.component.css']
 })
 export class TodoListComponent {
-
-  userNameList: string[] = []
-
   userNameControl: string | null = null
+  todoStore = inject(TodoStore)
+
+  constructor() {
+    this.todoStore.getTodo()
+
+  }
 
   addNewUserName() {
-    this.userNameList.push(this.userNameControl!)
-    console.log(this.userNameControl);
+    this.todoStore.addTodo({
+      userName: this.userNameControl!
+    })
   }
 
 }

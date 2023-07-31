@@ -34,11 +34,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of userNameList; let indexValue = index">
+        <tr
+          *ngFor="
+            let item of todoStore.todoList$ | async;
+            let indexValue = index
+          "
+        >
           <th scope="row">{{ indexValue + 1 }}</th>
-          <td>{{ item }}</td>
+          <td>{{ item.userName }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<ng-template #loadingScreen>
+  <h3>Loading....</h3>
+</ng-template>

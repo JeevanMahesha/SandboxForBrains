@@ -12,6 +12,5 @@ export class CounterOutputComponent {
   private store = inject(Store<{ counter: number }>);
   constructor() {
     this.counter$ = this.store.select("counter");
-
   }
 }

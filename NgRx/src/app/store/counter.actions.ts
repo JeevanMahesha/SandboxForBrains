@@ -5,3 +5,7 @@ export const incrementAction = createAction('[Counter] Increment',
 
 export const decrementAction = createAction('[Counter] Decrement',
     props<{ value: number }>())
+
+export const initialAction = createAction('[Counter] Initial')
+
+export const setAction = createAction('[Counter] Set', props<{ value: number }>())

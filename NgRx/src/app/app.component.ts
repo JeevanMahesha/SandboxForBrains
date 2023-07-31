@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { initialAction } from './store/counter.actions';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +8,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  private store = inject(Store<{ value: number }>)
+  constructor() {
+    this.store.dispatch(initialAction())
+  }
 }

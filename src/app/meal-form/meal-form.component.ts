@@ -169,8 +169,6 @@ export class MealFormComponent {
   submitTheForm() {
     this.pageLoading = false;
     const mealFormValue = this.mealForm.getRawValue();
-    console.log(mealFormValue);
-    return;
     const mealConsumedDate = mealFormValue.mealConsumedDate!;
     const mealTime = mealFormValue.mealTime! as keyof typeof MealTime;
     this._db

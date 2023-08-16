@@ -1,0 +1,14 @@
+<div class="task-container">
+  <div class="container">
+    <h1 class="heading">{{ title }}</h1>
+    <input type="text" [(ngModel)]="newTask" placeholder="Enter a new task" />
+    <button class="button" (click)="addTask()">Add Task</button>
+    <ul class="task-list">
+      <li *ngFor="let task of tasks; let ind = index" class="task-item">
+        <span>{{ ind + 1 }}.</span>
+        <span class="task-text">{{ task }}</span>
+        <button class="button" (click)="deleteTask(task)">Delete</button>
+      </li>
+    </ul>
+  </div>
+</div>

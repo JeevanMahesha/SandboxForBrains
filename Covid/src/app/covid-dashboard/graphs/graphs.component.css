@@ -1,9 +1,0 @@
-@media (max-width: 576px) { 
-    #dataFilter{
-       display: none;
-    }
-    .col-3{
-        width: 100%;
-    }
-
-}

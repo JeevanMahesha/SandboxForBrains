@@ -1,4 +1,4 @@
-import { Component, Optional, Self, SkipSelf } from '@angular/core';
+import { Component, Optional, Self, SkipSelf, Host } from '@angular/core';
 import { LoggerService } from './logger.service';
 
 @Component({
@@ -31,4 +31,9 @@ The @Self decorator instructs Angular to look for the dependency only in the loc
 The @SkipSelf decorator instructs Angular to look for the dependency in the Parent Injector and upwards.
   constructor(@SkipSelf() private lg: LoggerService) {}
  */
+
+  /*
+  @Host — The @Host decorator tells DI to look for a dependency in any injector until it reaches the host
+  constructor(@Host() private lg: LoggerService) {}
+  */
 }

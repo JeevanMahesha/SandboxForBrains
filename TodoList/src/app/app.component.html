@@ -7,7 +7,7 @@
       <li *ngFor="let task of tasks; let ind = index" class="task-item">
         <span>{{ ind + 1 }}.</span>
         <span class="task-text">{{ task.task }}</span>
-        <button class="button" (click)="deleteTask(task.id)">Delete</button>
+        <button class="button" (click)="deleteTask(ind)">Delete</button>
       </li>
     </ul>
   </div>

@@ -21,7 +21,9 @@ export class AppComponent {
     this.newTask = null;
   }
 
-  deleteTask(taskId: string) {}
+  deleteTask(indexValue: number) {
+    this.tasks.splice(indexValue, 1);
+  }
 }
 
 interface ITask {

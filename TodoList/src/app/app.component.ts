@@ -7,10 +7,24 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Todo App';
-  newTask: string = '';
-  tasks: string[] = [];
+  newTask: string | null = '';
+  tasks: ITask[] = [];
 
-  addTask() {}
+  addTask() {
+    if (!this.newTask) {
+      console.log('Please provide the task input');
+    }
+    this.tasks.push({
+      id: self.crypto.randomUUID(),
+      task: this.newTask!,
+    });
+    this.newTask = null;
+  }
 
-  deleteTask(task: string) {}
+  deleteTask(taskId: string) {}
+}
+
+interface ITask {
+  id: string;
+  task: string;
 }

@@ -12,7 +12,8 @@ export class AppComponent {
 
   addTask() {
     if (!this.newTask) {
-      console.log('Please provide the task input');
+      alert('Please provide the task input');
+      return;
     }
     this.tasks.push({
       id: self.crypto.randomUUID(),

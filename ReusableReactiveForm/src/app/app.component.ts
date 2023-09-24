@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { IUserForm } from './app.form';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AddressComponent } from './address/address.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ReactiveFormsModule],
+  imports: [CommonModule, RouterOutlet, ReactiveFormsModule, AddressComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })

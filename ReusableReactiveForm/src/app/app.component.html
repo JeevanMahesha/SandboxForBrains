@@ -6,19 +6,6 @@
     name="username"
     placeholder="username"
   />
-  <ng-container formGroupName="address">
-    <input
-      formControlName="state"
-      type="text"
-      name="state"
-      placeholder="state"
-    />
-    <input
-      formControlName="country"
-      type="text"
-      name="country"
-      placeholder="country"
-    />
-  </ng-container>
+  <app-address></app-address>
   <button type="submit">submit</button>
 </form>

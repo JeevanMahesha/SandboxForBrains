@@ -1,6 +1,24 @@
 <h3>{{ title }}</h3>
-<ng-container>
-  <input type="text" name="username" placeholder="username" />
-  <input type="text" name="state" placeholder="state" />
-  <input type="text" name="country" placeholder="country" />
-</ng-container>
+<form [formGroup]="userForm" (ngSubmit)="submitForm()">
+  <input
+    formControlName="userName"
+    type="text"
+    name="username"
+    placeholder="username"
+  />
+  <ng-container formGroupName="address">
+    <input
+      formControlName="state"
+      type="text"
+      name="state"
+      placeholder="state"
+    />
+    <input
+      formControlName="country"
+      type="text"
+      name="country"
+      placeholder="country"
+    />
+  </ng-container>
+  <button type="submit">submit</button>
+</form>

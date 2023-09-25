@@ -1,11 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
+  AbstractControl,
   ControlContainer,
+  FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { IAddressForm, IUserForm } from '../app.form';
 
 @Component({
   selector: 'app-address',
@@ -20,21 +23,15 @@ import {
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.css'],
 })
-export class AddressComponent implements OnInit {
+export class AddressComponent {
+  @Input({ required: true }) indexValue: number | null = null;
   private readonly parentControl = inject(ControlContainer);
 
-  get getAddressFormControlGroup() {
+  get getParentFormControl(): FormGroup<IUserForm> {
     return this.parentControl.control as FormGroup;
   }
 
-  ngOnInit() {
-    this.getAddressFormControlGroup.addControl(
-      'address',
-      new FormGroup({
-        country: new FormControl<string | null>('Jeevan'),
-        state: new FormControl<string | null>('Jeevan'),
-      })
-    );
-    console.log(this.getAddressFormControlGroup);
+  get getAddressFormControl(): AbstractControl<FormGroup<IAddressForm>>[] {
+    return (this.getParentFormControl.get('address') as FormArray)?.controls;
   }
 }

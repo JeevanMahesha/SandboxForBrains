@@ -2,6 +2,7 @@ import {
   Component,
   Signal,
   computed,
+  Injector,
   effect,
   inject,
   signal,
@@ -9,7 +10,8 @@ import {
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-
+import { Observable, concat, concatMap, from, map, of, toArray } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -27,11 +29,23 @@ export class AppComponent {
   logger = effect(() =>
     console.log("Hello I'm effect in signal", this.searchValue())
   );
+  userDetailFilter$: Observable<IUserDetail[]> | null = null;
+  private injector = inject(Injector);
 
   constructor() {
     this.#httpClient.get<IUserDetail[]>(this.#URL).subscribe((userResponse) => {
       this.userDetail = signal(userResponse);
       this.userDetailFilter = computed(this.filterUserDetail.bind(this));
+      this.userDetailFilter$ = toObservable(this.userDetail, {
+        injector: this.injector,
+      }).pipe(
+        concatMap((each) => from(each)),
+        concatMap((eachUser) => {
+          eachUser.company.name = eachUser.company.name.concat(' -> toObs');
+          return of(eachUser);
+        }),
+        toArray()
+      );
     });
   }
 

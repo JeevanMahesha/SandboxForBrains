@@ -1,4 +1,11 @@
-import { Component, Signal, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  Signal,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
@@ -17,6 +24,9 @@ export class AppComponent {
   searchValue = signal<string>('');
   userDetail = signal<IUserDetail[]>([]);
   userDetailFilter: Signal<IUserDetail[]> = signal<IUserDetail[]>([]);
+  logger = effect(() =>
+    console.log("Hello I'm effect in signal", this.searchValue())
+  );
 
   constructor() {
     this.#httpClient.get<IUserDetail[]>(this.#URL).subscribe((userResponse) => {

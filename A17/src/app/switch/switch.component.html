@@ -1,0 +1,5 @@
+<div [ngSwitch]="fruit$ | async">
+  <ng-template ngSwitchCase="apple"> I like apples! </ng-template>
+  <ng-template ngSwitchCase="orange"> I like oranges! </ng-template>
+  <ng-template ngSwitchDefault> I don't like fruit. </ng-template>
+</div>

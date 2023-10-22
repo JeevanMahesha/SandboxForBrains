@@ -19,5 +19,5 @@ import { SwitchComponent } from './switch/switch.component';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'A17';
+  title = 'Angular 17';
 }

@@ -32,14 +32,23 @@
               aria-expanded="false"
               aria-controls="panelsStayOpen-collapseTwo"
             >
-              For
+              InjectDestroyComponent
             </button>
           </h2>
           <div
             id="panelsStayOpen-collapseTwo"
             class="accordion-collapse collapse"
           >
-            <div class="accordion-body"></div>
+            <div class="accordion-body">
+              <a
+                type="button"
+                class="btn btn-primary"
+                [routerLink]="['/injectDestroy']"
+                routerLinkActive="router-link-active"
+              >
+                injectDestroy
+              </a>
+            </div>
           </div>
         </div>
         <div class="accordion-item">
@@ -65,4 +74,5 @@
       </div>
     </div>
   </div>
+  <router-outlet></router-outlet>
 </div>

@@ -1,0 +1,7 @@
+<h5>Track By Id</h5>
+<div *ngFor="let item of trackByIdArray; trackById">
+  <p>{{ item.name }}</p>
+</div>
+<button class="btn btn-primary" (click)="updateTrackByIdArray()">
+  updateArray
+</button>

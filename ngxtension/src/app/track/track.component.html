@@ -3,5 +3,15 @@
   <p>{{ item.name }}</p>
 </div>
 <button class="btn btn-primary" (click)="updateTrackByIdArray()">
-  updateArray
+  updateTrackByIdArray
 </button>
+
+<div class="mt-5">
+  <h5>Track By Prop</h5>
+  <div *ngFor="let item of trackByPropArray; trackByProp: 'name'">
+    <p>{{ item.name }} @{{ item.Dob }}</p>
+  </div>
+  <button class="btn btn-primary" (click)="updateTrackByPropArray()">
+    updateTrackByPropArray
+  </button>
+</div>

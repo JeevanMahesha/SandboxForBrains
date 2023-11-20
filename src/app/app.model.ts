@@ -62,8 +62,8 @@ export const MealTime = {
 };
 
 export const MealCost = {
-  BreakFast: 40,
-  Dinner: 40,
+  BreakFast: 45,
+  Dinner: 45,
   Lunch: 60,
 };
 
@@ -85,11 +85,6 @@ export interface IInsertDetail {
 }
 
 export const weekDaysList = Object.values(weekDays);
-
-// export type IReport = Pick<
-//   IMealsConsumptionDetail,
-//   'mealTime' | 'mealsConsumedTotalCount' | 'day'
-// >;
 
 export interface IReport
   extends IMealAmountDetail,

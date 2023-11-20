@@ -52,7 +52,7 @@ export class MealFormComponent {
     'Deepak',
     'SaravanaKumaran',
     'RajKumar',
-    'Suryaraj',
+    'Vignesh',
   ];
   mealTime = Object.values(MealTime);
   mealsConsumedOptions = Object.values(MealsConsumed);

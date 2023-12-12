@@ -1,0 +1,45 @@
+<div class="container-sm mt-5">
+  <h3 class="text-center">{{ title }}</h3>
+  <div class="d-flex justify-content-end">
+    <div class="input-group mb-3 width_input">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="username"
+        aria-label="username"
+        aria-describedby="button-addon2"
+        (input)="searchUserDetail($event.target)"
+      />
+      <button class="btn btn-outline-success" type="button" id="button-addon2">
+        Search
+      </button>
+    </div>
+  </div>
+  <table class="table table-primary table-striped mt-3">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Company Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="
+          let eachUserDetail of userDetailFilter();
+          let indexValue = index
+        "
+      >
+        <th scope="row">{{ indexValue + 1 }}</th>
+        <td>{{ eachUserDetail.name }}</td>
+        <td>{{ eachUserDetail.username }}</td>
+        <td>{{ eachUserDetail.email }}</td>
+        <td>{{ eachUserDetail.phone }}</td>
+        <td>{{ eachUserDetail.company.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

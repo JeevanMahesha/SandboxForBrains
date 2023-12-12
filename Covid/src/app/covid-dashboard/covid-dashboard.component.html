@@ -1,0 +1,7 @@
+<div class="container-fluid">
+  <app-header (searchKeyValueEmmit)="getSearchKeyValue($event)"></app-header>
+    <div class="row mt-3">
+   <app-all-country-test [searchValue]="searchKeyValue" ></app-all-country-test>
+    </div>
+  </div>
+  

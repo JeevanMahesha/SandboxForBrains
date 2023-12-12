@@ -1,0 +1,20 @@
+<h3>{{ title }}</h3>
+<form [formGroup]="userForm" (ngSubmit)="submitForm()">
+  <input
+    formControlName="userName"
+    type="text"
+    name="username"
+    placeholder="username"
+  />
+  <br />
+  <ng-container
+    formArrayName="address"
+    *ngFor="let item of getFormAddressArray; let indexValue = index"
+  >
+    <app-address [indexValue]="indexValue"></app-address> <br />
+  </ng-container>
+  <button type="button" (click)="addNewAddress()">Add</button>
+  <br />
+
+  <button type="submit">submit</button>
+</form>

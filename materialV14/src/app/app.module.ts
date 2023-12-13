@@ -9,6 +9,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatCheckboxModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

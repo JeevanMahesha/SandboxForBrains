@@ -1,13 +1,28 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { DecoratorInputComponent } from './decorator-input/decorator-input.component';
+import { SignalInputComponent } from './signal-input/signal-input.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [DecoratorInputComponent, SignalInputComponent],
+  template: `
+    <div>
+      <app-decorator-input
+        [countValue]="initialCountValue"
+        [doubleCountValue]="initialCountValue"
+      ></app-decorator-input>
+      <app-signal-input
+        [countValue]="initialCountValue"
+        [doubleCountValue]="initialCountValue"
+      ></app-signal-input>
+      <button type="button" (click)="increaseCount()">Increase Count</button>
+    </div>
+  `,
 })
 export class AppComponent {
-  title = 'SignalInputs';
+  initialCountValue = 0;
+  increaseCount(): void {
+    this.initialCountValue++;
+  }
 }

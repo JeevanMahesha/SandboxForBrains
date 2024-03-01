@@ -13,10 +13,15 @@ describe('AppComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('Create Component', async () => {
     expect(component).toBeTruthy();
-    fixture.detectChanges();
+  });
+
+  it('App Title', async () => {
+    const title = 'AngularUnitTest';
+    expect(component.title).toBe(title);
   });
 });

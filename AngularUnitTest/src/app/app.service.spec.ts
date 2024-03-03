@@ -87,6 +87,7 @@ describe('AppService', () => {
       ];
       apiRequest.flush(mockApiResponse);
       expect(userDetails).toEqual(mockApiResponse);
+      expect(apiRequest.request.method).toEqual('GET');
     });
   });
 });

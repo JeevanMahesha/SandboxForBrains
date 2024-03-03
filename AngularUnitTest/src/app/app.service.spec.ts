@@ -6,6 +6,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { IUserDetail } from './app.model';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 
 describe('AppService', () => {
   let service: AppService;
@@ -88,6 +89,24 @@ describe('AppService', () => {
       apiRequest.flush(mockApiResponse);
       expect(userDetails).toEqual(mockApiResponse);
       expect(apiRequest.request.method).toEqual('GET');
+    });
+
+    it('Handle Error', () => {
+      let errorResponse: HttpErrorResponse | undefined;
+      service.getUsers().subscribe({
+        next: () => fail('Success should not be called'),
+        error: (errorRes) => (errorResponse = errorRes),
+      });
+      const apiRequest = httpTestingController.expectOne(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+      apiRequest.flush('Server error', {
+        status: 401,
+        statusText: 'unauthorized',
+      });
+
+      expect(errorResponse?.status).toEqual(HttpStatusCode.Unauthorized);
+      expect(errorResponse?.statusText).toBe('unauthorized');
     });
   });
 });

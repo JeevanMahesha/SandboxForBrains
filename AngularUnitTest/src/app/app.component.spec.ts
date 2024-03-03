@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  beforeEach(async () => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AppComponent],
     }).compileComponents();
@@ -16,11 +16,11 @@ describe('AppComponent', () => {
     fixture.detectChanges();
   });
 
-  it('Create Component', async () => {
+  it('Create Component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('App Title', async () => {
+  it('App Title', () => {
     const title = 'AngularUnitTest';
     expect(component.title).toBe(title);
   });

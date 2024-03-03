@@ -24,4 +24,15 @@ describe('AppComponent', () => {
     const title = 'AngularUnitTest';
     expect(component.title).toBe(title);
   });
+
+  describe('Users', () => {
+    it('Add Users', () => {
+      const user = {
+        id: '1',
+        name: 'jeevan',
+      };
+      component.addNewUser(user);
+      expect(component.users$.getValue()).toEqual([user]);
+    });
+  });
 });

@@ -34,5 +34,10 @@ describe('AppComponent', () => {
       component.addNewUser(user);
       expect(component.users$.getValue()).toEqual([user]);
     });
+
+    it('Remove Users', () => {
+      component.removeUsers('1');
+      expect(component.users$.getValue()).toEqual([]);
+    });
   });
 });

@@ -9,4 +9,8 @@ export const routes: Routes = [
     path: 'useExisting',
     loadComponent: () => import('./use-existing/use-existing.component'),
   },
+  {
+    path: 'useFactory',
+    loadComponent: () => import('./use-factory/use-factory.component'),
+  },
 ];

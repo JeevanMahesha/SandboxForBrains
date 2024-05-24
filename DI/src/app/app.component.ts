@@ -20,7 +20,12 @@ import { RouterLink, RouterOutlet } from '@angular/router';
           </button>
         </div>
         <div class="col-md-3 col-6">
-          <button class="btn btn-secondary btn-lg btn-custom">Button 2</button>
+          <button
+            routerLink="/useExisting"
+            class="btn btn-secondary btn-lg btn-custom"
+          >
+            useExisting
+          </button>
         </div>
         <div class="col-md-3 col-6">
           <button class="btn btn-success btn-lg btn-custom">Button 3</button>

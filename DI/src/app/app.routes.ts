@@ -5,4 +5,8 @@ export const routes: Routes = [
     path: 'useClass',
     loadComponent: () => import('./use-class/use-class.component'),
   },
+  {
+    path: 'useExisting',
+    loadComponent: () => import('./use-existing/use-existing.component'),
+  },
 ];

@@ -5,7 +5,6 @@ import { BetterLoggerService } from './better-logger.service';
 @Component({
   selector: 'app-use-class',
   standalone: true,
-  imports: [],
   providers: [{ provide: LoggerService, useClass: BetterLoggerService }],
   template: `<h3>
     The <strong>useClass</strong>

@@ -5,7 +5,6 @@ import { AnalyticsService } from './analytics.service';
 @Component({
   selector: 'app-use-existing',
   standalone: true,
-  imports: [],
   template: `
     <h3>
       <strong>useExisting</strong> is a provider configuration in Angular used

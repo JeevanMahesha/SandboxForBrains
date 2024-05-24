@@ -6,7 +6,6 @@ import { GreetingService } from './greeting.service';
 @Component({
   selector: 'app-use-factory',
   standalone: true,
-  imports: [],
   template: `
     <h3>
       A factory provider in Angular is a way to create something (like a service

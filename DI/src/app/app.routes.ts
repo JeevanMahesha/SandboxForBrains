@@ -13,4 +13,8 @@ export const routes: Routes = [
     path: 'useFactory',
     loadComponent: () => import('./use-factory/use-factory.component'),
   },
+  {
+    path: 'useValue',
+    loadComponent: () => import('./use-value/use-value.component'),
+  },
 ];

@@ -36,7 +36,12 @@ import { RouterLink, RouterOutlet } from '@angular/router';
           </button>
         </div>
         <div class="col-md-3 col-6">
-          <button class="btn btn-danger btn-lg btn-custom">Button 4</button>
+          <button
+            routerLink="/useValue"
+            class="btn btn-danger btn-lg btn-custom"
+          >
+            useValue
+          </button>
         </div>
       </div>
       <router-outlet></router-outlet>

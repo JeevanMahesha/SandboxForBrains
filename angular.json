@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "roomFoodApp:build:production"
+              "buildTarget": "roomFoodApp:build:production"
             },
             "development": {
-              "browserTarget": "roomFoodApp:build:development"
+              "buildTarget": "roomFoodApp:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -75,7 +75,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "roomFoodApp:build"
+            "buildTarget": "roomFoodApp:build"
           }
         },
         "test": {

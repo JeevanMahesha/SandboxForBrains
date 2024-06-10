@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import {
   FormArray,
   FormGroup,
@@ -15,16 +15,17 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { DbAccess } from '../DB/DB.access';
+import { TrimWhitespaceDirective } from '../Directive/trim-whitespace';
 import { MealCost, MealTime, MealsConsumed, weekDaysList } from '../app.model';
 import { HeaderComponent } from '../header/header.component';
 import { IMealForm, IMealsConsumptionArrayForm } from './meal-form.model';
-import { TrimWhitespaceDirective } from '../Directive/trim-whitespace';
 
 @Component({
   selector: 'app-meal-form',
   standalone: true,
   imports: [
-    CommonModule,
+    NgIf,
+    NgFor,
     MatInputModule,
     MatDatepickerModule,
     ReactiveFormsModule,
@@ -36,34 +37,25 @@ import { TrimWhitespaceDirective } from '../Directive/trim-whitespace';
     TrimWhitespaceDirective,
   ],
   templateUrl: './meal-form.component.html',
-  styles: [
-    `
-      .mg-all {
-        margin: 5% 5%;
-      }
-    `,
-  ],
 })
 export class MealFormComponent {
   userNameList = [
-    'Jeevan',
     'Dharamraj',
     'Praveen',
     'Deepak',
     'SaravanaKumaran',
     'RajKumar',
-    'Vignesh',
   ];
+
   mealTime = Object.values(MealTime);
   mealsConsumedOptions = Object.values(MealsConsumed);
   mealForm: FormGroup<IMealForm>;
   pageLoading = false;
+  private _fb = inject(NonNullableFormBuilder);
+  private _db = inject(DbAccess);
+  private toastr = inject(ToastrService);
 
-  constructor(
-    private _fb: NonNullableFormBuilder,
-    private _db: DbAccess,
-    private toastr: ToastrService
-  ) {
+  constructor() {
     this.mealForm = this.constructMealForm;
   }
 

@@ -109,4 +109,6 @@
     </div>
   </div>
 </form>
-<mat-spinner class="spinner" *ngIf="pageLoading"></mat-spinner>
+<span *ngIf="pageLoading">
+  <mat-spinner class="spinner"></mat-spinner>
+</span>

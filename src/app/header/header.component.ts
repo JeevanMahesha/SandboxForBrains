@@ -71,30 +71,28 @@ import { DeleteRecordComponent } from '../delete-record/delete-record.component'
         <a
           [routerLink]="['/meal-form']"
           routerLinkActive="active"
-          class="text-white hover:bg-white hover:text-gray-900 px-3 py-2 rounded-md"
+          class="text-white  px-3 py-2 rounded-md"
           >Meal</a
         >
         <a
           [routerLink]="['/all']"
           routerLinkActive="active"
-          class="text-white hover:bg-white hover:text-gray-900 px-3 py-2 rounded-md"
+          class="text-white  px-3 py-2 rounded-md"
           >All Meal Records</a
         >
-        <a
-          (click)="deleteAllRecords()"
-          class="text-white hover:bg-white hover:text-gray-900 px-3 py-2 rounded-md"
+        <a (click)="deleteAllRecords()" class="text-white  px-3 py-2 rounded-md"
           >Delete Records</a
         >
         <a
           [routerLink]="['/detail-view']"
           routerLinkActive="active"
-          class="text-white hover:bg-white hover:text-gray-900 px-3 py-2 rounded-md"
+          class="text-white  px-3 py-2 rounded-md"
           >Detail</a
         >
         <a
           [routerLink]="['/report']"
           routerLinkActive="active"
-          class="text-white hover:bg-white hover:text-gray-900 px-3 py-2 rounded-md"
+          class="text-white  px-3 py-2 rounded-md"
           >Report</a
         >
       </div>

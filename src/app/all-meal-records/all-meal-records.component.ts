@@ -24,9 +24,30 @@ import { HeaderComponent } from '../header/header.component';
     MatDialogModule,
   ],
   templateUrl: './all-meal-records.component.html',
+  styles: `
+  .accordion-collapse-hidden {
+  max-height: 0;
+  opacity: 0;
+}
+
+.accordion-collapse-visible {
+  max-height: auto;
+  opacity: 1;
+}
+
+.transition-max-height {
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+  `,
 })
 export class AllMealRecordsComponent {
   totalMealDetails$: Observable<mealDetailByWeekWise | null> = of(null);
+  private openAccordions: {
+    [key: number]: {
+      isOpen: any;
+      [key: number]: boolean;
+    };
+  } = {};
   constructor(
     private _db: DbAccess,
     private dialog: MatDialog,
@@ -68,5 +89,39 @@ export class AllMealRecordsComponent {
             );
         }
       });
+  }
+
+  toggleAccordion(weekIndex: number, mealIndex?: number): void {
+    if (mealIndex !== undefined) {
+      this.closeAllMealAccordions(weekIndex);
+      this.openAccordions[weekIndex] = {
+        ...this.openAccordions[weekIndex],
+        [mealIndex]: !this.openAccordions[weekIndex][mealIndex],
+      };
+    } else {
+      this.closeAllWeekAccordions();
+      this.openAccordions[weekIndex] = {
+        isOpen: !this.openAccordions[weekIndex]?.isOpen,
+      };
+    }
+  }
+
+  closeAllWeekAccordions(): void {
+    this.openAccordions = {};
+  }
+
+  closeAllMealAccordions(weekIndex: number): void {
+    if (this.openAccordions[weekIndex]) {
+      this.openAccordions[weekIndex] = {
+        isOpen: this.openAccordions[weekIndex].isOpen,
+      };
+    }
+  }
+
+  isAccordionOpen(weekIndex: number, mealIndex?: number): boolean {
+    if (mealIndex !== undefined) {
+      return this.openAccordions[weekIndex]?.[mealIndex] ?? false;
+    }
+    return this.openAccordions[weekIndex]?.isOpen ?? false;
   }
 }

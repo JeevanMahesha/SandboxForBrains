@@ -1,4 +1,10 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe,
+  CommonModule,
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+} from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, map, of, tap } from 'rxjs';
@@ -14,7 +20,14 @@ import { HeaderComponent } from '../header/header.component';
 @Component({
   selector: 'app-detail-total',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatProgressSpinnerModule],
+  imports: [
+    NgFor,
+    HeaderComponent,
+    MatProgressSpinnerModule,
+    NgTemplateOutlet,
+    AsyncPipe,
+    NgIf,
+  ],
   templateUrl: './detail-total.component.html',
 })
 export class DetailTotalComponent implements OnInit {

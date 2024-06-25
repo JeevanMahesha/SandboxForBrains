@@ -2,9 +2,13 @@
   <mat-form-field>
     <mat-label>Category</mat-label>
     <mat-select formControlName="category">
-      <mat-option *ngFor="let category of categories()" [value]="category.id">
+      @for (category of apiData()?.categories; track category.id) {
+      <mat-option [value]="category.id">
         {{ category.title }}
       </mat-option>
+      } @empty {
+      <mat-option disabled>No categories available</mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <br />
@@ -25,13 +29,11 @@
   <br />
   <br />
   <button
+    [disabled]="form.invalid"
     mat-raised-button
     color="primary"
     type="submit"
-    [disabled]="form.invalid"
   >
     Submit
   </button>
 </form>
-
-<p *ngIf="submitResult()">Submit Result: {{ submitResult() }}</p>

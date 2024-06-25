@@ -29,39 +29,27 @@ export class AppComponent {
   apiData = toSignal<ApiResponse>(
     this.http
       .get<Category[]>('https://jsonplaceholder.typicode.com/todos')
-      .pipe(map((res) => ({ categories: res, subcategories: res })))
+      .pipe(map((res) => ({ categories: [], subcategories: res }))),
+    { initialValue: null }
   );
-
-  categories = computed(() => this.apiData()!.categories);
-  subcategories = computed(() => this.apiData()!.subcategories);
 
   form = this.fb.group({
     category: ['', Validators.required],
     subcategory: ['', Validators.required],
   });
 
-  filteredSubcategories = computed(() => {
-    const categoryId = this.form.get('category')?.value as unknown as number;
-    return categoryId
-      ? this.subcategories().filter((sub) => sub.id === categoryId)
-      : [];
-  });
-
-  submitResult = signal<string | null>(null);
+  filteredSubcategories = toSignal(
+    this.form.controls.category.valueChanges.pipe(
+      map((categoryId) => {
+        return this.apiData()?.subcategories.filter(
+          (sub) => sub.id === (categoryId as unknown as number)
+        );
+      })
+    )
+  );
 
   onSubmit() {
-    if (this.form.valid) {
-      this.http
-        .post('https://api.example.com/submit', this.form.value)
-        .subscribe({
-          next: (response: any) => {
-            this.submitResult.set('Success: ' + JSON.stringify(response));
-          },
-          error: (error) => {
-            this.submitResult.set('Error: ' + error.message);
-          },
-        });
-    }
+    console.log(this.apiData());
   }
 }
 

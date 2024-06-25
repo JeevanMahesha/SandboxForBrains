@@ -6,6 +6,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCardModule } from '@angular/material/card';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -25,9 +27,9 @@ export class AppComponent {
   private http = inject(HttpClient);
 
   apiData = toSignal<ApiResponse>(
-    this.http.get<ApiResponse>(
-      'https://api.example.com/categories-and-subcategories'
-    )
+    this.http
+      .get<Category[]>('https://jsonplaceholder.typicode.com/todos')
+      .pipe(map((res) => ({ categories: res, subcategories: res })))
   );
 
   categories = computed(() => this.apiData()!.categories);
@@ -39,9 +41,9 @@ export class AppComponent {
   });
 
   filteredSubcategories = computed(() => {
-    const categoryId = this.form.get('category')?.value;
+    const categoryId = this.form.get('category')?.value as unknown as number;
     return categoryId
-      ? this.subcategories().filter((sub) => sub.categoryId === categoryId)
+      ? this.subcategories().filter((sub) => sub.id === categoryId)
       : [];
   });
 
@@ -69,12 +71,15 @@ interface ApiResponse {
 }
 
 interface Category {
-  id: string;
-  name: string;
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
 }
 
 interface Subcategory {
-  id: string;
-  name: string;
-  categoryId: string;
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
 }

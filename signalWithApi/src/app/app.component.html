@@ -1,15 +1,15 @@
-<h1>aljsgbdkjhva</h1>
-
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field>
     <mat-label>Category</mat-label>
     <mat-select formControlName="category">
       <mat-option *ngFor="let category of categories()" [value]="category.id">
-        {{ category.name }}
+        {{ category.title }}
       </mat-option>
     </mat-select>
   </mat-form-field>
-
+  <br />
+  <br />
+  <br />
   <mat-form-field>
     <mat-label>Subcategory</mat-label>
     <mat-select formControlName="subcategory">
@@ -17,11 +17,13 @@
         *ngFor="let subcategory of filteredSubcategories()"
         [value]="subcategory.id"
       >
-        {{ subcategory.name }}
+        {{ subcategory.title }}
       </mat-option>
     </mat-select>
   </mat-form-field>
-
+  <br />
+  <br />
+  <br />
   <button
     mat-raised-button
     color="primary"

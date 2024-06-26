@@ -1,5 +1,8 @@
-form {
+form,
+p {
   display: flex;
-  justify-content: center;
-  margin-top: 100%;
+  justify-content: space-between;
+  padding-top: 10%;
+  padding-left: 10%;
+  width: 600px;
 }

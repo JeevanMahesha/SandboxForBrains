@@ -1,3 +1,4 @@
+@defer (when apiData()) {
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field>
     <mat-label>Category</mat-label>
@@ -11,9 +12,7 @@
       }
     </mat-select>
   </mat-form-field>
-  <br />
-  <br />
-  <br />
+
   <mat-form-field>
     <mat-label>Subcategory</mat-label>
     <mat-select formControlName="subcategory">
@@ -25,9 +24,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <br />
-  <br />
-  <br />
+
   <button
     [disabled]="form.invalid"
     mat-raised-button
@@ -37,3 +34,8 @@
     Submit
   </button>
 </form>
+} @placeholder {
+<p>Loading...</p>
+} @error {
+<p>Error loading component</p>
+}

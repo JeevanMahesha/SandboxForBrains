@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
-import { map } from 'rxjs';
+import { catchError, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -25,11 +25,17 @@ import { map } from 'rxjs';
 export class AppComponent {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
-
+  errorReceived = signal<string | null>(null);
   apiData = toSignal<ApiResponse>(
     this.http
       .get<Category[]>('https://jsonplaceholder.typicode.com/todos')
-      .pipe(map((res) => ({ categories: [], subcategories: res }))),
+      .pipe(
+        map((res) => ({ categories: res, subcategories: res })),
+        catchError((err) => {
+          this.errorReceived.set(err.message);
+          return [];
+        })
+      ),
     { initialValue: null }
   );
 

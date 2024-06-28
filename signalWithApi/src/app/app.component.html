@@ -34,8 +34,10 @@
     Submit
   </button>
 </form>
-} @placeholder {
+} @placeholder { @if (errorReceived()) {
+
+<p>Error loading component {{ errorReceived() }}</p>
+} @else {
+
 <p>Loading...</p>
-} @error {
-<p>Error loading component</p>
-}
+} }

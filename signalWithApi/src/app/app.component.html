@@ -1,0 +1,43 @@
+@defer (when apiData()) {
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="category">
+      @for (category of apiData()?.categories; track category.id) {
+      <mat-option [value]="category.id">
+        {{ category.title }}
+      </mat-option>
+      } @empty {
+      <mat-option disabled>No categories available</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Subcategory</mat-label>
+    <mat-select formControlName="subcategory">
+      <mat-option
+        *ngFor="let subcategory of filteredSubcategories()"
+        [value]="subcategory.id"
+      >
+        {{ subcategory.title }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    [disabled]="form.invalid"
+    mat-raised-button
+    color="primary"
+    type="submit"
+  >
+    Submit
+  </button>
+</form>
+} @placeholder { @if (errorReceived()) {
+
+<p>Error loading component {{ errorReceived() }}</p>
+} @else {
+
+<p>Loading...</p>
+} }

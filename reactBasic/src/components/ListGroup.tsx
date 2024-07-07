@@ -1,28 +1,20 @@
 import { useState } from "react";
 
-function ListGroup() {
-  const countries = [
-    "United States",
-    "Canada",
-    "Mexico",
-    "Brazil",
-    "United Kingdom",
-    "Germany",
-    "France",
-    "Italy",
-    "Australia",
-    "India",
-  ];
+type ListGroupProps = {
+  heading: string;
+  items: string[];
+};
+function ListGroup({ heading, items }: ListGroupProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const notFoundCountries = countries.length === 0 && <p>No countries found</p>;
+  const notFoundCountries = items.length === 0 && <p>No {heading} found</p>;
 
   return (
     <>
-      <h1>List Group</h1>
+      <h1>{heading}</h1>
       {notFoundCountries}
       <ul className="list-group">
-        {countries.map((country, countryIndex) => (
+        {items.map((country, countryIndex) => (
           <li
             className={
               selectedIndex === countryIndex

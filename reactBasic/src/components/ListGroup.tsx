@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function ListGroup() {
   const countries = [
     "United States",
@@ -11,20 +13,26 @@ function ListGroup() {
     "Australia",
     "India",
   ];
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const notFoundCountries = countries.length === 0 && <p>No countries found</p>;
-
-  const handleClick = (clickEvent: React.MouseEvent) => {
-    console.log("clicked", clickEvent);
-  };
 
   return (
     <>
       <h1>List Group</h1>
       {notFoundCountries}
       <ul className="list-group">
-        {countries.map((country) => (
-          <li className="list-group-item" onClick={handleClick} key={country}>
+        {countries.map((country, countryIndex) => (
+          <li
+            className={
+              selectedIndex === countryIndex
+                ? "list-group-item active"
+                : "list-group-item"
+            }
+            aria-current="true"
+            onClick={() => setSelectedIndex(countryIndex)}
+            key={country}
+          >
             {country}
           </li>
         ))}

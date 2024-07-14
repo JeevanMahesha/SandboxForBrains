@@ -13,18 +13,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create environment file
         env:
-            REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
-            REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
-            PASSWORD: ${{ secrets.PASSWORD }}
+          REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
+          REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-            sh -c 'echo "export const environmentValues = {
-            REALM_API_KEY: \"$REALM_API_KEY\",
-            REALM_APP_ID: \"$REALM_APP_ID\",
-            PASSWORD: \"$PASSWORD\",
-            };" > ./src/environments/environment.ts && echo "File created successfully" || echo "Error creating file'
-
+          echo "export const environmentValues = {
+            REALM_API_KEY: '$REALM_API_KEY',
+            REALM_APP_ID: '$REALM_APP_ID',
+            PASSWORD: '$PASSWORD',
+          };" > ./src/environments/environment.ts && echo "File created successfully" || echo "Error creating file"
       - run: npm ci && npm run build
-
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

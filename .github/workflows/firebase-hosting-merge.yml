@@ -21,7 +21,7 @@ jobs:
             REALM_API_KEY: '$REALM_API_KEY',
             REALM_APP_ID: '$REALM_APP_ID',
             PASSWORD: '$PASSWORD',
-          };" > ./src/environments/environment.ts && echo "File created successfully" || echo "Error creating file"
+          };" > dist/environment/environment.ts && echo "File created successfully" || echo "Error creating file"
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

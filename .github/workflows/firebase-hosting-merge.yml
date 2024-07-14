@@ -19,7 +19,8 @@ jobs:
       - name: Create environment file
         run: |
           echo "variable from shell environment : $PASSWORD"
-          echo $PASSWORD
+          echo ${{ vars.PASSWORD }}
+          echo ${{ secrets.REALM_API_KEY }}
           mkdir -p dist/environment
           touch dist/environment/environment.ts
           echo "export const environmentValues = {

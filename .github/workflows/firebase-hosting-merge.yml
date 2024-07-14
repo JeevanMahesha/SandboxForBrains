@@ -18,17 +18,8 @@ jobs:
       # - run: npm ci && npm run build
       - name: Create environment file
         run: |
-          echo "variable from shell environment : $PASSWORD"
           echo ${{ vars.PASSWORD }}
           echo ${{ secrets.REALM_API_KEY }}
-          mkdir -p dist/environment
-          touch dist/environment/environment.ts
-          echo "export const environmentValues = {
-            REALM_API_KEY: '$REALM_API_KEY',
-            REALM_APP_ID: '$REALM_APP_ID',
-            PASSWORD: ${{ vars.PASSWORD }},
-          };" > dist/environment/environment.ts && echo "File created successfully" || echo "Error creating file"
-          cat dist/environment/environment.ts
       # - uses: FirebaseExtended/action-hosting-deploy@v0
         # with:
         #   repoToken: ${{ secrets.GITHUB_TOKEN }}

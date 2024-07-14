@@ -16,7 +16,7 @@ jobs:
         env:
           REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
           REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          PASSWORD: ${{ vars.PASSWORD }}
         run: |
           mkdir -p dist/environment
           touch dist/environment/environment.ts

@@ -9,14 +9,14 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    env:
+        REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
+        REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
+        PASSWORD: ${{ vars.PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
+      # - uses: actions/checkout@v4
       # - run: npm ci && npm run build
       - name: Create environment file
-        env:
-          REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
-          REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
-          PASSWORD: ${{ vars.PASSWORD }}
         run: |
           echo "variable from shell environment : $PASSWORD"
           mkdir -p dist/environment

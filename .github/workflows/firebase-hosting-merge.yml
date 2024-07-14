@@ -12,22 +12,24 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci && npm run build
-      - name: Create environment file
-        env:
-          REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
-          REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
-          PASSWORD: ${{ vars.PASSWORD }}
-        run: |
-          echo "export const environmentValues = {
-            REALM_API_KEY: '$REALM_API_KEY',
-            REALM_APP_ID: '$REALM_APP_ID',
-            PASSWORD: '$PASSWORD',
-          };" > dist/environment/environment.ts && echo "File created successfully" || echo "Error creating file"
-          cat dist/environment/environment.ts
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ROOMFOODAPP_JDPS }}
-          channelId: live
-          projectId: roomfoodapp-jdps
+      - run: ls
+      # - run: npm ci && npm run build
+      # - name: Create environment file
+      #   env:
+      #     REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
+      #     REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
+      #     PASSWORD: ${{ vars.PASSWORD }}
+      #   run: |
+      #     echo "export const environmentValues = {
+      #       REALM_API_KEY: '$REALM_API_KEY',
+      #       REALM_APP_ID: '$REALM_APP_ID',
+      #       PASSWORD: '$PASSWORD',
+      #     };" > dist/environment/environment.ts && echo "File created successfully" || echo "Error creating file"
+      #     cat dist/environment/environment.ts
+      #     ls dist/environment/
+      # - uses: FirebaseExtended/action-hosting-deploy@v0
+      #   with:
+      #     repoToken: ${{ secrets.GITHUB_TOKEN }}
+      #     firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ROOMFOODAPP_JDPS }}
+      #     channelId: live
+      #     projectId: roomfoodapp-jdps

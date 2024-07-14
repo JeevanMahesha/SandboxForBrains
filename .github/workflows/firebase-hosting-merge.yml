@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: npm ci && npm run build
       - name: Create environment file
         env:
           REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
@@ -22,7 +23,6 @@ jobs:
             REALM_APP_ID: '$REALM_APP_ID',
             PASSWORD: '$PASSWORD',
           };" > dist/environment/environment.ts && echo "File created successfully" || echo "Error creating file"
-      - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

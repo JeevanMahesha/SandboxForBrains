@@ -18,6 +18,7 @@ jobs:
           REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
+          touch dist/environment/environment.ts
           echo "export const environmentValues = {
             REALM_API_KEY: '$REALM_API_KEY',
             REALM_APP_ID: '$REALM_APP_ID',

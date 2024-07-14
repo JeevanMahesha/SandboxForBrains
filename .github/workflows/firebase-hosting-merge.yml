@@ -6,19 +6,20 @@ on:
   push:
     branches:
       - master
+env:
+    REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
+    REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
+    PASSWORD: ${{ vars.PASSWORD }}
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    env:
-        REALM_API_KEY: ${{ secrets.REALM_API_KEY }}
-        REALM_APP_ID: ${{ secrets.REALM_APP_ID }}
-        PASSWORD: ${{ vars.PASSWORD }}
     steps:
       # - uses: actions/checkout@v4
       # - run: npm ci && npm run build
       - name: Create environment file
         run: |
           echo "variable from shell environment : $PASSWORD"
+          echo $PASSWORD
           mkdir -p dist/environment
           touch dist/environment/environment.ts
           echo "export const environmentValues = {

@@ -6,9 +6,13 @@
           <h5 class="card-title">Plain Counter</h5>
         </div>
         <div class="card-body">
+          @if (plainCounter) {
           <h2 class="card-text">
             {{ plainCounter }}
           </h2>
+          } @else {
+          <ng-container *ngTemplateOutlet="initialValue"></ng-container>
+          }
         </div>
         <div class="card-footer text-body-secondary">
           <button (click)="incrementPlainCounter()" class="btn btn-primary">
@@ -23,9 +27,13 @@
           <h5 class="card-title">Signal Counter</h5>
         </div>
         <div class="card-body">
+          @if (signalCounter()) {
           <h2 class="card-text">
             {{ signalCounter() }}
           </h2>
+          } @else {
+          <ng-container *ngTemplateOutlet="initialValue"></ng-container>
+          }
         </div>
         <div class="card-footer text-body-secondary">
           <button (click)="incrementSignalCounter()" class="btn btn-primary">
@@ -34,6 +42,31 @@
         </div>
       </div>
     </div>
-    <div class="col-4"></div>
+    <div class="col-4">
+      <div class="card text-center">
+        <div class="card-header">
+          <h5 class="card-title">Observable Counter</h5>
+        </div>
+        <div class="card-body">
+          @let counter = counter$ | async; @if (counter) {
+
+          <h2 class="card-text">
+            {{ counter }}
+          </h2>
+          } @else {
+          <ng-container *ngTemplateOutlet="initialValue"></ng-container>
+          }
+        </div>
+        <div class="card-footer text-body-secondary">
+          <button (click)="incrementCounter()" class="btn btn-primary">
+            Increment
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<ng-template #initialValue>
+  <p class="fs-5 text-muted">Please Start Counting</p>
+</ng-template>

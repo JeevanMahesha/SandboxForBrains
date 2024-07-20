@@ -17,7 +17,23 @@
         </div>
       </div>
     </div>
-    <div class="col-4"></div>
+    <div class="col-4">
+      <div class="card text-center">
+        <div class="card-header">
+          <h5 class="card-title">Signal Counter</h5>
+        </div>
+        <div class="card-body">
+          <h2 class="card-text">
+            {{ signalCounter() }}
+          </h2>
+        </div>
+        <div class="card-footer text-body-secondary">
+          <button (click)="incrementSignalCounter()" class="btn btn-primary">
+            Increment
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="col-4"></div>
   </div>
 </div>

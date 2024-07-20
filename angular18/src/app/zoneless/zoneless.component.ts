@@ -1,5 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { interval, Observable } from 'rxjs';
 
 @Component({
@@ -13,9 +13,13 @@ export default class ZonelessComponent {
   plainCounter = 0;
   signalCounter = signal(0);
   counter$: Observable<number> | null = null;
+  // changeDetectorRef = inject(ChangeDetectorRef);
 
   incrementPlainCounter() {
-    setInterval(() => this.plainCounter++, 1000);
+    setInterval(() => {
+      this.plainCounter++;
+      // this.changeDetectorRef.markForCheck();
+    }, 1000);
   }
 
   incrementSignalCounter() {

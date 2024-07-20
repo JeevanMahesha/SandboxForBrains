@@ -1,12 +1,23 @@
 <div class="container text-center">
   <div class="row">
-    <div class="col">1 of 3</div>
-    <div class="col-6">2 of 3 (wider)</div>
-    <div class="col">3 of 3</div>
-  </div>
-  <div class="row">
-    <div class="col">1 of 3</div>
-    <div class="col-5">2 of 3 (wider)</div>
-    <div class="col">3 of 3</div>
+    <div class="col-4">
+      <div class="card text-center">
+        <div class="card-header">
+          <h5 class="card-title">Plain Counter</h5>
+        </div>
+        <div class="card-body">
+          <h2 class="card-text">
+            {{ plainCounter }}
+          </h2>
+        </div>
+        <div class="card-footer text-body-secondary">
+          <button (click)="incrementPlainCounter()" class="btn btn-primary">
+            Increment
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-4"></div>
+    <div class="col-4"></div>
   </div>
 </div>

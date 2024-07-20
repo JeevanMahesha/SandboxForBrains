@@ -7,7 +7,6 @@ import { interval, Observable } from 'rxjs';
   standalone: true,
   imports: [AsyncPipe, NgTemplateOutlet],
   templateUrl: './zoneless.component.html',
-  styleUrl: './zoneless.component.css',
 })
 export default class ZonelessComponent {
   plainCounter = 0;

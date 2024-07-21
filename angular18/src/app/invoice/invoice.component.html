@@ -14,27 +14,39 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let eachProduct of products; let i = index">
+      <tr *ngFor="let eachItem of invoiceItems(); let i = index">
         <td>
-          <input
-            type="text"
-            [(ngModel)]="eachProduct.name"
-            class="form-control"
-            placeholder="Product Name"
-          />
+          <mat-form-field>
+            <mat-label>Product</mat-label>
+            <input
+              type="text"
+              placeholder="Pick one"
+              matInput
+              [ngModel]="eachItem.productName"
+              [matAutocomplete]="auto"
+              (ngModelChange)="updateProductDetail($event, i)"
+            />
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              @for (option of products; track option.id) {
+              <mat-option [value]="option">{{ option.name }}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
         </td>
         <td>
-          <input type="number" class="form-control" placeholder="Quantity" />
+          <mat-form-field class="example-form-field">
+            <input
+              type="number"
+              matInput
+              [ngModel]="eachItem.quantity"
+              (ngModelChange)="calculateTotal($event, i)"
+              placeholder="Quantity"
+            />
+          </mat-form-field>
         </td>
-        <td>
-          <input
-            type="number"
-            [(ngModel)]="eachProduct.price"
-            class="form-control"
-            placeholder="Price"
-          />
-        </td>
-        <td class="text-end">{{ eachProduct.price }} &#8377;</td>
+
+        <td class="no-print">{{ eachItem.price }} &#8377;</td>
+        <td class="no-print">{{ eachItem.total }} &#8377;</td>
         <td class="no-print">
           <button class="btn btn-danger" (click)="removeRow(i)">
             <span class="material-icons">delete</span>
@@ -69,7 +81,7 @@
 
   <div class="text-end mt-3">
     <p class="text-muted mb-1">
-      <strong>Subtotal:</strong> {{ subtotal.toFixed(2) }} &#8377;
+      <strong>Subtotal:</strong> {{ subtotal().toFixed(2) }} &#8377;
     </p>
     <p class="text-muted mb-1">
       <strong>GST:</strong> {{ taxAmount.toFixed(2) }} &#8377;

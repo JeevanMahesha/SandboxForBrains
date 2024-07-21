@@ -1,24 +1,79 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, model, signal } from '@angular/core';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-invoice',
   templateUrl: './invoice.component.html',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+  ],
 })
 export default class InvoiceComponent {
   products = products;
+  invoiceItems = signal<InvoiceItem[]>([]);
   taxRate = 0;
-  discountRate = 0;
-  subtotal = 0;
+  discountRate = model(0);
+  subtotal = computed(() =>
+    this.invoiceItems().reduce((sum, row) => sum + row.total, 0)
+  );
   taxAmount = 0;
   discountAmount = 0;
   totalAmount = 0;
+  invoiceItem = new FormGroup({
+    productName: new FormControl(''),
+    quantity: new FormControl(0),
+    price: new FormControl(0),
+    total: new FormControl(0),
+  });
+  invoiceForm = new FormGroup({
+    invoiceItems: new FormArray([this.invoiceItem]),
+  });
+
+  constructor() {
+    this.addRow();
+  }
 
   addRow() {
-    // this.products.push({ name: '', quantity: 0, price: 0, total: 0 });
+    this.invoiceItems.update((items) => {
+      items.push({ productName: '', quantity: 0, price: 0, total: 0 });
+      return items;
+    });
+  }
+
+  updateProductDetail(productDetail: IProduct, indexValue: number) {
+    this.invoiceItems.update((items) => {
+      items[indexValue] = {
+        price: productDetail.price,
+        productName: productDetail.name,
+        quantity: 1,
+        total: productDetail.price,
+      };
+      return items;
+    });
+  }
+
+  calculateTotal(quantity: number, indexValue: number) {
+    this.invoiceItems.update((items) => {
+      items[indexValue].quantity = quantity;
+      items[indexValue].total = Math.ceil(items[indexValue].price * quantity);
+      return items;
+    });
   }
 
   removeRow(index: number) {
@@ -26,27 +81,21 @@ export default class InvoiceComponent {
     this.updateTotals();
   }
 
-  calculateTotal(index: number) {
-    const row = this.products[index];
-    // row.total = row.quantity * row.price;
-    this.updateTotals();
-  }
-
   updateTotals() {
     // this.subtotal = this.rows.reduce((sum, row) => sum + row.total, 0);
-    this.taxAmount = this.subtotal * (this.taxRate / 100);
-    this.discountAmount = this.subtotal * (this.discountRate / 100);
-    this.totalAmount = this.subtotal + this.taxAmount - this.discountAmount;
+    this.taxAmount = this.subtotal() * (this.taxRate / 100);
+    this.discountAmount = this.subtotal() * (this.discountRate() / 100);
+    this.totalAmount = this.subtotal() + this.taxAmount - this.discountAmount;
   }
 }
 
-interface Product {
+interface IProduct {
   id: number;
   name: string;
   price: number;
 }
 
-const products: Product[] = [
+const products = [
   { id: 1, name: 'Laptop', price: 999.99 },
   { id: 2, name: 'Smartphone', price: 699.99 },
   { id: 3, name: 'Tablet', price: 499.99 },
@@ -58,3 +107,10 @@ const products: Product[] = [
   { id: 9, name: 'Monitor', price: 179.99 },
   { id: 10, name: 'Keyboard', price: 79.99 },
 ];
+
+interface InvoiceItem {
+  productName: string;
+  quantity: number;
+  price: number;
+  total: number;
+}

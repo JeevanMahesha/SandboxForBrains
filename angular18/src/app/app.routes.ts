@@ -10,4 +10,8 @@ export const routes: Routes = [
     path: 'zoneless',
     loadComponent: () => import('./zoneless/zoneless.component'),
   },
+  {
+    path: 'invoice',
+    loadComponent: () => import('./invoice/invoice.component'),
+  },
 ];

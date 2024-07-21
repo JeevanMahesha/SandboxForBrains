@@ -28,12 +28,16 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
                 [routerLink]="['/zoneless']"
                 routerLinkActive="active"
                 aria-current="page"
-                href="#"
                 >Zoneless</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Features</a>
+              <a
+                class="nav-link"
+                [routerLink]="['/invoice']"
+                routerLinkActive="active"
+                >Signal</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Pricing</a>
@@ -45,7 +49,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </div>
       </div>
     </nav>
-    <div class="container text-center m-5 p-5 bg-body-secondary">
+    <div class="container text-center m-5 p-3 bg-body-secondary">
       <router-outlet></router-outlet>
     </div>
   `,

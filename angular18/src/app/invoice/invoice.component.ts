@@ -48,37 +48,44 @@ export default class InvoiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.#updateRowTotal();
+    this.invoiceForm.controls.invoiceItems.valueChanges.subscribe(console.log);
   }
 
   addRow() {
-    this.invoiceForm.controls.invoiceItems.push(this.getNewInvoiceItems);
-    this.#updateRowTotal();
+    this.invoiceForm.controls.invoiceItems.push(this.getNewInvoiceItems, {
+      emitEvent: false,
+    });
   }
 
   updateProductDetail(productName: string, indexValue: number) {
     const selectedProductPrice = this.products.find(
       (product) => product.productName === productName
     );
-    this.invoiceForm.controls.invoiceItems.at(indexValue).patchValue({
-      price: selectedProductPrice?.price,
-      quantity: 1,
-    });
+    this.invoiceForm.controls.invoiceItems.at(indexValue).patchValue(
+      {
+        price: selectedProductPrice?.price,
+        quantity: 1,
+        total: selectedProductPrice?.price,
+      },
+      { emitEvent: false }
+    );
   }
 
   removeRow(index: number) {
     this.invoiceForm.controls.invoiceItems.removeAt(index);
-    this.#updateRowTotal();
   }
 
-  #updateRowTotal() {
-    this.invoiceForm.controls.invoiceItems.controls.forEach((eachControl) => {
-      eachControl.controls.quantity.valueChanges.subscribe((value) => {
-        eachControl.controls.total.setValue(
-          Math.ceil(value! * eachControl.controls.price.value!)
-        );
-      });
-    });
+  updateRowTotal(indexValue: number) {
+    const currentProduct =
+      this.invoiceForm.controls.invoiceItems.at(indexValue);
+    this.invoiceForm.controls.invoiceItems.at(indexValue).patchValue(
+      {
+        total: Math.ceil(
+          currentProduct.value.price! * currentProduct.value.quantity!
+        ),
+      },
+      { emitEvent: false }
+    );
   }
 }
 

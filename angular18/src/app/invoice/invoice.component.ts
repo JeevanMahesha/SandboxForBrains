@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, model, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-invoice',
@@ -18,94 +19,80 @@ import { MatInputModule } from '@angular/material/input';
   imports: [
     FormsModule,
     CommonModule,
-    MatAutocompleteModule,
+    MatSelectModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
   ],
 })
-export default class InvoiceComponent {
+export default class InvoiceComponent implements OnInit {
   products = products;
-  invoiceItems = signal<InvoiceItem[]>([]);
   taxRate = 0;
-  discountRate = model(0);
-  subtotal = computed(() =>
-    this.invoiceItems().reduce((sum, row) => sum + row.total, 0)
-  );
+  discountRate = 0;
+  subtotal = 0;
   taxAmount = 0;
   discountAmount = 0;
   totalAmount = 0;
-  invoiceItem = new FormGroup({
-    productName: new FormControl(''),
-    quantity: new FormControl(0),
-    price: new FormControl(0),
-    total: new FormControl(0),
-  });
+
   invoiceForm = new FormGroup({
-    invoiceItems: new FormArray([this.invoiceItem]),
+    invoiceItems: new FormArray<FormGroup<IInvoiceItemForm>>([]),
   });
 
-  constructor() {
-    this.addRow();
+  get getNewInvoiceItems() {
+    return new FormGroup({
+      productName: new FormControl(''),
+      quantity: new FormControl(0, Validators.min(1)),
+      price: new FormControl(0),
+      total: new FormControl(0),
+    });
+  }
+
+  ngOnInit(): void {
+    this.#updateRowTotal();
   }
 
   addRow() {
-    this.invoiceItems.update((items) => {
-      items.push({ productName: '', quantity: 0, price: 0, total: 0 });
-      return items;
-    });
+    this.invoiceForm.controls.invoiceItems.push(this.getNewInvoiceItems);
+    this.#updateRowTotal();
   }
 
-  updateProductDetail(productDetail: IProduct, indexValue: number) {
-    this.invoiceItems.update((items) => {
-      items[indexValue] = {
-        price: productDetail.price,
-        productName: productDetail.name,
-        quantity: 1,
-        total: productDetail.price,
-      };
-      return items;
-    });
-  }
-
-  calculateTotal(quantity: number, indexValue: number) {
-    this.invoiceItems.update((items) => {
-      items[indexValue].quantity = quantity;
-      items[indexValue].total = Math.ceil(items[indexValue].price * quantity);
-      return items;
+  updateProductDetail(productName: string, indexValue: number) {
+    const selectedProductPrice = this.products.find(
+      (product) => product.productName === productName
+    );
+    this.invoiceForm.controls.invoiceItems.at(indexValue).patchValue({
+      price: selectedProductPrice?.price,
+      quantity: 1,
     });
   }
 
   removeRow(index: number) {
-    this.products.splice(index, 1);
-    this.updateTotals();
+    this.invoiceForm.controls.invoiceItems.removeAt(index);
+    this.#updateRowTotal();
   }
 
-  updateTotals() {
-    // this.subtotal = this.rows.reduce((sum, row) => sum + row.total, 0);
-    this.taxAmount = this.subtotal() * (this.taxRate / 100);
-    this.discountAmount = this.subtotal() * (this.discountRate() / 100);
-    this.totalAmount = this.subtotal() + this.taxAmount - this.discountAmount;
+  #updateRowTotal() {
+    this.invoiceForm.controls.invoiceItems.controls.forEach((eachControl) => {
+      eachControl.controls.quantity.valueChanges.subscribe((value) => {
+        eachControl.controls.total.setValue(
+          Math.ceil(value! * eachControl.controls.price.value!)
+        );
+      });
+    });
   }
-}
-
-interface IProduct {
-  id: number;
-  name: string;
-  price: number;
 }
 
 const products = [
-  { id: 1, name: 'Laptop', price: 999.99 },
-  { id: 2, name: 'Smartphone', price: 699.99 },
-  { id: 3, name: 'Tablet', price: 499.99 },
-  { id: 4, name: 'Smartwatch', price: 199.99 },
-  { id: 5, name: 'Headphones', price: 149.99 },
-  { id: 6, name: 'Bluetooth Speaker', price: 89.99 },
-  { id: 7, name: 'External Hard Drive', price: 129.99 },
-  { id: 8, name: 'Gaming Console', price: 399.99 },
-  { id: 9, name: 'Monitor', price: 179.99 },
-  { id: 10, name: 'Keyboard', price: 79.99 },
+  { id: 1, productName: 'Laptop', price: 999.99 },
+  { id: 2, productName: 'Smartphone', price: 699.99 },
+  { id: 3, productName: 'Tablet', price: 499.99 },
+  { id: 4, productName: 'Smartwatch', price: 199.99 },
+  { id: 5, productName: 'Headphones', price: 149.99 },
+  { id: 6, productName: 'Bluetooth Speaker', price: 89.99 },
+  { id: 7, productName: 'External Hard Drive', price: 129.99 },
+  { id: 8, productName: 'Gaming Console', price: 399.99 },
+  { id: 9, productName: 'Monitor', price: 179.99 },
+  { id: 10, productName: 'Keyboard', price: 79.99 },
 ];
 
 interface InvoiceItem {
@@ -113,4 +100,11 @@ interface InvoiceItem {
   quantity: number;
   price: number;
   total: number;
+}
+
+interface IInvoiceItemForm {
+  productName: FormControl<string | null>;
+  quantity: FormControl<number | null>;
+  price: FormControl<number | null>;
+  total: FormControl<number | null>;
 }

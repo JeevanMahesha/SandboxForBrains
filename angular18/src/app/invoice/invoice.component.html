@@ -3,7 +3,7 @@
     <h1 class="material-symbols-rounded me-2">Invoice</h1>
   </div>
 
-  <table class="table table-bordered">
+  <table [formGroup]="invoiceForm" class="table table-bordered">
     <thead class="table-light">
       <tr>
         <th class="w-35">Product Name</th>
@@ -13,24 +13,23 @@
         <th class="no-print">Action</th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let eachItem of invoiceItems(); let i = index">
+    <tbody formArrayName="invoiceItems">
+      @for (item of invoiceForm.controls.invoiceItems.controls; track item; let
+      indexValue=$index) {
+      <tr [formGroupName]="indexValue">
         <td>
           <mat-form-field>
             <mat-label>Product</mat-label>
-            <input
-              type="text"
-              placeholder="Pick one"
-              matInput
-              [ngModel]="eachItem.productName"
-              [matAutocomplete]="auto"
-              (ngModelChange)="updateProductDetail($event, i)"
-            />
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-              @for (option of products; track option.id) {
-              <mat-option [value]="option">{{ option.name }}</mat-option>
+            <mat-select
+              formControlName="productName"
+              (selectionChange)="updateProductDetail($event.value, indexValue)"
+            >
+              @for (eachProduct of products; track eachProduct.id) {
+              <mat-option [value]="eachProduct.productName">{{
+                eachProduct.productName
+              }}</mat-option>
               }
-            </mat-autocomplete>
+            </mat-select>
           </mat-form-field>
         </td>
         <td>
@@ -38,21 +37,49 @@
             <input
               type="number"
               matInput
-              [ngModel]="eachItem.quantity"
-              (ngModelChange)="calculateTotal($event, i)"
+              formControlName="quantity"
               placeholder="Quantity"
+              [min]="1"
             />
           </mat-form-field>
         </td>
 
-        <td class="no-print">{{ eachItem.price }} &#8377;</td>
-        <td class="no-print">{{ eachItem.total }} &#8377;</td>
         <td class="no-print">
-          <button class="btn btn-danger" (click)="removeRow(i)">
+          <mat-form-field class="example-form-field">
+            <input
+              type="number"
+              matInput
+              formControlName="price"
+              placeholder="Price"
+              readonly
+            />
+            <span matTextSuffix>&#8377;</span>
+          </mat-form-field>
+        </td>
+        <td class="no-print">
+          <mat-form-field class="example-form-field">
+            <input
+              type="number"
+              matInput
+              formControlName="total"
+              placeholder="Total"
+              readonly
+            />
+            <span matTextSuffix>&#8377;</span>
+          </mat-form-field>
+        </td>
+        <td class="no-print">
+          <button class="btn btn-danger" (click)="removeRow(indexValue)">
             <span class="material-icons">delete</span>
           </button>
         </td>
       </tr>
+
+      } @empty {
+      <tr>
+        <td colspan="5" class="text-center">No Products Added</td>
+      </tr>
+      }
     </tbody>
   </table>
 
@@ -72,7 +99,6 @@
     <input
       type="number"
       [(ngModel)]="discountRate"
-      (input)="updateTotals()"
       class="form-control ms-2"
       style="width: 80px"
       placeholder="Rabat %"
@@ -81,7 +107,7 @@
 
   <div class="text-end mt-3">
     <p class="text-muted mb-1">
-      <strong>Subtotal:</strong> {{ subtotal().toFixed(2) }} &#8377;
+      <strong>Subtotal:</strong> {{ subtotal.toFixed(2) }} &#8377;
     </p>
     <p class="text-muted mb-1">
       <strong>GST:</strong> {{ taxAmount.toFixed(2) }} &#8377;

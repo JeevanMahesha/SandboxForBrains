@@ -7,63 +7,33 @@
     <thead class="table-light">
       <tr>
         <th class="w-35">Product Name</th>
-        <th class="w-20">Quantity</th>
         <th class="w-20">Price</th>
-        <th class="w-25">Total</th>
         <th class="no-print">Action</th>
       </tr>
     </thead>
     <tbody formArrayName="invoiceItems">
-      @for (item of invoiceForm.controls.invoiceItems.controls; track item; let
-      indexValue=$index) {
+      @for (eachFormControl of invoiceForm.controls.invoiceItems.controls; track
+      eachFormControl; let indexValue=$index) {
       <tr [formGroupName]="indexValue">
         <td>
           <mat-form-field>
             <mat-label>Product</mat-label>
-            <mat-select
-              formControlName="productName"
-              (selectionChange)="updateProductDetail($event.value, indexValue)"
-            >
+            <mat-select formControlName="productDetail">
               @for (eachProduct of products; track eachProduct.id) {
-              <mat-option [value]="eachProduct.productName">{{
+              <mat-option [value]="eachProduct">{{
                 eachProduct.productName
               }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
         </td>
-        <td>
-          <mat-form-field class="example-form-field">
-            <input
-              type="number"
-              matInput
-              formControlName="quantity"
-              placeholder="Quantity"
-              [min]="1"
-              (change)="updateRowTotal(indexValue)"
-            />
-          </mat-form-field>
-        </td>
-
         <td class="no-print">
-          <mat-form-field class="example-form-field">
+          <mat-form-field>
             <input
               type="number"
               matInput
-              formControlName="price"
+              [value]="eachFormControl.value.productDetail?.price"
               placeholder="Price"
-              readonly
-            />
-            <span matTextSuffix>&#8377;</span>
-          </mat-form-field>
-        </td>
-        <td class="no-print">
-          <mat-form-field class="example-form-field">
-            <input
-              type="number"
-              matInput
-              formControlName="total"
-              placeholder="Total"
               readonly
             />
             <span matTextSuffix>&#8377;</span>
@@ -102,22 +72,20 @@
       [(ngModel)]="discountRate"
       class="form-control ms-2"
       style="width: 80px"
-      placeholder="Rabat %"
+      [disabled]="totalAmount() === 0"
     />
   </div>
 
   <div class="text-end mt-3">
     <p class="text-muted mb-1">
-      <strong>Subtotal:</strong> {{ subtotal.toFixed(2) }} &#8377;
+      <strong>Subtotal:</strong> {{ subtotal() }} &#8377;
     </p>
+
     <p class="text-muted mb-1">
-      <strong>GST:</strong> {{ taxAmount.toFixed(2) }} &#8377;
-    </p>
-    <p class="text-muted mb-1">
-      <strong>Discount amount:</strong> {{ discountAmount.toFixed(2) }} &#8377;
+      <strong>Discount amount:</strong> {{ discountAmount() }} &#8377;
     </p>
     <p class="text-primary fs-4 fw-bold mb-0">
-      <strong>Total:</strong> {{ totalAmount.toFixed(2) }} &#8377;
+      <strong>Total:</strong> {{ totalAmount() }} &#8377;
     </p>
   </div>
 </div>

@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, effect, model } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { map, of, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-invoice',
@@ -25,30 +26,40 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
   ],
 })
-export default class InvoiceComponent implements OnInit {
+export default class InvoiceComponent {
   products = products;
-  taxRate = 0;
-  discountRate = 0;
-  subtotal = 0;
-  taxAmount = 0;
-  discountAmount = 0;
-  totalAmount = 0;
+  discountRate = model(0);
+  subtotal = toSignal(of(0));
+  discountAmount = computed(() =>
+    Math.ceil(this.subtotal()! * (this.discountRate() / 100))
+  );
+  totalAmount = computed(() =>
+    Math.ceil(this.subtotal()! - this.discountAmount())
+  );
 
   invoiceForm = new FormGroup({
     invoiceItems: new FormArray<FormGroup<IInvoiceItemForm>>([]),
   });
 
+  constructor() {
+    this.subtotal = this.getSubtotal;
+    effect(() => console.log(this.discountRate()));
+  }
+
   get getNewInvoiceItems() {
     return new FormGroup({
-      productName: new FormControl(''),
-      quantity: new FormControl(0, Validators.min(1)),
-      price: new FormControl(0),
-      total: new FormControl(0),
+      productDetail: new FormControl<IProductDetail | null>(null),
     });
   }
 
-  ngOnInit(): void {
-    this.invoiceForm.controls.invoiceItems.valueChanges.subscribe(console.log);
+  get getSubtotal() {
+    return toSignal(
+      this.invoiceForm.controls.invoiceItems.valueChanges.pipe(
+        map((items) => items.map((item) => item.productDetail?.price || 0)),
+        map((prices) => prices.reduce((a, b) => Math.ceil(a + b), 0)),
+        startWith(0)
+      )
+    );
   }
 
   addRow() {
@@ -57,35 +68,8 @@ export default class InvoiceComponent implements OnInit {
     });
   }
 
-  updateProductDetail(productName: string, indexValue: number) {
-    const selectedProductPrice = this.products.find(
-      (product) => product.productName === productName
-    );
-    this.invoiceForm.controls.invoiceItems.at(indexValue).patchValue(
-      {
-        price: selectedProductPrice?.price,
-        quantity: 1,
-        total: selectedProductPrice?.price,
-      },
-      { emitEvent: false }
-    );
-  }
-
   removeRow(index: number) {
     this.invoiceForm.controls.invoiceItems.removeAt(index);
-  }
-
-  updateRowTotal(indexValue: number) {
-    const currentProduct =
-      this.invoiceForm.controls.invoiceItems.at(indexValue);
-    this.invoiceForm.controls.invoiceItems.at(indexValue).patchValue(
-      {
-        total: Math.ceil(
-          currentProduct.value.price! * currentProduct.value.quantity!
-        ),
-      },
-      { emitEvent: false }
-    );
   }
 }
 
@@ -102,16 +86,12 @@ const products = [
   { id: 10, productName: 'Keyboard', price: 79.99 },
 ];
 
-interface InvoiceItem {
+interface IProductDetail {
   productName: string;
-  quantity: number;
   price: number;
-  total: number;
+  id: number;
 }
 
 interface IInvoiceItemForm {
-  productName: FormControl<string | null>;
-  quantity: FormControl<number | null>;
-  price: FormControl<number | null>;
-  total: FormControl<number | null>;
+  productDetail: FormControl<IProductDetail | null>;
 }

@@ -39,12 +39,6 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
                 >Signal</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-            </li>
           </ul>
         </div>
       </div>

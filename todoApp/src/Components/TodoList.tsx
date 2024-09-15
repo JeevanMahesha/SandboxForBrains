@@ -5,6 +5,7 @@ function TodoList() {
   const [todoData, setTodoData] = useState<ITodo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     axios
@@ -27,11 +28,28 @@ function TodoList() {
     return <>Error: {error}</>;
   }
 
+  const filteredTodo = todoData.filter((todo) =>
+    todo.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <h1>Todo List</h1>
       <div className="container-fluid m-5">
+        <input
+          type="text"
+          placeholder="Search todo..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="form-control mb-3"
+        />
+
         <table className="table">
+          {filteredTodo.length === 0 ? (
+            <tr>
+              <td colSpan={3}>No todos found</td>
+            </tr>
+          ) : null}
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -40,7 +58,7 @@ function TodoList() {
             </tr>
           </thead>
           <tbody>
-            {todoData.map((todo) => (
+            {filteredTodo.map((todo) => (
               <tr key={todo.id}>
                 <th scope="row">{todo.id}</th>
                 <td>{todo.title}</td>

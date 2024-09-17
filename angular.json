@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Rooted-Baskets:build:production"
+              "buildTarget": "rooted-baskets:build:production"
             },
             "development": {
-              "buildTarget": "Rooted-Baskets:build:development"
+              "buildTarget": "rooted-baskets:build:development"
             }
           },
           "defaultConfiguration": "development"

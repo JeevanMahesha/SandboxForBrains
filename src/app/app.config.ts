@@ -1,14 +1,13 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
-import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter } from '@angular/router';
 import { fireBaseInitializeAppConfig } from '../environment/env.dev';
 import { routes } from './app.routes';
 import { AuthService } from './auth/auth.service';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,10 +24,10 @@ export const appConfig: ApplicationConfig = {
         authDomain: fireBaseInitializeAppConfig.authDomain,
         messagingSenderId: fireBaseInitializeAppConfig.messagingSenderId,
         measurementId: fireBaseInitializeAppConfig.measurementId,
-        databaseURL: fireBaseInitializeAppConfig.databaseURL,
       })
     ),
-    AngularFireDatabaseModule,
-    provideAuth(() => getAuth()), provideAnimationsAsync(),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    provideAnimationsAsync(),
   ],
 };

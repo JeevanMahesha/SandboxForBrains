@@ -1,16 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { GoogleAuthProvider } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
-import {} from '@angular/fire/storage';
-import { from } from 'rxjs';
-import { IUserProfile } from './auth.model';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
+import {
+  addDoc,
+  collection,
+  collectionData,
+  CollectionReference,
+  DocumentData,
+  Firestore,
+} from '@angular/fire/firestore';
+import { from, Observable } from 'rxjs';
 import { DB_NAMES } from '../common/db.name.list';
+import { IUserProfile } from './auth.model';
 
 @Injectable()
 export class AuthService {
-  fireBaseDatabase = inject(AngularFireDatabase);
+  #fireBaseDatabase = inject(Firestore);
   #angularFireAuth = inject(AngularFireAuth);
   loggedInUserDetail: IUserProfile | null = null;
 
@@ -21,10 +26,20 @@ export class AuthService {
       this.loggedInUserDetail = authResponse.additionalUserInfo
         ?.profile as IUserProfile;
       if (authResponse.additionalUserInfo?.isNewUser) {
-        this.fireBaseDatabase
-          .object(DB_NAMES.USERS)
-          .set(this.loggedInUserDetail);
+        addDoc(this.getCollection(DB_NAMES.USERS), {
+          ...this.loggedInUserDetail,
+        });
       }
     });
+  }
+
+  getCollection(
+    collectionName: DB_NAMES
+  ): CollectionReference<DocumentData, DocumentData> {
+    return collection(this.#fireBaseDatabase, collectionName);
+  }
+
+  getUsers(): Observable<IUserProfile[]> {
+    return collectionData(this.getCollection(DB_NAMES.USERS));
   }
 }

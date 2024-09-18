@@ -8,6 +8,7 @@ import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { fireBaseInitializeAppConfig } from '../environment/env.dev';
 import { routes } from './app.routes';
 import { AuthService } from './auth/auth.service';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +29,6 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     AngularFireDatabaseModule,
-    provideAuth(() => getAuth()),
+    provideAuth(() => getAuth()), provideAnimationsAsync(),
   ],
 };

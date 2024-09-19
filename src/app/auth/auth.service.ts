@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { GoogleAuthProvider } from '@angular/fire/auth';
+import { Auth, authState, GoogleAuthProvider } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
   addDoc,
@@ -9,15 +9,33 @@ import {
   DocumentData,
   Firestore,
 } from '@angular/fire/firestore';
-import { from, Observable } from 'rxjs';
+import { filter, from, Observable } from 'rxjs';
 import { DB_NAMES } from '../common/db.name.list';
-import { IUserProfile } from './auth.model';
+import { IAuthStateResponse, IUserProfile } from './auth.model';
 
 @Injectable()
 export class AuthService {
   #fireBaseDatabase = inject(Firestore);
   #angularFireAuth = inject(AngularFireAuth);
+  #auth = inject(Auth);
+  authState$: Observable<IAuthStateResponse> = authState(this.#auth);
   loggedInUserDetail: IUserProfile | null = null;
+
+  constructor() {
+    this.authState$.pipe(filter((user) => !!user)).subscribe((user) => {
+      const userDetail = user.providerData.at(0)!;
+      this.loggedInUserDetail = {
+        email: userDetail?.email,
+        name: userDetail?.displayName,
+        id: userDetail?.uid,
+        verified_email: null,
+        given_name: null,
+        family_name: null,
+        picture: userDetail?.photoURL,
+        granted_scopes: userDetail?.providerId,
+      };
+    });
+  }
 
   signInWithGoogle(): void {
     from(
@@ -31,6 +49,11 @@ export class AuthService {
         });
       }
     });
+  }
+
+  signOut(): void {
+    this.#auth.signOut();
+    this.loggedInUserDetail = null;
   }
 
   getCollection(

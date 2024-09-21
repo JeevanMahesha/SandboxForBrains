@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, Signal } from '@angular/core';
 import { Auth, authState, GoogleAuthProvider } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
@@ -21,12 +21,12 @@ export class AuthService {
   #auth = inject(Auth);
   #router = inject(Router);
   authState$: Observable<IAuthStateResponse> = authState(this.#auth);
-  loggedInUserDetail: IUserProfile | null = null;
+  loggedInUserDetail = signal<IUserProfile | null>(null);
 
   constructor() {
     this.authState$.pipe(filter((user) => !!user)).subscribe((user) => {
       const userDetail = user.providerData.at(0)!;
-      this.loggedInUserDetail = {
+      this.loggedInUserDetail.set({
         email: userDetail?.email,
         name: userDetail?.displayName,
         id: userDetail?.uid,
@@ -35,7 +35,7 @@ export class AuthService {
         family_name: null,
         picture: userDetail?.photoURL,
         granted_scopes: userDetail?.providerId,
-      };
+      });
       this.#router.navigate(['/']);
     });
   }
@@ -44,8 +44,9 @@ export class AuthService {
     from(
       this.#angularFireAuth.signInWithPopup(new GoogleAuthProvider())
     ).subscribe((authResponse) => {
-      this.loggedInUserDetail = authResponse.additionalUserInfo
-        ?.profile as IUserProfile;
+      this.loggedInUserDetail.set(
+        authResponse.additionalUserInfo?.profile as IUserProfile
+      );
       if (authResponse.additionalUserInfo?.isNewUser) {
         addDoc(this.getCollection(DB_NAMES.USERS), {
           ...this.loggedInUserDetail,
@@ -57,7 +58,7 @@ export class AuthService {
 
   signOut(): void {
     this.#auth.signOut();
-    this.loggedInUserDetail = null;
+    this.loggedInUserDetail.set(null);
   }
 
   getCollection(

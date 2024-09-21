@@ -20,11 +20,11 @@ export class AuthService {
   #angularFireAuth = inject(AngularFireAuth);
   #auth = inject(Auth);
   #router = inject(Router);
-  authState$: Observable<IAuthStateResponse> = authState(this.#auth);
+  #authState$: Observable<IAuthStateResponse> = authState(this.#auth);
   loggedInUserDetail = signal<IUserProfile | null>(null);
 
   constructor() {
-    this.authState$.pipe(filter((user) => !!user)).subscribe((user) => {
+    this.#authState$.pipe(filter((user) => !!user)).subscribe((user) => {
       const userDetail = user.providerData.at(0)!;
       this.loggedInUserDetail.set({
         email: userDetail?.email,

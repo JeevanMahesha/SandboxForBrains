@@ -40,6 +40,9 @@ export default class AddProductComponent {
       productName: fb.control('Tomato', Validators.required),
       productPrice: fb.control(10, [Validators.required, Validators.min(1)]),
       productType: fb.control('vegetable', Validators.required),
+      createdAt: fb.control(new Date()),
+      updatedAt: fb.control(new Date()),
+      id: fb.control(crypto.randomUUID()),
     });
   }
 

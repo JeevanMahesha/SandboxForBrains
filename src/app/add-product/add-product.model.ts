@@ -9,4 +9,7 @@ export interface INewProduct {
   productName: string | null;
   productType: TProductType | null;
   productPrice: number | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  id?: string | null;
 }

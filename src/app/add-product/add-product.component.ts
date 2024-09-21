@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ProductService } from '../service/product.service';
 import { IProductForm } from './add-product.form';
 import { PRODUCT_TYPES } from './add-product.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-product',
@@ -21,6 +22,7 @@ import { PRODUCT_TYPES } from './add-product.model';
 })
 export default class AddProductComponent {
   #productService = inject(ProductService);
+  #toastr = inject(ToastrService);
   productTypes = signal(Object.values(PRODUCT_TYPES));
   productForm: FormGroup<IProductForm>;
 
@@ -28,7 +30,7 @@ export default class AddProductComponent {
     const fb = inject(FormBuilder);
     this.productForm = fb.group<IProductForm>({
       productName: fb.control('Tomato', Validators.required),
-      productPrice: fb.control(10, Validators.required),
+      productPrice: fb.control(10, [Validators.required, Validators.min(1)]),
       productType: fb.control('vegetable', Validators.required),
     });
   }
@@ -37,6 +39,14 @@ export default class AddProductComponent {
     if (this.productForm.invalid) {
       return;
     }
-    this.#productService.addNewProduct(this.productForm.value);
+    this.#productService.addNewProduct(this.productForm.value).subscribe({
+      next: () => {
+        this.#toastr.success('Product added successfully');
+        this.productForm.reset({}, { emitEvent: false, onlySelf: true });
+      },
+      error: () => {
+        this.#toastr.error('Something went wrong');
+      },
+    });
   }
 }

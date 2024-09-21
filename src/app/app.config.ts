@@ -8,11 +8,13 @@ import { provideRouter } from '@angular/router';
 import { fireBaseInitializeAppConfig } from '../environment/env.dev';
 import { routes } from './app.routes';
 import { AuthService } from './auth/auth.service';
+import { DBService } from './db/db.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: FIREBASE_OPTIONS, useValue: fireBaseInitializeAppConfig },
     AuthService,
+    DBService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideFirebaseApp(() =>

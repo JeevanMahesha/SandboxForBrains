@@ -1,22 +1,16 @@
-import { inject, Injectable, OnInit, signal, Signal } from '@angular/core';
+import { inject, Injectable, OnInit, signal } from '@angular/core';
 import { Auth, authState, GoogleAuthProvider } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import {
-  addDoc,
-  collection,
-  collectionData,
-  CollectionReference,
-  DocumentData,
-  Firestore,
-} from '@angular/fire/firestore';
+import { addDoc, collectionData } from '@angular/fire/firestore';
+import { Router } from '@angular/router';
 import { filter, from, Observable } from 'rxjs';
 import { DB_NAMES } from '../common/db.name.list';
+import { DBService } from '../db/db.service';
 import { IAuthStateResponse, IUserProfile } from './auth.model';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthService implements OnInit {
-  #fireBaseDatabase = inject(Firestore);
+  #dbService = inject(DBService);
   #angularFireAuth = inject(AngularFireAuth);
   #auth = inject(Auth);
   #router = inject(Router);
@@ -36,8 +30,6 @@ export class AuthService implements OnInit {
         picture: userDetail?.photoURL,
         granted_scopes: userDetail?.providerId,
       });
-      console.log(this.loggedInUserDetail);
-
       this.#router.navigate(['/products']);
     });
   }
@@ -50,7 +42,7 @@ export class AuthService implements OnInit {
         authResponse.additionalUserInfo?.profile as IUserProfile
       );
       if (authResponse.additionalUserInfo?.isNewUser) {
-        addDoc(this.getCollection(DB_NAMES.USERS), {
+        addDoc(this.#dbService.getCollection(DB_NAMES.USERS), {
           ...this.loggedInUserDetail,
         });
       }
@@ -63,13 +55,7 @@ export class AuthService implements OnInit {
     this.loggedInUserDetail.set(null);
   }
 
-  getCollection(
-    collectionName: DB_NAMES
-  ): CollectionReference<DocumentData, DocumentData> {
-    return collection(this.#fireBaseDatabase, collectionName);
-  }
-
   getUsers(): Observable<IUserProfile[]> {
-    return collectionData(this.getCollection(DB_NAMES.USERS));
+    return collectionData(this.#dbService.getCollection(DB_NAMES.USERS));
   }
 }

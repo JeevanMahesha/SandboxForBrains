@@ -5,7 +5,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./user-detail-list-view/user-detail-list-view.component'),
+      import('../app/products-details/products-details.component'),
     canActivate: [authGuard],
   },
   {

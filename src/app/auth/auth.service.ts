@@ -12,12 +12,14 @@ import {
 import { filter, from, Observable } from 'rxjs';
 import { DB_NAMES } from '../common/db.name.list';
 import { IAuthStateResponse, IUserProfile } from './auth.model';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthService {
   #fireBaseDatabase = inject(Firestore);
   #angularFireAuth = inject(AngularFireAuth);
   #auth = inject(Auth);
+  #router = inject(Router);
   authState$: Observable<IAuthStateResponse> = authState(this.#auth);
   loggedInUserDetail: IUserProfile | null = null;
 
@@ -34,6 +36,7 @@ export class AuthService {
         picture: userDetail?.photoURL,
         granted_scopes: userDetail?.providerId,
       };
+      this.#router.navigate(['/']);
     });
   }
 
@@ -48,6 +51,7 @@ export class AuthService {
           ...this.loggedInUserDetail,
         });
       }
+      this.#router.navigate(['/']);
     });
   }
 

@@ -11,11 +11,18 @@ import { ProductService } from '../service/product.service';
 import { IProductForm } from './add-product.form';
 import { PRODUCT_TYPES } from './add-product.model';
 import { ToastrService } from 'ngx-toastr';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize, pipe } from 'rxjs';
 
 @Component({
   selector: 'app-add-product',
   standalone: true,
-  imports: [MatInputModule, MatSelectModule, ReactiveFormsModule],
+  imports: [
+    MatInputModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+  ],
   providers: [ProductService],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.scss',
@@ -25,6 +32,7 @@ export default class AddProductComponent {
   #toastr = inject(ToastrService);
   productTypes = signal(Object.values(PRODUCT_TYPES));
   productForm: FormGroup<IProductForm>;
+  saveSpinner = signal(false);
 
   constructor() {
     const fb = inject(FormBuilder);
@@ -39,14 +47,19 @@ export default class AddProductComponent {
     if (this.productForm.invalid) {
       return;
     }
-    this.#productService.addNewProduct(this.productForm.value).subscribe({
-      next: () => {
-        this.#toastr.success('Product added successfully');
-        this.productForm.reset({}, { emitEvent: false, onlySelf: true });
-      },
-      error: () => {
-        this.#toastr.error('Something went wrong');
-      },
-    });
+
+    this.saveSpinner.set(true);
+    this.#productService
+      .addNewProduct(this.productForm.value)
+      .pipe(finalize(() => this.saveSpinner.set(false)))
+      .subscribe({
+        next: () => {
+          this.#toastr.success('Product added successfully');
+          this.productForm.reset({}, { emitEvent: false, onlySelf: true });
+        },
+        error: () => {
+          this.#toastr.error('Something went wrong');
+        },
+      });
   }
 }

@@ -70,7 +70,9 @@
               [disabled]="productForm.invalid"
               class="inline-block rounded border border-gray-600 px-12 py-3 text-sm font-medium text-gray-600 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring active:bg-gray-500"
             >
-              Add Product
+              @if (saveSpinner()) {
+              <mat-spinner diameter="30"></mat-spinner>
+              }@else { Add Product }
             </button>
           </div>
         </form>

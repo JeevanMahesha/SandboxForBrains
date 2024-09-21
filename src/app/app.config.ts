@@ -5,6 +5,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import { provideToastr } from 'ngx-toastr';
 import { fireBaseInitializeAppConfig } from '../environment/env.dev';
 import { routes } from './app.routes';
 import { AuthService } from './auth/auth.service';
@@ -31,5 +32,6 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideAnimationsAsync(),
+    provideToastr(),
   ],
 };

@@ -33,14 +33,15 @@
       id="navbar-collapse"
     >
       <a
-        href="#"
+        [routerLink]="['/products']"
+        routerLinkActive="router-link-active"
         class="p-2 lg:px-4 md:mx-2 text-white rounded bg-black hover:text-gray-600"
         >Home</a
       >
       <a
-        href="#"
-        class="p-2 lg:px-4 md:mx-2 text-gray-600 rounded hover:bg-gray-200 hover:text-gray-700 transition-colors duration-300"
-        >About</a
+        [routerLink]="['/products/add-product']"
+        class="p-2 lg:px-4 md:mx-2 text-gray-600 rounded hover:text-gray-700 transition-colors duration-300"
+        >Add Product</a
       >
       <a
         href="#"

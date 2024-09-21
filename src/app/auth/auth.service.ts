@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, Signal } from '@angular/core';
+import { inject, Injectable, OnInit, signal, Signal } from '@angular/core';
 import { Auth, authState, GoogleAuthProvider } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
@@ -15,7 +15,7 @@ import { IAuthStateResponse, IUserProfile } from './auth.model';
 import { Router } from '@angular/router';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnInit {
   #fireBaseDatabase = inject(Firestore);
   #angularFireAuth = inject(AngularFireAuth);
   #auth = inject(Auth);
@@ -23,7 +23,7 @@ export class AuthService {
   #authState$: Observable<IAuthStateResponse> = authState(this.#auth);
   loggedInUserDetail = signal<IUserProfile | null>(null);
 
-  constructor() {
+  ngOnInit(): void {
     this.#authState$.pipe(filter((user) => !!user)).subscribe((user) => {
       const userDetail = user.providerData.at(0)!;
       this.loggedInUserDetail.set({
@@ -36,7 +36,9 @@ export class AuthService {
         picture: userDetail?.photoURL,
         granted_scopes: userDetail?.providerId,
       });
-      this.#router.navigate(['/']);
+      console.log(this.loggedInUserDetail);
+
+      this.#router.navigate(['/products']);
     });
   }
 
@@ -52,7 +54,7 @@ export class AuthService {
           ...this.loggedInUserDetail,
         });
       }
-      this.#router.navigate(['/']);
+      this.#router.navigate(['/products']);
     });
   }
 

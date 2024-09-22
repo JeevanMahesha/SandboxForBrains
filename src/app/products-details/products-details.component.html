@@ -1,55 +1,3 @@
-<!-- <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 m-5">
-  @for (eachProduct of productsDetails(); track eachProduct.id) {
-
-  <div
-    class="rounded-xl bg-black-100 text-center p-4 ring ring-gray-300 hover:ring-gray-500 sm:p-6 lg:p-8"
-  >
-    <div class="flex items-start sm:gap-8">
-      <div>
-        <strong
-          class="rounded border border-black-500 bg-black-500 px-3 py-1.5 text-[10px] font-medium text-blabg-black-100"
-        >
-          {{ eachProduct.productPrice }} &#8377;
-        </strong>
-
-        <h3 class="mt-4 text-lg font-medium sm:text-xl">
-          <a href="#" class="hover:underline">
-            {{ eachProduct.productName }}
-          </a>
-        </h3>
-
-        <div class="mt-4 sm:flex sm:items-center sm:gap-2">
-          <div class="flex flex-col-reverse">
-            <label for="Quantity" class="sr-only"> Quantity </label>
-
-            <div class="flex items-center rounded border border-gray-200">
-              <button
-                type="button"
-                class="size-10 leading-10 text-gray-600 transition hover:opacity-75"
-              >
-                &minus;
-              </button>
-
-              <input
-                type="number"
-                class="h-10 w-16 border-transparent text-center"
-              />
-
-              <button
-                type="button"
-                class="size-10 leading-10 text-gray-600 transition hover:opacity-75"
-              >
-                &plus;
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  }
-</div> -->
-
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 m-5">
   @for (eachProduct of productsDetails(); track eachProduct.id) {
 
@@ -59,6 +7,11 @@
     >
       {{ eachProduct.productPrice }} &#8377;
     </span>
+    <!-- <img
+      src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      alt=""
+      class="h-30 w-full rounded-tr-3xl object-cover"
+    /> -->
 
     <div class="p-4 text-left">
       <strong class="text-xl font-medium text-gray-900">
@@ -68,6 +21,25 @@
       <p class="mt-2 text-pretty text-gray-700">
         {{ eachProduct.productType }}
       </p>
+    </div>
+    <div class="text-center p-5">
+      @if (isProductInCart(eachProduct.id!)) {
+
+      <button
+        (click)="removeFromCart(eachProduct.id!)"
+        class="mt-4 block rounded-md border border-gray-900 bg-gray-900 px-5 py-3 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-gray-900"
+      >
+        Remove from cart
+      </button>
+      } @else {
+      <button
+        (click)="addToCart(eachProduct)"
+        class="mt-4 block rounded-md border border-gray-900 bg-gray-900 px-5 py-3 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-gray-900"
+      >
+        Add to cart
+      </button>
+
+      }
     </div>
   </div>
   }

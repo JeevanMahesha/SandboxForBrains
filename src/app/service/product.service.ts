@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { addDoc, collectionData } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { INewProduct } from '../add-product/add-product.model';
@@ -8,6 +8,7 @@ import { DBService } from '../db/db.service';
 @Injectable()
 export class ProductService {
   #dbService = inject(DBService);
+  selectedCartProduct = signal<INewProduct[]>([]);
   addNewProduct(newProduct: Partial<INewProduct>) {
     return from(
       addDoc(this.#dbService.getCollection(DB_NAMES.PRODUCTS), newProduct)

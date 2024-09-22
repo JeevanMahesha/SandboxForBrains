@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
+import { addDoc, collectionData } from '@angular/fire/firestore';
+import { from, Observable } from 'rxjs';
 import { INewProduct } from '../add-product/add-product.model';
-import { DBService } from '../db/db.service';
-import { addDoc } from '@angular/fire/firestore';
 import { DB_NAMES } from '../common/db.name.list';
-import { from } from 'rxjs';
+import { DBService } from '../db/db.service';
 
 @Injectable()
 export class ProductService {
@@ -11,6 +11,12 @@ export class ProductService {
   addNewProduct(newProduct: Partial<INewProduct>) {
     return from(
       addDoc(this.#dbService.getCollection(DB_NAMES.PRODUCTS), newProduct)
+    );
+  }
+
+  getProducts(): Observable<INewProduct[]> {
+    return from(
+      collectionData(this.#dbService.getCollection(DB_NAMES.PRODUCTS))
     );
   }
 }

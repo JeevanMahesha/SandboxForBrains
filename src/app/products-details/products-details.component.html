@@ -1,17 +1,21 @@
-<div class="grid grid-cols-1 gap-4 lg:grid-cols-5 lg:gap-8 m-5">
+<!-- <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 m-5">
+  @for (eachProduct of productsDetails(); track eachProduct.id) {
+
   <div
-    class="rounded-xl bg-black-100 p-4 ring ring-gray-300 hover:ring-gray-500 sm:p-6 lg:p-8"
+    class="rounded-xl bg-black-100 text-center p-4 ring ring-gray-300 hover:ring-gray-500 sm:p-6 lg:p-8"
   >
     <div class="flex items-start sm:gap-8">
       <div>
         <strong
           class="rounded border border-black-500 bg-black-500 px-3 py-1.5 text-[10px] font-medium text-blabg-black-100"
         >
-          Amount #101
+          {{ eachProduct.productPrice }} &#8377;
         </strong>
 
         <h3 class="mt-4 text-lg font-medium sm:text-xl">
-          <a href="#" class="hover:underline"> Product Name </a>
+          <a href="#" class="hover:underline">
+            {{ eachProduct.productName }}
+          </a>
         </h3>
 
         <div class="mt-4 sm:flex sm:items-center sm:gap-2">
@@ -43,4 +47,28 @@
       </div>
     </div>
   </div>
+  }
+</div> -->
+
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 m-5">
+  @for (eachProduct of productsDetails(); track eachProduct.id) {
+
+  <div class="relative block rounded-tr-3xl border border-gray-100">
+    <span
+      class="absolute -right-px -top-px rounded-bl-3xl rounded-tr-3xl bg-green-600 px-6 py-4 font-medium uppercase tracking-widest text-white"
+    >
+      {{ eachProduct.productPrice }} &#8377;
+    </span>
+
+    <div class="p-4 text-left">
+      <strong class="text-xl font-medium text-gray-900">
+        {{ eachProduct.productName }}
+      </strong>
+
+      <p class="mt-2 text-pretty text-gray-700">
+        {{ eachProduct.productType }}
+      </p>
+    </div>
+  </div>
+  }
 </div>

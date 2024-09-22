@@ -7,7 +7,7 @@ export const routes: Routes = [
     path: 'products',
     loadComponent: () =>
       import('../app/products-section/products-section.component'),
-    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     providers: [ProductService],
     children: [
       {

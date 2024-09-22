@@ -7,7 +7,6 @@ import { ProductService } from '../service/product.service';
   selector: 'app-products-details',
   standalone: true,
   imports: [],
-  providers: [ProductService],
   templateUrl: './products-details.component.html',
   styleUrl: './products-details.component.scss',
 })

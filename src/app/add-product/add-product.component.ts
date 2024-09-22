@@ -23,7 +23,6 @@ import { finalize, pipe } from 'rxjs';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
   ],
-  providers: [ProductService],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.scss',
 })

@@ -9,6 +9,11 @@ import { DBService } from '../db/db.service';
 export class ProductService {
   #dbService = inject(DBService);
   selectedCartProduct = signal<INewProduct[]>([]);
+  constructor() {
+    this.getProducts().subscribe((products) =>
+      this.selectedCartProduct.set(products)
+    );
+  }
   addNewProduct(newProduct: Partial<INewProduct>) {
     return from(
       addDoc(this.#dbService.getCollection(DB_NAMES.PRODUCTS), newProduct)

@@ -17,6 +17,11 @@ export const routes: Routes = [
         path: 'add-product',
         loadComponent: () => import('../app/add-product/add-product.component'),
       },
+      {
+        path: 'cart',
+        loadComponent: () =>
+          import('../app/shopping-cart/shopping-cart.component'),
+      },
     ],
   },
   {

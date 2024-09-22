@@ -11,7 +11,7 @@ export interface IShoppingProductCartForm {
 }
 
 export interface IShoppingCartForm {
-  products: FormArray<FormControl<IShoppingProductCartForm>>;
+  products: FormArray<FormControl<IShoppingProductCartForm | null>>;
   total: FormControl<number | null>;
   name: FormControl<string | null>;
   email: FormControl<string | null>;

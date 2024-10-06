@@ -9,16 +9,13 @@ export const loginGuard: CanActivateFn = (route, state) => {
   const auth = inject(Auth);
   const authService = inject(AuthService);
   const authState$: Observable<IAuthStateResponse> = authState(auth);
-  authState$
-    .pipe(
-      map((user) => {
-        if (!user) {
-          return true;
-        }
-        authService.setLoggedInUserDetail(user.providerData.at(0)!);
-        return false;
-      })
-    )
-    .subscribe(console.log);
-  return true;
+  return authState$.pipe(
+    map((user) => {
+      if (!user) {
+        return true;
+      }
+      authService.setLoggedInUserDetail(user.providerData.at(0)!);
+      return false;
+    })
+  );
 };

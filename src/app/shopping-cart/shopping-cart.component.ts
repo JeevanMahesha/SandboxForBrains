@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../auth/auth.service';
 import { ProductService } from '../service/product.service';
@@ -12,20 +12,17 @@ import {
   VEGETABLE_QUANTITY_DOMINATION,
 } from './shopping-cart.model';
 import { INewProduct, TProductType } from '../add-product/add-product.model';
+import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-shopping-cart',
   standalone: true,
-  imports: [MatSelectModule],
+  imports: [MatSelectModule, KeyValuePipe, ReactiveFormsModule],
   templateUrl: './shopping-cart.component.html',
   styleUrl: './shopping-cart.component.scss',
 })
 export default class ShoppingCartComponent {
-  foods = [
-    { value: 'steak-0', viewValue: 'Steak' },
-    { value: 'pizza-1', viewValue: 'Pizza' },
-    { value: 'tacos-2', viewValue: 'Tacos' },
-  ];
+  productQuantity = signal(VEGETABLE_QUANTITY_DOMINATION);
 
   #fb = inject(FormBuilder);
   #productService = inject(ProductService);

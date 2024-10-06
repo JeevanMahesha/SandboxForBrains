@@ -1,17 +1,18 @@
-import { FormArray, FormControl } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { TQuantityDomination } from './shopping-cart.model';
+import { TProductType } from '../add-product/add-product.model';
 
 export interface IShoppingProductCartForm {
   quantity: FormControl<TQuantityDomination | null>;
-  price: FormControl<number | null>;
+  quantityPrice: FormControl<number | null>;
   productName: FormControl<string | null>;
-  productType: FormControl<TQuantityDomination | null>;
+  productType: FormControl<TProductType | null>;
   productId: FormControl<string | null>;
   productPrice: FormControl<number | null>;
 }
 
 export interface IShoppingCartForm {
-  products: FormArray<FormControl<IShoppingProductCartForm | null>>;
+  products: FormArray<FormGroup<IShoppingProductCartForm>>;
   total: FormControl<number | null>;
   name: FormControl<string | null>;
   email: FormControl<string | null>;

@@ -7,7 +7,11 @@ import {
   IShoppingCartForm,
   IShoppingProductCartForm,
 } from './shopping-cart.form';
-import { TQuantityDomination } from './shopping-cart.model';
+import {
+  TQuantityDomination,
+  VEGETABLE_QUANTITY_DOMINATION,
+} from './shopping-cart.model';
+import { INewProduct, TProductType } from '../add-product/add-product.model';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -31,13 +35,15 @@ export default class ShoppingCartComponent {
 
   constructor() {
     this.shoppingCartForm = this.initForm();
-    console.log(this.shoppingCartForm);
   }
 
   initForm() {
     const userDetail = this.#authService.loggedInUserDetail();
+    const products = this.#productService
+      .selectedCartProduct()
+      .map((product) => this.getProductsForm(product));
     return this.#fb.group<IShoppingCartForm>({
-      products: this.#fb.array([this.getProductsForm()]),
+      products: this.#fb.array(products),
       total: this.#fb.control<number | null>(null),
       name: this.#fb.control<string | null>(userDetail?.name ?? null),
       email: this.#fb.control<string | null>(userDetail?.email ?? null),
@@ -49,14 +55,18 @@ export default class ShoppingCartComponent {
     });
   }
 
-  private getProductsForm() {
-    return this.#fb.control<IShoppingProductCartForm>({
-      quantity: this.#fb.control<TQuantityDomination | null>(null),
-      price: this.#fb.control<number | null>(null),
-      productName: this.#fb.control<string | null>(null),
-      productType: this.#fb.control<TQuantityDomination | null>(null),
-      productId: this.#fb.control<string | null>(null),
-      productPrice: this.#fb.control<number | null>(null),
+  private getProductsForm(productValue: INewProduct) {
+    return this.#fb.group<IShoppingProductCartForm>({
+      quantity: this.#fb.control<TQuantityDomination | null>(
+        VEGETABLE_QUANTITY_DOMINATION['One Kilogram']
+      ),
+      quantityPrice: this.#fb.control<number | null>(productValue.productPrice),
+      productName: this.#fb.control<string | null>(productValue.productName),
+      productType: this.#fb.control<TProductType | null>(
+        productValue.productType
+      ),
+      productId: this.#fb.control<string | null>(productValue.id!),
+      productPrice: this.#fb.control<number | null>(productValue.productPrice),
     });
   }
 }

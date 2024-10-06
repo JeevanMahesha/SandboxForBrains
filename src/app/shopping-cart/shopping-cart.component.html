@@ -50,10 +50,15 @@
               </div>
             </div>
             <div class="ml-auto">
-              <h4 class="text-base font-bold text-gray-800">
-                $
-                {{ eachProductControl.value.quantityPrice }}
-              </h4>
+              <mat-form-field class="text-base w-20 font-bold text-gray-800">
+                <span matTextPrefix>$ &nbsp;</span>
+                <input
+                  type="number"
+                  matInput
+                  readonly
+                  formControlName="quantityPrice"
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -161,7 +166,8 @@
     <div class="bg-gray-100 rounded-md h-auto p-4 md:sticky top-0">
       <ul class="text-gray-800 mt-8 space-y-4">
         <li class="flex flex-wrap gap-4 text-base font-bold">
-          Total <span class="ml-auto">$52.00</span>
+          Total
+          <span class="ml-auto">${{ shoppingCartForm.value.total }}</span>
         </li>
       </ul>
 

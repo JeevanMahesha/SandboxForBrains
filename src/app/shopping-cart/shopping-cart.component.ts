@@ -1,6 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { KeyValuePipe } from '@angular/common';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { map } from 'rxjs';
+import { INewProduct, TProductType } from '../add-product/add-product.model';
 import { AuthService } from '../auth/auth.service';
 import { ProductService } from '../service/product.service';
 import {
@@ -11,27 +16,26 @@ import {
   TQuantityDomination,
   VEGETABLE_QUANTITY_DOMINATION,
 } from './shopping-cart.model';
-import { INewProduct, TProductType } from '../add-product/add-product.model';
-import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-shopping-cart',
   standalone: true,
-  imports: [MatSelectModule, KeyValuePipe, ReactiveFormsModule],
+  imports: [MatSelectModule, KeyValuePipe, MatInput, ReactiveFormsModule],
   templateUrl: './shopping-cart.component.html',
   styleUrl: './shopping-cart.component.scss',
 })
 export default class ShoppingCartComponent {
   productQuantity = signal(VEGETABLE_QUANTITY_DOMINATION);
-
   #fb = inject(FormBuilder);
   #productService = inject(ProductService);
   #authService = inject(AuthService);
+  #destroyRef = inject(DestroyRef);
 
   shoppingCartForm: FormGroup<IShoppingCartForm>;
 
   constructor() {
     this.shoppingCartForm = this.initForm();
+    this.triggerFormValueChangesEvent();
   }
 
   initForm() {
@@ -65,5 +69,40 @@ export default class ShoppingCartComponent {
       productId: this.#fb.control<string | null>(productValue.id!),
       productPrice: this.#fb.control<number | null>(productValue.productPrice),
     });
+  }
+
+  private triggerFormValueChangesEvent() {
+    this.shoppingCartForm.controls.products.controls.forEach((control) => {
+      control.valueChanges
+        .pipe(
+          map((product) => {
+            return product.productPrice! * product.quantity!;
+          }),
+          takeUntilDestroyed(this.#destroyRef)
+        )
+        .subscribe((quantityPrice) => {
+          control.controls.quantityPrice.setValue(quantityPrice, {
+            emitEvent: false,
+            onlySelf: true,
+          });
+        });
+    });
+    this.shoppingCartForm.controls.products.valueChanges
+      .pipe(
+        map((products) =>
+          products
+            .map((product) => product.quantityPrice)
+            .filter(
+              (price): price is number => price !== null && price !== undefined
+            )
+            .reduce((acc, value) => acc + value, 0)
+        )
+      )
+      .subscribe((totalPrice) => {
+        this.shoppingCartForm.controls.total.setValue(totalPrice, {
+          emitEvent: false,
+          onlySelf: true,
+        });
+      });
   }
 }

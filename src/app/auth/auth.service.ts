@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { filter, from, Observable } from 'rxjs';
 import { DB_NAMES } from '../common/db.name.list';
 import { DBService } from '../db/db.service';
-import { IAuthStateResponse, IUserProfile } from './auth.model';
+import { IAuthStateResponse, IProviderDatum, IUserProfile } from './auth.model';
 
 @Injectable()
 export class AuthService implements OnInit {
@@ -18,20 +18,25 @@ export class AuthService implements OnInit {
   loggedInUserDetail = signal<IUserProfile | null>(null);
 
   ngOnInit(): void {
-    this.#authState$.pipe(filter((user) => !!user)).subscribe((user) => {
-      const userDetail = user.providerData.at(0)!;
-      this.loggedInUserDetail.set({
-        email: userDetail?.email,
-        name: userDetail?.displayName,
-        id: userDetail?.uid,
-        verified_email: null,
-        given_name: null,
-        family_name: null,
-        picture: userDetail?.photoURL,
-        granted_scopes: userDetail?.providerId,
-      });
-      this.#router.navigate(['/products']);
+    this.#authState$
+      .pipe(filter((user) => !!user))
+      .subscribe((user) =>
+        this.setLoggedInUserDetail(user.providerData.at(0)!)
+      );
+  }
+
+  setLoggedInUserDetail(userDetail: IProviderDatum): void {
+    this.loggedInUserDetail.set({
+      email: userDetail?.email,
+      name: userDetail?.displayName,
+      id: userDetail?.uid,
+      verified_email: null,
+      given_name: null,
+      family_name: null,
+      picture: userDetail?.photoURL,
+      granted_scopes: userDetail?.providerId,
     });
+    this.#router.navigate(['/products']);
   }
 
   signInWithGoogle(): void {

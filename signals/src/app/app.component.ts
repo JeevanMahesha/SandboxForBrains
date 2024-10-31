@@ -1,8 +1,11 @@
-import { Component, Signal, computed, signal } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
+  standalone: true,
+  imports: [TitleCasePipe],
 })
 export class AppComponent {
   title = 'signals';
@@ -16,12 +19,10 @@ export class AppComponent {
   }
 
   addNewUser() {
-    this.users.mutate(() => {
-      this.users().push({
-        name: this.userName(),
-        age: this.getRandomAge(),
-      });
-    });
+    this.users.update((existUsers) => [
+      ...existUsers,
+      { name: 'New User', age: this.getRandomAge() },
+    ]);
   }
 
   private filterUserWithUserName() {

@@ -1,15 +1,11 @@
 import { Component, Signal, computed, signal } from '@angular/core';
 import { NgIf, NgFor, TitleCasePipe } from '@angular/common';
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
-    standalone: true,
-    imports: [
-        NgIf,
-        NgFor,
-        TitleCasePipe,
-    ],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+  standalone: true,
+  imports: [NgIf, NgFor, TitleCasePipe],
 })
 export class AppComponent {
   title = 'signals';
@@ -23,12 +19,10 @@ export class AppComponent {
   }
 
   addNewUser() {
-    this.users.mutate(() => {
-      this.users().push({
-        name: this.userName(),
-        age: this.getRandomAge(),
-      });
-    });
+    this.users.update((existUsers) => [
+      ...existUsers,
+      { name: 'New User', age: this.getRandomAge() },
+    ]);
   }
 
   private filterUserWithUserName() {

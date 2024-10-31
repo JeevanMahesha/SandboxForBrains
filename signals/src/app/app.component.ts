@@ -1,11 +1,11 @@
-import { Component, Signal, computed, signal } from '@angular/core';
-import { NgIf, NgFor, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [NgIf, NgFor, TitleCasePipe],
+  imports: [TitleCasePipe],
 })
 export class AppComponent {
   title = 'signals';

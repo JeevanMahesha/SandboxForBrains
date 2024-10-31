@@ -11,26 +11,29 @@
           aria-label="name"
           aria-describedby="basic-addon1"
           (input)="setUserName($event)"
-        />
+          />
       </div>
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="addNewUser()"
-        *ngIf="userName()"
-      >
-        add {{ userName() }} to user List
-      </button>
+      @if (userName()) {
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="addNewUser()"
+          >
+          add {{ userName() }} to user List
+        </button>
+      }
     </div>
     <div class="col-md-2">
-      <ul class="list-group" *ngFor="let item of filteredUsersArray()">
-        <li
-          class="list-group-item d-flex justify-content-between align-items-center mt-1"
-        >
-          {{ item.name }}
-          <span class="badge bg-primary rounded-pill">{{ item.age }}</span>
-        </li>
-      </ul>
+      @for (item of filteredUsersArray(); track item) {
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center mt-1"
+            >
+            {{ item.name }}
+            <span class="badge bg-primary rounded-pill">{{ item.age }}</span>
+          </li>
+        </ul>
+      }
     </div>
   </div>
 </div>

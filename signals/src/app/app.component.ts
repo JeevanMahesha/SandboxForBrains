@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SignalComponent } from './signal/signal.component';
-import { ComputedSignalComponent } from './computed-signal/computed-signal.component';
+import { SignalComponent } from './signal.component';
+import { ComputedSignalComponent } from './computed-signal.component';
 
 @Component({
   selector: 'app-root',

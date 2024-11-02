@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [MatSelectModule],
   template: `
     <div class="container mt-3">
-      <div class="row">
+      <div class="d-flex justify-content-evenly">
         <div class="col-md-4">
           <mat-form-field>
             <mat-label>Status </mat-label>
@@ -19,6 +19,9 @@ import { MatSelectModule } from '@angular/material/select';
           <a class="card-link" (click)="clearSelectedStatus()">
             clear the filter
           </a>
+          <button type="button" class="btn btn-success" (click)="addNewTask()">
+            Add new task
+          </button>
         </div>
         <div class="col-md-8">
           <table class="table">
@@ -32,7 +35,7 @@ import { MatSelectModule } from '@angular/material/select';
             <tbody>
               @for (item of filteredTaskList(); track $index) {
               <tr>
-                <th scope="row">{{ item.id }}</th>
+                <th>{{ item.id }}</th>
                 <td>{{ item.name }}</td>
                 <td>{{ item.completedStatus }}</td>
               </tr>
@@ -72,6 +75,17 @@ export class ComputedSignalComponent {
 
   clearSelectedStatus() {
     this.selectedStatus.update(() => null);
+  }
+
+  addNewTask() {
+    this.taskList.update((tasks) => [
+      ...tasks,
+      {
+        id: tasks.length + 1,
+        name: `Task ${tasks.length + 1}`,
+        completedStatus: 'Todo',
+      },
+    ]);
   }
 }
 

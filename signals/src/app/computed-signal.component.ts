@@ -1,24 +1,39 @@
 import { Component, computed, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-computed-signal',
-  imports: [MatSelectModule],
+  imports: [
+    MatSelectModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    FormsModule,
+  ],
   template: `
     <div class="container mt-3">
       <div class="d-flex justify-content-evenly">
         <div class="col-md-4">
           <mat-form-field>
             <mat-label>Status </mat-label>
+            <button
+              matSuffix
+              mat-icon-button
+              (click)="clearSelectedStatus()"
+              aria-label="Clear"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
             <mat-select [(value)]="selectedStatus">
               @for (status of statusList; track status) {
               <mat-option [value]="status">{{ status }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
-          <a class="card-link" (click)="clearSelectedStatus()">
-            clear the filter
-          </a>
           <button type="button" class="btn btn-success" (click)="addNewTask()">
             Add new task
           </button>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { interval, map } from 'rxjs';
+import { BehaviorSubject, interval, map } from 'rxjs';
 
 @Component({
   selector: 'app-to-signal',
@@ -20,4 +20,9 @@ export class ToSignalComponent {
       initialValue: new Date().toLocaleTimeString(),
     }
   );
+
+  welcomeMessage$ = new BehaviorSubject<string>('Hello, World!');
+  welcomeMessage = toSignal(this.welcomeMessage$, {
+    requireSync: true,
+  });
 }

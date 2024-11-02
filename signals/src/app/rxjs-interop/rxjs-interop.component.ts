@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { ToSignalComponent } from './to-signal/to-signal.component';
+import { ToSignalComponent } from './to-signal.component';
 
 @Component({
   selector: 'app-rxjs-interop',

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SignalComponent } from './signal.component';
 import { ComputedSignalComponent } from './computed-signal.component';
-import { ToSignalComponent } from './rxjs-interop/to-signal/to-signal.component';
+import { ToSignalComponent } from './rxjs-interop/to-signal.component';
 import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
 
 @Component({

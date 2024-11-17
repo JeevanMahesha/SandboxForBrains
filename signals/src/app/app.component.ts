@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SignalComponent } from './signal.component';
 import { ComputedSignalComponent } from './computed-signal.component';
-import { ToSignalComponent } from './rxjs-interop/to-signal.component';
-import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
+import { LinkedSignalComponent } from './linked-signal/linked-signal.component';
 import { ModelInputsComponent } from './model-inputs/model-inputs.component';
-import {LinkedSignalComponent} from "./linked-signal/linked-signal.component";
+import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
+import { SignalComponent } from './signal.component';
 
 @Component({
   selector: 'app-root',
@@ -58,7 +57,7 @@ import {LinkedSignalComponent} from "./linked-signal/linked-signal.component";
     ComputedSignalComponent,
     RxjsInteropComponent,
     ModelInputsComponent,
-    LinkedSignalComponent
+    LinkedSignalComponent,
   ],
 })
 export class AppComponent {}

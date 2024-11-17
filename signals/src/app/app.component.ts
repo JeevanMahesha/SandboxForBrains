@@ -27,6 +27,13 @@ import { SignalComponent } from './signal.component';
           <h6>Loading the Computed signal Component</h6>
           }
         </mat-tab>
+        <mat-tab label="LinkedSignal">
+          @defer (on viewport) {
+          <app-linked-signal />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Linked Signal</h6>
+          }
+        </mat-tab>
         <mat-tab label="Rxjs Interop">
           @defer (on viewport) {
           <app-rxjs-interop />
@@ -39,13 +46,6 @@ import { SignalComponent } from './signal.component';
           <app-model-inputs />
           } @placeholder (minimum 500ms) {
           <h6>Loading the Model Inputs Component</h6>
-          }
-        </mat-tab>
-        <mat-tab label="LinkedSignal">
-          @defer (on viewport) {
-          <app-linked-signal />
-          } @placeholder (minimum 500ms) {
-          <h6>Loading the Linked Signal</h6>
           }
         </mat-tab>
       </mat-tab-group>

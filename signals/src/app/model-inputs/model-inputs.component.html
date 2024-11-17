@@ -1,1 +1,25 @@
-<p>model-inputs works!</p>
+<div class="d-flex justify-content-center mt-3">
+  <div class="col-md-10">
+    <div class="d-flex justify-content-evenly">
+      <div class="col-md-5 border border-black">
+        <custom-toggle [(checked)]="isToggled" [disabled]="isDisabled" />
+      </div>
+      <div class="col-md-5 text-center border border-black">
+        <h6>Parent Component</h6>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="toggleDisabled()"
+        >
+          Toggle Disabled
+        </button>
+        <p>
+          Toggle Status: <strong>{{ isToggled() ? "ON" : "OFF" }}</strong>
+        </p>
+        <p>
+          Disabled: <strong>{{ isDisabled ? "Yes" : "No" }}</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

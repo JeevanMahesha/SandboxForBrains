@@ -5,6 +5,7 @@ import { ComputedSignalComponent } from './computed-signal.component';
 import { ToSignalComponent } from './rxjs-interop/to-signal.component';
 import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
 import { ModelInputsComponent } from './model-inputs/model-inputs.component';
+import {LinkedSignalComponent} from "./linked-signal/linked-signal.component";
 
 @Component({
   selector: 'app-root',
@@ -40,6 +41,13 @@ import { ModelInputsComponent } from './model-inputs/model-inputs.component';
           <h6>Loading the Model Inputs Component</h6>
           }
         </mat-tab>
+        <mat-tab label="LinkedSignal">
+          @defer (on viewport) {
+          <app-linked-signal />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Linked Signal</h6>
+          }
+        </mat-tab>
       </mat-tab-group>
     </section>
   `,
@@ -50,6 +58,7 @@ import { ModelInputsComponent } from './model-inputs/model-inputs.component';
     ComputedSignalComponent,
     RxjsInteropComponent,
     ModelInputsComponent,
+    LinkedSignalComponent
   ],
 })
 export class AppComponent {}

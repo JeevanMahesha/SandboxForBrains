@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ComputedSignalComponent } from './computed-signal.component';
 import { LinkedSignalComponent } from './linked-signal/linked-signal.component';
@@ -11,7 +12,7 @@ import { SignalComponent } from './signal.component';
   template: `
     <section class="p-5">
       <h1 class="text-center">Angular Signals</h1>
-      <mat-tab-group>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="Signal">
           @defer (on viewport) {
           <app-signal />
@@ -60,4 +61,16 @@ import { SignalComponent } from './signal.component';
     LinkedSignalComponent,
   ],
 })
-export class AppComponent {}
+export class AppComponent {
+  selectedTabIndex = signal(0);
+  constructor() {
+    if (sessionStorage.getItem('selectedTabIndex')) {
+      this.selectedTabIndex.set(
+        parseInt(sessionStorage.getItem('selectedTabIndex')!)
+      );
+    }
+    toObservable(this.selectedTabIndex).subscribe((indexValue) => {
+      sessionStorage.setItem('selectedTabIndex', indexValue.toString());
+    });
+  }
+}

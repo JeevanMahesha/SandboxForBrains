@@ -2,9 +2,8 @@ import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'custom-toggle',
-  standalone: true,
-  template: `
+    selector: 'custom-toggle',
+    template: `
     <div class="p-3">
       <h6>Custom Toggle Component</h6>
       <div class="form-check form-switch">
@@ -22,7 +21,7 @@ import { FormsModule } from '@angular/forms';
       </div>
     </div>
   `,
-  imports: [FormsModule],
+    imports: [FormsModule]
 })
 export class CustomToggleComponent {
   // `checked` is a model input, allowing two-way binding

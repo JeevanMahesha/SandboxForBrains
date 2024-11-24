@@ -8,8 +8,8 @@ import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
 import { SignalComponent } from './signal.component';
 
 @Component({
-  selector: 'app-root',
-  template: `
+    selector: 'app-root',
+    template: `
     <section class="p-5">
       <h1 class="text-center">Angular Signals</h1>
       <mat-tab-group [(selectedIndex)]="selectedTabIndex">
@@ -51,15 +51,14 @@ import { SignalComponent } from './signal.component';
       </mat-tab-group>
     </section>
   `,
-  standalone: true,
-  imports: [
-    MatTabsModule,
-    SignalComponent,
-    ComputedSignalComponent,
-    RxjsInteropComponent,
-    ModelInputsComponent,
-    LinkedSignalComponent,
-  ],
+    imports: [
+        MatTabsModule,
+        SignalComponent,
+        ComputedSignalComponent,
+        RxjsInteropComponent,
+        ModelInputsComponent,
+        LinkedSignalComponent,
+    ]
 })
 export class AppComponent {
   selectedTabIndex = signal(0);

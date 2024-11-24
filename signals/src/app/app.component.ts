@@ -1,57 +1,76 @@
-import { TitleCasePipe } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ComputedSignalComponent } from './computed-signal.component';
+import { LinkedSignalComponent } from './linked-signal/linked-signal.component';
+import { ModelInputsComponent } from './model-inputs/model-inputs.component';
+import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
+import { SignalComponent } from './signal.component';
+
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  template: `
+    <section class="p-5">
+      <h1 class="text-center">Angular Signals</h1>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <mat-tab label="Signal">
+          @defer (on viewport) {
+          <app-signal />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Signal Component</h6>
+          }
+        </mat-tab>
+        <mat-tab label="Computed signal">
+          @defer (on viewport) {
+          <app-computed-signal />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Computed signal Component</h6>
+          }
+        </mat-tab>
+        <mat-tab label="LinkedSignal">
+          @defer (on viewport) {
+          <app-linked-signal />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Linked Signal</h6>
+          }
+        </mat-tab>
+        <mat-tab label="Rxjs Interop">
+          @defer (on viewport) {
+          <app-rxjs-interop />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Rxjs Interop Component</h6>
+          }
+        </mat-tab>
+        <mat-tab label="Model Inputs">
+          @defer (on viewport) {
+          <app-model-inputs />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Model Inputs Component</h6>
+          }
+        </mat-tab>
+      </mat-tab-group>
+    </section>
+  `,
   standalone: true,
-  imports: [TitleCasePipe],
+  imports: [
+    MatTabsModule,
+    SignalComponent,
+    ComputedSignalComponent,
+    RxjsInteropComponent,
+    ModelInputsComponent,
+    LinkedSignalComponent,
+  ],
 })
 export class AppComponent {
-  title = 'signals';
-  userName = signal('');
-  users = signal(orgUserArray);
-  filteredUsersArray = computed(this.filterUserWithUserName.bind(this));
-
-  setUserName(par: Event): void {
-    const userNameValue = par.target as unknown as HTMLInputElement;
-    this.userName.set(userNameValue.value as string);
-  }
-
-  addNewUser() {
-    this.users.update((existUsers) => [
-      ...existUsers,
-      { name: 'New User', age: this.getRandomAge() },
-    ]);
-  }
-
-  private filterUserWithUserName() {
-    return this.users().filter((eachUser) =>
-      eachUser.name
-        ?.toLowerCase()
-        ?.includes(this.userName()?.toLowerCase() as string)
-    );
-  }
-
-  private getRandomAge(): number {
-    return Math.floor(Math.random() * (55 - 15 + 1)) + 15;
+  selectedTabIndex = signal(0);
+  constructor() {
+    if (sessionStorage.getItem('selectedTabIndex')) {
+      this.selectedTabIndex.set(
+        parseInt(sessionStorage.getItem('selectedTabIndex')!)
+      );
+    }
+    toObservable(this.selectedTabIndex).subscribe((indexValue) => {
+      sessionStorage.setItem('selectedTabIndex', indexValue.toString());
+    });
   }
 }
-
-interface IUser {
-  name: string | null;
-  age: number;
-}
-
-const orgUserArray = [
-  { name: 'John Doe', age: 30 },
-  { name: 'Jane Smith', age: 25 },
-  // { name: 'Michael Johnson', age: 35 },
-  // { name: 'Emily Davis', age: 28 },
-  // { name: 'Daniel Brown', age: 32 },
-  // { name: 'Sophia Wilson', age: 27 },
-  // { name: 'David Thompson', age: 31 },
-  { name: 'Olivia Clark', age: 26 },
-  // { name: 'William Allen', age: 29 },
-  { name: 'Emma Turner', age: 33 },
-];

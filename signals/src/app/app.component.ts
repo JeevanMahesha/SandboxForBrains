@@ -6,10 +6,11 @@ import { LinkedSignalComponent } from './linked-signal/linked-signal.component';
 import { ModelInputsComponent } from './model-inputs/model-inputs.component';
 import { RxjsInteropComponent } from './rxjs-interop/rxjs-interop.component';
 import { SignalComponent } from './signal.component';
+import { ResourceComponent } from './resource/resource.component';
 
 @Component({
-    selector: 'app-root',
-    template: `
+  selector: 'app-root',
+  template: `
     <section class="p-5">
       <h1 class="text-center">Angular Signals</h1>
       <mat-tab-group [(selectedIndex)]="selectedTabIndex">
@@ -34,6 +35,13 @@ import { SignalComponent } from './signal.component';
           <h6>Loading the Linked Signal</h6>
           }
         </mat-tab>
+        <mat-tab label="Resource">
+          @defer (on viewport) {
+          <app-resource />
+          } @placeholder (minimum 500ms) {
+          <h6>Loading the Resource Component</h6>
+          }
+        </mat-tab>
         <mat-tab label="Rxjs Interop">
           @defer (on viewport) {
           <app-rxjs-interop />
@@ -51,14 +59,15 @@ import { SignalComponent } from './signal.component';
       </mat-tab-group>
     </section>
   `,
-    imports: [
-        MatTabsModule,
-        SignalComponent,
-        ComputedSignalComponent,
-        RxjsInteropComponent,
-        ModelInputsComponent,
-        LinkedSignalComponent,
-    ]
+  imports: [
+    MatTabsModule,
+    SignalComponent,
+    ComputedSignalComponent,
+    RxjsInteropComponent,
+    ModelInputsComponent,
+    LinkedSignalComponent,
+    ResourceComponent,
+  ],
 })
 export class AppComponent {
   selectedTabIndex = signal(0);

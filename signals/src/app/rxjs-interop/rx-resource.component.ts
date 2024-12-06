@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';

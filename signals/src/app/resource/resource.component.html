@@ -1,1 +1,46 @@
-<p>resource works!</p>
+@if (user.isLoading()) {
+
+<div class="d-flex align-items-center justify-content-center mt-3">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+} @else if (user.error()) {
+
+<div class="d-flex align-items-center justify-content-center mt-3">
+  <div class="alert alert-danger mt-3" role="alert">
+    {{ user.error() }}
+  </div>
+</div>
+
+} @else {
+
+<mat-form-field class="dropdow mt-3">
+  <mat-label>Current Table Value Limit</mat-label>
+  <mat-select [(ngModel)]="selectedLimit">
+    @for (limit of limitDropDownValues; track limit) {
+    <mat-option [value]="limit">{{ limit }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+<table class="table table-hover table-bordered table-striped mt-3">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th class="col-md-5 col-xs-5">Title</th>
+      <th class="col-md-4 col-xs-4">Completed statue</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (eachUser of user.value(); track eachUser.id) {
+    <tr>
+      <th scope="row">{{ eachUser.id }}</th>
+      <td>{{ eachUser.todo }}</td>
+      <td>{{ eachUser.completed ? "active" : "Inactive" }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+}

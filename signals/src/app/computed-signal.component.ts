@@ -6,15 +6,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-computed-signal',
-  imports: [
-    MatSelectModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    FormsModule,
-  ],
-  template: `
+    selector: 'app-computed-signal',
+    imports: [
+        MatSelectModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        FormsModule,
+    ],
+    template: `
     <div class="container mt-3">
       <div class="d-flex justify-content-evenly">
         <div class="col-md-4">
@@ -60,8 +60,7 @@ import { MatSelectModule } from '@angular/material/select';
         </div>
       </div>
     </div>
-  `,
-  standalone: true,
+  `
 })
 export class ComputedSignalComponent {
   statusList = ['Todo', 'Pending', 'Completed'];

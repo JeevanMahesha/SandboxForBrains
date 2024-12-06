@@ -40,13 +40,4 @@ export class ToSignalComponent {
   welcomeMessage = toSignal(this.welcomeMessage$, {
     requireSync: true,
   });
-
-  constructor() {
-    /*  the signal returned by `toSignal` will keep returning the last
-    good value forever, as Observables which error produce no further values.
-     */
-    setInterval(() => {
-      this.welcomeMessage$.error(new Error('An error occurred!'));
-    }, 5000);
-  }
 }

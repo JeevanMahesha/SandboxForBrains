@@ -2,9 +2,9 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-signal',
-  imports: [FormsModule],
-  template: `
+    selector: 'app-signal',
+    imports: [FormsModule],
+    template: `
     <div class="d-flex justify-content-evenly">
       <div class="col-md-4">
         <div class="card mt-2">
@@ -58,8 +58,7 @@ import { FormsModule } from '@angular/forms';
         </div>
       </div>
     </div>
-  `,
-  standalone: true,
+  `
 })
 export class SignalComponent {
   userName = signal('Jeevan Mahesha');

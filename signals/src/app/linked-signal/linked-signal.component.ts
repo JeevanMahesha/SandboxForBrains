@@ -9,10 +9,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-linked-signal',
-  imports: [MatSelectModule, FormsModule],
-  templateUrl: './linked-signal.component.html',
-  standalone: true,
+    selector: 'app-linked-signal',
+    imports: [MatSelectModule, FormsModule],
+    templateUrl: './linked-signal.component.html'
 })
 export class LinkedSignalComponent {
   cartProducts: WritableSignal<ICart[]> = signal([

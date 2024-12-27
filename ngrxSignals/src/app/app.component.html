@@ -12,7 +12,12 @@
     />
   </mat-form-field>
 
-  <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+  <mat-button-toggle-group
+    name="fontStyle"
+    #filter
+    (change)="filterStatus($event)"
+    aria-label="Font Style"
+  >
     <mat-button-toggle value="all">All</mat-button-toggle>
     <mat-button-toggle value="pending">Pending</mat-button-toggle>
     <mat-button-toggle value="completed">Completed</mat-button-toggle>

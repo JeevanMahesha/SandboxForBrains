@@ -1,10 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { Component, effect, inject, OnInit, viewChild } from '@angular/core';
+import {
+  MatButtonToggleChange,
+  MatButtonToggleGroup,
+  MatButtonToggleModule,
+} from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TodoStore } from './todo.store';
+import { TodoFilter, TodoStore } from './todo.store';
 import { NgStyle } from '@angular/common';
 
 @Component({
@@ -24,6 +28,13 @@ import { NgStyle } from '@angular/common';
 export class AppComponent implements OnInit {
   title = 'ngrxSignals';
   todoStore = inject(TodoStore);
+  filter = viewChild.required(MatButtonToggleGroup);
+
+  constructor() {
+    effect(() => {
+      this.filter().value = this.todoStore.filter();
+    });
+  }
 
   async ngOnInit() {
     await this.todoStore.loadTodos();
@@ -40,5 +51,10 @@ export class AppComponent implements OnInit {
 
   toggleTodoStatus(todoId: string, completed: boolean): void {
     this.todoStore.updateTodoStatus(todoId, completed);
+  }
+
+  filterStatus(filterEvent: MatButtonToggleChange): void {
+    const filter = filterEvent.value as TodoFilter;
+    this.todoStore.setFilter(filter);
   }
 }

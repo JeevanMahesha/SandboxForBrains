@@ -51,5 +51,9 @@ export const TodoStore = signalStore(
         ),
       }));
     },
+
+    setFilter(filter: TodoFilter) {
+      patchState(storeValue, { filter });
+    },
   }))
 );

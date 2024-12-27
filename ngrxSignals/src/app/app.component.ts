@@ -30,4 +30,9 @@ export class AppComponent implements OnInit {
   addTodo(todoTitle: string): void {
     this.todoStore.addTodo(todoTitle);
   }
+
+  deleteTodo(todoId: string, $event: MouseEvent): void {
+    $event.stopPropagation();
+    this.todoStore.deleteTodo(todoId);
+  }
 }

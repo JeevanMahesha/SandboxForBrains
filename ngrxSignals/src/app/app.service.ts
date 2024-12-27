@@ -21,6 +21,10 @@ export class AppService {
     };
     return newTodo;
   }
+
+  async deleteTodo(id: string) {
+    await sleep(1000);
+  }
 }
 
 async function sleep(ms: number) {

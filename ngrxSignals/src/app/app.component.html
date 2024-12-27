@@ -22,7 +22,9 @@
     @for (eachTodo of todoStore.todos(); track eachTodo.id) {
     <mat-list-option>
       <div class="todo-item">
-        <mat-icon class="delete-icon">delete</mat-icon>
+        <mat-icon class="delete-icon" (click)="deleteTodo(eachTodo.id, $event)"
+          >delete</mat-icon
+        >
         <span>
           {{ eachTodo.title }}
         </span>

@@ -35,4 +35,8 @@ export class AppComponent implements OnInit {
     $event.stopPropagation();
     this.todoStore.deleteTodo(todoId);
   }
+
+  toggleTodoStatus(todoId: string, completed: boolean): void {
+    this.todoStore.updateTodoStatus(todoId, completed);
+  }
 }

@@ -20,7 +20,10 @@
 
   <mat-selection-list>
     @for (eachTodo of todoStore.todos(); track eachTodo.id) {
-    <mat-list-option>
+    <mat-list-option
+      [selected]="eachTodo.completed"
+      (selectedChange)="toggleTodoStatus(eachTodo.id, $event)"
+    >
       <div class="todo-item">
         <mat-icon class="delete-icon" (click)="deleteTodo(eachTodo.id, $event)"
           >delete</mat-icon

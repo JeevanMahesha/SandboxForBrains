@@ -42,5 +42,14 @@ export const TodoStore = signalStore(
         todos: currentState.todos.filter((todo) => todo.id !== id),
       }));
     },
+
+    async updateTodoStatus(id: string, completed: boolean) {
+      await todoService.updateTodo(id, completed);
+      patchState(storeValue, (currentState) => ({
+        todos: currentState.todos.map((todo) =>
+          todo.id === id ? { ...todo, completed } : todo
+        ),
+      }));
+    },
   }))
 );

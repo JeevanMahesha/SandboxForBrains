@@ -25,8 +25,13 @@ export class AppService {
   async deleteTodo(id: string) {
     await sleep(1000);
   }
-}
 
+  async updateTodo(taskId: string, completed: boolean) {
+    {
+      await sleep(1000);
+    }
+  }
+}
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

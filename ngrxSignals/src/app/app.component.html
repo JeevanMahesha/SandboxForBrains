@@ -4,7 +4,12 @@
   <h1>Todo App</h1>
   <mat-form-field>
     <mat-label>Todos</mat-label>
-    <input matInput type="text" />
+    <input
+      matInput
+      #todoName
+      type="text"
+      (keyup.enter)="addTodo(todoName.value)"
+    />
   </mat-form-field>
 
   <mat-button-toggle-group name="fontStyle" aria-label="Font Style">

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TODOS } from './mock-data';
+import { Todo } from './todo.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,15 @@ export class AppService {
   async getTodos() {
     await sleep(1000);
     return TODOS;
+  }
+
+  async addTodo(todo: Partial<Todo>) {
+    await sleep(1000);
+    const newTodo = {
+      id: Math.random().toString(36).substr(2, 9),
+      ...todo,
+    };
+    return newTodo;
   }
 }
 

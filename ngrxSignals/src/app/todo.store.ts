@@ -25,5 +25,14 @@ export const TodoStore = signalStore(
       const todos = await todoService.getTodos();
       patchState(storeValue, { todos, isLoading: false });
     },
+    async addTodo(title: string) {
+      const newTodo = (await todoService.addTodo({
+        title,
+        completed: false,
+      })) as Todo;
+      patchState(storeValue, (currentState) => ({
+        todos: [...currentState.todos, newTodo],
+      }));
+    },
   }))
 );

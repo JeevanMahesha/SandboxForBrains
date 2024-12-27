@@ -26,4 +26,8 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     await this.todoStore.loadTodos();
   }
+
+  addTodo(todoTitle: string): void {
+    this.todoStore.addTodo(todoTitle);
+  }
 }

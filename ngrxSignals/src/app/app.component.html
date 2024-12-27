@@ -21,6 +21,7 @@
   <mat-selection-list>
     @for (eachTodo of todoStore.todos(); track eachTodo.id) {
     <mat-list-option
+      (click)="$event.stopPropagation()"
       [selected]="eachTodo.completed"
       (selectedChange)="toggleTodoStatus(eachTodo.id, $event)"
     >
@@ -28,7 +29,11 @@
         <mat-icon class="delete-icon" (click)="deleteTodo(eachTodo.id, $event)"
           >delete</mat-icon
         >
-        <span>
+        <span
+          [ngStyle]="{
+            'text-decoration': eachTodo.completed ? 'line-through' : 'none'
+          }"
+        >
           {{ eachTodo.title }}
         </span>
       </div>

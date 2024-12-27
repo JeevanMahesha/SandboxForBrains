@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TodoStore } from './todo.store';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import { TodoStore } from './todo.store';
     MatListModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    NgStyle,
   ],
 })
 export class AppComponent implements OnInit {

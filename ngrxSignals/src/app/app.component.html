@@ -24,7 +24,7 @@
   </mat-button-toggle-group>
 
   <mat-selection-list>
-    @for (eachTodo of todoStore.todos(); track eachTodo.id) {
+    @for (eachTodo of todoStore.filteredTodos(); track eachTodo.id) {
     <mat-list-option
       (click)="$event.stopPropagation()"
       [selected]="eachTodo.completed"

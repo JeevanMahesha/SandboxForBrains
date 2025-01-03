@@ -1,60 +1,14 @@
-import { Component, effect, inject, OnInit, viewChild } from '@angular/core';
-import {
-  MatButtonToggleChange,
-  MatButtonToggleGroup,
-  MatButtonToggleModule,
-} from '@angular/material/button-toggle';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TodoFilter, TodoStore } from './todo.store';
-import { NgStyle } from '@angular/common';
+import { Component } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TodoStore } from './with-out-rx-js/todo.store';
+import { WithOutRxJsComponent } from './with-out-rx-js/with-out-rx-js.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  providers: [TodoStore],
-  imports: [
-    MatInputModule,
-    MatButtonToggleModule,
-    MatListModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    NgStyle,
-  ],
+  imports: [MatTabsModule, WithOutRxJsComponent],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'ngrxSignals';
-  todoStore = inject(TodoStore);
-  filter = viewChild.required(MatButtonToggleGroup);
-
-  constructor() {
-    effect(() => {
-      this.filter().value = this.todoStore.filter();
-    });
-  }
-
-  async ngOnInit() {
-    await this.todoStore.loadTodos();
-  }
-
-  addTodo(todoTitle: string): void {
-    this.todoStore.addTodo(todoTitle);
-  }
-
-  deleteTodo(todoId: string, $event: MouseEvent): void {
-    $event.stopPropagation();
-    this.todoStore.deleteTodo(todoId);
-  }
-
-  toggleTodoStatus(todoId: string, completed: boolean): void {
-    this.todoStore.updateTodoStatus(todoId, completed);
-  }
-
-  filterStatus(filterEvent: MatButtonToggleChange): void {
-    const filter = filterEvent.value as TodoFilter;
-    this.todoStore.setFilter(filter);
-  }
 }

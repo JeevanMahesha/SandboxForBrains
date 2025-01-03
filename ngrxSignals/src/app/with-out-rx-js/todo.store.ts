@@ -5,9 +5,9 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { Todo } from './todo.model';
+import { Todo } from '../todo.model';
 import { computed, inject } from '@angular/core';
-import { AppService } from './app.service';
+import { WithOutRxJsService } from './with-out-rx-js.service';
 
 export type TodoFilter = 'all' | 'completed' | 'pending';
 
@@ -25,7 +25,7 @@ const initialState: TodoState = {
 
 export const TodoStore = signalStore(
   withState(initialState),
-  withMethods((storeValue, todoService = inject(AppService)) => ({
+  withMethods((storeValue, todoService = inject(WithOutRxJsService)) => ({
     async loadTodos() {
       patchState(storeValue, { isLoading: true });
       const todos = await todoService.getTodos();

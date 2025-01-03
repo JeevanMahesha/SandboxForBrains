@@ -1,0 +1,51 @@
+<div class="app">
+  @if (!todoStore.isLoading()) {
+
+  <h1>Todo App</h1>
+  <mat-form-field>
+    <mat-label>Todos</mat-label>
+    <input
+      matInput
+      #todoName
+      type="text"
+      (keyup.enter)="addTodo(todoName.value)"
+    />
+  </mat-form-field>
+
+  <mat-button-toggle-group
+    name="fontStyle"
+    #filter
+    (change)="filterStatus($event)"
+    aria-label="Font Style"
+  >
+    <mat-button-toggle value="all">All</mat-button-toggle>
+    <mat-button-toggle value="pending">Pending</mat-button-toggle>
+    <mat-button-toggle value="completed">Completed</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <mat-selection-list>
+    @for (eachTodo of todoStore.filteredTodos(); track eachTodo.id) {
+    <mat-list-option
+      (click)="$event.stopPropagation()"
+      [selected]="eachTodo.completed"
+      (selectedChange)="toggleTodoStatus(eachTodo.id, $event)"
+    >
+      <div class="todo-item">
+        <mat-icon class="delete-icon" (click)="deleteTodo(eachTodo.id, $event)"
+          >delete</mat-icon
+        >
+        <span
+          [ngStyle]="{
+            'text-decoration': eachTodo.completed ? 'line-through' : 'none'
+          }"
+        >
+          {{ eachTodo.title }}
+        </span>
+      </div>
+    </mat-list-option>
+    }
+  </mat-selection-list>
+  } @else {
+  <mat-spinner></mat-spinner>
+  }
+</div>

@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TODOS } from './mock-data';
-import { Todo } from './todo.model';
+import { Todo } from '../todo.model';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AppService {
-  constructor() {}
-
+@Injectable()
+export class WithOutRxJsService {
   async getTodos() {
     await sleep(1000);
     return TODOS;

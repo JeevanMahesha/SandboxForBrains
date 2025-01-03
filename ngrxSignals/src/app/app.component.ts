@@ -5,8 +5,16 @@ import { WithRxJsComponent } from './with-rx-js/with-rx-js.component';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  template: `
+    <mat-tab-group>
+      <mat-tab label="with Out RxJS">
+        <app-with-out-rx-js />
+      </mat-tab>
+      <mat-tab label="with RxJS">
+        <app-with-rx-js />
+      </mat-tab>
+    </mat-tab-group>
+  `,
   imports: [MatTabsModule, WithOutRxJsComponent, WithRxJsComponent],
 })
 export class AppComponent {

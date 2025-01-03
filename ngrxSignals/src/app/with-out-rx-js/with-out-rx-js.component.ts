@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TodoFilter, TodoStore } from './todo.store';
+import { TodoFilter, TodoWithOutRxjsStore } from './todo.with-out-rxjs.store';
 import { WithOutRxJsService } from './with-out-rx-js.service';
 
 @Component({
@@ -22,12 +22,12 @@ import { WithOutRxJsService } from './with-out-rx-js.service';
     MatProgressSpinnerModule,
     NgStyle,
   ],
-  providers: [TodoStore, WithOutRxJsService],
+  providers: [TodoWithOutRxjsStore, WithOutRxJsService],
   templateUrl: './with-out-rx-js.component.html',
   styleUrl: './with-out-rx-js.component.css',
 })
 export class WithOutRxJsComponent {
-  todoStore = inject(TodoStore);
+  todoStore = inject(TodoWithOutRxjsStore);
   filter = viewChild.required(MatButtonToggleGroup);
 
   constructor() {

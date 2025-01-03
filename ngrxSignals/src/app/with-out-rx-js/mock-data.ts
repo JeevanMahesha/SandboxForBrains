@@ -1,4 +1,4 @@
-import { Todo } from '../todo.model';
+import { Todo } from './todo.with-out-rxjs.model';
 
 export const TODOS: Todo[] = [
   {

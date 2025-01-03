@@ -5,7 +5,7 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { Todo } from '../todo.model';
+import { Todo } from './todo.with-out-rxjs.model';
 import { computed, inject } from '@angular/core';
 import { WithOutRxJsService } from './with-out-rx-js.service';
 
@@ -23,7 +23,7 @@ const initialState: TodoState = {
   filter: 'all',
 };
 
-export const TodoStore = signalStore(
+export const TodoWithOutRxjsStore = signalStore(
   withState(initialState),
   withMethods((storeValue, todoService = inject(WithOutRxJsService)) => ({
     async loadTodos() {

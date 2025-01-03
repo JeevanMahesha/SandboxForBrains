@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TODOS } from './mock-data';
-import { Todo } from '../todo.model';
+import { Todo } from './todo.with-out-rxjs.model';
 
 @Injectable()
 export class WithOutRxJsService {

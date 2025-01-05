@@ -10,7 +10,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { finalize } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { APIResponse, Todo } from './with-rx-js.model';
 import { WithRxJsService } from './with-rx-js.service';
 
@@ -37,10 +37,11 @@ export const TodoWithRxjsStore = signalStore(
     _defaultLimit: 5,
   })),
   withMethods((storeValue) => ({
-    loadTodos: rxMethod<void>(() => {
+    loadTodos: rxMethod<number>((limit$) => {
+      patchState(storeValue, { isLoading: true });
       const _withRxJsService = inject(WithRxJsService);
-      return _withRxJsService.getTodos(storeValue._defaultLimit).pipe(
-        finalize(() => patchState(storeValue, { isLoading: false })),
+      return limit$.pipe(
+        switchMap((limit) => _withRxJsService.getTodos(limit)),
         tapResponse<APIResponse, HttpErrorResponse>({
           next: (data) => {
             patchState(storeValue, {
@@ -48,16 +49,27 @@ export const TodoWithRxjsStore = signalStore(
               total: data.total,
               limit: data.limit,
               skip: data.skip,
+              isLoading: false,
             });
           },
-          error: (error) => console.error(error),
+          error: (error) => {
+            console.error(error);
+            patchState(storeValue, { isLoading: false });
+          },
         })
       );
     }),
+    setPageSize: (limit: number) => {
+      patchState(storeValue, { limit });
+    },
   })),
+
   withHooks((storeValue) => ({
     onInit() {
-      storeValue.loadTodos();
+      if (storeValue.limit() === 0) {
+        storeValue.setPageSize(storeValue._defaultLimit);
+      }
+      storeValue.loadTodos(storeValue.limit);
     },
   }))
 );

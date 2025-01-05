@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { WithRxJsService } from './with-rx-js.service';
@@ -17,4 +17,9 @@ export class WithRxJsComponent {
   displayedColumns: string[] = ['id', 'todo', 'userId', 'completed'];
   isLoading = this.#todoStore.isLoading;
   todos = this.#todoStore.todos;
+  pageSize = this.#todoStore.limit;
+
+  pageSizeChanged(pageSize: PageEvent): void {
+    this.#todoStore.setPageSize(pageSize.pageSize);
+  }
 }

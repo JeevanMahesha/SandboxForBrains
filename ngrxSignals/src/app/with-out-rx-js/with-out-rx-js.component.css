@@ -1,0 +1,17 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.delete-icon {
+  cursor: pointer;
+}

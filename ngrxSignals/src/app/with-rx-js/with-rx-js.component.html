@@ -1,0 +1,40 @@
+@if (!isLoading()) {
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="todos()">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>Id.</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="todo">
+      <th mat-header-cell *matHeaderCellDef>Todo</th>
+      <td mat-cell *matCellDef="let element">{{ element.todo }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="userId">
+      <th mat-header-cell *matHeaderCellDef>User Id</th>
+      <td mat-cell *matCellDef="let element">{{ element.userId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="completed">
+      <th mat-header-cell *matHeaderCellDef>Completed Status</th>
+      <td mat-cell *matCellDef="let element">{{ element.completed }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    [length]="totalTodos()"
+    [pageSize]="pageSize"
+    showFirstLastButtons
+    aria-label="Select page of periodic elements"
+    (page)="pageSizeChanged($event)"
+  >
+  </mat-paginator>
+</div>
+} @else {
+<mat-spinner />
+}

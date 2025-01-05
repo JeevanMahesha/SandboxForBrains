@@ -27,6 +27,7 @@
 
   <mat-paginator
     [pageSizeOptions]="[5, 10, 20]"
+    [length]="totalTodos()"
     [pageSize]="pageSize"
     showFirstLastButtons
     aria-label="Select page of periodic elements"

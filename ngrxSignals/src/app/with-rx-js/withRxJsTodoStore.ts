@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
@@ -10,7 +11,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { switchMap } from 'rxjs';
+import { combineLatest, switchMap } from 'rxjs';
 import { APIResponse, Todo } from './with-rx-js.model';
 import { WithRxJsService } from './with-rx-js.service';
 
@@ -37,11 +38,11 @@ export const TodoWithRxjsStore = signalStore(
     _defaultLimit: 5,
   })),
   withMethods((storeValue) => ({
-    loadTodos: rxMethod<number>((limit$) => {
+    loadTodos: rxMethod<[number, number]>((limit$) => {
       patchState(storeValue, { isLoading: true });
       const _withRxJsService = inject(WithRxJsService);
       return limit$.pipe(
-        switchMap((limit) => _withRxJsService.getTodos(limit)),
+        switchMap(([limit, skip]) => _withRxJsService.getTodos(limit, skip)),
         tapResponse<APIResponse, HttpErrorResponse>({
           next: (data) => {
             patchState(storeValue, {
@@ -62,6 +63,9 @@ export const TodoWithRxjsStore = signalStore(
     setPageSize: (limit: number) => {
       patchState(storeValue, { limit });
     },
+    setSkip: (skip: number) => {
+      patchState(storeValue, { skip });
+    },
   })),
 
   withHooks((storeValue) => ({
@@ -69,7 +73,12 @@ export const TodoWithRxjsStore = signalStore(
       if (storeValue.limit() === 0) {
         storeValue.setPageSize(storeValue._defaultLimit);
       }
-      storeValue.loadTodos(storeValue.limit);
+      storeValue.loadTodos(
+        combineLatest([
+          toObservable(storeValue.limit),
+          toObservable(storeValue.skip),
+        ])
+      );
     },
   }))
 );

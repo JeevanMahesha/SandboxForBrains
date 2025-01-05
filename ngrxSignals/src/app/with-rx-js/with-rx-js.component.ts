@@ -18,8 +18,10 @@ export class WithRxJsComponent {
   isLoading = this.#todoStore.isLoading;
   todos = this.#todoStore.todos;
   pageSize = this.#todoStore.limit;
+  totalTodos = this.#todoStore.total;
 
   pageSizeChanged(pageSize: PageEvent): void {
     this.#todoStore.setPageSize(pageSize.pageSize);
+    this.#todoStore.setSkip(pageSize.pageIndex * pageSize.pageSize);
   }
 }

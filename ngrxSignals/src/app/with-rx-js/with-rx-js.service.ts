@@ -7,9 +7,9 @@ export class WithRxJsService {
   httpClient = inject(HttpClient);
   #baseUrl = 'https://dummyjson.com/todos';
 
-  getTodos(limit: number) {
+  getTodos(limit: number, skip: number) {
     return this.httpClient.get<APIResponse>(
-      this.#baseUrl.concat(`?limit=${limit}`)
+      this.#baseUrl.concat(`?limit=${limit}`).concat(`&skip=${skip}`)
     );
   }
 }

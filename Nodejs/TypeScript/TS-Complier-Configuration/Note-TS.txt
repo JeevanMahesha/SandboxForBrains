@@ -1,0 +1,31 @@
+tsc FILE_NAME.ts --watch / -w 
+This will watch for the ts files when it changes and compile automatically 
+when it changes 
+
+
+/*************************************************************************************************************************/
+  
+  tsc --init 
+
+  This command is used to create a tsconfig.json file
+
+/*************************************************************************************************************************/
+
+
+compilerOptions settings 
+
+lib = is used to specify the compiler to use ESversion and DOM related settings
+
+sourceMap = is use to see the ts files in browser on (SOURCES TAB) 
+
+outDir = to compile your ts files and store in required path example :- dist/
+
+rootDir = to tell the compiler to take the ts files to compile example:- src/
+
+removeComments = remove the comments while compiling
+
+noEmitOnError =  this will don't compile the ts file if it have error 
+
+noImplicitAny = in ts file we can't use any datatype for variable  
+
+strictBindCallApply = Check that the arguments for 'bind', 'call', and 'apply' methods match the original function.

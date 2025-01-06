@@ -1,0 +1,16 @@
+{
+    "name": "news-api",
+    "version": "1.0.0",
+    "description": "This is an API which give news of jobs",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.17.1",
+        "node-fetch": "^3.1.1",
+        "postman-request": "^2.88.1-postman.24"
+    }
+}

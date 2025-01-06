@@ -1,0 +1,50 @@
+<app-header></app-header>
+
+<div class="container text-center">
+  <div
+    class="row align-items-center mt-3"
+    *ngIf="totalMealDetails$ | async as totalMealDetails; else pageLoading"
+  >
+    <div class="col align-self-center">
+      <table class="table table-info table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Break Fast</th>
+            <th scope="col">Lunch</th>
+            <th scope="col">Dinner</th>
+            <th scope="col">Total Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="table-info"
+            *ngFor="let eachMealDetail of totalMealDetails; let objInd = index"
+          >
+            <th scope="row">{{ objInd + 1 }}</th>
+            <td class="table-info">{{ eachMealDetail.mealsConsumedUser }}</td>
+            <td class="table-info">{{ eachMealDetail.BreakFast || "--" }}</td>
+            <td class="table-info">{{ eachMealDetail.Lunch || "--" }}</td>
+            <td class="table-info">{{ eachMealDetail.Dinner || "--" }}</td>
+            <td class="table-info h6">
+              {{ eachMealDetail.totalMealAmount }}
+              <span>&#8377;</span>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="table-success h4" colspan="6">
+              {{ totalAmount }} &#8377;
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #pageLoading>
+  <mat-spinner class="spinner"></mat-spinner>
+</ng-template>

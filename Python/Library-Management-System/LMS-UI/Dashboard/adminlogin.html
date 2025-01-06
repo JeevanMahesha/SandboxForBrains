@@ -1,0 +1,123 @@
+<html lang="en">
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminLogin</title>
+</head>
+<style>
+    body {
+        background-color: #9f9da7;
+        font-size: 1.6rem;
+        font-family: "Open Sans", sans-serif;
+        color: #2b3e51;
+    }
+    
+    h2 {
+        font-weight: 300;
+        text-align: center;
+    }
+    
+    p {
+        position: relative;
+    }
+    
+    a,
+    a:link,
+    a:visited,
+    a:active {
+        color: #3ca9e2;
+        transition: all 0.2s ease;
+    }
+    
+    #login-form-wrap {
+        background-color: #fff;
+        width: 35%;
+        margin: 30px auto;
+        text-align: center;
+        padding: 20px 0 0 0;
+        border-radius: 4px;
+        box-shadow: 0px 30px 50px 0px rgba(0, 0, 0, 0.2);
+    }
+    
+    #login-form {
+        padding: 0 60px;
+    }
+    
+    input {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        outline: none;
+        height: 60px;
+        line-height: 60px;
+        border-radius: 4px;
+    }
+    
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 0 0 0 10px;
+        margin: 0;
+        color: #8a8b8e;
+        border: 1px solid #c2c0ca;
+        font-style: normal;
+        font-size: 16px;
+        appearance: none;
+        position: relative;
+        display: inline-block;
+        background: none;
+    }
+    
+    .btn {
+        border: none;
+        display: block;
+        background-color: #3ca9e2;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 18px;
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        text-align: center;
+        width: 30%;
+        height: 6%;
+    }
+    
+    #create-account-wrap {
+        background-color: #eeedf1;
+        color: #8a8b8e;
+        font-size: 14px;
+        width: 100%;
+        padding: 10px 0;
+        border-radius: 0 0 4px 4px;
+    }
+</style>
+
+<body>
+    <div id="login-form-wrap">
+        <a href="../index.html">Home</a>
+        <h2>Admin Login</h2>
+        <form action="" method="POST" id="login-form">
+            <div id="error-message"></div>
+            <input type="email" id="Admin-username" name="username" placeholder="Username">
+            <br> <br>
+            <input type="password" id="Admin-password" name="Password" placeholder="Password">
+            <br>
+            <br>
+        </form>
+        <div id="create-account-wrap">
+            <button class="btn" id="Admin-Login-Button">Login</button>
+        </div>
+        <!--create-account-wrap-->
+    </div>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</body>
+<script src="./theme-assets/fetch/Adminfetch.js"></script>
+
+</html>

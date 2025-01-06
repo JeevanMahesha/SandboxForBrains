@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>Sliding Puzzle</title>
+    <link rel="stylesheet" href="./assets/css/sliding_puzzle.css">
+    <link rel="stylesheet" href="./assets/css/solution_modal.css">
+    <link rel="stylesheet" href="./assets/css/font-awesome.min.css">
+    <script src="lib/jquery-2.1.1.js"></script>
+    <script src="lib/bundle.js"></script>
+    </head>
+
+  <body>
+    <main>
+      <h1>Sliding Puzzle</h1> 
+      <figure class="game-window group">
+        <div class="main-game">
+          <div id="grid-puzzle-area">
+            <div id="grid-puzzle"></div>
+            <div id="message"></div>
+          </div>
+        </div>
+        <div class="game-info">
+          <div>
+            <input id="level" type="range" min="2" max="6" step="1" value="3"/>
+            <p id="rangeText">Grid Size: 3 x 3</p>
+            <input id="new-game" class="button" type="button"  value="New Game" />
+             </div>
+          <h2>Moves: </h2>
+          <h3 class="moves">0</h3>
+          <h2>Time: </h2>
+          <h3 class="time">0</h3>
+        </div>
+      </figure>
+    </main>
+    <div id="solution-modal" class="modal">
+      <div class="modal-content group">
+        <span id="solution-modal-close" class="close unselectable">&#10005;</span>
+        <div id="puzzle-solution" class="group">
+          <h2>Start a game first!</h2>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

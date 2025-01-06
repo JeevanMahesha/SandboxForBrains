@@ -1,0 +1,100 @@
+<app-header></app-header>
+<div class="container mx-auto text-center mt-5">
+  <div
+    *ngIf="this.totalMealDetails$ | async as totalMealDetails; else pageLoading"
+  >
+    <div>
+      <div
+        *ngFor="
+          let weekMealDetail of totalMealDetails | keyvalue;
+          let weekMealIndex = index
+        "
+      >
+        <h2
+          class="bg-gray-800 text-white cursor-pointer"
+          (click)="toggleAccordion(weekMealIndex)"
+        >
+          {{ weekMealDetail.key }}
+        </h2>
+        <div
+          [ngClass]="{
+            'accordion-collapse-visible': isAccordionOpen(weekMealIndex),
+            'accordion-collapse-hidden': !isAccordionOpen(weekMealIndex)
+          }"
+          class="accordion-collapse transition-max-height duration-500 ease-in-out overflow-hidden"
+        >
+          <div>
+            <div
+              *ngFor="
+                let mealTimeDetail of weekMealDetail.value | keyvalue;
+                let mealTimeIndex = index
+              "
+            >
+              <h2
+                class="bg-gray-700 text-white cursor-pointer"
+                (click)="toggleAccordion(weekMealIndex, mealTimeIndex)"
+              >
+                {{ mealTimeDetail.key }} - {{ mealTimeDetail.value.length }}
+              </h2>
+              <div
+                [ngClass]="{
+                  'accordion-collapse-visible': isAccordionOpen(
+                    weekMealIndex,
+                    mealTimeIndex
+                  ),
+                  'accordion-collapse-hidden': !isAccordionOpen(
+                    weekMealIndex,
+                    mealTimeIndex
+                  )
+                }"
+                class="accordion-collapse transition-max-height duration-500 ease-in-out overflow-hidden"
+              >
+                <div>
+                  <table class="min-w-full bg-white rounded-lg shadow-md">
+                    <thead>
+                      <tr class="bg-gray-600 text-white">
+                        <th class="py-2 px-4">#</th>
+                        <th class="py-2 px-4">Name</th>
+                        <th class="py-2 px-4">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let eachDetail of mealTimeDetail.value;
+                          let ind = index
+                        "
+                        class="hover:bg-gray-100"
+                      >
+                        <td class="py-2 px-4">{{ ind + 1 }}</td>
+                        <td class="py-2 px-4">
+                          {{ eachDetail.mealsConsumedUser }}
+                        </td>
+                        <td class="py-2 px-4">
+                          {{ eachDetail.amountPerMeal }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3" class="py-2 px-4">
+                          <button
+                            class="bg-red-500 text-white py-2 px-4 rounded"
+                            (click)="deleteRecord(mealTimeDetail.value.at(0)!)"
+                          >
+                            Delete {{ mealTimeDetail.key }} Records
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #pageLoading>
+  <mat-spinner class="spinner"></mat-spinner>
+</ng-template>

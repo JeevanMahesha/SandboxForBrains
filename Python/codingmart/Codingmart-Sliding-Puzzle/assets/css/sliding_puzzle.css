@@ -1,0 +1,219 @@
+html, body, figure, a, 
+ul, li, h1, h2, h3 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  display: table-row;
+}
+
+.group:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+body {
+  font-family: sans-serif;
+  text-align: center;
+  font-weight: bold;
+  background:white;
+}
+
+main {
+  width: 900px;
+  margin: 60px auto;
+  padding: 50px;
+  background: rgb(182, 216, 255);
+}
+
+h1 {
+  font-size: 120px;
+  margin-bottom: 30px;
+  color: rgb(193, 20, 209);
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+.game-window {
+  width: 850px;
+  height: auto;
+  margin: 0 auto;
+  padding: 30px 0;
+  display: table;
+}
+
+.main-game {
+  display: table-cell;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+#grid-puzzle-area {
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+
+#grid-puzzle, #grid-solution, #grid-solver {
+  display: table;
+  table-layout: fixed;
+}
+
+#grid-puzzle, #grid-solution {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.game-info {
+  display: table-cell;
+  width: 250px;
+  margin: auto;
+  vertical-align: middle;
+  font-style: bolder;
+}
+
+.game-info > * {
+  margin: 0 auto;
+}
+
+.button {
+  color: #736d36;
+  width: 100px;
+  height: 30px;
+  border: 1px outset;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 16px;
+  outline: 0;
+}
+
+.button:hover {
+  cursor: pointer;
+  background: white;
+}
+
+.button:active {
+    border: 1px inset;
+    background: black
+}
+
+.button:hover:active {
+    border: 1px inset;
+    background: black
+}
+
+.game-info > h2 {
+  padding: 20px 0 10px 0;
+  color: rgb(148,0,144);
+}
+
+#grid-solution-area {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border: 2px solid black;
+}
+
+div[id^=grid] li {
+  display: table-cell;
+  vertical-align: middle;
+  border: 2px solid black;
+  background: rgba(255,255,255,0.55);
+  font-size: 20px;
+}
+
+#grid-puzzle li:not(.empty) {
+  border: 4px outset #cecece;
+  background: rgb(255, 251, 185);
+  cursor: pointer;
+  font-size: 50px;
+  box-shadow: 5px 5px 20px 0px black;
+}
+
+div[id^=grid] li:before {
+  content: attr(value);
+}
+
+#grid-puzzle li.empty {
+  background: transparent;
+  border: 0px;
+}
+
+#grid-puzzle li:hover:not(.empty) {
+  background:red;
+}
+
+#message {
+  display: none;
+  left: 0;
+  top: 0;
+  font-size: 100px;
+  color: green;
+  position: absolute;
+  height: inherit;
+  width: inherit;
+  justify-content: center;
+  align-items: center;
+}
+
+#message:before {
+  content: "You Win!";
+  text-shadow: 7px 4px 6px rgb(95, 255, 47);
+  padding: 15px;
+}
+
+#grid-puzzle.game-over ~ #message {
+  display: flex;
+}
+
+footer {
+  width: 900px;
+  margin: 30px auto;
+  height: 100px;
+  display: table;
+}
+
+footer p {
+  color: rgba(255,255,255,0.55);
+}
+
+ul.icons > li {
+  display: inline-block;
+  font-size: 50px;
+  color: rgb(212,12,204);
+  width: 100px;
+}
+
+ul.icons > li:hover {
+  display: inline-block;
+  color: rgb(40,40,40)
+}
+
+.icons a {
+  -moz-transition: color 0.35s ease-in-out, border-bottom-color 0.35s ease-in-out;
+  -webkit-transition: color 0.35s ease-in-out, border-bottom-color 0.35s ease-in-out;
+  -ms-transition: color 0.35s ease-in-out, border-bottom-color 0.35s ease-in-out;
+  transition: color 0.35s ease-in-out, border-bottom-color 0.35s ease-in-out;
+}
+
+#grid-puzzle.game-over li:hover:not(.empty) {
+  background:white;
+  cursor: default;
+}

@@ -1,0 +1,39 @@
+.container {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: auto;
+  overflow: hidden;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1,
+h2,
+h3 {
+  color: #333;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+ul li {
+  background: #e7e7e7;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+code {
+  background: #f4f4f4;
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+pre {
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  overflow: auto;
+}
+a {
+  color: #0066cc;
+}

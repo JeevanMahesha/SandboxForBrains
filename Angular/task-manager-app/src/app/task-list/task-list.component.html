@@ -1,0 +1,87 @@
+<div class="task-list" *ngIf="tasks$ | async as tasks">
+  <div class="task-creation">
+    <button type="button" (click)="createTask()" mat-stroked-button>
+      Create Task
+    </button>
+    <mat-button-toggle-group
+      [formControl]="filterByPriority"
+      name="fontStyle"
+      aria-label="Font Style"
+    >
+      @for (eachPriority of priorityList; track $index) {
+      <mat-button-toggle [value]="eachPriority.key">{{
+        eachPriority.value
+      }}</mat-button-toggle>
+      }
+      <mat-button-toggle [value]="null">All Priority</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-button-toggle-group
+      [formControl]="filterByStatus"
+      name="fontStyle"
+      aria-label="Font Style"
+    >
+      @for (eachStatus of taskStatusList; track $index) {
+      <mat-button-toggle [value]="eachStatus.key">{{
+        eachStatus.value
+      }}</mat-button-toggle>
+      }
+      <mat-button-toggle [value]="null">All Status</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="task-container">
+    @for (task of tasks ; track $index) {
+    <mat-card class="task-item" appearance="outlined">
+      <mat-card-header class="mt-20">
+        <mat-card-title>{{ task.title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          {{ task.description }}
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <span class="task-meta-detail">Due: {{ task.dueDate | date }}</span>
+        <span class="priority">
+          Priority:
+          <span
+            [ngClass]="{
+              high: task.priority === 'high',
+              medium: task.priority === 'medium',
+              low: task.priority === 'low'
+            }"
+          >
+            {{ task.priority | getValue : "priority" }}
+          </span>
+        </span>
+      </mat-card-actions>
+      <mat-card-actions>
+        <mat-button-toggle-group
+          (change)="updateStatus(task.id, $event)"
+          [value]="task.taskStatus"
+        >
+          @for (eachStatus of taskStatusList; track $index) {
+          <mat-button-toggle [value]="eachStatus.key">{{
+            eachStatus.value
+          }}</mat-button-toggle>
+          }
+        </mat-button-toggle-group>
+      </mat-card-actions>
+      <mat-card-footer>
+        <button type="button" class="edit-button" (click)="editTask(task.id)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          type="button"
+          (click)="deleteTask(task.id)"
+          class="delete-button"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-footer>
+    </mat-card>
+    } @empty {
+    <span class="content-center"> You have no tasks yet.</span>
+    }
+  </div>
+</div>

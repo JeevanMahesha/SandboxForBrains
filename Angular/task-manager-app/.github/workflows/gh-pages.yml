@@ -1,0 +1,42 @@
+name: Task Management Application GitHub Pages
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.13.1"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Cleanup gh-pages and Deploy
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+          git fetch origin gh-pages
+          git checkout gh-pages
+          shopt -s extglob
+          rm -rf !("dist")
+          git add -A
+          git commit -m "Delete existing files except dist" --allow-empty
+
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.TASK_GH_SECRET }}
+          publish_dir: ./dist/task-manager-app/browser
+permissions:
+  contents: write

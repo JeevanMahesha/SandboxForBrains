@@ -1,0 +1,88 @@
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Weather App</title>
+    <link rel="icon" href="img/cloud.png">
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
+ <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hideme {
+            display: none;
+            visibility: hidden;
+        }
+        
+     
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid px-1 px-sm-3 py-5 mx-auto">
+        <div class="row d-flex justify-content-center">
+            <div class="row card0 text-center">
+                <div class="card1 col-lg-8 col-md-7">
+                    <h1 class="font-weight-bold display-2">Weather <img width="100em"  src="img/cloud.png" alt=""></h1>
+                    <div id="temperature">
+                    </div>
+                    <h2 class="mt-3 mb-3" id="locationName"></h2> 
+                    <h5 id="weatherdescription"></h5>
+                    <div id="locationtime"> </div>
+                    <!-- <div class="row px-3 mt-3 mb-3">
+                        <h1 class="large-font mr-3">26&#176;</h1>
+                        <div class="d-flex flex-column mr-3">
+                            <h2 class="mt-3 mb-0">London</h2> <small>10:36 - Tuesday, 22 Oct '19</small>
+                        </div>
+                        <div class="d-flex flex-column text-center">
+                            <h3 class="fa fa-sun-o mt-4"></h3> <small>Sunny</small>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="card2 col-lg-4 col-md-4 ">
+                    <form class="row mr-4">
+                        <input type="search" id="locationaddress"  placeholder="Location" class="mb-5">
+                        <button class="fa fa-search mb-5 mr-0 text-center" type="submit"></button>
+                    </form>
+                   <div class=" mr-5">
+                     <p class="Dark-text font-weight-bolder h4 text-center" id="location-name-message"></p>
+                      <div class="line my-5"></div>
+                    <h3 id="date"></h3>
+                    <h3 id="time"> </h3>
+                      <div class="line my-5"></div>
+                        <p class="font-weight-bolder">Weather Details</p>
+                        <div class="row px-3 d-flex justify-content-center">
+                            
+                            <p class="Dark-text">Wind Speed<img src="img/icon/windsock.png" alt=""></p> 
+                            <p class="ml-3" id="windspeed">0km/h</p>
+                        </div>
+                        <div class="row px-3 d-flex justify-content-center">
+                        
+                            <p class="Dark-text">Humidity <img src="img/icon/humidity.png" alt=""></p> 
+                            <p class="ml-3" id="humidity">0%</p>
+                        </div>
+                        <div class="row px-3 d-flex justify-content-center">
+                            
+                            <p class="Dark-text">feelslike <img src="img/icon/wind-gauge.png" alt=""></p>
+                            <p class="ml-3" id="feelslike">0%</p>
+                        </div>
+                        <div class="row px-3 d-flex justify-content-center">
+                            <p class="Dark-text">Time Zone <img src="img/icon/timezone.png" alt=""> </p>
+                            <p class="ml-3" id="timezone">/</p>
+                        </div>
+                        <div class="line mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom text-center">
+        <input type="text" name="" id="location" class="hideme">
+    <h5 >Created by &hearts; <a class="h4" href="http://jeevan-m.github.io/" target="_blank">Jeevan</a> </h5>
+</div>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <script type='text/javascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'></script>
+    <script type='text/javascript' src="js/app.js"></script>
+</body>
+
+</html>

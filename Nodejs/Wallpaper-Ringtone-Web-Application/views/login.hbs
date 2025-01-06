@@ -1,0 +1,76 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <style>
+        .note {
+            text-align: center;
+            height: 50px;
+            background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        
+        .form-content {
+            padding: 5%;
+            border: 1px solid #ced4da;
+            margin-bottom: 2%;
+        }
+        
+        .form-control {
+            border-radius: 1.5rem;
+        }
+        
+        .btnSubmit {
+            border: none;
+            border-radius: 1.5rem;
+            padding: 1%;
+            width: 20%;
+            cursor: pointer;
+            background: #0062cc;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mt-5 text-center">
+        <a href="/" class="btn btn-outline-primary ">Home</a> 
+        <a href="/signup" class="btn btn-outline-primary ">signup</a> 
+
+    </div>
+
+    <form class="container register-form justify-content-center mt-3 col-lg-4">
+       
+            <div class="note">
+                <h3> RingGall Login</h3>
+                
+            </div>
+
+            <div class="form-content text-center">
+
+                <div class="form-group ">
+                    <input type="email" class="form-control" id="email" placeholder="Your E-mail *" value="" />
+                </div>
+
+                <div class="form-group ">
+                    <input type="password" class="form-control" id="password" placeholder="Your Password *" value="" />
+                </div>
+                 <div class="form-group " id="message">
+                    
+                </div>
+                <button type="button" onclick="Login()" class="btn btn-outline-primary">Login</button>
+            </div>
+        </div>
+    </form>
+
+</body>
+<script src="js/fetch.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
+</html>

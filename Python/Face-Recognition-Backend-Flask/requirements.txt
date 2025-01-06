@@ -1,0 +1,9 @@
+Flask
+Flask-RESTful
+pymongo
+numpy
+face-recognition
+Flask-Cors
+gunicorn
+dnspython
+Flask-JWT-Extended

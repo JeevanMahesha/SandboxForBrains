@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>RingGall | Profile | My Ringtone</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.css">
+    <link rel="stylesheet" href="/public/css/audioplayer.css">
+    <link rel="stylesheet" href="/public/css/thumbnail-gallery.css">
+
+</head>
+
+<body>
+
+    <div class="container gallery-container">
+
+        <h1>Welcome <span id="profilename"></span></h1>
+        <div class="text-center">
+            <a href="/" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Home</a>
+            <a href="/profile" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Profile</a>
+            <a href="/mywallpaper" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">My Wallpaper</a>
+            <a href="/myaudio" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">My Ringtone</a>
+            <a onclick="logout()" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Logout</a>
+
+        </div>
+        <div class="tz-gallery">
+
+            <div class="row text-center">
+
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <div class="card ">
+                        <h5 class="font-weight-bolder">File Name <span>jeevan</span></h5>
+                        <h5 class="font-weight-bolder">File type <span></span></h5>
+                        <a href="audios/1591997850480-petta.mp3" download>download</a>
+                        <br>
+                        <audio controls class="align-content-center">
+                           <source src="/audios/1591997850480-petta.mp3">
+                      </audio>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <div class="card ">
+                        <h5 class="font-weight-bolder">File Name <span>jeevan</span></h5>
+                        <h5 class="font-weight-bolder">File type <span></span></h5>
+                        <a href="audio/BlueDucks_FourFlossFiveSix.mp3" download>download</a>
+                        <audio controls class="align-content-center">
+                        <source src="audio/BlueDucks_FourFlossFiveSix.mp3">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.ogg">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.wav">
+                      </audio>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <div class="card ">
+                        <h5 class="font-weight-bolder">File Name <span>jeevan</span></h5>
+                        <h5 class="font-weight-bolder">File type <span></span></h5>
+                        <a href="audio/BlueDucks_FourFlossFiveSix.mp3" download>download</a>
+                        <audio controls class="align-content-center">
+                        <source src="audio/BlueDucks_FourFlossFiveSix.mp3">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.ogg">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.wav">
+                      </audio>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <div class="card ">
+                        <h5 class="font-weight-bolder">File Name <span>jeevan</span></h5>
+                        <h5 class="font-weight-bolder">File type <span></span></h5>
+                        <a href="audio/BlueDucks_FourFlossFiveSix.mp3" download>download</a>
+                        <audio controls class="align-content-center">
+                        <source src="audio/BlueDucks_FourFlossFiveSix.mp3">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.ogg">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.wav">
+                      </audio>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <div class="card ">
+                        <h5 class="font-weight-bolder">File Name <span>jeevan</span></h5>
+                        <h5 class="font-weight-bolder">File type <span></span></h5>
+                        <a href="audio/BlueDucks_FourFlossFiveSix.mp3" download>download</a>
+                        <audio controls class="align-content-center">
+                        <source src="audio/BlueDucks_FourFlossFiveSix.mp3">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.ogg">
+                            <source src="audio/BlueDucks_FourFlossFiveSix.wav">
+                      </audio>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+    <script src="/public/js/jquery.js"></script>
+    <script src="/public/js/audioplayer.js"></script>
+    <script>
+        $(function() {
+            $('audio').audioPlayer();
+        });
+    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
+
+</body>
+
+</html>

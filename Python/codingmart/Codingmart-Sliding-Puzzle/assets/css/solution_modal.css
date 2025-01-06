@@ -1,0 +1,132 @@
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100vh; /* Height of window */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  position: relative;
+  background-color: rgba(218, 47, 47, 0.897);
+  margin: auto;
+  padding: 30px;
+  border: 1px solid rgb(201, 51, 51);
+  min-width: 700px;
+  width: 700px;
+}
+
+/* The Close Button */
+.close {
+  padding: 3 8px;
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  font-size: 28px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+}
+
+.unselectable {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.close:hover {
+  cursor: pointer;
+}
+
+.close:active {
+  color: rgb(218, 58, 58);
+  background: rgb(200,0,0);
+}
+
+#grid-solver {
+  float: left;
+  width: 450px;
+  height: 450px;
+  border: 5px solid black;
+}
+
+#grid-solver li {
+  font-size: 45px;
+  border: 5px solid black;
+}
+
+#play-div {
+  float: left;
+  display: flex;
+  margin-top: 30px;
+  width: 100%;
+}
+
+#solver-steps {
+  width: 500px;
+}
+
+#solver-play {
+  width: 75px;
+  margin-left: auto;
+}
+
+#solver-detail {
+  float: right;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  height: 460px;
+}
+
+#solver-detail > *:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+#solver-text {
+  background: rgba(223, 16, 16, 0.55);
+  overflow-y: scroll;
+  flex: 1;
+  border: 2px inset #c72c2c;
+  text-align: left;
+  font-weight: normal;
+}
+
+#solver-text > ul {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+#solver-text li {
+  padding: 2px;
+}
+
+#solver-text li:hover {
+  cursor: pointer;
+  background: rgba(0,255,0,.25);
+}
+
+#solver-text li:not(:last-child) {
+  border-bottom: 1px solid #bbb;
+}
+
+#solver-text span {
+  display: inline-block;
+  width: 20px;
+  text-align: right;
+  margin: 0 10px;
+}
+
+#solver-text li.current {
+  background: rgba(0,0,255,.25);
+}

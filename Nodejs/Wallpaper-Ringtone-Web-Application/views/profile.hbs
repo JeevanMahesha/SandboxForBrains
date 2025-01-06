@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>RingGall | Profile</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.css">
+    <link rel="stylesheet" href="css/thumbnail-gallery.css">
+
+</head>
+
+<body onload="profile()">
+<div class="container gallery-container">
+    <h1>Welcome  <span id="profilename"></span></h1>
+    
+    <div class="text-center">
+        <a href="/" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Home</a>
+        <a href="/mywallpaper" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">My Wallpaper</a>
+        <a href="/myaudio" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">My Ringtone</a>
+        <a onclick="logout()" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Logout</a>
+    </div>
+
+    <div class="tz-gallery">
+        <div class="d-flex justify-content-center col-xs-4">
+            <div class="card-content collapse show">
+                <div class="card-body chartjs ">
+                    
+                    <h3>  &nbsp;&nbsp;&nbsp; Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="username"></span></h3>
+                    <br>
+                    <h3>  &nbsp;&nbsp;&nbsp; E-mail &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="useremail"></span></h3>
+                    <br>
+                    <h3>  &nbsp;&nbsp;&nbsp; Phone &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="userphone"></span></h3>
+                    <br>
+                     <h5>  &nbsp;&nbsp;&nbsp; File Type Allowed &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span >MP3,MP4,PNG,JPG,JPEG</span></h5>
+                    <br>
+                </div>
+                <div class="form-content text-center">
+                        <div class="form-group">
+<select class="btn btn-primary dropdown-toggle" id="uploadtype" required>
+                                    <option disabled selected value> -- select an option -- </option>
+                                <option value="image">Image</option>
+                                <option value="ringtone">Ringtone</option>
+                                </select>
+                        </div>
+                <div class="form-group text-left">
+                 <div class="custom-file">
+    <input type="file" class="custom-file-input" id="customFile">
+    <label class="custom-file-label" for="customFile">Choose file</label>
+  </div>
+                </div>
+                <div class="form-group " id="message">
+                </div>
+                <button type="button" onclick="uploadfile()" class="btn btn-outline-primary">Upload</button>
+            </div>
+            </div>
+            
+        </div>
+    </div>
+ </div>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="js/fetch.js">   
+    </script>
+    <script>
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+</script>
+</body>
+
+</html>

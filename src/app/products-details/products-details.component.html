@@ -1,0 +1,46 @@
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 m-5">
+  @for (eachProduct of productsDetails(); track eachProduct.id) {
+
+  <div class="relative block rounded-tr-3xl border border-gray-100">
+    <span
+      class="absolute -right-px -top-px rounded-bl-3xl rounded-tr-3xl bg-green-600 px-6 py-4 font-medium uppercase tracking-widest text-white"
+    >
+      {{ eachProduct.productPrice }} &#8377;
+    </span>
+    <!-- <img
+      src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      alt=""
+      class="h-30 w-full rounded-tr-3xl object-cover"
+    /> -->
+
+    <div class="p-4 text-left">
+      <strong class="text-xl font-medium text-gray-900">
+        {{ eachProduct.productName }}
+      </strong>
+
+      <p class="mt-2 text-pretty text-gray-700">
+        {{ eachProduct.productType }}
+      </p>
+    </div>
+    <div class="text-center p-5">
+      @if (isProductInCart(eachProduct.id!)) {
+
+      <button
+        (click)="removeFromCart(eachProduct.id!)"
+        class="mt-4 block rounded-md border border-gray-900 bg-gray-900 px-5 py-3 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-gray-900"
+      >
+        Remove from cart
+      </button>
+      } @else {
+      <button
+        (click)="addToCart(eachProduct)"
+        class="mt-4 block rounded-md border border-gray-900 bg-gray-900 px-5 py-3 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-gray-900"
+      >
+        Add to cart
+      </button>
+
+      }
+    </div>
+  </div>
+  }
+</div>

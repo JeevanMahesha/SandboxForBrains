@@ -49,7 +49,7 @@ body {
   padding: 5px 10px;
   h3 {
     margin-left: 15px;
-    font-size: 1.5em;
+    font-size: 1.2em;
     color: rebeccapurple;
     margin-bottom: 20px;
     font-family: "Courier New", Courier, monospace;
@@ -67,7 +67,7 @@ body {
   span {
     font-weight: bolder;
     font-family: "Times New Roman", Times, serif;
-    color: black;
+    color: #4d4c4c;
   }
 }
 
@@ -90,5 +90,32 @@ body {
     border: none;
     border-top: 1px solid #d3d3d3;
     margin: 1em 0;
+  }
+}
+
+.instruction_section {
+  h3 {
+    color: saddlebrown;
+    font-size: 1.5em;
+  }
+  li {
+    font-family: monospace;
+    color: #7a7975;
+    margin-top: 0.5em;
+    margin-left: -1.2em;
+    text-indent: 0.5em;
+  }
+  li::marker {
+    color: saddlebrown;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid #d3d3d3;
+    margin: 1em 0;
+  }
+  span {
+    font-weight: bolder;
+    font-family: "Times New Roman", Times, serif;
+    color: #4d4c4c;
   }
 }

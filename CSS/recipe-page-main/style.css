@@ -58,11 +58,37 @@ body {
     margin-top: 0.5em;
     margin-left: -5px;
     text-indent: 1em;
+    font-family: monospace;
+    color: #7a7975;
   }
   li::marker {
     color: rebeccapurple;
   }
   span {
     font-weight: bolder;
+    font-family: "Times New Roman", Times, serif;
+    color: black;
+  }
+}
+
+.ingredient-section {
+  h3 {
+    color: saddlebrown;
+    font-size: 1.5em;
+  }
+  li {
+    font-family: monospace;
+    color: #7a7975;
+    margin-top: 0.5em;
+    margin-left: -1.2em;
+    text-indent: 1.5em;
+  }
+  li::marker {
+    color: saddlebrown;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid #d3d3d3;
+    margin: 1em 0;
   }
 }

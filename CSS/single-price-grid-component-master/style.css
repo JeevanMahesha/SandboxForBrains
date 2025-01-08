@@ -36,3 +36,27 @@ body {
     line-height: 1.5;
   }
 }
+
+.bottom-section {
+  background-color: hsl(179, 62%, 43%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  color: whitesmoke;
+  .monthly_subscription {
+    .title {
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+    padding: 10px 1rem;
+    text-align: left;
+    background-color: hsl(179, 52%, 35%);
+    width: 50%;
+  }
+  .reason_section {
+    padding: 10px 1rem;
+    text-align: left;
+    width: 50%;
+  }
+}

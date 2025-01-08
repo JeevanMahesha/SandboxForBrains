@@ -34,3 +34,11 @@ body {
   margin-bottom: 20px;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
+
+.card__description {
+  font-size: 1em;
+  color: #7a7975;
+  font-weight: 400;
+  margin-bottom: 10px;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}

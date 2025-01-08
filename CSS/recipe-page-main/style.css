@@ -42,3 +42,27 @@ body {
   margin-bottom: 10px;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
+
+.preparation-section {
+  background-color: #faf2fd;
+  border-radius: 10px;
+  padding: 5px 10px;
+  h3 {
+    margin-left: 15px;
+    font-size: 1.5em;
+    color: rebeccapurple;
+    margin-bottom: 20px;
+    font-family: "Courier New", Courier, monospace;
+  }
+  li {
+    margin-top: 0.5em;
+    margin-left: -5px;
+    text-indent: 1em;
+  }
+  li::marker {
+    color: rebeccapurple;
+  }
+  span {
+    font-weight: bolder;
+  }
+}

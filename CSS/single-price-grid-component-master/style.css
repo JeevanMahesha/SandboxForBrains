@@ -60,3 +60,19 @@ body {
     width: 50%;
   }
 }
+
+.sign_up_button {
+  background-color: hsl(71, 83%, 43%);
+  color: whitesmoke;
+  padding: 1rem 5rem 1rem 5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: hsl(71, 83%, 33%);
+  }
+}

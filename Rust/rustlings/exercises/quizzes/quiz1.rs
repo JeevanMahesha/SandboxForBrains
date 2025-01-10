@@ -10,10 +10,18 @@
 
 // TODO: Write a function that calculates the price of an order of apples given
 // the quantity bought.
-// fn calculate_price_of_apples(???) -> ??? { ??? }
+fn calculate_price_of_apples(apple_quantity: u8) -> u8 {
+    if apple_quantity > 40 {
+        apple_quantity
+    } else {
+        apple_quantity * 2
+    }
+}
 
 fn main() {
     // You can optionally experiment here.
+    println!("{}", calculate_price_of_apples(40));
+    print!("{}", calculate_price_of_apples(35));
 }
 
 // Don't change the tests!

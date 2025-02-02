@@ -1,7 +1,11 @@
 // server.js
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 3000;
+
+// allow cross-origin requests
+app.use(cors());
 
 app.get('/events', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');

@@ -13,7 +13,11 @@ app.get('/events', (req, res) => {
   res.setHeader('Connection', 'keep-alive');
 
   const sendEvent = () => {
-    res.write(`data: ${JSON.stringify({ message: 'Hello, SSE!' })}\n\n`);
+
+    res.write(`data: ${JSON.stringify({
+      message: 'Hello, SSE!',
+      currentTime: new Date().toLocaleTimeString()
+    })}\n\n`);
   };
 
   const interval = setInterval(sendEvent, 1000);

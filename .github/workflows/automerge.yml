@@ -17,7 +17,6 @@ on:
   check_suite:
     types:
       - completed
-  status: {}
 
 jobs:
   automerge:
@@ -28,3 +27,7 @@ jobs:
         uses: pascalgn/automerge-action@v0.16.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG: ${{ secrets.LOG }}
+          MERGE_LABELS: "automerge"
+          MAX_PR_COUNT: 1
+          MERGE_REMOVE_LABELS: "This PR is Merged by automerge-action"

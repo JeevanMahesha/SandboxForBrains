@@ -1,37 +1,41 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { Component, computed, effect, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
+  imports: [FormsModule],
 })
 export class AppComponent {
-  title = 'SSE';
-
   private readonly url = 'http://localhost:3000/';
-  private readonly http = inject(HttpClient);
+  readonly notificationCount = signal(0);
+  // readonly eventSourceSignal = signal(new EventSource(this.url + 'events'));
 
-  ngOnInit() {
-    this.http.get(this.url).subscribe((data) => {
-      console.log(data);
-      this.getEvents();
-    });
-  }
+  // constructor() {
+  //   effect(() => {
+  //     if (this.notificationCount() > 0) {
+  //       this.initializeEventStream();
+  //     }
+  //   });
+  // }
 
-  private getEvents() {
-    const eventSource = new EventSource(this.url + 'events');
-    let count = 0;
-    eventSource.onmessage = (event) => {
-      count++;
-      console.log(event.data, count);
-      if (count > 10) {
-        eventSource.close();
-      }
-    };
-    eventSource.onerror = (error) => {
-      console.error('EventSource failed:', error);
-      eventSource.close();
-    };
+  private initializeEventStream() {
+    console.log('Initializing event stream');
+
+    // const eventSource = new EventSource(this.url + 'events');
+    // let count = 0;
+    // eventSource.onmessage = (notificationEvent) => {
+    //   count++;
+    //   console.log(notificationEvent.data, count);
+    //   if (count > this.notificationCount()) {
+    //     eventSource.close();
+    //   }
+    // };
+    // eventSource.onerror = (error) => {
+    //   console.error('EventSource failed:', error);
+    //   eventSource.close();
+    // };
   }
 }

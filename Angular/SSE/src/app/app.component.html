@@ -1,21 +1,74 @@
-<div class="flex gap-4 flex-col justify-center items-center bg-gray-100 p-4">
-  <div class="justify-center items-center">
-    <select class="bg-white p-2 rounded-md" [(ngModel)]="notificationCount">
-      <option value="10">10 notification</option>
-      <option value="20">20 notification</option>
-      <option value="30">30 notification</option>
-    </select>
-  </div>
-  <div class="relative inline-block">
+@let liveNotificationsCount = liveNotifications().length; @let
+sseConnectionState = eventSource ? eventSource.readyState : -1;
+
+<div class="flex flex-row justify-center items-center gap-4 text-center mt-1">
+  <select
+    class="basis-16 border-1 rounded-xl bg-gray-200"
+    [(ngModel)]="notificationCount"
+  >
+    <option value="0" disabled>Select notification count</option>
+    <option value="10">10 notification</option>
+    <option value="20">20 notification</option>
+    <option value="30">30 notification</option>
+  </select>
+  <div class="basis-16 rounded-xl">
     <img
       src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1480&amp;q=80"
       alt="Profile avatar"
       class="w-16 h-16 rounded-full object-cover"
     />
+
+    @if(liveNotificationsCount > 0){
+
     <div
-      class="absolute -bottom-1 -right-1 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full text-white font-medium"
+      class="absolute ml-8 -mt-5 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full text-white font-medium"
     >
-      5
+      {{ liveNotificationsCount }}
     </div>
+    }
+  </div>
+  <div class="basis-64 border-1 rounded-xl bg-gray-200">
+    Connection status:
+    <span
+      [ngClass]="{
+        ' text-yellow-800': eventSource?.readyState === 0,
+        'text-green-800': eventSource?.readyState === 1,
+        'text-red-800': eventSource?.readyState === 2,
+        'text-gray-800': sseConnectionState === -1
+      }"
+      class="text-md font-medium rounded-full"
+    >
+      {{ connectionStatusText[sseConnectionState] || "Unknown" }}
+    </span>
+  </div>
+  <div class="basis-96 shadow-md rounded-md">
+    @for (notification of liveNotifications(); track $index;let idx = $index) {
+    <div class="flex gap-x-3">
+      <div class="w-24 text-end">
+        <span class="text-xs text-gray-500 dark:text-neutral-400">{{
+          notification.currentTime
+        }}</span>
+      </div>
+      <!-- Icon -->
+      <div
+        class="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-200 dark:after:bg-neutral-700"
+      >
+        <div class="relative z-10 size-7 flex justify-center items-center">
+          <div
+            class="size-2 rounded-full bg-gray-400 dark:bg-neutral-600"
+          ></div>
+        </div>
+      </div>
+      <!-- End Icon -->
+
+      <!-- Right Content -->
+      <div class="grow pt-0.5 pb-8">
+        <p class="mt-1 text-sm text-gray-600 dark:text-neutral-400">
+          Notification content here {{ idx }}
+        </p>
+      </div>
+      <!-- End Right Content -->
+    </div>
+    }
   </div>
 </div>

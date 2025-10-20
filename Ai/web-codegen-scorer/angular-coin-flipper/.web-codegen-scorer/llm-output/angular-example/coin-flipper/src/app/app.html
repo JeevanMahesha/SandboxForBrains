@@ -1,0 +1,45 @@
+<main class="min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-6 text-white font-sans">
+  <h1 class="text-6xl font-extrabold mb-12 text-center drop-shadow-lg leading-tight">
+    Coin Flipper
+  </h1>
+
+  <section class="bg-gradient-to-tl from-slate-700 to-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-600 flex flex-col items-center max-w-lg w-full transform transition-all duration-300 hover:scale-105">
+    <!-- Coin Container -->
+    <div
+      class="relative w-40 h-40 transform-style-preserve-3d rounded-full shadow-lg
+             transition-transform duration-700 ease-out"
+      [class.animate-flip-single]="isFlipping()"
+      [style.transform]="!isFlipping() ? 'rotateY(' + coinRotation() + 'deg)' : ''"
+    >
+      <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center rounded-full text-5xl font-bold text-amber-900 border-4 border-amber-600 shadow-inner">
+        Heads
+      </div>
+      <div class="absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-gradient-to-br from-gray-300 to-slate-500 flex items-center justify-center rounded-full text-5xl font-bold text-slate-800 border-4 border-slate-600 shadow-inner">
+        Tails
+      </div>
+    </div>
+
+    <button
+      (click)="flipCoin()"
+      [disabled]="isFlipping()"
+      class="mt-12 px-10 py-4 text-2xl font-semibold rounded-full shadow-xl transform transition-all duration-300
+             bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700
+             focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-75
+             active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500"
+    >
+      <span>
+        @if (isFlipping()) {
+          Flipping...
+        } @else {
+          Flip Coin
+        }
+      </span>
+    </button>
+
+    @if (result()) {
+      <p class="mt-8 text-4xl font-bold text-lime-400 animate-fade-in drop-shadow-lg">
+        Result: {{ result() }}!
+      </p>
+    }
+  </section>
+</main>

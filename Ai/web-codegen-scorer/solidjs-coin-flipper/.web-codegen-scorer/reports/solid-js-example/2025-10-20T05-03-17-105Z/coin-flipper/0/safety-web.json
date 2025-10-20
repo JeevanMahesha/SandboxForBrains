@@ -1,0 +1,16 @@
+[
+  {
+    "summaryVersion": "0.1.0",
+    "packageName": "solid-example",
+    "packageVersion": "__VERSION_NOT_FOUND__",
+    "packagePath": ".",
+    "violations": []
+  },
+  {
+    "summaryVersion": "0.1.0",
+    "packageName": "solid-example-prod",
+    "packageVersion": "0.0.0",
+    "packagePath": ".output/server",
+    "violations": []
+  }
+]

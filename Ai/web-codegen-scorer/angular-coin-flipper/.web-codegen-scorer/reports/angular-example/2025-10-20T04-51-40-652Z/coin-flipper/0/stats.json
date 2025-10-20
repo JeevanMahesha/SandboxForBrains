@@ -1,0 +1,9 @@
+{
+  "fileSize": 3915,
+  "buildResult": {
+    "status": "error",
+    "message": "✘ [ERROR] NG5002: Opening tag \"span\" not terminated. [plugin angular-compiler]\n\n    src/app/app.html:30:6:\n      30 │       <span @if (isFlipping()) {\n         ╵       ~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n  Error occurs in the template of component App.\n\n    src/app/app.ts:5:15:\n      5 │   templateUrl: './app.html',\n        ╵                ~~~~~~~~~~~~\n\n\n✘ [ERROR] NG5002: Unexpected closing tag \"span\". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags [plugin angular-compiler]\n\n    src/app/app.html:34:7:\n      34 │       }</span>\n         ╵        ~~~~~~~\n\n  Error occurs in the template of component App.\n\n    src/app/app.ts:5:15:\n      5 │   templateUrl: './app.html',\n        ╵                ~~~~~~~~~~~~\n\n\n",
+    "errorType": "Angular Diagnostic"
+  },
+  "serveTestingResult": null
+}

@@ -1,0 +1,351 @@
+{
+  "id": "3394c81a-9ffe-42ce-9318-a43549a363f6",
+  "group": "b290e80d2bb55e854379e82710bdc019945e03046db0770270f09a64777d9695",
+  "version": 3,
+  "results": [
+    {
+      "promptDef": {
+        "name": "coin-flipper",
+        "prompt": "Develop a coin flipper application. It should have a button that says \"Flip Coin\". When clicked, it should show a simple flipping animation and then display whether the result is \"Heads\" or \"Tails\".\n"
+      },
+      "outputFiles": [
+        {
+          "filePath": "src/app/app.ts",
+          "code": "import { Component, ChangeDetectionStrategy, signal } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.html',\n  styleUrl: './app.css',\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class App {\n  isFlipping = signal(false);\n  result = signal<'Heads' | 'Tails' | null>(null);\n  coinRotation = signal<0 | 180>(0); // 0 for Heads, 180 for Tails\n\n  flipCoin(): void {\n    if (this.isFlipping()) {\n      return; // Prevent multiple flips while animating\n    }\n\n    this.isFlipping.set(true);\n    this.result.set(null); // Clear previous result\n\n    const animationDuration = 2000; // 2 seconds for the visual flip animation\n\n    setTimeout(() => {\n      const isHeads = Math.random() < 0.5;\n      this.result.set(isHeads ? 'Heads' : 'Tails');\n      this.isFlipping.set(false); // Stop the flipping animation\n      this.coinRotation.set(isHeads ? 0 : 180); // Apply final rotation for result\n    }, animationDuration);\n  }\n}\n"
+        },
+        {
+          "filePath": "src/app/app.html",
+          "code": "<main class=\"min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-6 text-white font-sans\">\n  <h1 class=\"text-6xl font-extrabold mb-12 text-center drop-shadow-lg leading-tight\">\n    Coin Flipper\n  </h1>\n\n  <section class=\"bg-gradient-to-tl from-slate-700 to-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-600 flex flex-col items-center max-w-lg w-full transform transition-all duration-300 hover:scale-105\">\n    <!-- Coin Container -->\n    <div\n      class=\"relative w-40 h-40 transform-style-preserve-3d rounded-full shadow-lg\n             transition-transform duration-700 ease-out\"\n      [class.animate-flip-single]=\"isFlipping()\"\n      [style.transform]=\"!isFlipping() ? 'rotateY(' + coinRotation() + 'deg)' : ''\"\n    >\n      <div class=\"absolute inset-0 backface-hidden bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center rounded-full text-5xl font-bold text-amber-900 border-4 border-amber-600 shadow-inner\">\n        Heads\n      </div>\n      <div class=\"absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-gradient-to-br from-gray-300 to-slate-500 flex items-center justify-center rounded-full text-5xl font-bold text-slate-800 border-4 border-slate-600 shadow-inner\">\n        Tails\n      </div>\n    </div>\n\n    <button\n      (click)=\"flipCoin()\"\n      [disabled]=\"isFlipping()\"\n      class=\"mt-12 px-10 py-4 text-2xl font-semibold rounded-full shadow-xl transform transition-all duration-300\n             bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700\n             focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-75\n             active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500\"\n    >\n      <span>\n        @if (isFlipping()) {\n          Flipping...\n        } @else {\n          Flip Coin\n        }\n      </span>\n    </button>\n\n    @if (result()) {\n      <p class=\"mt-8 text-4xl font-bold text-lime-400 animate-fade-in drop-shadow-lg\">\n        Result: {{ result() }}!\n      </p>\n    }\n  </section>\n</main>"
+        },
+        {
+          "filePath": "src/app/app.css",
+          "code": "/* Required for 3D transforms */\n.transform-style-preserve-3d {\n  transform-style: preserve-3d;\n}\n\n.backface-hidden {\n  backface-visibility: hidden;\n}\n\n/* Single coin flip animation */\n@keyframes flip-single {\n  0% { transform: rotateY(0deg) rotateX(0deg); }\n  25% { transform: rotateY(90deg) rotateX(15deg); }\n  50% { transform: rotateY(180deg) rotateX(0deg); }\n  75% { transform: rotateY(270deg) rotateX(-15deg); }\n  100% { transform: rotateY(360deg) rotateX(0deg); } /* Ends at 360deg (same as 0deg) */\n}\n\n.animate-flip-single {\n  animation: flip-single 2s ease-out forwards; /* Run once and stay at the end state */\n}\n\n/* Fade in for result */\n@keyframes fade-in {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.animate-fade-in {\n  animation: fade-in 0.5s ease-out forwards;\n}\n"
+        }
+      ],
+      "finalAttempt": {
+        "buildResult": {
+          "status": "success",
+          "message": "Application built successfully!",
+          "safetyWebReportJson": [
+            {
+              "summaryVersion": "0.1.0",
+              "packageName": "code-gen-validation",
+              "packageVersion": "0.0.0",
+              "packagePath": ".",
+              "violations": []
+            }
+          ]
+        },
+        "serveTestingResult": {
+          "runtimeErrors": "",
+          "userJourneyAgentOutput": null
+        },
+        "outputFiles": [
+          {
+            "filePath": "src/app/app.ts",
+            "code": "import { Component, ChangeDetectionStrategy, signal } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.html',\n  styleUrl: './app.css',\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class App {\n  isFlipping = signal(false);\n  result = signal<'Heads' | 'Tails' | null>(null);\n  coinRotation = signal<0 | 180>(0); // 0 for Heads, 180 for Tails\n\n  flipCoin(): void {\n    if (this.isFlipping()) {\n      return; // Prevent multiple flips while animating\n    }\n\n    this.isFlipping.set(true);\n    this.result.set(null); // Clear previous result\n\n    const animationDuration = 2000; // 2 seconds for the visual flip animation\n\n    setTimeout(() => {\n      const isHeads = Math.random() < 0.5;\n      this.result.set(isHeads ? 'Heads' : 'Tails');\n      this.isFlipping.set(false); // Stop the flipping animation\n      this.coinRotation.set(isHeads ? 0 : 180); // Apply final rotation for result\n    }, animationDuration);\n  }\n}\n"
+          },
+          {
+            "filePath": "src/app/app.html",
+            "code": "<main class=\"min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-6 text-white font-sans\">\n  <h1 class=\"text-6xl font-extrabold mb-12 text-center drop-shadow-lg leading-tight\">\n    Coin Flipper\n  </h1>\n\n  <section class=\"bg-gradient-to-tl from-slate-700 to-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-600 flex flex-col items-center max-w-lg w-full transform transition-all duration-300 hover:scale-105\">\n    <!-- Coin Container -->\n    <div\n      class=\"relative w-40 h-40 transform-style-preserve-3d rounded-full shadow-lg\n             transition-transform duration-700 ease-out\"\n      [class.animate-flip-single]=\"isFlipping()\"\n      [style.transform]=\"!isFlipping() ? 'rotateY(' + coinRotation() + 'deg)' : ''\"\n    >\n      <div class=\"absolute inset-0 backface-hidden bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center rounded-full text-5xl font-bold text-amber-900 border-4 border-amber-600 shadow-inner\">\n        Heads\n      </div>\n      <div class=\"absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-gradient-to-br from-gray-300 to-slate-500 flex items-center justify-center rounded-full text-5xl font-bold text-slate-800 border-4 border-slate-600 shadow-inner\">\n        Tails\n      </div>\n    </div>\n\n    <button\n      (click)=\"flipCoin()\"\n      [disabled]=\"isFlipping()\"\n      class=\"mt-12 px-10 py-4 text-2xl font-semibold rounded-full shadow-xl transform transition-all duration-300\n             bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700\n             focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-75\n             active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500\"\n    >\n      <span>\n        @if (isFlipping()) {\n          Flipping...\n        } @else {\n          Flip Coin\n        }\n      </span>\n    </button>\n\n    @if (result()) {\n      <p class=\"mt-8 text-4xl font-bold text-lime-400 animate-fade-in drop-shadow-lg\">\n        Result: {{ result() }}!\n      </p>\n    }\n  </section>\n</main>"
+          },
+          {
+            "filePath": "src/app/app.css",
+            "code": "/* Required for 3D transforms */\n.transform-style-preserve-3d {\n  transform-style: preserve-3d;\n}\n\n.backface-hidden {\n  backface-visibility: hidden;\n}\n\n/* Single coin flip animation */\n@keyframes flip-single {\n  0% { transform: rotateY(0deg) rotateX(0deg); }\n  25% { transform: rotateY(90deg) rotateX(15deg); }\n  50% { transform: rotateY(180deg) rotateX(0deg); }\n  75% { transform: rotateY(270deg) rotateX(-15deg); }\n  100% { transform: rotateY(360deg) rotateX(0deg); } /* Ends at 360deg (same as 0deg) */\n}\n\n.animate-flip-single {\n  animation: flip-single 2s ease-out forwards; /* Run once and stay at the end state */\n}\n\n/* Fade in for result */\n@keyframes fade-in {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.animate-fade-in {\n  animation: fade-in 0.5s ease-out forwards;\n}\n"
+          }
+        ],
+        "repairAttempts": 1,
+        "axeRepairAttempts": 0
+      },
+      "score": {
+        "totalPoints": 85,
+        "maxOverallPoints": 100,
+        "categories": [
+          {
+            "id": "high-impact",
+            "name": "High Impact",
+            "points": 45,
+            "maxPoints": 60,
+            "assessments": [
+              {
+                "state": 0,
+                "name": "Code builds successfully",
+                "description": "Ensures the code build without errors.",
+                "id": "common-successful-build",
+                "scoreReduction": "50%",
+                "successPercentage": 0.5,
+                "category": "high-impact",
+                "message": "Partial Pass (50%)"
+              },
+              {
+                "state": 0,
+                "name": "SafetyWeb Violations",
+                "description": "Checks for TrustedTypes and CSP incompatible coding patterns.",
+                "id": "safety-web",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass\nNo safety-web violations found."
+              },
+              {
+                "state": 0,
+                "name": "No runtime exceptions",
+                "description": "Ensures the app doesn't have runtime exceptions.",
+                "id": "common-no-runtime-errors",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 0,
+                "name": "Sufficient Code Size (over 50b)",
+                "description": "Ensures the generated code is not trivially small (e.g. < 50b).",
+                "id": "common-generated-code-size",
+                "scoreReduction": "30%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 0,
+                "name": "Sufficient number of generated files",
+                "description": "Ensures that the LLM produced at least one file.",
+                "id": "common-generated-file-count",
+                "scoreReduction": "100%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 1,
+                "name": "CSP Violations",
+                "description": "Checks for Content Security Policy violations, excluding Trusted Types.",
+                "id": "csp-violations",
+                "category": "high-impact",
+                "message": "CSP violation data not available for this run."
+              }
+            ]
+          },
+          {
+            "id": "medium-impact",
+            "name": "Medium Impact",
+            "points": 30,
+            "maxPoints": 30,
+            "assessments": [
+              {
+                "state": 0,
+                "name": "Code Quality (LLM-rated)",
+                "description": "Rates the app's source code via LLM",
+                "id": "common-autorater-code-quality",
+                "scoreReduction": "30%",
+                "successPercentage": 1,
+                "category": "medium-impact",
+                "message": "Pass\nThis is a well-implemented Angular coin flipper using signals and modern best practices, featuring a clean UI, smooth animation, and excellent adherence to all prompt requirements."
+              },
+              {
+                "state": 1,
+                "name": "UI & Visual appearance (LLM-Rated)",
+                "description": "Rates the app based on its visuals (UI visuals and feature completeness).",
+                "id": "common-autorater-visuals",
+                "category": "medium-impact",
+                "message": "No screenshot available"
+              },
+              {
+                "state": 0,
+                "name": "Valid CSS",
+                "description": "Ensures that the generated CSS code is valid",
+                "id": "common-valid-css",
+                "scoreReduction": "20%",
+                "successPercentage": 1,
+                "category": "medium-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 1,
+                "name": "Axe Accessibility Violations",
+                "description": "Checks for accessibility violations using the Axe-core engine.",
+                "id": "axe-a11y",
+                "category": "medium-impact",
+                "message": "Axe testing was not performed."
+              },
+              {
+                "state": 1,
+                "name": "User Journey validation",
+                "description": "Ensures that all User Journeys are working in the generated app",
+                "id": "user-journey-tests",
+                "category": "medium-impact",
+                "message": "Was not enabled for this run"
+              },
+              {
+                "state": 0,
+                "name": "No-Inner-HTML-Bindings",
+                "description": "Checks that no templates contain bindings that bypass sanitization, like Angular's `[innerHTML]`.",
+                "id": "no-inner-html-bindings",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "medium-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 1,
+                "name": "No-Dangerously-Set-Inner-HTML",
+                "description": "Checks that no templates contain bindings that bypass sanitization, like React's `dangerouslySetInnerHTML`.",
+                "id": "no-dangerously-set-inner-html",
+                "category": "medium-impact",
+                "message": "Does not match any files"
+              }
+            ]
+          },
+          {
+            "id": "low-impact",
+            "name": "Low Impact",
+            "points": 10,
+            "maxPoints": 10,
+            "assessments": []
+          }
+        ],
+        "tokenUsage": {
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "totalTokens": 0
+        }
+      },
+      "repairAttempts": 1,
+      "attemptDetails": [
+        {
+          "outputFiles": [
+            {
+              "filePath": "src/app/app.ts",
+              "code": "import { Component, ChangeDetectionStrategy, signal } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.html',\n  styleUrl: './app.css',\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class App {\n  isFlipping = signal(false);\n  result = signal<'Heads' | 'Tails' | null>(null);\n  coinRotation = signal<0 | 180>(0); // 0 for Heads, 180 for Tails\n\n  flipCoin(): void {\n    if (this.isFlipping()) {\n      return; // Prevent multiple flips while animating\n    }\n\n    this.isFlipping.set(true);\n    this.result.set(null); // Clear previous result\n\n    const animationDuration = 2000; // 2 seconds for the visual flip animation\n\n    setTimeout(() => {\n      const isHeads = Math.random() < 0.5;\n      this.result.set(isHeads ? 'Heads' : 'Tails');\n      this.isFlipping.set(false); // Stop the flipping animation\n      this.coinRotation.set(isHeads ? 0 : 180); // Apply final rotation for result\n    }, animationDuration);\n  }\n}\n"
+            },
+            {
+              "filePath": "src/app/app.html",
+              "code": "<main class=\"min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-6 text-white font-sans\">\n  <h1 class=\"text-6xl font-extrabold mb-12 text-center drop-shadow-lg leading-tight\">\n    Coin Flipper\n  </h1>\n\n  <section class=\"bg-gradient-to-tl from-slate-700 to-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-600 flex flex-col items-center max-w-lg w-full transform transition-all duration-300 hover:scale-105\">\n    <!-- Coin Container -->\n    <div\n      class=\"relative w-40 h-40 transform-style-preserve-3d rounded-full shadow-lg\n             transition-transform duration-700 ease-out\"\n      [class.animate-flip-single]=\"isFlipping()\"\n      [style.transform]=\"!isFlipping() ? 'rotateY(' + coinRotation() + 'deg)' : ''\"\n    >\n      <div class=\"absolute inset-0 backface-hidden bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center rounded-full text-5xl font-bold text-amber-900 border-4 border-amber-600 shadow-inner\">\n        Heads\n      </div>\n      <div class=\"absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-gradient-to-br from-gray-300 to-slate-500 flex items-center justify-center rounded-full text-5xl font-bold text-slate-800 border-4 border-slate-600 shadow-inner\">\n        Tails\n      </div>\n    </div>\n\n    <button\n      (click)=\"flipCoin()\"\n      [disabled]=\"isFlipping()\"\n      class=\"mt-12 px-10 py-4 text-2xl font-semibold rounded-full shadow-xl transform transition-all duration-300\n             bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700\n             focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-75\n             active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500\"\n    >\n      <span @if (isFlipping()) {\n        Flipping...\n      } @else {\n        Flip Coin\n      }</span>\n    </button>\n\n    @if (result()) {\n      <p class=\"mt-8 text-4xl font-bold text-lime-400 animate-fade-in drop-shadow-lg\">\n        Result: {{ result() }}!\n      </p>\n    }\n  </section>\n</main>\n"
+            },
+            {
+              "filePath": "src/app/app.css",
+              "code": "/* Required for 3D transforms */\n.transform-style-preserve-3d {\n  transform-style: preserve-3d;\n}\n\n.backface-hidden {\n  backface-visibility: hidden;\n}\n\n/* Single coin flip animation */\n@keyframes flip-single {\n  0% { transform: rotateY(0deg) rotateX(0deg); }\n  25% { transform: rotateY(90deg) rotateX(15deg); }\n  50% { transform: rotateY(180deg) rotateX(0deg); }\n  75% { transform: rotateY(270deg) rotateX(-15deg); }\n  100% { transform: rotateY(360deg) rotateX(0deg); } /* Ends at 360deg (same as 0deg) */\n}\n\n.animate-flip-single {\n  animation: flip-single 2s ease-out forwards; /* Run once and stay at the end state */\n}\n\n/* Fade in for result */\n@keyframes fade-in {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.animate-fade-in {\n  animation: fade-in 0.5s ease-out forwards;\n}\n"
+            }
+          ],
+          "usage": {
+            "inputTokens": 975,
+            "outputTokens": 1491,
+            "totalTokens": 8554
+          },
+          "reasoning": "**Here's how I'm thinking about building this Angular coin flipper:**\n\nI'll start with the file structure: `src/app/app.ts`, `src/app/app.html`, and `src/app/app.css`. It's a standalone component with no NgModules. I'm prioritizing a visually stunning and accessible design, and I'm leveraging Tailwind CSS for this. The core functionality is simple: a button to flip the coin, an animation, and displaying the result (\"Heads\" or \"Tails\").\n\nMy component will have the class name `App`, with the selector `app-root`. I'll use Signals for state management: `isFlipping` (boolean) to control the animation, `result` (\"Heads\" | \"Tails\" | null) to hold the outcome, and `coinRotation` to track the state of the coin.\n\nWhen the button is clicked, I'll set `isFlipping` to `true`.  A `setTimeout` will simulate the animation duration (about 2 seconds), then randomly set the `result` to \"Heads\" or \"Tails\" and flip `isFlipping` to `false`. The key to the animation is conditionally applying the `animate-flip-single` CSS class, which handles the rotation. After the animation ends, the `[style.transform]` will take over and apply the final rotation to the coin.  I'm using ChangeDetectionStrategy.OnPush for performance.  I want to avoid complex logic in the templates, using native control flow (`@if`) and class/style bindings.\n\nThe HTML will be semantic:  `main` and an `h1` for the heading.  I will have a button, the coin visualization and the result display.  The CSS will use Tailwind CSS with keyframes for the coin flip animation.  There's a subtle fade-in animation for the result.  I need a 3D coin, so I'm using `transform-style: preserve-3d` and `backface-visibility: hidden`. I'll create a single animation with a single run and apply it when flipping.  For good UX, I'll disable the button while the coin is flipping and show a \"Flipping...\" state.\n\nFor accessibility, I'm using proper HTML elements, a good heading order, a visible focus indicator on the button and appropriate contrast. The design has a modern, clean look with a dark background, gradients, shadows, and smooth transitions. The \"Flipping...\" state and animation should provide clear feedback to the user.\n",
+          "buildResult": {
+            "status": "error",
+            "message": "✘ [ERROR] NG5002: Opening tag \"span\" not terminated. [plugin angular-compiler]\n\n    src/app/app.html:30:6:\n      30 │       <span @if (isFlipping()) {\n         ╵       ~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n  Error occurs in the template of component App.\n\n    src/app/app.ts:5:15:\n      5 │   templateUrl: './app.html',\n        ╵                ~~~~~~~~~~~~\n\n\n✘ [ERROR] NG5002: Unexpected closing tag \"span\". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags [plugin angular-compiler]\n\n    src/app/app.html:34:7:\n      34 │       }</span>\n         ╵        ~~~~~~~\n\n  Error occurs in the template of component App.\n\n    src/app/app.ts:5:15:\n      5 │   templateUrl: './app.html',\n        ╵                ~~~~~~~~~~~~\n\n\n",
+            "errorType": "Angular Diagnostic"
+          },
+          "serveTestingResult": null,
+          "attempt": 0
+        },
+        {
+          "outputFiles": [
+            {
+              "filePath": "src/app/app.ts",
+              "code": "import { Component, ChangeDetectionStrategy, signal } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.html',\n  styleUrl: './app.css',\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class App {\n  isFlipping = signal(false);\n  result = signal<'Heads' | 'Tails' | null>(null);\n  coinRotation = signal<0 | 180>(0); // 0 for Heads, 180 for Tails\n\n  flipCoin(): void {\n    if (this.isFlipping()) {\n      return; // Prevent multiple flips while animating\n    }\n\n    this.isFlipping.set(true);\n    this.result.set(null); // Clear previous result\n\n    const animationDuration = 2000; // 2 seconds for the visual flip animation\n\n    setTimeout(() => {\n      const isHeads = Math.random() < 0.5;\n      this.result.set(isHeads ? 'Heads' : 'Tails');\n      this.isFlipping.set(false); // Stop the flipping animation\n      this.coinRotation.set(isHeads ? 0 : 180); // Apply final rotation for result\n    }, animationDuration);\n  }\n}\n"
+            },
+            {
+              "filePath": "src/app/app.html",
+              "code": "<main class=\"min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-6 text-white font-sans\">\n  <h1 class=\"text-6xl font-extrabold mb-12 text-center drop-shadow-lg leading-tight\">\n    Coin Flipper\n  </h1>\n\n  <section class=\"bg-gradient-to-tl from-slate-700 to-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-600 flex flex-col items-center max-w-lg w-full transform transition-all duration-300 hover:scale-105\">\n    <!-- Coin Container -->\n    <div\n      class=\"relative w-40 h-40 transform-style-preserve-3d rounded-full shadow-lg\n             transition-transform duration-700 ease-out\"\n      [class.animate-flip-single]=\"isFlipping()\"\n      [style.transform]=\"!isFlipping() ? 'rotateY(' + coinRotation() + 'deg)' : ''\"\n    >\n      <div class=\"absolute inset-0 backface-hidden bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center rounded-full text-5xl font-bold text-amber-900 border-4 border-amber-600 shadow-inner\">\n        Heads\n      </div>\n      <div class=\"absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-gradient-to-br from-gray-300 to-slate-500 flex items-center justify-center rounded-full text-5xl font-bold text-slate-800 border-4 border-slate-600 shadow-inner\">\n        Tails\n      </div>\n    </div>\n\n    <button\n      (click)=\"flipCoin()\"\n      [disabled]=\"isFlipping()\"\n      class=\"mt-12 px-10 py-4 text-2xl font-semibold rounded-full shadow-xl transform transition-all duration-300\n             bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700\n             focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-75\n             active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500\"\n    >\n      <span>\n        @if (isFlipping()) {\n          Flipping...\n        } @else {\n          Flip Coin\n        }\n      </span>\n    </button>\n\n    @if (result()) {\n      <p class=\"mt-8 text-4xl font-bold text-lime-400 animate-fade-in drop-shadow-lg\">\n        Result: {{ result() }}!\n      </p>\n    }\n  </section>\n</main>"
+            },
+            {
+              "filePath": "src/app/app.css",
+              "code": "/* Required for 3D transforms */\n.transform-style-preserve-3d {\n  transform-style: preserve-3d;\n}\n\n.backface-hidden {\n  backface-visibility: hidden;\n}\n\n/* Single coin flip animation */\n@keyframes flip-single {\n  0% { transform: rotateY(0deg) rotateX(0deg); }\n  25% { transform: rotateY(90deg) rotateX(15deg); }\n  50% { transform: rotateY(180deg) rotateX(0deg); }\n  75% { transform: rotateY(270deg) rotateX(-15deg); }\n  100% { transform: rotateY(360deg) rotateX(0deg); } /* Ends at 360deg (same as 0deg) */\n}\n\n.animate-flip-single {\n  animation: flip-single 2s ease-out forwards; /* Run once and stay at the end state */\n}\n\n/* Fade in for result */\n@keyframes fade-in {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.animate-fade-in {\n  animation: fade-in 0.5s ease-out forwards;\n}\n"
+            }
+          ],
+          "usage": {
+            "inputTokens": 1670,
+            "outputTokens": 790,
+            "totalTokens": 3632
+          },
+          "reasoning": "**Diagnosing and Correcting Angular Template Errors**\n\nOkay, so I'm looking at these Angular template errors, specifically `NG5002: Opening tag \"span\" not terminated.` and `NG5002: Unexpected closing tag \"span.\"`  They're both pointing to the same block of HTML within `src/app/app.html`. The problem is immediately obvious: I'm using the new Angular `@if` control flow directive directly *inside* a `<span>` tag in a way that just doesn't work.\n\nEssentially, I'm trying to make the `@if` block somehow *part of* the `<span>`'s content or attributes, but it's fundamentally a structural directive. `@if` is meant to control the *structure* of the template, not just the content *within* an element in this way.  The parser's getting confused because it sees `<span @if ...` and expects a closing `>` but gets more code, thinking the span is left open. Then, later, it finds the closing `</span>` and has no matching opening tag.\n\nThe `@if` needs to wrap the `<span>`'s content, or it needs to be *inside* the `<span>`. I need to conditionally render the *text* inside the `<span>`.\n\nLet's break down the incorrect structure: `<span @if (isFlipping()) { Flipping... } @else { Flip Coin }</span>`. The `@if` is essentially trying to be a *part* of the `<span>` tag, but it can't.\n\nNow, let's think about how to fix it. The best solution here, to make the code clearer is this:  I want to *conditionally* render the text inside the `<span>` based on `isFlipping()`. So, I'll put the `@if` block *inside* the `<span>` to control the content within it.\n\nHere's the corrected code:\n\n```html\n<span>\n  @if (isFlipping()) {\n    Flipping...\n  } @else {\n    Flip Coin\n  }\n</span>\n```\n\nNow, the `<span>` tag is properly opened and closed, and the `@if` directive correctly controls what text appears inside.  I'm confident this will fix both errors. Let's test this in the editor and see what happens. I'm pretty sure those errors are resolved. My `app.ts` and `app.css` look okay.\n",
+          "buildResult": {
+            "status": "success",
+            "message": "Application built successfully!",
+            "safetyWebReportJson": [
+              {
+                "summaryVersion": "0.1.0",
+                "packageName": "code-gen-validation",
+                "packageVersion": "0.0.0",
+                "packagePath": ".",
+                "violations": []
+              }
+            ]
+          },
+          "serveTestingResult": {
+            "runtimeErrors": "",
+            "userJourneyAgentOutput": null
+          },
+          "attempt": 1
+        }
+      ],
+      "userJourneys": {
+        "usage": {
+          "inputTokens": 2061,
+          "outputTokens": 260,
+          "totalTokens": 3987
+        },
+        "result": [
+          {
+            "name": "Flip Coin and Display Result",
+            "steps": [
+              "Navigate to the application URL.",
+              "Verify that the title 'Coin Flipper' is prominently displayed.",
+              "Verify that the 'Flip Coin' button is visible and enabled.",
+              "Verify that no result message (e.g., 'Result: Heads!') is displayed initially.",
+              "Click the 'Flip Coin' button.",
+              "Verify the 'Flip Coin' button text changes to 'Flipping...' and the button becomes disabled.",
+              "Verify that the coin visually starts a flipping animation (e.g., rotating in 3D).",
+              "Wait for the animation to complete (approximately 2 seconds based on code).",
+              "Verify the 'Flipping...' button text reverts to 'Flip Coin' and the button becomes enabled.",
+              "Verify that a result message, either 'Result: Heads!' or 'Result: Tails!', is displayed.",
+              "Verify that the coin's final visual state matches the displayed result (e.g., if result is 'Heads', the 'Heads' side of the coin is facing up)."
+            ]
+          }
+        ]
+      },
+      "axeRepairAttempts": 0,
+      "toolLogs": []
+    }
+  ],
+  "details": {
+    "summary": {
+      "model": "gemini-2.5-flash",
+      "environmentId": "angular-example",
+      "displayName": "Angular (example)",
+      "framework": {
+        "fullStackFramework": {
+          "id": "angular",
+          "displayName": "Angular"
+        },
+        "clientSideFramework": {
+          "id": "angular",
+          "displayName": "Angular"
+        }
+      },
+      "aiSummary": "<p>The report indicates one app, <code>coin-flipper</code>, with a score of 85/100 (Great).</p>\n<p><strong>Common Failures &amp; Low-Hanging Fruit:</strong></p>\n<ul>\n<li><strong>Build Failures (High-Impact):</strong> The initial build attempt for <code>coin-flipper</code> failed with Angular compiler errors related to unclosed or unexpected closing <code>span</code> tags in <code>app.html</code>.<ul>\n<li><strong>Exact Error:</strong> <code>✘ [ERROR] NG5002: Opening tag &quot;span&quot; not terminated.</code></li>\n<li><strong>Exact Error:</strong> <code>✘ [ERROR] NG5002: Unexpected closing tag &quot;span&quot;.</code></li>\n</ul>\n</li>\n<li><strong>Successful Build &amp; Runtime:</strong> The second attempt successfully built the application and had no runtime errors. This suggests that the identified build issues were readily fixable.</li>\n</ul>\n",
+      "completionStats": {
+        "allPromptsCount": 1,
+        "failedPrompts": []
+      },
+      "usage": {
+        "inputTokens": 3750,
+        "outputTokens": 2452,
+        "totalTokens": 13462
+      },
+      "runner": {
+        "id": "genkit",
+        "displayName": "Genkit"
+      }
+    },
+    "timestamp": "2025-10-20T04:53:19.860Z",
+    "reportName": "2025-10-20T04-51-40-652Z",
+    "systemPromptGeneration": "Follow instructions below CAREFULLY:\n\n- Code MUST be implemented in Angular.\n- Put the component code inside `src/app/app.ts`\n- Component class MUST always be named \"App\"\n- Component's selector MUST always be \"app-root\" (the `selector: 'app-root'` MUST be present in the \"@Component\" decorator)\n- Use standalone components, do NOT generate NgModules\n- Generate the template code inside a separate HTML file and link it in the `template` field of the `App` component\n- Generate the styling code inside a separate CSS file and link it in the `styleUrl` field of the `App` component\n- Use Tailwind CSS\n- Completeness: include all necessary code to run independently\n- Use comments sparingly and only for complex parts of the code\n- Make sure the generated code is **complete** and **runnable**\n- Make sure the generated code contains a **complete** implementation of the `App` class\n- Do NOT generate `bootstrapApplication` calls\n- Do NOT use `ngModel` directive\n- Aesthetics are **crucial**, make the application look amazing\n\nRemember! AESTHETICS ARE VERY IMPORTANT. All web apps should LOOK AMAZING and have GREAT FUNCTIONALITY!\n\nYou are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.\n\n### TypeScript Best Practices\n\n- Use strict type checking\n- Prefer type inference when the type is obvious\n- Avoid the `any` type; use `unknown` when type is uncertain\n\n### Angular Best Practices\n\n- Always use standalone components over NgModules\n- Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.\n- Use signals for state management\n- Implement lazy loading for feature routes\n- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead\n- Use `NgOptimizedImage` for all static images.\n  - `NgOptimizedImage` does not work for inline base64 images.\n\n### Accessibility (a11y)\n\n- Use semantic HTML5 elements. Each page must have at least one heading and a single, top-level `<main>` landmark.\n- Ensure landmark elements (`<header>`, `<nav>`, `<footer>`, etc.) are unique.\n- Maintain a logical and semantically correct heading order.\n- All functionality must be keyboard-accessible with a visible focus indicator.\n- A scrollable region must not be focusable.\n- All UI components must have accessible names (e.g., using `<label>` for form controls or `alt` for images).\n- Use ARIA roles and attributes correctly.\n- Ensure the contrast between foreground/background and non-text colors meets WCAG 2 AA minimums.\n\n### Components\n\n- Keep components small and focused on a single responsibility\n- Use `input()` and `output()` functions instead of decorators\n- Use `computed()` for derived state\n- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator\n- Prefer inline templates for small components\n- Prefer Reactive forms instead of Template-driven ones\n- Do NOT use `ngClass`, use `class` bindings instead\n- DO NOT use `ngStyle`, use `style` bindings instead\n- When using external templates/styles, use paths relative to the component TS file.\n\n### State Management\n\n- Use signals for local component state\n- Use `computed()` for derived state\n- Keep state transformations pure and predictable\n- Do NOT use `mutate` on signals, use `update` or `set` instead\n\n### Templates\n\n- Keep templates simple and avoid complex logic\n- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`\n- Use the async pipe to handle observables\n- Do not assume globals like (`new Date()`) are available.\n- Do not write arrow functions in templates (they are not supported).\n- Do not write Regular expressions in templates (they are not supported).\n\n\n### Services\n\n- Design services around a single responsibility\n- Use the `providedIn: 'root'` option for singleton services\n- Use the `inject()` function instead of constructor injection\n",
+    "systemPromptRepair": "Please fix the given errors and return the corrected code.",
+    "labels": []
+  }
+}

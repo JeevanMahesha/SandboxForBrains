@@ -1,0 +1,26 @@
+✘ [ERROR] NG5002: Opening tag "span" not terminated. [plugin angular-compiler]
+
+    src/app/app.html:30:6:
+      30 │       <span @if (isFlipping()) {
+         ╵       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component App.
+
+    src/app/app.ts:5:15:
+      5 │   templateUrl: './app.html',
+        ╵                ~~~~~~~~~~~~
+
+
+✘ [ERROR] NG5002: Unexpected closing tag "span". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags [plugin angular-compiler]
+
+    src/app/app.html:34:7:
+      34 │       }</span>
+         ╵        ~~~~~~~
+
+  Error occurs in the template of component App.
+
+    src/app/app.ts:5:15:
+      5 │   templateUrl: './app.html',
+        ╵                ~~~~~~~~~~~~
+
+

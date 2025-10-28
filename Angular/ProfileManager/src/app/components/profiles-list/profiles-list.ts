@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Signal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -8,10 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Router, RouterLink } from '@angular/router';
 import { Profile, ProfileColumn } from '../../models/profile';
-import { collection, collectionData, Firestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import { PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
+import { ProfilesService } from '../../services/profiles.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize, tap } from 'rxjs';
 
 @Component({
   selector: 'app-profiles-list',
@@ -24,16 +27,21 @@ import { PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
     MatInputModule,
     MatFormFieldModule,
     MatChipsModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    RouterLink,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
 })
 export class ProfilesList {
-  firestore = inject(Firestore);
-  itemCollection = collection(this.firestore, 'profiles');
-  profiles = toSignal(collectionData(this.itemCollection) as Observable<Profile[]>, {
-    initialValue: [],
-  });
+  private readonly profilesService = inject(ProfilesService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
+
+  profiles = signal<Profile[]>([]);
+  isLoading = signal<boolean>(false);
+
   displayedColumns: ProfileColumn[] = [
     'name',
     'zodiacSign',
@@ -42,6 +50,10 @@ export class ProfilesList {
     'starMatchScore',
     'actions',
   ];
+
+  constructor() {
+    this.reloadProfiles();
+  }
 
   onSearchChange(value: string): void {
     console.log(value);
@@ -61,15 +73,40 @@ export class ProfilesList {
 
   onDelete(profile: Profile): void {
     if (confirm(`Are you sure you want to delete ${profile.name}'s profile?`)) {
-      console.log('Delete profile:', profile);
+      this.profilesService.deleteProfile(profile.id.toString()).subscribe({
+        next: () => {
+          this.snackBar.open('Profile deleted successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+          });
+          this.reloadProfiles();
+        },
+        error: (error) => {
+          console.error('Error deleting profile:', error);
+          this.snackBar.open('Error deleting profile', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar'],
+          });
+        },
+      });
     }
   }
 
   addProfile(): void {
-    console.log('Add new profile');
+    this.router.navigate(['/add-profile']);
   }
 
   getStatusClass(status: keyof typeof PROFILE_STATUS): string {
     return PROFILE_STATUS_COLORS[status];
+  }
+
+  private reloadProfiles(): void {
+    this.isLoading.set(true);
+    this.profilesService
+      .getProfiles()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe((profiles) => {
+        this.profiles.set(profiles);
+      });
   }
 }

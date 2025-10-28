@@ -1,3 +1,9 @@
+@if (isLoading()) {
+<div class="flex justify-center items-center h-screen">
+  <mat-spinner mode="indeterminate"></mat-spinner>
+</div>
+} @else {
+
 <div class="p-4 md:p-8 bg-gray-50 min-h-screen">
   <!-- Header -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -5,7 +11,7 @@
     <button
       mat-raised-button
       color="primary"
-      (click)="addProfile()"
+      routerLink="/add-profile"
       class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700"
     >
       <mat-icon class="mr-2">person_add</mat-icon>
@@ -185,3 +191,4 @@
     }
   </div>
 </div>
+}

@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import {
   matchingStars,
@@ -25,6 +27,7 @@ import {
 import { ProfileForm } from './add-profile.forms';
 import { map, tap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ProfilesService } from '../../services/profiles.service';
 
 @Component({
   selector: 'app-add-profile',
@@ -38,6 +41,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
     MatIconModule,
     MatCardModule,
     MatChipsModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './add-profile.html',
   styleUrl: './add-profile.css',
@@ -46,6 +51,7 @@ export class AddProfileComponent {
   profileForm: FormGroup<ProfileForm>;
   comments = signal<string[]>([]);
   newComment = signal<string>('');
+  isLoading = signal<boolean>(false);
   zodiacSigns = Object.entries(zodiacSignList).map(([key, value]) => ({
     value: key,
     label: value.tanglish,
@@ -59,6 +65,8 @@ export class AddProfileComponent {
   cities: Signal<string[]>;
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly profilesService = inject(ProfilesService);
+  private readonly snackBar = inject(MatSnackBar);
 
   constructor() {
     this.profileForm = this.formBuilder.group<ProfileForm>({
@@ -127,16 +135,45 @@ export class AddProfileComponent {
 
   onSubmit() {
     if (this.profileForm.valid) {
+      this.isLoading.set(true);
+
       const profileData = {
-        ...this.profileForm.value,
+        name: this.profileForm.value.name!,
+        mobileNumber: this.profileForm.value.mobileNumber!,
+        zodiacSign: this.profileForm.value.zodiacSign!,
+        star: this.profileForm.value.star!,
+        age: this.profileForm.value.age!,
+        starMatchScore: this.profileForm.value.starMatchScore!,
+        state: this.profileForm.value.state!,
+        city: this.profileForm.value.city!,
+        profileStatusId: this.profileForm.value.profileStatusId!,
+        matrimonyId: this.profileForm.value.matrimonyId!,
         comments: this.comments(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
-      console.log('Profile Data:', profileData);
-      // TODO: Add service call to save profile
-      // For now, just navigate back
-      // this.router.navigate(['/']);
+
+      this.profilesService.addProfile(profileData).subscribe({
+        next: (id) => {
+          this.isLoading.set(false);
+          this.snackBar.open('Profile added successfully!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['success-snackbar'],
+          });
+          console.log('Profile saved with ID:', id);
+          this.router.navigate(['/']);
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          console.error('Error saving profile:', error);
+          this.snackBar.open('Error adding profile. Please try again.', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar'],
+          });
+        },
+      });
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.profileForm.controls).forEach((key) => {

@@ -116,10 +116,32 @@ mat-chip-row {
   font-size: 16px;
   background-color: #00796b;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
   background-color: #00695c;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.inline-spinner {
+  display: inline-block;
+}
+
+::ng-deep .inline-spinner svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+::ng-deep .inline-spinner circle {
+  stroke: white !important;
 }
 
 /* Mobile Responsive Styles */

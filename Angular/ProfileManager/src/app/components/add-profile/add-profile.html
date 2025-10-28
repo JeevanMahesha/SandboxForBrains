@@ -172,11 +172,26 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <button mat-stroked-button type="button" (click)="onCancel()" class="cancel-btn">
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="onCancel()"
+            class="cancel-btn"
+            [disabled]="isLoading()"
+          >
             Cancel
           </button>
-          <button mat-raised-button color="primary" type="submit" class="submit-btn">
-            Add Profile
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="submit-btn"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+            <mat-spinner diameter="20" class="inline-spinner"></mat-spinner>
+            <span>Saving...</span>
+            } @else { Add Profile }
           </button>
         </div>
       </form>

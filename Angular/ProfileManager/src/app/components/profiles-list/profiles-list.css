@@ -76,3 +76,57 @@
     text-align: center;
   }
 }
+
+/* Filter Section Styling */
+::ng-deep .mat-button-toggle-group {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+::ng-deep .mat-button-toggle {
+  border: none;
+}
+
+::ng-deep .mat-button-toggle-checked {
+  background-color: #00796b;
+  color: white;
+}
+
+::ng-deep .mat-button-toggle-button {
+  padding: 8px 16px;
+}
+
+/* Active Filters Chips */
+::ng-deep .mat-mdc-chip-row {
+  background-color: #e0f2f1;
+  color: #00695c;
+  font-size: 13px;
+}
+
+::ng-deep .mat-mdc-chip-remove {
+  color: #00695c;
+  opacity: 0.7;
+}
+
+::ng-deep .mat-mdc-chip-remove:hover {
+  opacity: 1;
+}
+
+/* Form Field Alignment */
+.min-w-\[200px\] {
+  min-width: 200px;
+}
+
+/* Mobile Adjustments for Filters */
+@media (max-width: 768px) {
+  .min-w-\[200px\] {
+    width: 100%;
+    min-width: auto;
+  }
+
+  ::ng-deep .mat-button-toggle-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}

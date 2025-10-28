@@ -6,6 +6,7 @@ import {
   computed,
   ViewChild,
   afterNextRender,
+  effect,
 } from '@angular/core';
 import { CommonModule, KeyValuePipe, NgClass } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -61,7 +62,12 @@ export class ProfilesList {
   pageIndex = signal<number>(0);
   pageSizeOptions = [5, 10, 25, 50, 100];
 
-  // Sorting
+  // Sorting & Filtering
+  sortDirection = signal<OrderByDirection>('desc');
+  sortField = signal<string>('createdAt');
+  selectedProfileStatus = signal<string | null>(null);
+  selectedStar = signal<number | null>(null);
+
   sortOptions = signal<{ label: string; value: OrderByDirection }[]>([
     {
       label: 'Newest',
@@ -73,14 +79,17 @@ export class ProfilesList {
     },
   ]);
   profileSortOption = PROFILE_STATUS;
-  starSortOption = new Set(Object.values(MATCHING_STARS));
+  starSortOption = Array.from(new Set(Object.values(MATCHING_STARS))).sort((a, b) => b - a);
 
-  // Computed paginated profiles
+  // Computed paginated profiles (no filtering here, it's done on backend)
   profiles = computed(() => {
     const start = this.pageIndex() * this.pageSize();
     const end = start + this.pageSize();
     return this.allProfiles().slice(start, end);
   });
+
+  // For pagination, use allProfiles length
+  filteredProfiles = computed(() => this.allProfiles());
 
   displayedColumns: ProfileColumn[] = [
     'sNo',
@@ -93,7 +102,14 @@ export class ProfilesList {
   ];
 
   constructor() {
-    this.reloadProfiles();
+    // this.reloadProfiles();
+    effect(() => {
+      this.selectedProfileStatus();
+      this.selectedStar();
+      this.sortDirection();
+      this.sortField();
+      this.reloadProfiles();
+    });
   }
 
   onPageChange(event: PageEvent): void {
@@ -118,10 +134,20 @@ export class ProfilesList {
   }
 
   onSortChange(event: MatButtonToggleChange): void {
-    console.log('Sort change:', event);
+    const direction = event.value as OrderByDirection;
+    this.sortDirection.set(direction);
   }
-  onStarSortChange($event: MatSelectChange<keyof typeof MATCHING_STARS>) {
-    console.log('Star sort change:', $event);
+
+  onStarSortChange(event: MatSelectChange): void {
+    const starScore = event.value === undefined ? null : event.value;
+    this.selectedStar.set(starScore);
+    this.pageIndex.set(0); // Reset to first page when filtering
+  }
+
+  onProfileSortChange(event: MatSelectChange): void {
+    const status = event.value === undefined ? null : event.value;
+    this.selectedProfileStatus.set(status);
+    this.pageIndex.set(0); // Reset to first page when filtering
   }
 
   onDelete(profile: Profile): void {
@@ -153,18 +179,33 @@ export class ProfilesList {
     return PROFILE_STATUS_COLORS[status];
   }
 
+  getStatusLabel(status: string | null): string {
+    if (!status) return '';
+    return this.profileSortOption[status as keyof typeof PROFILE_STATUS] || status;
+  }
+
   getSerialNumber(index: number): number {
     return this.pageIndex() * this.pageSize() + index + 1;
   }
 
-  onProfileSortChange(event: MatSelectChange): void {
-    console.log('Profile sort change:', event);
+  clearFilters(): void {
+    this.selectedProfileStatus.set(null);
+    this.selectedStar.set(null);
+    this.sortDirection.set('desc');
+    this.sortField.set('createdAt');
+    this.pageIndex.set(0);
   }
 
   private reloadProfiles(): void {
     this.isLoading.set(true);
+
+    const filters = {
+      profileStatus: this.selectedProfileStatus(),
+      starMatchScore: this.selectedStar(),
+    };
+
     this.profilesService
-      .getProfiles()
+      .getFilteredProfiles(this.sortField(), this.sortDirection(), filters)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((profiles) => {
         this.allProfiles.set(profiles);

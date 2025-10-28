@@ -19,33 +19,88 @@
     </button>
   </div>
 
-  <!-- Search Section -->
+  <!-- Sort & Filter Section -->
   <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-    <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-      <mat-button-toggle-group (change)="onSortChange($event)" aria-label="Sort Options">
-        @for (option of sortOptions(); track $index) {
-        <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
-        }
-      </mat-button-toggle-group>
-      <mat-form-field fil>
-        <mat-label>Favorite food</mat-label>
-        <mat-select
-          (selectionChange)="onProfileSortChange($event)"
-          aria-label="Profile Sort Options"
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col md:flex-row gap-4 justify-center items-center flex-wrap">
+        <!-- Sort by Date -->
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-gray-700">Sort by Date</label>
+          <mat-button-toggle-group
+            [value]="sortDirection()"
+            (change)="onSortChange($event)"
+            aria-label="Sort Options"
+          >
+            @for (option of sortOptions(); track $index) {
+            <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+        </div>
+
+        <!-- Filter by Profile Status -->
+        <mat-form-field appearance="fill" class="min-w-[200px]">
+          <mat-label>Filter by Status</mat-label>
+          <mat-select
+            [value]="selectedProfileStatus()"
+            (selectionChange)="onProfileSortChange($event)"
+            aria-label="Profile Status Filter"
+          >
+            <mat-option>All Statuses</mat-option>
+            @for (option of profileSortOption | keyvalue; track $index) {
+            <mat-option [value]="option.key">{{ option.value }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Filter by Star Match Score -->
+        <mat-form-field appearance="fill" class="min-w-[200px]">
+          <mat-label>Filter by Match Score</mat-label>
+          <mat-select
+            [value]="selectedStar()"
+            (selectionChange)="onStarSortChange($event)"
+            aria-label="Star Score Filter"
+          >
+            <mat-option>All Scores</mat-option>
+            @for (option of starSortOption; track $index) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Clear Filters Button -->
+        <button
+          mat-flat-button
+          color="tertiary"
+          (click)="clearFilters()"
+          class="h-14"
+          [disabled]="!selectedProfileStatus() && !selectedStar() && sortDirection() === 'desc'"
         >
-          @for (option of profileSortOption | keyvalue; track $index) {
-          <mat-option [value]="option.key">{{ option.value }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field fill>
-        <mat-label>Star Sort Options</mat-label>
-        <mat-select (selectionChange)="onStarSortChange($event)" aria-label="Star Sort Options">
-          @for (option of starSortOption ; track $index) {
-          <mat-option [value]="option">{{ option }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+          <mat-icon class="mr-2">filter_alt_off</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Active Filters Display -->
+      @if (selectedProfileStatus() || selectedStar()) {
+      <div class="flex gap-2 flex-wrap justify-center items-center">
+        <span class="text-sm text-gray-600">Active filters:</span>
+        @if (selectedProfileStatus()) {
+        <mat-chip-row (removed)="selectedProfileStatus.set(null); pageIndex.set(0)">
+          Status: {{ getStatusLabel(selectedProfileStatus()) }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        } @if (selectedStar()) {
+        <mat-chip-row (removed)="selectedStar.set(null); pageIndex.set(0)">
+          Score: {{ selectedStar() }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        }
+      </div>
+      }
     </div>
   </div>
 
@@ -140,15 +195,18 @@
       </table>
     </div>
 
-    @if (allProfiles().length === 0) {
+    @if (filteredProfiles().length === 0 && !isLoading()) {
     <div class="text-center py-12 text-gray-500">
       <mat-icon class="text-6xl mb-4">person_off</mat-icon>
       <p class="text-lg">No profiles found</p>
+      @if (selectedProfileStatus() || selectedStar()) {
+      <p class="text-sm mt-2">Try adjusting your filters</p>
+      }
     </div>
-    } @else {
+    } @else if (filteredProfiles().length > 0) {
     <!-- Paginator -->
     <mat-paginator
-      [length]="allProfiles().length"
+      [length]="filteredProfiles().length"
       [pageSize]="pageSize()"
       [pageIndex]="pageIndex()"
       [pageSizeOptions]="pageSizeOptions"
@@ -210,14 +268,17 @@
     <div class="text-center py-12 text-gray-500 bg-white rounded-lg">
       <mat-icon class="text-6xl mb-4">person_off</mat-icon>
       <p class="text-lg">No profiles found</p>
+      @if (selectedProfileStatus() || selectedStar()) {
+      <p class="text-sm mt-2">Try adjusting your filters</p>
+      }
     </div>
     }
 
     <!-- Mobile Paginator -->
-    @if (allProfiles().length > 0) {
+    @if (filteredProfiles().length > 0) {
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mt-4">
       <mat-paginator
-        [length]="allProfiles().length"
+        [length]="filteredProfiles().length"
         [pageSize]="pageSize()"
         [pageIndex]="pageIndex()"
         [pageSizeOptions]="pageSizeOptions"

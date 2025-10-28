@@ -10,6 +10,7 @@ import {
   getDoc,
   query,
   orderBy,
+  where,
   Timestamp,
 } from '@angular/fire/firestore';
 import { Observable, from, map } from 'rxjs';
@@ -37,14 +38,33 @@ export class ProfilesService {
   }
 
   /**
-   * Get all profiles from Firestore
+   * Get filtered profiles from Firestore with sorting and filtering from backend
    */
-  getProfiles(): Observable<Profile[]> {
-    const q = query(this.profilesCollection, orderBy('createdAt', 'desc'));
+  getFilteredProfiles(
+    sortField: string = 'createdAt',
+    sortDirection: 'asc' | 'desc' = 'desc',
+    filters?: {
+      profileStatus?: string | null;
+      starMatchScore?: number | null;
+    }
+  ): Observable<Profile[]> {
+    let q = query(this.profilesCollection);
+
+    // Apply filters using where clauses
+    if (filters?.profileStatus) {
+      q = query(q, where('profileStatusId', '==', filters.profileStatus));
+    }
+
+    if (filters?.starMatchScore !== null && filters?.starMatchScore !== undefined) {
+      q = query(q, where('starMatchScore', '==', filters.starMatchScore));
+    }
+
+    // Apply sorting - must come after where clauses
+    q = query(q, orderBy(sortField, sortDirection));
 
     return from(getDocs(q)).pipe(
-      map((snapshot) =>
-        snapshot.docs.map((doc) => {
+      map((snapshot) => {
+        const profiles = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
@@ -53,8 +73,9 @@ export class ProfilesService {
             createdAt: data['createdAt']?.toDate() || new Date(),
             updatedAt: data['updatedAt']?.toDate() || new Date(),
           } as unknown as Profile;
-        })
-      )
+        });
+        return profiles;
+      })
     );
   }
 

@@ -1,9 +1,13 @@
 <div class="add-profile-container">
   <mat-card class="profile-card">
-    <mat-card-header>
-      <mat-card-title>Add New Profile</mat-card-title>
-    </mat-card-header>
-
+    <div class="flex items-center">
+      <button mat-icon-button (click)="onCancel()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <mat-card-header>
+        <mat-card-title>{{ title() }}</mat-card-title>
+      </mat-card-header>
+    </div>
     <mat-card-content>
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <!-- Name Field -->
@@ -82,7 +86,11 @@
           <!-- State Field -->
           <mat-form-field appearance="fill" class="half-width">
             <mat-label>State</mat-label>
-            <mat-select formControlName="state" placeholder="Select state">
+            <mat-select
+              (selectionChange)="onStateChange($event)"
+              formControlName="state"
+              placeholder="Select state"
+            >
               @for (state of states; track state) {
               <mat-option [value]="state">{{ state }}</mat-option>
               }
@@ -144,14 +152,15 @@
             @for (comment of comments(); track $index) {
             <mat-chip-row (removed)="removeComment($index)">
               {{ comment }}
+              @if (action() !== 'view') {
               <button matChipRemove>
                 <mat-icon>cancel</mat-icon>
               </button>
+              }
             </mat-chip-row>
             }
           </div>
-          }
-
+          } @if (action() !== 'view') {
           <div class="add-comment-container">
             <mat-form-field appearance="fill" class="comment-input">
               <mat-label>Add Comment</mat-label>
@@ -168,9 +177,11 @@
               Add Comment
             </button>
           </div>
+          }
         </div>
 
         <!-- Action Buttons -->
+        @if (action() !== 'view') {
         <div class="action-buttons">
           <button
             mat-stroked-button
@@ -186,14 +197,15 @@
             color="primary"
             type="submit"
             class="submit-btn"
-            [disabled]="isLoading()"
+            [disabled]="isLoading() || profileForm.invalid"
           >
             @if (isLoading()) {
             <mat-spinner diameter="20" class="inline-spinner"></mat-spinner>
             <span>Saving...</span>
-            } @else { Add Profile }
+            } @else { {{ action() === 'add' ? 'Add Profile' : 'Update Profile' }} }
           </button>
         </div>
+        }
       </form>
     </mat-card-content>
   </mat-card>

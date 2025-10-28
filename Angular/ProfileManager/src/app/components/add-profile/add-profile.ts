@@ -1,4 +1,4 @@
-import { Component, effect, inject, Signal, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, Signal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -49,6 +49,8 @@ import { Profile } from '../../models/profile';
   styleUrl: './add-profile.css',
 })
 export default class AddProfileComponent {
+  public readonly id = input<string | null>();
+  public readonly action = input<string | null>();
   profileForm: FormGroup<ProfileForm>;
   comments = signal<string[]>([]);
   newComment = signal<string>('');
@@ -64,6 +66,16 @@ export default class AddProfileComponent {
   }));
   states = [...StateList];
   cities: Signal<string[]>;
+  public readonly title = computed(() => {
+    switch (this.action()) {
+      case 'view':
+        return 'View Profile';
+      case 'edit':
+        return 'Edit Profile';
+      default:
+        return 'Add New Profile';
+    }
+  });
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly profilesService = inject(ProfilesService);
@@ -98,7 +110,6 @@ export default class AddProfileComponent {
 
     this.cities = toSignal(
       this.profileForm.controls.state.valueChanges.pipe(
-        tap(() => this.profileForm.controls.city.reset(null)),
         map(
           (state) =>
             (state && state in DistrictList
@@ -120,6 +131,59 @@ export default class AddProfileComponent {
         );
       }
     });
+  }
+
+  ngOnInit() {
+    const selectedId = this.id();
+    const selectedAction = this.action();
+    if (!selectedAction) {
+      this.snackBar.open('Invalid request', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar'],
+      });
+      this.router.navigate(['/']);
+    }
+
+    if (selectedAction === 'view') {
+      if (!selectedId) {
+        this.snackBar.open('Invalid request', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+        this.router.navigate(['/']);
+      }
+      this.profilesService.getProfileById(selectedId as string).subscribe((profile) => {
+        if (profile) {
+          this.profileForm.patchValue(profile);
+          this.comments.set(profile.comments);
+          this.profileForm.disable();
+        }
+      });
+    }
+    if (selectedAction === 'edit') {
+      if (!selectedId) {
+        this.snackBar.open('Invalid request', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      }
+      this.profilesService.getProfileById(selectedId as string).subscribe((profile) => {
+        if (profile) {
+          this.profileForm.patchValue(profile);
+          this.comments.set(profile.comments);
+        }
+      });
+    }
+  }
+
+  onStateChange(event: MatSelectChange) {
+    this.profileForm.controls.city.reset(null);
   }
 
   addComment() {
@@ -151,30 +215,14 @@ export default class AddProfileComponent {
         matrimonyId: this.profileForm.value.matrimonyId!,
         comments: this.comments(),
       };
-
-      this.profilesService.addProfile(profileData as Partial<Profile>).subscribe({
-        next: (id) => {
-          this.isLoading.set(false);
-          this.snackBar.open('Profile added successfully!', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            panelClass: ['success-snackbar'],
-          });
-          console.log('Profile saved with ID:', id);
-          this.router.navigate(['/']);
-        },
-        error: (error) => {
-          this.isLoading.set(false);
-          console.error('Error saving profile:', error);
-          this.snackBar.open('Error adding profile. Please try again.', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            panelClass: ['error-snackbar'],
-          });
-        },
-      });
+      switch (this.action()) {
+        case 'add':
+          this.addProfile(profileData as Partial<Profile>);
+          break;
+        case 'edit':
+          this.updateProfile(profileData as Partial<Profile>);
+          break;
+      }
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.profileForm.controls).forEach((key) => {
@@ -205,5 +253,56 @@ export default class AddProfileComponent {
       return `Maximum value is ${control.errors?.['max'].max}`;
     }
     return '';
+  }
+
+  private addProfile(profileData: Partial<Profile>) {
+    this.profilesService.addProfile(profileData).subscribe({
+      next: (id) => {
+        this.isLoading.set(false);
+        this.snackBar.open('Profile added successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+        console.log('Profile saved with ID:', id);
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        this.isLoading.set(false);
+        console.error('Error saving profile:', error);
+        this.snackBar.open('Error adding profile. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    });
+  }
+  private updateProfile(profileData: Partial<Profile>) {
+    this.profilesService.updateProfile(this.id() as string, profileData).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.snackBar.open('Profile updated successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+        console.log('Profile updated successfully!');
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        this.isLoading.set(false);
+        console.error('Error updating profile:', error);
+        this.snackBar.open('Error updating profile. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    });
   }
 }

@@ -17,11 +17,23 @@
       <!-- Sidebar Navigation -->
       <nav class="flex-1 p-4">
         <a
-          href="#"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          routerLink="/"
+          routerLinkActive="bg-teal-50 text-teal-700"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-2"
+          (click)="isMobile() && toggleSidebar()"
         >
           <mat-icon>home</mat-icon>
           <span class="font-medium">Home</span>
+        </a>
+        <a
+          routerLink="/add-profile"
+          routerLinkActive="bg-teal-50 text-teal-700"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          (click)="isMobile() && toggleSidebar()"
+        >
+          <mat-icon>person_add</mat-icon>
+          <span class="font-medium">Add Profile</span>
         </a>
       </nav>
     </div>
@@ -40,7 +52,7 @@
       </div>
     </div>
 
-    <!-- Profiles List Component -->
-    <app-profiles-list></app-profiles-list>
+    <!-- Router Outlet for Components -->
+    <router-outlet></router-outlet>
   </mat-drawer-content>
 </mat-drawer-container>

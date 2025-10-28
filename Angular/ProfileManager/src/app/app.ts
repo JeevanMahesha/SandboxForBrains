@@ -5,19 +5,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { ProfilesList } from './components/profiles-list/profiles-list';
 
 @Component({
   selector: 'app-root',
   imports: [
     CommonModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
     MatSidenavModule,
     MatListModule,
     MatIconModule,
     MatToolbarModule,
     MatButtonModule,
-    ProfilesList,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

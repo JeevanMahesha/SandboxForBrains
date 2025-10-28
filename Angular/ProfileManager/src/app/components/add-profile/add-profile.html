@@ -1,0 +1,185 @@
+<div class="add-profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <mat-card-title>Add New Profile</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <!-- Name Field -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Name</mat-label>
+          <input matInput placeholder="Full Name" formControlName="name" />
+          @if (profileForm.controls.name.invalid && profileForm.controls.name.touched) {
+          <mat-error>{{ getErrorMessage('name') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Mobile Number Field -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Mobile Number</mat-label>
+          <input matInput placeholder="+91XXXXXXXXXX" formControlName="mobileNumber" />
+          @if (profileForm.controls.mobileNumber.invalid &&
+          profileForm.controls.mobileNumber.touched) {
+          <mat-error>{{ getErrorMessage('mobileNumber') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- zodiacSign and Star Row -->
+        <div class="form-row">
+          <!-- Zodiac Sign (zodiacSign) Field -->
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Zodiac Sign</mat-label>
+            <mat-select formControlName="zodiacSign" placeholder="Select Zodiac Sign">
+              @for (sign of zodiacSigns; track sign.value; let i = $index) {
+              <mat-option [value]="sign.value"> {{ i + 1 }}. {{ sign.label }}</mat-option>
+              }
+            </mat-select>
+            @if (profileForm.controls.zodiacSign.invalid && profileForm.controls.zodiacSign.touched)
+            {
+            <mat-error>{{ getErrorMessage('zodiacSign') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Star Field -->
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Star</mat-label>
+            <mat-select formControlName="star" placeholder="Birth Star">
+              @for (star of stars; track star; let i = $index) {
+              <mat-option [value]="star"> {{ i + 1 }}. {{ star }}</mat-option>
+              }
+            </mat-select>
+            @if (profileForm.controls.star.invalid && profileForm.controls.star.touched) {
+            <mat-error>{{ getErrorMessage('star') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Age and Star Match Score Row -->
+        <div class="form-row">
+          <!-- Age Field -->
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Age</mat-label>
+            <input matInput type="number" formControlName="age" />
+            @if (profileForm.controls.age.invalid && profileForm.controls.age.touched) {
+            <mat-error>{{ getErrorMessage('age') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Star Match Score Field -->
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Star Match Score (0-10)</mat-label>
+            <input matInput type="number" readonly formControlName="starMatchScore" />
+            @if (profileForm.controls.starMatchScore.invalid &&
+            profileForm.controls.starMatchScore.touched) {
+            <mat-error>{{ getErrorMessage('starMatchScore') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- State and City Row -->
+        <div class="form-row">
+          <!-- State Field -->
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>State</mat-label>
+            <mat-select formControlName="state" placeholder="Select state">
+              @for (state of states; track state) {
+              <mat-option [value]="state">{{ state }}</mat-option>
+              }
+            </mat-select>
+            @if (profileForm.controls.state.invalid && profileForm.controls.state.touched) {
+            <mat-error>{{ getErrorMessage('state') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- City Field -->
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>City</mat-label>
+            <mat-select
+              formControlName="city"
+              [placeholder]="
+                profileForm.controls.state.value ? 'Select city' : 'Select state first'
+              "
+            >
+              @for (city of cities(); track city) {
+              <mat-option [value]="city">{{ city }}</mat-option>
+              }
+            </mat-select>
+            @if (profileForm.controls.city.invalid && profileForm.controls.city.touched) {
+            <mat-error>{{ getErrorMessage('city') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Profile Status Field -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Profile Status</mat-label>
+          <mat-select formControlName="profileStatusId">
+            @for (status of profileStatuses; track status.value) {
+            <mat-option [value]="status.value">{{ status.label }}</mat-option>
+            }
+          </mat-select>
+          @if (profileForm.controls.profileStatusId.invalid &&
+          profileForm.controls.profileStatusId.touched) {
+          <mat-error>{{ getErrorMessage('profileStatusId') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Matrimony ID Field -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Matrimony ID</mat-label>
+          <input matInput placeholder="Matrimony Site Profile ID" formControlName="matrimonyId" />
+          @if (profileForm.controls.matrimonyId.invalid && profileForm.controls.matrimonyId.touched)
+          {
+          <mat-error>{{ getErrorMessage('matrimonyId') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <h3 class="section-title">Comments</h3>
+
+          @if (comments().length > 0) {
+          <div class="comments-list">
+            @for (comment of comments(); track $index) {
+            <mat-chip-row (removed)="removeComment($index)">
+              {{ comment }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+            }
+          </div>
+          }
+
+          <div class="add-comment-container">
+            <mat-form-field appearance="fill" class="comment-input">
+              <mat-label>Add Comment</mat-label>
+              <input
+                matInput
+                [value]="newComment()"
+                (input)="newComment.set($any($event.target).value)"
+                (keyup.enter)="addComment()"
+                placeholder="Enter your comment"
+              />
+            </mat-form-field>
+            <button mat-raised-button type="button" (click)="addComment()" class="add-comment-btn">
+              <mat-icon>add</mat-icon>
+              Add Comment
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button mat-stroked-button type="button" (click)="onCancel()" class="cancel-btn">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" class="submit-btn">
+            Add Profile
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

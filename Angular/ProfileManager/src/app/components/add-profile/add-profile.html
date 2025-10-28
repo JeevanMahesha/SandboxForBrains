@@ -4,8 +4,19 @@
       <button mat-icon-button (click)="onCancel()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <mat-card-header>
+      <mat-card-header class="flex-1 flex items-center gap-5">
         <mat-card-title>{{ title() }}</mat-card-title>
+        @if (action() !== 'add') {
+        <a
+          target="_blank"
+          href="https://wa.me/{{ profileForm.value.mobileNumber?.replace('+91', '') }}"
+        >
+          <mat-icon>chat_add_on</mat-icon>
+        </a>
+        <a target="_blank" href="tel:{{ profileForm.value.mobileNumber }}">
+          <mat-icon>call</mat-icon>
+        </a>
+        }
       </mat-card-header>
     </div>
     <mat-card-content>

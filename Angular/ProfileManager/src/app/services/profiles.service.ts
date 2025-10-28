@@ -15,6 +15,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable, from, map } from 'rxjs';
 import { Profile } from '../models/profile';
+import { PROFILE_STATUS } from '../constant/common';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +45,7 @@ export class ProfilesService {
     sortField: string = 'createdAt',
     sortDirection: 'asc' | 'desc' = 'desc',
     filters?: {
-      profileStatus?: string | null;
+      profileStatus?: keyof typeof PROFILE_STATUS | null;
       starMatchScore?: number | null;
     }
   ): Observable<Profile[]> {
@@ -53,6 +54,8 @@ export class ProfilesService {
     // Apply filters using where clauses
     if (filters?.profileStatus) {
       q = query(q, where('profileStatusId', '==', filters.profileStatus));
+    } else {
+      q = query(q, where('profileStatusId', '!=', PROFILE_STATUS.REJECTED));
     }
 
     if (filters?.starMatchScore !== null && filters?.starMatchScore !== undefined) {

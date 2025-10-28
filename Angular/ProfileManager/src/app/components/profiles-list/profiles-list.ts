@@ -65,7 +65,7 @@ export default class ProfilesList {
   // Sorting & Filtering
   sortDirection = signal<OrderByDirection>('desc');
   sortField = signal<string>('createdAt');
-  selectedProfileStatus = signal<string | null>(null);
+  selectedProfileStatus = signal<keyof typeof PROFILE_STATUS | null>(null);
   selectedStar = signal<number | null>(null);
 
   sortOptions = signal<{ label: string; value: OrderByDirection }[]>([

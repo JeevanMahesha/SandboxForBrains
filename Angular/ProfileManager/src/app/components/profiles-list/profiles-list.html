@@ -49,7 +49,7 @@
         <!-- Serial Number Column -->
         <ng-container matColumnDef="sNo">
           <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">S.No</th>
-          <td mat-cell *matCellDef="let profile; let i = index">{{ i + 1 }}</td>
+          <td mat-cell *matCellDef="let profile; let i = index">{{ getSerialNumber(i) }}</td>
         </ng-container>
         <!-- Name Column -->
         <ng-container matColumnDef="name">
@@ -133,11 +133,22 @@
       </table>
     </div>
 
-    @if (profiles().length === 0) {
+    @if (allProfiles().length === 0) {
     <div class="text-center py-12 text-gray-500">
       <mat-icon class="text-6xl mb-4">person_off</mat-icon>
       <p class="text-lg">No profiles found</p>
     </div>
+    } @else {
+    <!-- Paginator -->
+    <mat-paginator
+      [length]="allProfiles().length"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+      class="border-t"
+    ></mat-paginator>
     }
   </div>
 
@@ -192,6 +203,20 @@
     <div class="text-center py-12 text-gray-500 bg-white rounded-lg">
       <mat-icon class="text-6xl mb-4">person_off</mat-icon>
       <p class="text-lg">No profiles found</p>
+    </div>
+    }
+
+    <!-- Mobile Paginator -->
+    @if (allProfiles().length > 0) {
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden mt-4">
+      <mat-paginator
+        [length]="allProfiles().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      ></mat-paginator>
     </div>
     }
   </div>

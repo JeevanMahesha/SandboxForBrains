@@ -1,0 +1,78 @@
+/* Paginator Styling */
+::ng-deep .mat-mdc-paginator {
+  background-color: white;
+}
+
+::ng-deep .mat-mdc-paginator-container {
+  padding: 16px;
+  min-height: 56px;
+}
+
+/* Mobile Responsive Paginator */
+@media (max-width: 768px) {
+  ::ng-deep .mat-mdc-paginator-container {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+
+  ::ng-deep .mat-mdc-paginator-range-actions {
+    margin-left: 0;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  ::ng-deep .mat-mdc-paginator-container {
+    padding: 12px 8px;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-label,
+  ::ng-deep .mat-mdc-paginator-range-label {
+    font-size: 12px;
+  }
+
+  ::ng-deep .mat-mdc-icon-button {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+}
+
+/* Table Row Hover Effect */
+::ng-deep .mat-mdc-row:hover {
+  background-color: #f5f5f5;
+  transition: background-color 0.2s ease;
+}
+
+/* Table Header Styling */
+::ng-deep .mat-mdc-header-cell {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+/* Pagination Summary Info */
+.pagination-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+@media (max-width: 640px) {
+  .pagination-info {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

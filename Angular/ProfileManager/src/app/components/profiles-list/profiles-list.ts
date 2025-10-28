@@ -1,4 +1,12 @@
-import { Component, inject, Signal, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  Signal,
+  signal,
+  computed,
+  ViewChild,
+  afterNextRender,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Router, RouterLink } from '@angular/router';
 import { Profile, ProfileColumn } from '../../models/profile';
 import { PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
@@ -29,6 +38,7 @@ import { finalize, tap } from 'rxjs';
     MatChipsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatPaginatorModule,
     RouterLink,
   ],
   templateUrl: './profiles-list.html',
@@ -39,8 +49,22 @@ export class ProfilesList {
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
 
-  profiles = signal<Profile[]>([]);
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  allProfiles = signal<Profile[]>([]);
   isLoading = signal<boolean>(false);
+
+  // Pagination
+  pageSize = signal<number>(10);
+  pageIndex = signal<number>(0);
+  pageSizeOptions = [5, 10, 25, 50, 100];
+
+  // Computed paginated profiles
+  profiles = computed(() => {
+    const start = this.pageIndex() * this.pageSize();
+    const end = start + this.pageSize();
+    return this.allProfiles().slice(start, end);
+  });
 
   displayedColumns: ProfileColumn[] = [
     'sNo',
@@ -54,6 +78,11 @@ export class ProfilesList {
 
   constructor() {
     this.reloadProfiles();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 
   onSearchChange(value: string): void {
@@ -101,13 +130,18 @@ export class ProfilesList {
     return PROFILE_STATUS_COLORS[status];
   }
 
+  getSerialNumber(index: number): number {
+    return this.pageIndex() * this.pageSize() + index + 1;
+  }
+
   private reloadProfiles(): void {
     this.isLoading.set(true);
     this.profilesService
       .getProfiles()
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((profiles) => {
-        this.profiles.set(profiles);
+        this.allProfiles.set(profiles);
+        this.pageIndex.set(0); // Reset to first page when reloading
       });
   }
 }

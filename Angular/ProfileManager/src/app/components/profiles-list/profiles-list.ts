@@ -43,6 +43,7 @@ export class ProfilesList {
   isLoading = signal<boolean>(false);
 
   displayedColumns: ProfileColumn[] = [
+    'sNo',
     'name',
     'zodiacSign',
     'city',

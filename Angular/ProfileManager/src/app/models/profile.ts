@@ -16,9 +16,10 @@ export interface Profile {
   city: string;
   id: number;
   actions: string;
+  sNo?: number;
 }
 
 export type ProfileColumn = keyof Pick<
   Profile,
-  'name' | 'zodiacSign' | 'city' | 'profileStatusId' | 'starMatchScore' | 'actions'
+  'name' | 'zodiacSign' | 'city' | 'profileStatusId' | 'starMatchScore' | 'actions' | 'sNo'
 >;

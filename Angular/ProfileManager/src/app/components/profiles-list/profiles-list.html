@@ -46,6 +46,11 @@
   <div class="bg-white rounded-lg shadow-sm overflow-hidden hidden lg:block">
     <div class="overflow-x-auto">
       <table mat-table [dataSource]="profiles()" class="w-full">
+        <!-- Serial Number Column -->
+        <ng-container matColumnDef="sNo">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">S.No</th>
+          <td mat-cell *matCellDef="let profile; let i = index">{{ i + 1 }}</td>
+        </ng-container>
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Name</th>

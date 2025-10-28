@@ -1,4 +1,46 @@
-<mat-drawer-container class="example-container">
-  <mat-drawer mode="side" opened>Drawer content</mat-drawer>
-  <mat-drawer-content>Main content</mat-drawer-content>
+<mat-drawer-container class="h-screen">
+  <!-- Sidebar -->
+  <mat-drawer
+    [mode]="getSidebarMode()"
+    [opened]="sidebarOpen()"
+    class="w-64 border-r border-gray-200"
+  >
+    <div class="h-full bg-white flex flex-col">
+      <!-- Sidebar Header -->
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+          <mat-icon class="text-teal-600 text-3xl">account_circle</mat-icon>
+          <span class="text-xl font-bold text-gray-900">ProfileAce</span>
+        </div>
+      </div>
+
+      <!-- Sidebar Navigation -->
+      <nav class="flex-1 p-4">
+        <a
+          href="#"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <mat-icon>home</mat-icon>
+          <span class="font-medium">Home</span>
+        </a>
+      </nav>
+    </div>
+  </mat-drawer>
+
+  <!-- Main Content -->
+  <mat-drawer-content class="bg-gray-50">
+    <!-- Mobile Header with Menu Toggle -->
+    <div class="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center gap-4">
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <div class="flex items-center gap-2">
+        <mat-icon class="text-teal-600">account_circle</mat-icon>
+        <span class="text-lg font-bold text-gray-900">ProfileAce</span>
+      </div>
+    </div>
+
+    <!-- Profiles List Component -->
+    <app-profiles-list></app-profiles-list>
+  </mat-drawer-content>
 </mat-drawer-container>

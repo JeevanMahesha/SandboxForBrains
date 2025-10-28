@@ -1,0 +1,188 @@
+<div class="p-4 md:p-8 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Matrimony Profiles</h1>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addProfile()"
+      class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700"
+    >
+      <mat-icon class="mr-2">person_add</mat-icon>
+      Add Profile
+    </button>
+  </div>
+
+  <!-- Search Section -->
+  <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Search by Name</label>
+        <mat-form-field class="w-full" appearance="outline">
+          <input
+            matInput
+            placeholder="Search name..."
+            [value]="searchTerm()"
+            (input)="onSearchChange($any($event.target).value)"
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="flex items-end">
+        <button mat-stroked-button (click)="clearSearch()" class="w-full md:w-auto h-14">
+          <mat-icon class="mr-2">filter_alt_off</mat-icon>
+          Clear Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Table View -->
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden hidden lg:block">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="profileService.filteredProfiles()" class="w-full">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Name</th>
+          <td mat-cell *matCellDef="let profile" class="py-4">{{ profile.name }}</td>
+        </ng-container>
+
+        <!-- Caste Column -->
+        <ng-container matColumnDef="caste">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Caste/Raise</th>
+          <td mat-cell *matCellDef="let profile">{{ profile.caste }}</td>
+        </ng-container>
+
+        <!-- City Column -->
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">City</th>
+          <td mat-cell *matCellDef="let profile">{{ profile.city }}, {{ profile.state }}</td>
+        </ng-container>
+
+        <!-- Profile Status Column -->
+        <ng-container matColumnDef="profileStatus">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">
+            Profile Status
+          </th>
+          <td mat-cell *matCellDef="let profile">
+            <span
+              class="px-3 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getStatusClass(profile.profileStatus)"
+            >
+              {{ profile.profileStatus }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Star Column -->
+        <ng-container matColumnDef="star">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Star</th>
+          <td mat-cell *matCellDef="let profile">{{ profile.star }}</td>
+        </ng-container>
+
+        <!-- Star Match Score Column -->
+        <ng-container matColumnDef="starMatchScore">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">
+            Star Match Score
+          </th>
+          <td mat-cell *matCellDef="let profile">{{ profile.starMatchScore }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Actions</th>
+          <td mat-cell *matCellDef="let profile">
+            <div class="flex gap-2">
+              <button
+                mat-icon-button
+                (click)="onView(profile)"
+                class="text-gray-600 hover:text-gray-900"
+              >
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="onEdit(profile)"
+                class="text-gray-600 hover:text-gray-900"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="onDelete(profile)"
+                class="text-red-600 hover:text-red-800"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="hover:bg-gray-50"></tr>
+      </table>
+    </div>
+
+    @if (profileService.filteredProfiles().length === 0) {
+    <div class="text-center py-12 text-gray-500">
+      <mat-icon class="text-6xl mb-4">person_off</mat-icon>
+      <p class="text-lg">No profiles found</p>
+    </div>
+    }
+  </div>
+
+  <!-- Mobile Card View -->
+  <div class="lg:hidden space-y-4">
+    @for (profile of profileService.filteredProfiles(); track profile.id) {
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <div class="flex justify-between items-start mb-3">
+        <h3 class="text-lg font-semibold text-gray-900">{{ profile.name }}</h3>
+        <span
+          class="px-3 py-1 rounded-full text-xs font-medium"
+          [ngClass]="getStatusClass(profile.profileStatus)"
+        >
+          {{ profile.profileStatus }}
+        </span>
+      </div>
+
+      <div class="space-y-2 text-sm text-gray-600 mb-4">
+        <div class="flex">
+          <span class="font-medium w-32">Caste/Raise:</span>
+          <span>{{ profile.caste }}</span>
+        </div>
+        <div class="flex">
+          <span class="font-medium w-32">City:</span>
+          <span>{{ profile.city }}, {{ profile.state }}</span>
+        </div>
+        <div class="flex">
+          <span class="font-medium w-32">Star:</span>
+          <span>{{ profile.star }}</span>
+        </div>
+        <div class="flex">
+          <span class="font-medium w-32">Match Score:</span>
+          <span>{{ profile.starMatchScore }}</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2 border-t pt-3">
+        <button mat-stroked-button (click)="onView(profile)" class="flex-1">
+          <mat-icon>visibility</mat-icon>
+          View
+        </button>
+        <button mat-stroked-button (click)="onEdit(profile)" class="flex-1">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-icon-button (click)="onDelete(profile)" class="text-red-600">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+    } @empty {
+    <div class="text-center py-12 text-gray-500 bg-white rounded-lg">
+      <mat-icon class="text-6xl mb-4">person_off</mat-icon>
+      <p class="text-lg">No profiles found</p>
+    </div>
+    }
+  </div>
+</div>

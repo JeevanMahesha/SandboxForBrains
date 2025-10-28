@@ -1,12 +1,48 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, signal, inject } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ProfilesList } from './components/profiles-list/profiles-list';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatSidenavModule],
+  imports: [
+    CommonModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule,
+    ProfilesList,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('ProfileManager');
+  private breakpointObserver = inject(BreakpointObserver);
+  sidebarOpen = signal(true);
+  isMobile = signal(false);
+
+  constructor() {
+    // Observe breakpoint changes
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .subscribe((result) => {
+        this.isMobile.set(result.matches);
+        this.sidebarOpen.set(!result.matches);
+      });
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen.set(!this.sidebarOpen());
+  }
+
+  getSidebarMode(): 'over' | 'side' {
+    return this.isMobile() ? 'over' : 'side';
+  }
 }

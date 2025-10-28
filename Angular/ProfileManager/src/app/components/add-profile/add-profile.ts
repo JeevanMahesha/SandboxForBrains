@@ -18,16 +18,17 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import {
-  matchingStars,
   PROFILE_STATUS,
   zodiacSignList,
   StateList,
   DistrictList,
+  MATCHING_STARS,
 } from '../../constant/common';
 import { ProfileForm } from './add-profile.forms';
 import { map, tap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ProfilesService } from '../../services/profiles.service';
+import { Profile } from '../../models/profile';
 
 @Component({
   selector: 'app-add-profile',
@@ -56,7 +57,7 @@ export class AddProfileComponent {
     value: key,
     label: value.tanglish,
   }));
-  stars = Object.keys(matchingStars);
+  stars = Object.keys(MATCHING_STARS);
   profileStatuses = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
     value: key,
     label: value,
@@ -76,13 +77,13 @@ export class AddProfileComponent {
         Validators.pattern(/^\+91[0-9]{10}$/),
       ]),
       zodiacSign: new FormControl<keyof typeof zodiacSignList | null>(null, Validators.required),
-      star: new FormControl<keyof typeof matchingStars | null>(null, Validators.required),
+      star: new FormControl<keyof typeof MATCHING_STARS | null>(null, Validators.required),
       age: new FormControl<number | null>(null, [
         Validators.required,
         Validators.min(18),
         Validators.max(30),
       ]),
-      starMatchScore: new FormControl<(typeof matchingStars)[keyof typeof matchingStars] | null>(
+      starMatchScore: new FormControl<(typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | null>(
         null,
         [Validators.required, Validators.min(0), Validators.max(10)]
       ),
@@ -112,9 +113,9 @@ export class AddProfileComponent {
 
     effect(() => {
       const star = starEvent();
-      if (star && star in matchingStars) {
+      if (star && star in MATCHING_STARS) {
         this.profileForm.controls.starMatchScore.setValue(
-          matchingStars[star as keyof typeof matchingStars],
+          MATCHING_STARS[star as keyof typeof MATCHING_STARS],
           { emitEvent: false }
         );
       }
@@ -138,20 +139,20 @@ export class AddProfileComponent {
       this.isLoading.set(true);
 
       const profileData = {
-        name: this.profileForm.value.name!,
-        mobileNumber: this.profileForm.value.mobileNumber!,
-        zodiacSign: this.profileForm.value.zodiacSign!,
-        star: this.profileForm.value.star!,
-        age: this.profileForm.value.age!,
-        starMatchScore: this.profileForm.value.starMatchScore!,
+        name: this.profileForm.value.name,
+        mobileNumber: this.profileForm.value.mobileNumber,
+        zodiacSign: this.profileForm.value.zodiacSign,
+        star: this.profileForm.value.star,
+        age: this.profileForm.value.age,
+        starMatchScore: this.profileForm.value.starMatchScore,
         state: this.profileForm.value.state!,
         city: this.profileForm.value.city!,
-        profileStatusId: this.profileForm.value.profileStatusId!,
+        profileStatusId: this.profileForm.value.profileStatusId,
         matrimonyId: this.profileForm.value.matrimonyId!,
         comments: this.comments(),
       };
 
-      this.profilesService.addProfile(profileData).subscribe({
+      this.profilesService.addProfile(profileData as Partial<Profile>).subscribe({
         next: (id) => {
           this.isLoading.set(false);
           this.snackBar.open('Profile added successfully!', 'Close', {

@@ -1,4 +1,4 @@
-export const matchingStars = {
+export const MATCHING_STARS = {
   Revathi: 10,
   Uthirattathi: 8,
   Bharani: 8,

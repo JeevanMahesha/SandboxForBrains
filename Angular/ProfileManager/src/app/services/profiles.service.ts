@@ -15,20 +15,6 @@ import {
 import { Observable, from, map } from 'rxjs';
 import { Profile } from '../models/profile';
 
-export interface ProfileInput {
-  name: string;
-  mobileNumber: string;
-  zodiacSign: string;
-  star: string;
-  age: number;
-  starMatchScore: number;
-  state: string;
-  city: string;
-  profileStatusId: string;
-  matrimonyId: string;
-  comments: string[];
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -39,7 +25,7 @@ export class ProfilesService {
   /**
    * Add a new profile to Firestore
    */
-  addProfile(profileData: ProfileInput): Observable<string> {
+  addProfile(profileData: Partial<Profile>): Observable<string> {
     const now = Timestamp.now();
     const profileToAdd = {
       ...profileData,
@@ -97,7 +83,7 @@ export class ProfilesService {
   /**
    * Update an existing profile
    */
-  updateProfile(id: string, profileData: Partial<ProfileInput>): Observable<void> {
+  updateProfile(id: string, profileData: Partial<Profile>): Observable<void> {
     const docRef = doc(this.firestore, 'profiles', id);
     const updateData = {
       ...profileData,

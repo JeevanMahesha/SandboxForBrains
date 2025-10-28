@@ -1,11 +1,11 @@
-import { matchingStars, PROFILE_STATUS, zodiacSignList } from '../constant/common';
+import { MATCHING_STARS, PROFILE_STATUS, zodiacSignList } from '../constant/common';
 
 export interface Profile {
   updatedAt: Date;
   createdAt: Date;
   comments: string[];
-  star: keyof typeof matchingStars;
-  starMatchScore: (typeof matchingStars)[keyof typeof matchingStars];
+  star: keyof typeof MATCHING_STARS;
+  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS];
   mobileNumber: string;
   zodiacSign: keyof typeof zodiacSignList;
   age: number;

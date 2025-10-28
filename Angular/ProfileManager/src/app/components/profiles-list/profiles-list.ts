@@ -7,7 +7,7 @@ import {
   ViewChild,
   afterNextRender,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValuePipe, NgClass } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -20,16 +20,17 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Router, RouterLink } from '@angular/router';
 import { Profile, ProfileColumn } from '../../models/profile';
-import { PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
+import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
 import { ProfilesService } from '../../services/profiles.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize, tap } from 'rxjs';
-
+import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { OrderByDirection } from '@angular/fire/firestore';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-profiles-list',
   imports: [
-    CommonModule,
-    FormsModule,
+    NgClass,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
@@ -40,6 +41,9 @@ import { finalize, tap } from 'rxjs';
     MatProgressSpinnerModule,
     MatPaginatorModule,
     RouterLink,
+    MatButtonToggleModule,
+    KeyValuePipe,
+    MatSelectModule,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
@@ -49,8 +53,6 @@ export class ProfilesList {
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
   allProfiles = signal<Profile[]>([]);
   isLoading = signal<boolean>(false);
 
@@ -58,6 +60,20 @@ export class ProfilesList {
   pageSize = signal<number>(10);
   pageIndex = signal<number>(0);
   pageSizeOptions = [5, 10, 25, 50, 100];
+
+  // Sorting
+  sortOptions = signal<{ label: string; value: OrderByDirection }[]>([
+    {
+      label: 'Newest',
+      value: 'desc',
+    },
+    {
+      label: 'Oldest',
+      value: 'asc',
+    },
+  ]);
+  profileSortOption = PROFILE_STATUS;
+  starSortOption = new Set(Object.values(MATCHING_STARS));
 
   // Computed paginated profiles
   profiles = computed(() => {
@@ -101,6 +117,13 @@ export class ProfilesList {
     console.log('Edit profile:', profile);
   }
 
+  onSortChange(event: MatButtonToggleChange): void {
+    console.log('Sort change:', event);
+  }
+  onStarSortChange($event: MatSelectChange<keyof typeof MATCHING_STARS>) {
+    console.log('Star sort change:', $event);
+  }
+
   onDelete(profile: Profile): void {
     if (confirm(`Are you sure you want to delete ${profile.name}'s profile?`)) {
       this.profilesService.deleteProfile(profile.id.toString()).subscribe({
@@ -132,6 +155,10 @@ export class ProfilesList {
 
   getSerialNumber(index: number): number {
     return this.pageIndex() * this.pageSize() + index + 1;
+  }
+
+  onProfileSortChange(event: MatSelectChange): void {
+    console.log('Profile sort change:', event);
   }
 
   private reloadProfiles(): void {

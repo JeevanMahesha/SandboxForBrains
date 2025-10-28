@@ -21,24 +21,31 @@
 
   <!-- Search Section -->
   <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="flex-1">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Search by Name</label>
-        <mat-form-field class="w-full" appearance="outline">
-          <input
-            matInput
-            placeholder="Search name..."
-            (input)="onSearchChange($event.target.value)"
-          />
-          <mat-icon matPrefix>search</mat-icon>
-        </mat-form-field>
-      </div>
-      <div class="flex items-end">
-        <button mat-stroked-button (click)="clearSearch()" class="w-full md:w-auto h-14">
-          <mat-icon class="mr-2">filter_alt_off</mat-icon>
-          Clear Search
-        </button>
-      </div>
+    <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+      <mat-button-toggle-group (change)="onSortChange($event)" aria-label="Sort Options">
+        @for (option of sortOptions(); track $index) {
+        <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+      <mat-form-field fil>
+        <mat-label>Favorite food</mat-label>
+        <mat-select
+          (selectionChange)="onProfileSortChange($event)"
+          aria-label="Profile Sort Options"
+        >
+          @for (option of profileSortOption | keyvalue; track $index) {
+          <mat-option [value]="option.key">{{ option.value }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field fill>
+        <mat-label>Star Sort Options</mat-label>
+        <mat-select (selectionChange)="onStarSortChange($event)" aria-label="Star Sort Options">
+          @for (option of starSortOption ; track $index) {
+          <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
 

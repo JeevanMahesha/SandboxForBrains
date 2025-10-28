@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,8 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
-import { ProfileService } from '../../services/profile';
-import { Profile } from '../../models/profile';
+import { Profile, ProfileColumn } from '../../models/profile';
+import { collection, collectionData, Firestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
 
 @Component({
   selector: 'app-profiles-list',
@@ -26,26 +29,26 @@ import { Profile } from '../../models/profile';
   styleUrl: './profiles-list.css',
 })
 export class ProfilesList {
-  profileService = inject(ProfileService);
-  searchTerm = signal('');
-  displayedColumns: string[] = [
+  firestore = inject(Firestore);
+  itemCollection = collection(this.firestore, 'profiles');
+  profiles = toSignal(collectionData(this.itemCollection) as Observable<Profile[]>, {
+    initialValue: [],
+  });
+  displayedColumns: ProfileColumn[] = [
     'name',
-    'caste',
+    'zodiacSign',
     'city',
-    'profileStatus',
-    'star',
+    'profileStatusId',
     'starMatchScore',
     'actions',
   ];
 
   onSearchChange(value: string): void {
-    this.searchTerm.set(value);
-    this.profileService.filterProfiles(value);
+    console.log(value);
   }
 
   clearSearch(): void {
-    this.searchTerm.set('');
-    this.profileService.clearSearch();
+    console.log('Clear search');
   }
 
   onView(profile: Profile): void {
@@ -58,7 +61,7 @@ export class ProfilesList {
 
   onDelete(profile: Profile): void {
     if (confirm(`Are you sure you want to delete ${profile.name}'s profile?`)) {
-      this.profileService.deleteProfile(profile.id);
+      console.log('Delete profile:', profile);
     }
   }
 
@@ -66,16 +69,7 @@ export class ProfilesList {
     console.log('Add new profile');
   }
 
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'New':
-        return 'bg-teal-100 text-teal-800';
-      case 'Rejected':
-        return 'bg-gray-100 text-gray-800';
-      case 'Unknown':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  getStatusClass(status: keyof typeof PROFILE_STATUS): string {
+    return PROFILE_STATUS_COLORS[status];
   }
 }

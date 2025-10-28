@@ -22,8 +22,7 @@
           <input
             matInput
             placeholder="Search name..."
-            [value]="searchTerm()"
-            (input)="onSearchChange($any($event.target).value)"
+            (input)="onSearchChange($event.target.value)"
           />
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
@@ -40,17 +39,17 @@
   <!-- Desktop Table View -->
   <div class="bg-white rounded-lg shadow-sm overflow-hidden hidden lg:block">
     <div class="overflow-x-auto">
-      <table mat-table [dataSource]="profileService.filteredProfiles()" class="w-full">
+      <table mat-table [dataSource]="profiles()" class="w-full">
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Name</th>
           <td mat-cell *matCellDef="let profile" class="py-4">{{ profile.name }}</td>
         </ng-container>
 
-        <!-- Caste Column -->
-        <ng-container matColumnDef="caste">
-          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Caste/Raise</th>
-          <td mat-cell *matCellDef="let profile">{{ profile.caste }}</td>
+        <!-- Zodiac Sign Column -->
+        <ng-container matColumnDef="zodiacSign">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Zodiac Sign</th>
+          <td mat-cell *matCellDef="let profile">{{ profile.zodiacSign }}</td>
         </ng-container>
 
         <!-- City Column -->
@@ -60,16 +59,16 @@
         </ng-container>
 
         <!-- Profile Status Column -->
-        <ng-container matColumnDef="profileStatus">
+        <ng-container matColumnDef="profileStatusId">
           <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">
             Profile Status
           </th>
           <td mat-cell *matCellDef="let profile">
             <span
               class="px-3 py-1 rounded-full text-xs font-medium"
-              [ngClass]="getStatusClass(profile.profileStatus)"
+              [ngClass]="getStatusClass(profile.profileStatusId)"
             >
-              {{ profile.profileStatus }}
+              {{ profile.profileStatusId }}
             </span>
           </td>
         </ng-container>
@@ -123,7 +122,7 @@
       </table>
     </div>
 
-    @if (profileService.filteredProfiles().length === 0) {
+    @if (profiles().length === 0) {
     <div class="text-center py-12 text-gray-500">
       <mat-icon class="text-6xl mb-4">person_off</mat-icon>
       <p class="text-lg">No profiles found</p>
@@ -133,22 +132,22 @@
 
   <!-- Mobile Card View -->
   <div class="lg:hidden space-y-4">
-    @for (profile of profileService.filteredProfiles(); track profile.id) {
+    @for (profile of profiles(); track $index) {
     <div class="bg-white rounded-lg shadow-sm p-4">
       <div class="flex justify-between items-start mb-3">
         <h3 class="text-lg font-semibold text-gray-900">{{ profile.name }}</h3>
         <span
           class="px-3 py-1 rounded-full text-xs font-medium"
-          [ngClass]="getStatusClass(profile.profileStatus)"
+          [ngClass]="getStatusClass(profile.profileStatusId)"
         >
-          {{ profile.profileStatus }}
+          {{ profile.profileStatusId }}
         </span>
       </div>
 
       <div class="space-y-2 text-sm text-gray-600 mb-4">
         <div class="flex">
-          <span class="font-medium w-32">Caste/Raise:</span>
-          <span>{{ profile.caste }}</span>
+          <span class="font-medium w-32">Zodiac Sign:</span>
+          <span>{{ profile.zodiacSign }}</span>
         </div>
         <div class="flex">
           <span class="font-medium w-32">City:</span>

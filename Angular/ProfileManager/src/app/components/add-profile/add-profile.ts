@@ -48,7 +48,7 @@ import { Profile } from '../../models/profile';
   templateUrl: './add-profile.html',
   styleUrl: './add-profile.css',
 })
-export class AddProfileComponent {
+export default class AddProfileComponent {
   profileForm: FormGroup<ProfileForm>;
   comments = signal<string[]>([]);
   newComment = signal<string>('');

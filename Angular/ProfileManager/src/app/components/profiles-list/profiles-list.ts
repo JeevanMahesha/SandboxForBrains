@@ -49,7 +49,7 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
 })
-export class ProfilesList {
+export default class ProfilesList {
   private readonly profilesService = inject(ProfilesService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
@@ -102,7 +102,6 @@ export class ProfilesList {
   ];
 
   constructor() {
-    // this.reloadProfiles();
     effect(() => {
       this.selectedProfileStatus();
       this.selectedStar();
@@ -115,14 +114,6 @@ export class ProfilesList {
   onPageChange(event: PageEvent): void {
     this.pageIndex.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
-  }
-
-  onSearchChange(value: string): void {
-    console.log(value);
-  }
-
-  clearSearch(): void {
-    console.log('Clear search');
   }
 
   onView(profile: Profile): void {

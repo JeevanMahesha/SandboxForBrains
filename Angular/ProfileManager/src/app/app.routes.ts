@@ -1,14 +1,12 @@
 import { Routes } from '@angular/router';
-import { AddProfileComponent } from './components/add-profile/add-profile';
-import { ProfilesList } from './components/profiles-list/profiles-list';
 
 export const routes: Routes = [
   {
     path: '',
-    component: ProfilesList,
+    loadComponent: () => import('./components/profiles-list/profiles-list'),
   },
   {
-    path: 'add-profile',
-    component: AddProfileComponent,
+    path: 'profile',
+    loadComponent: () => import('./components/add-profile/add-profile'),
   },
 ];

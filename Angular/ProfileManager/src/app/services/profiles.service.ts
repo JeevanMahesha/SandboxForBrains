@@ -55,7 +55,7 @@ export class ProfilesService {
     if (filters?.profileStatus) {
       q = query(q, where('profileStatusId', '==', filters.profileStatus));
     } else {
-      q = query(q, where('profileStatusId', '!=', PROFILE_STATUS.REJECTED));
+      q = query(q, where('profileStatusId', '!=', PROFILE_STATUS.REJECTED.toUpperCase()));
     }
 
     if (filters?.starMatchScore !== null && filters?.starMatchScore !== undefined) {

@@ -23,23 +23,21 @@
   <!-- Sort & Filter Section -->
   <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
     <div class="flex flex-col gap-4">
-      <div class="flex flex-col md:flex-row gap-4 justify-center items-center flex-wrap">
+      <div class="flex flex-col md:flex-row gap-4 justify-center items-end flex-wrap">
         <!-- Sort by Date -->
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium text-gray-700">Sort by Date</label>
-          <mat-button-toggle-group
-            [value]="sortDirection()"
-            (change)="onSortChange($event)"
-            aria-label="Sort Options"
-          >
-            @for (option of sortOptions(); track $index) {
-            <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
-            }
-          </mat-button-toggle-group>
-        </div>
+        <mat-button-toggle-group
+          class="min-w-[200px] filter-control"
+          [value]="sortDirection()"
+          (change)="onSortChange($event)"
+          aria-label="Sort Options"
+        >
+          @for (option of sortOptions(); track $index) {
+          <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+          }
+        </mat-button-toggle-group>
 
         <!-- Filter by Profile Status -->
-        <mat-form-field appearance="fill" class="min-w-[200px]">
+        <mat-form-field appearance="fill" class="min-w-[200px] filter-control">
           <mat-label>Filter by Status</mat-label>
           <mat-select
             [value]="selectedProfileStatus()"
@@ -54,7 +52,7 @@
         </mat-form-field>
 
         <!-- Filter by Star Match Score -->
-        <mat-form-field appearance="fill" class="min-w-[200px]">
+        <mat-form-field appearance="fill" class="min-w-[200px] filter-control">
           <mat-label>Filter by Match Score</mat-label>
           <mat-select
             [value]="selectedStar()"
@@ -73,7 +71,7 @@
           mat-flat-button
           color="tertiary"
           (click)="clearFilters()"
-          class="h-14"
+          class="filter-control clear-button"
           [disabled]="!selectedProfileStatus() && !selectedStar() && sortDirection() === 'desc'"
         >
           <mat-icon class="mr-2">filter_alt_off</mat-icon>

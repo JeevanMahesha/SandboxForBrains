@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Import Material prebuilt theme - required for Material components */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Import Tailwind */
+@import 'tailwindcss';
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* Snackbar custom styles */
+.success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: inherit !important;
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-button {
+  color: white !important;
+}

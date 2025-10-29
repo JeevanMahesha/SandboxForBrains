@@ -1,0 +1,299 @@
+@if (isLoading()) {
+  <div class="flex justify-center items-center h-screen">
+    <mat-spinner mode="indeterminate"></mat-spinner>
+  </div>
+} @else {
+  <div class="p-4 md:p-8 bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Matrimony Profiles</h1>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button
+          mat-raised-button
+          color="primary"
+          routerLink="/profile"
+          [queryParams]="{ action: 'add' }"
+          class="flex-1 sm:flex-none bg-teal-600 hover:bg-teal-700"
+        >
+          <mat-icon class="mr-2">person_add</mat-icon>
+          Add Profile
+        </button>
+        <button mat-raised-button color="warn" (click)="logout()" class="flex-1 sm:flex-none">
+          <mat-icon class="mr-2">logout</mat-icon>
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Sort & Filter Section -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row gap-4 justify-center items-end flex-wrap">
+          <!-- Sort by Date -->
+          <mat-button-toggle-group
+            class="min-w-[200px] filter-control"
+            [value]="sortDirection()"
+            (change)="onSortChange($event)"
+            aria-label="Sort Options"
+          >
+            @for (option of sortOptions(); track $index) {
+              <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+
+          <!-- Filter by Profile Status -->
+          <mat-form-field appearance="fill" class="min-w-[200px] filter-control">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select
+              [value]="selectedProfileStatus()"
+              (selectionChange)="onProfileSortChange($event)"
+              aria-label="Profile Status Filter"
+            >
+              <mat-option>All Statuses</mat-option>
+              @for (option of profileSortOption | keyvalue; track $index) {
+                <mat-option [value]="option.key">{{ option.value }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Filter by Star Match Score -->
+          <mat-form-field appearance="fill" class="min-w-[200px] filter-control">
+            <mat-label>Filter by Match Score</mat-label>
+            <mat-select
+              [value]="selectedStar()"
+              (selectionChange)="onStarSortChange($event)"
+              aria-label="Star Score Filter"
+            >
+              <mat-option>All Scores</mat-option>
+              @for (option of starSortOption; track $index) {
+                <mat-option [value]="option">{{ option }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Clear Filters Button -->
+          <button
+            mat-flat-button
+            color="tertiary"
+            (click)="clearFilters()"
+            class="filter-control clear-button"
+            [disabled]="!selectedProfileStatus() && !selectedStar() && sortDirection() === 'desc'"
+          >
+            <mat-icon class="mr-2">filter_alt_off</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Active Filters Display -->
+        @if (selectedProfileStatus() || selectedStar()) {
+          <div class="flex gap-2 flex-wrap justify-center items-center">
+            <span class="text-sm text-gray-600">Active filters:</span>
+            @if (selectedProfileStatus()) {
+              <mat-chip-row (removed)="selectedProfileStatus.set(null); pageIndex.set(0)">
+                Status: {{ getStatusLabel(selectedProfileStatus()) }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+            }
+            @if (selectedStar()) {
+              <mat-chip-row (removed)="selectedStar.set(null); pageIndex.set(0)">
+                Score: {{ selectedStar() }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden hidden lg:block">
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="profiles()" class="w-full">
+          <!-- Serial Number Column -->
+          <ng-container matColumnDef="sNo">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">S.No</th>
+            <td mat-cell *matCellDef="let profile; let i = index">{{ getSerialNumber(i) }}</td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Name</th>
+            <td mat-cell *matCellDef="let profile" class="py-4">{{ profile.name }}</td>
+          </ng-container>
+
+          <!-- Zodiac Sign Column -->
+          <ng-container matColumnDef="zodiacSign">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">
+              Zodiac Sign
+            </th>
+            <td mat-cell *matCellDef="let profile">{{ profile.zodiacSign }}</td>
+          </ng-container>
+
+          <!-- City Column -->
+          <ng-container matColumnDef="city">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">City</th>
+            <td mat-cell *matCellDef="let profile">{{ profile.city }}, {{ profile.state }}</td>
+          </ng-container>
+
+          <!-- Profile Status Column -->
+          <ng-container matColumnDef="profileStatusId">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">
+              Profile Status
+            </th>
+            <td mat-cell *matCellDef="let profile">
+              <span
+                class="px-3 py-1 rounded-full text-xs font-medium"
+                [ngClass]="getStatusClass(profile.profileStatusId)"
+              >
+                {{ profile.profileStatusId }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Star Column -->
+          <ng-container matColumnDef="star">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Star</th>
+            <td mat-cell *matCellDef="let profile">{{ profile.star }}</td>
+          </ng-container>
+
+          <!-- Star Match Score Column -->
+          <ng-container matColumnDef="starMatchScore">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">
+              Star Match Score
+            </th>
+            <td mat-cell *matCellDef="let profile">{{ profile.starMatchScore }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Actions</th>
+            <td mat-cell *matCellDef="let profile">
+              <div class="flex gap-2">
+                <button
+                  mat-icon-button
+                  (click)="onView(profile)"
+                  class="text-gray-600 hover:text-gray-900"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="onEdit(profile)"
+                  class="text-gray-600 hover:text-gray-900"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="onDelete(profile)"
+                  class="text-red-600 hover:text-red-800"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="hover:bg-gray-50"></tr>
+        </table>
+      </div>
+
+      @if (filteredProfiles().length === 0 && !isLoading()) {
+        <div class="text-center py-12 text-gray-500">
+          <mat-icon class="text-6xl mb-4">person_off</mat-icon>
+          <p class="text-lg">No profiles found</p>
+          @if (selectedProfileStatus() || selectedStar()) {
+            <p class="text-sm mt-2">Try adjusting your filters</p>
+          }
+        </div>
+      } @else if (filteredProfiles().length > 0) {
+        <!-- Paginator -->
+        <mat-paginator
+          [length]="filteredProfiles().length"
+          [pageSize]="pageSize()"
+          [pageIndex]="pageIndex()"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+          class="border-t"
+        ></mat-paginator>
+      }
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="lg:hidden space-y-4">
+      @for (profile of profiles(); track $index) {
+        <div class="bg-white rounded-lg shadow-sm p-4">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="text-lg font-semibold text-gray-900">{{ profile.name }}</h3>
+            <span
+              class="px-3 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getStatusClass(profile.profileStatusId)"
+            >
+              {{ profile.profileStatusId }}
+            </span>
+          </div>
+
+          <div class="space-y-2 text-sm text-gray-600 mb-4">
+            <div class="flex">
+              <span class="font-medium w-32">Zodiac Sign:</span>
+              <span>{{ profile.zodiacSign }}</span>
+            </div>
+            <div class="flex">
+              <span class="font-medium w-32">City:</span>
+              <span>{{ profile.city }}, {{ profile.state }}</span>
+            </div>
+            <div class="flex">
+              <span class="font-medium w-32">Star:</span>
+              <span>{{ profile.star }}</span>
+            </div>
+            <div class="flex">
+              <span class="font-medium w-32">Match Score:</span>
+              <span>{{ profile.starMatchScore }}</span>
+            </div>
+          </div>
+
+          <div class="flex gap-2 border-t pt-3">
+            <button mat-stroked-button (click)="onView(profile)" class="flex-1">
+              <mat-icon>visibility</mat-icon>
+              View
+            </button>
+            <button mat-stroked-button (click)="onEdit(profile)" class="flex-1">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-icon-button (click)="onDelete(profile)" class="text-red-600">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center py-12 text-gray-500 bg-white rounded-lg">
+          <mat-icon class="text-6xl mb-4">person_off</mat-icon>
+          <p class="text-lg">No profiles found</p>
+          @if (selectedProfileStatus() || selectedStar()) {
+            <p class="text-sm mt-2">Try adjusting your filters</p>
+          }
+        </div>
+      }
+
+      <!-- Mobile Paginator -->
+      @if (filteredProfiles().length > 0) {
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mt-4">
+          <mat-paginator
+            [length]="filteredProfiles().length"
+            [pageSize]="pageSize()"
+            [pageIndex]="pageIndex()"
+            [pageSizeOptions]="pageSizeOptions"
+            (page)="onPageChange($event)"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+      }
+    </div>
+  </div>
+}

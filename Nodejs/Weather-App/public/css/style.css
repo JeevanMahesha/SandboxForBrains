@@ -1,0 +1,104 @@
+body {
+    color: #fff;
+    overflow-x: hidden;
+    height: 100%;
+    background-image: url('../img/image.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: auto;
+}
+
+.card0 {
+    width: 94%
+}
+
+.card1 {
+    background-color: transparent;
+    padding: 30px 20px 30px 50px;
+}
+
+.image {
+    width: 300px;
+    height: 300px
+}
+
+.large-font {
+    font-size: 70px;
+    font-family: Arial
+}
+
+.fa-sun-o {
+    font-size: 22px
+}
+
+.card2 {
+    background-color: rgba(96, 125, 139, 0.52);
+    padding: 0px 0px 40px 40px
+}
+
+input {
+    background-color: rgba(96, 125, 139, 0.52);
+    padding: 24px 0px 12px 0px !important;
+    width: 80%;
+    box-sizing: border-box;
+    border: none !important;
+    border-bottom: 1px solid rgba(96, 125, 139, 0.52) !important;
+    font-size: 16px !important;
+    color: #fff !important;
+}
+
+input:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #fff !important;
+    outline-width: 0;
+    font-weight: 400
+}
+
+ ::placeholder {
+    color: rgb(251, 249, 249) !important;
+    opacity: 1
+}
+
+ :-ms-input-placeholder {
+    color: #fff !important
+}
+
+ ::-ms-input-placeholder {
+    color: #fff !important
+}
+
+.fa-search {
+    color: rgb(21, 69, 93);
+    background-color: #fff;
+    font-size: 20px;
+    padding: 20px;
+    width: 20%;
+    cursor: pointer
+}
+
+.light-text {
+    color: #B0BEC5
+}
+
+.suggestion:hover {
+    color: #fff;
+    cursor: pointer
+}
+
+.line {
+    height: 1px;
+    background-color: #B0BEC5
+}
+
+@media screen and (max-width: 500px) {
+    .card1 {
+        padding-left: 26px
+    }
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}

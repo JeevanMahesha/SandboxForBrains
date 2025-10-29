@@ -1,0 +1,189 @@
+<app-header></app-header>
+<div class="accordion accordion-flush mg120 border" id="accordionFlushExample">
+  <h3 class="text-center">Performant Angular Applications</h3>
+
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingOne">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapseOne"
+        aria-expanded="false"
+        aria-controls="flush-collapseOne"
+      >
+        Lazy Loading Modules
+      </button>
+    </h2>
+    <div
+      id="flush-collapseOne"
+      class="accordion-collapse collapse"
+      aria-labelledby="flush-headingOne"
+      data-bs-parent="#accordionFlushExample"
+    >
+      <div class="accordion-body">
+        NgModules are eagerly loaded. This means that as soon as the application
+        loads, so do all the NgModules, whether they are immediately necessary
+        or not. For large applications with lots of routes, consider lazy
+        loading —a design pattern that loads NgModules as needed.
+        <strong> Lazy loading helps keep initial bundle sizes smaller, </strong>
+        which in turn helps decrease load times.
+      </div>
+      <img src="../../assets/lazy.png" alt="" srcset="" />
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingTwo">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapseTwo"
+        aria-expanded="false"
+        aria-controls="flush-collapseTwo"
+      >
+        Unsubscribe
+      </button>
+    </h2>
+    <div
+      id="flush-collapseTwo"
+      class="accordion-collapse collapse"
+      aria-labelledby="flush-headingTwo"
+      data-bs-parent="#accordionFlushExample"
+    >
+      <div class="accordion-body">
+        Observables are awesome but you need to <strong>unsubscribe</strong> it
+        once the operation has been completed. If you don’t unsubscribe,
+        <strong>
+          it may lead to memory leak and this may cause a performance
+          issue.</strong
+        >
+      </div>
+      <img
+        src="../../assets/unsubscribe.jpeg"
+        class="img-fluid"
+        alt=""
+        srcset=""
+      />
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingThree">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapseThree"
+        aria-expanded="false"
+        aria-controls="flush-collapseThree"
+      >
+        unused imports
+      </button>
+    </h2>
+    <div
+      id="flush-collapseThree"
+      class="accordion-collapse collapse"
+      aria-labelledby="flush-headingThree"
+      data-bs-parent="#accordionFlushExample"
+    >
+      <div class="accordion-body">
+        As an application grows, we developers tend to forget about the various
+        dependencies our Angular app is using. We forget to check our imports to
+        make sure we're not importing JavaScript dependencies and libraries that
+        we don't use.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingFour">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapseFour"
+        aria-expanded="false"
+        aria-controls="flush-collapseFour"
+      >
+        Async Pipe
+      </button>
+    </h2>
+    <div
+      id="flush-collapseFour"
+      class="accordion-collapse collapse"
+      aria-labelledby="flush-headingFour"
+      data-bs-parent="#accordionFlushExample"
+    >
+      <div class="accordion-body">
+        Angular Pipes are one of most awesome utility. There are lot of
+        predefined pipes in angular which you can make use of in your respective
+        application. <strong>Async Pipe </strong> allows you to use RxJS
+        Observables directly in your respective Angular Templates. if you
+        subscribe to an observable make sure you unsubscribe it. But if you use
+        async pipe you don’t have to worry about it. The best use of Async Pipe
+        is that it allows us to use OnPush Change Detection. Whenever the value
+        of an observable gets changed, we can inform Angular about it and the
+        async pipe takes care of updating the current value.
+      </div>
+      <img src="../../assets/async.png" alt="" srcset="" />
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingFive">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapseFive"
+        aria-expanded="false"
+        aria-controls="flush-collapseFive"
+      >
+        source-map-explorer
+      </button>
+    </h2>
+    <div
+      id="flush-collapseFive"
+      class="accordion-collapse collapse"
+      aria-labelledby="flush-headingFive"
+      data-bs-parent="#accordionFlushExample"
+    >
+      <div class="accordion-body">
+        The source map explorer determines which file each byte in your minified
+        code came from. It shows you an interactive tree-map visualization to
+        help you debug where all the code is coming from.
+      </div>
+      <img src="../../assets/source-map-explorer.png" alt="" srcset="" />
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingSix">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapseSix"
+        aria-expanded="false"
+        aria-controls="flush-collapseSix"
+      >
+        Third party library
+      </button>
+    </h2>
+    <div
+      id="flush-collapseSix"
+      class="accordion-collapse collapse"
+      aria-labelledby="flush-headingSix"
+      data-bs-parent="#accordionFlushExample"
+    >
+      <div class="accordion-body">
+        You can do anything without a third party library that you can do with
+        one, you just need to write more code yourself.
+        <strong> Third party libraries </strong>
+        are only used for convenience.
+      </div>
+      <img
+        src="https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2015/03/1426064914package_manager.jpg"
+        alt=""
+        srcset=""
+      />
+    </div>
+  </div>
+</div>

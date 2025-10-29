@@ -1,0 +1,123 @@
+<app-header></app-header>
+<form
+  *ngIf="!pageLoading"
+  [formGroup]="mealForm"
+  class="bg-gray-800 flex items-center justify-center"
+  (ngSubmit)="submitTheForm()"
+>
+  <div class="container mx-auto">
+    <div class="flex flex-wrap justify-center gap-4">
+      <mat-form-field class="w-full sm:w-1/2 lg:w-1/4 p-2" appearance="fill">
+        <input
+          matInput
+          (dateChange)="updateMealDataValue()"
+          [matDatepicker]="picker1"
+          formControlName="mealDate"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker1"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="w-full sm:w-1/2 lg:w-1/4 p-2">
+        <mat-label>Day</mat-label>
+        <input
+          matInput
+          placeholder="Sunday"
+          formControlName="day"
+          type="text"
+        />
+      </mat-form-field>
+      <mat-form-field class="w-full sm:w-1/2 lg:w-1/4 p-2" appearance="fill">
+        <mat-label>Meal Time</mat-label>
+        <mat-select
+          formControlName="mealTime"
+          (valueChange)="mealTimeChanged($event)"
+        >
+          <mat-option *ngFor="let eachMeal of mealTime" [value]="eachMeal">
+            {{ eachMeal }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="w-full sm:w-1/2 lg:w-1/4 p-2">
+        <mat-label>Total meal Consumed Count</mat-label>
+        <input
+          matInput
+          placeholder="10"
+          formControlName="mealsConsumedTotalCount"
+          type="number"
+        />
+      </mat-form-field>
+      <mat-form-field class="w-full sm:w-1/2 lg:w-1/4 p-2">
+        <mat-label>Amount per meal</mat-label>
+        <input
+          matInput
+          placeholder="50"
+          formControlName="amountPerMeal"
+          type="number"
+        />
+      </mat-form-field>
+      <div class="w-full sm:w-1/2 lg:w-1/4 p-2">
+        <button
+          type="button"
+          (click)="addNewUser()"
+          class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+        >
+          Add Additional user
+        </button>
+      </div>
+      <div
+        class="mt-6 space-y-4"
+        *ngFor="
+          let eachUser of getMealsConsumptionArrayControls;
+          let indexValue = index
+        "
+        formArrayName="mealsConsumptionArray"
+      >
+        <div class="flex items-center" [formGroupName]="indexValue">
+          <mat-form-field class="w-full sm:w-1/2 lg:w-1/3 p-2">
+            <input
+              matInput
+              formControlName="mealsConsumedUser"
+              placeholder="Name"
+              appTrimWhitespace
+            />
+          </mat-form-field>
+          <mat-radio-group
+            class="flex gap-1"
+            aria-label="Select an option"
+            formControlName="mealsConsumed"
+            (change)="mealsConsumedValueChanged()"
+          >
+            <mat-radio-button
+              *ngFor="let eachMealOption of mealsConsumedOptions"
+              [value]="eachMealOption"
+              >{{ eachMealOption }}</mat-radio-button
+            >
+          </mat-radio-group>
+          <button
+            *ngIf="checkMealsConsumedUserDisabled(indexValue)"
+            type="button"
+            (click)="removeMealsConsumedUser(indexValue)"
+            class="text-white ml-3 flex bg-blue-500"
+          >
+            X
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-center">
+      <button
+        type="submit"
+        class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+</form>
+<span *ngIf="pageLoading">
+  <mat-spinner class="spinner"></mat-spinner>
+</span>

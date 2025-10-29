@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            formControlName="userName"
+            class="form-control"
+          />
+          <span *ngIf="checkFormControlIsValid('userName')">
+            <span
+              *ngIf="signUpForm.get('userName').errors['invalidUserNameLength']"
+            >
+              The user name length should be less than or equal to 10
+            </span>
+            <span *ngIf="signUpForm.get('userName').errors['required']">
+              This field is required
+            </span>
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="email">email</label>
+          <input
+            type="text"
+            id="email"
+            formControlName="email"
+            class="form-control"
+          />
+          <span *ngIf="checkFormControlIsValid('email')">
+            Please Enter the email
+          </span>
+        </div>
+        <div class="radio" *ngFor="let gender of genders">
+          <label>
+            <input formControlName="gender" type="radio" [value]="gender" />{{
+              gender
+            }}
+          </label>
+        </div>
+        <div class="form-group" formGroupName="passwordForm">
+          <label for="password">password</label>
+          <input
+            type="password"
+            formControlName="password"
+            class="form-control"
+          />
+          <span *ngIf="checkFormControlIsValid('passwordForm.password')">
+            Please Enter the password
+          </span>
+        </div>
+        <div class="form-group" formArrayName="hobbies">
+          <button class="btn btn-primary" type="button" (click)="onAddHobby()">
+            Add Hobby
+          </button>
+          <div
+            class="form-group"
+            *ngFor="let eachHobbyController of getHobbyControls; let i = index"
+          >
+            <input type="text" [formControlName]="i" class="form-control" />
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="!signUpForm.valid"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

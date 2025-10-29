@@ -1,0 +1,349 @@
+{
+  "id": "a95e7e54-d543-4943-b784-f44eae1d203c",
+  "group": "79655d99dfd49a9a302ae5395bb0f81e194676dcd94d26075efc6a6f242fad92",
+  "version": 3,
+  "results": [
+    {
+      "promptDef": {
+        "name": "coin-flipper",
+        "prompt": "Develop a coin flipper application. It should have a button that says \"Flip Coin\". When clicked, it should show a simple flipping animation and then display whether the result is \"Heads\" or \"Tails\".\n"
+      },
+      "outputFiles": [
+        {
+          "filePath": "tailwind.config.js",
+          "code": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [\n    \"./index.html\",\n    \"./src/**/*.{js,ts,jsx,tsx}\",\n  ],\n  theme: {\n    extend: {\n      keyframes: {\n        fadeInUp: {\n          '0%': { opacity: '0', transform: 'translateY(20px)' },\n          '100%': { opacity: '1', transform: 'translateY(0)' }\n        },\n        coinSpin: {\n          '0%': { transform: 'rotateY(0deg)' },\n          '100%': { transform: 'rotateY(1440deg)' } // 4 full rotations\n        },\n        pulseSlow: {\n          '0%, 100%': { opacity: '1' },\n          '50%': { opacity: '.7' }\n        }\n      },\n      animation: {\n        'fade-in-up-once': 'fadeInUp 0.8s ease-out forwards',\n        'coin-spin': 'coinSpin 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards', // Bouncy ease-out\n        'pulse-slow': 'pulseSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'\n      }\n    }\n  },\n  plugins: []\n}"
+        },
+        {
+          "filePath": "src/index.css",
+          "code": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
+        },
+        {
+          "filePath": "src/app.tsx",
+          "code": "import { createSignal } from \"solid-js\";\n\nexport default function App() {\n  const [result, setResult] = createSignal<\"Heads\" | \"Tails\" | null>(null);\n  const [isFlipping, setIsFlipping] = createSignal(false);\n\n  const flipCoin = () => {\n    setResult(null); // Clear previous result\n    setIsFlipping(true);\n\n    const flipDuration = 2000; // 2 seconds for the animation\n\n    setTimeout(() => {\n      const outcome = Math.random() < 0.5 ? \"Heads\" : \"Tails\";\n      setResult(outcome);\n      setIsFlipping(false);\n    }, flipDuration);\n  };\n\n  return (\n    <div class=\"min-h-screen bg-gradient-to-br from-purple-900 to-indigo-800 flex flex-col items-center justify-center p-4 font-sans\">\n      <h1 class=\"text-6xl md:text-7xl font-extrabold text-white mb-12 drop-shadow-lg text-center animate-fade-in-up-once leading-tight\">\n        The Ultimate Coin Flipper\n      </h1>\n\n      <div class=\"relative w-48 h-48 mb-12\">\n        <div\n          class={`absolute inset-0 rounded-full flex items-center justify-center\n            bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 shadow-2xl\n            border-4 border-yellow-300 transform transition-transform duration-300\n            ${isFlipping() ? \"animate-coin-spin\" : \"\"} // Apply animation when flipping\n          `}\n        >\n          <span class=\"text-white text-7xl font-black italic drop-shadow-lg opacity-70\">\n            {isFlipping() ? \"✨\" : \"\"} {/* Show a sparkle during flip */}\n          </span>\n        </div>\n      </div>\n\n      <button\n        onClick={flipCoin}\n        disabled={isFlipping()}\n        class={`\n          px-12 py-5 text-2xl md:text-3xl font-bold rounded-full\n          bg-gradient-to-r from-emerald-500 to-teal-600 text-white\n          shadow-lg hover:shadow-xl transform transition-all duration-300\n          ${isFlipping()\n            ? \"opacity-70 cursor-not-allowed animate-pulse-slow\"\n            : \"hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300\"}\n        `}\n      >\n        {isFlipping() ? \"Flipping...\" : \"Flip Coin\"}\n      </button>\n\n      {result() && (\n        <div\n          class=\"mt-12 text-7xl md:text-8xl font-extrabold drop-shadow-lg\n            bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-rose-500\n            animate-fade-in-up-once\"\n        >\n          {result()}\n        </div>\n      )}\n    </div>\n  );\n}"
+        }
+      ],
+      "finalAttempt": {
+        "buildResult": {
+          "status": "success",
+          "message": "Application built successfully!",
+          "safetyWebReportJson": [
+            {
+              "summaryVersion": "0.1.0",
+              "packageName": "solid-example",
+              "packageVersion": "__VERSION_NOT_FOUND__",
+              "packagePath": ".",
+              "violations": []
+            },
+            {
+              "summaryVersion": "0.1.0",
+              "packageName": "solid-example-prod",
+              "packageVersion": "0.0.0",
+              "packagePath": ".output/server",
+              "violations": []
+            }
+          ]
+        },
+        "serveTestingResult": {
+          "runtimeErrors": "",
+          "userJourneyAgentOutput": null
+        },
+        "outputFiles": [
+          {
+            "filePath": "tailwind.config.js",
+            "code": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [\n    \"./index.html\",\n    \"./src/**/*.{js,ts,jsx,tsx}\",\n  ],\n  theme: {\n    extend: {\n      keyframes: {\n        fadeInUp: {\n          '0%': { opacity: '0', transform: 'translateY(20px)' },\n          '100%': { opacity: '1', transform: 'translateY(0)' }\n        },\n        coinSpin: {\n          '0%': { transform: 'rotateY(0deg)' },\n          '100%': { transform: 'rotateY(1440deg)' } // 4 full rotations\n        },\n        pulseSlow: {\n          '0%, 100%': { opacity: '1' },\n          '50%': { opacity: '.7' }\n        }\n      },\n      animation: {\n        'fade-in-up-once': 'fadeInUp 0.8s ease-out forwards',\n        'coin-spin': 'coinSpin 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards', // Bouncy ease-out\n        'pulse-slow': 'pulseSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'\n      }\n    }\n  },\n  plugins: []\n}"
+          },
+          {
+            "filePath": "src/index.css",
+            "code": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
+          },
+          {
+            "filePath": "src/app.tsx",
+            "code": "import { createSignal } from \"solid-js\";\n\nexport default function App() {\n  const [result, setResult] = createSignal<\"Heads\" | \"Tails\" | null>(null);\n  const [isFlipping, setIsFlipping] = createSignal(false);\n\n  const flipCoin = () => {\n    setResult(null); // Clear previous result\n    setIsFlipping(true);\n\n    const flipDuration = 2000; // 2 seconds for the animation\n\n    setTimeout(() => {\n      const outcome = Math.random() < 0.5 ? \"Heads\" : \"Tails\";\n      setResult(outcome);\n      setIsFlipping(false);\n    }, flipDuration);\n  };\n\n  return (\n    <div class=\"min-h-screen bg-gradient-to-br from-purple-900 to-indigo-800 flex flex-col items-center justify-center p-4 font-sans\">\n      <h1 class=\"text-6xl md:text-7xl font-extrabold text-white mb-12 drop-shadow-lg text-center animate-fade-in-up-once leading-tight\">\n        The Ultimate Coin Flipper\n      </h1>\n\n      <div class=\"relative w-48 h-48 mb-12\">\n        <div\n          class={`absolute inset-0 rounded-full flex items-center justify-center\n            bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 shadow-2xl\n            border-4 border-yellow-300 transform transition-transform duration-300\n            ${isFlipping() ? \"animate-coin-spin\" : \"\"} // Apply animation when flipping\n          `}\n        >\n          <span class=\"text-white text-7xl font-black italic drop-shadow-lg opacity-70\">\n            {isFlipping() ? \"✨\" : \"\"} {/* Show a sparkle during flip */}\n          </span>\n        </div>\n      </div>\n\n      <button\n        onClick={flipCoin}\n        disabled={isFlipping()}\n        class={`\n          px-12 py-5 text-2xl md:text-3xl font-bold rounded-full\n          bg-gradient-to-r from-emerald-500 to-teal-600 text-white\n          shadow-lg hover:shadow-xl transform transition-all duration-300\n          ${isFlipping()\n            ? \"opacity-70 cursor-not-allowed animate-pulse-slow\"\n            : \"hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300\"}\n        `}\n      >\n        {isFlipping() ? \"Flipping...\" : \"Flip Coin\"}\n      </button>\n\n      {result() && (\n        <div\n          class=\"mt-12 text-7xl md:text-8xl font-extrabold drop-shadow-lg\n            bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-rose-500\n            animate-fade-in-up-once\"\n        >\n          {result()}\n        </div>\n      )}\n    </div>\n  );\n}"
+          }
+        ],
+        "repairAttempts": 0,
+        "axeRepairAttempts": 0
+      },
+      "score": {
+        "totalPoints": 100,
+        "maxOverallPoints": 100,
+        "categories": [
+          {
+            "id": "high-impact",
+            "name": "High Impact",
+            "points": 60,
+            "maxPoints": 60,
+            "assessments": [
+              {
+                "state": 0,
+                "name": "Code builds successfully",
+                "description": "Ensures the code build without errors.",
+                "id": "common-successful-build",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 0,
+                "name": "SafetyWeb Violations",
+                "description": "Checks for TrustedTypes and CSP incompatible coding patterns.",
+                "id": "safety-web",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass\nNo safety-web violations found."
+              },
+              {
+                "state": 0,
+                "name": "No runtime exceptions",
+                "description": "Ensures the app doesn't have runtime exceptions.",
+                "id": "common-no-runtime-errors",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 0,
+                "name": "Sufficient Code Size (over 50b)",
+                "description": "Ensures the generated code is not trivially small (e.g. < 50b).",
+                "id": "common-generated-code-size",
+                "scoreReduction": "30%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 0,
+                "name": "Sufficient number of generated files",
+                "description": "Ensures that the LLM produced at least one file.",
+                "id": "common-generated-file-count",
+                "scoreReduction": "100%",
+                "successPercentage": 1,
+                "category": "high-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 1,
+                "name": "CSP Violations",
+                "description": "Checks for Content Security Policy violations, excluding Trusted Types.",
+                "id": "csp-violations",
+                "category": "high-impact",
+                "message": "CSP violation data not available for this run."
+              }
+            ]
+          },
+          {
+            "id": "medium-impact",
+            "name": "Medium Impact",
+            "points": 30,
+            "maxPoints": 30,
+            "assessments": [
+              {
+                "state": 0,
+                "name": "Code Quality (LLM-rated)",
+                "description": "Rates the app's source code via LLM",
+                "id": "common-autorater-code-quality",
+                "scoreReduction": "30%",
+                "successPercentage": 1,
+                "category": "medium-impact",
+                "message": "Pass\nA highly functional and aesthetically pleasing coin flipper application, demonstrating excellent use of Solid.js and Tailwind CSS for a smooth user experience."
+              },
+              {
+                "state": 1,
+                "name": "UI & Visual appearance (LLM-Rated)",
+                "description": "Rates the app based on its visuals (UI visuals and feature completeness).",
+                "id": "common-autorater-visuals",
+                "category": "medium-impact",
+                "message": "No screenshot available"
+              },
+              {
+                "state": 0,
+                "name": "Valid CSS",
+                "description": "Ensures that the generated CSS code is valid",
+                "id": "common-valid-css",
+                "scoreReduction": "20%",
+                "successPercentage": 1,
+                "category": "medium-impact",
+                "message": "Pass"
+              },
+              {
+                "state": 1,
+                "name": "Axe Accessibility Violations",
+                "description": "Checks for accessibility violations using the Axe-core engine.",
+                "id": "axe-a11y",
+                "category": "medium-impact",
+                "message": "Axe testing was not performed."
+              },
+              {
+                "state": 1,
+                "name": "User Journey validation",
+                "description": "Ensures that all User Journeys are working in the generated app",
+                "id": "user-journey-tests",
+                "category": "medium-impact",
+                "message": "Was not enabled for this run"
+              },
+              {
+                "state": 1,
+                "name": "No-Inner-HTML-Bindings",
+                "description": "Checks that no templates contain bindings that bypass sanitization, like Angular's `[innerHTML]`.",
+                "id": "no-inner-html-bindings",
+                "category": "medium-impact",
+                "message": "Does not match any files"
+              },
+              {
+                "state": 0,
+                "name": "No-Dangerously-Set-Inner-HTML",
+                "description": "Checks that no templates contain bindings that bypass sanitization, like React's `dangerouslySetInnerHTML`.",
+                "id": "no-dangerously-set-inner-html",
+                "scoreReduction": "50%",
+                "successPercentage": 1,
+                "category": "medium-impact",
+                "message": "Pass"
+              }
+            ]
+          },
+          {
+            "id": "low-impact",
+            "name": "Low Impact",
+            "points": 10,
+            "maxPoints": 10,
+            "assessments": []
+          }
+        ],
+        "tokenUsage": {
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "totalTokens": 0
+        }
+      },
+      "repairAttempts": 0,
+      "attemptDetails": [
+        {
+          "outputFiles": [
+            {
+              "filePath": "tailwind.config.js",
+              "code": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [\n    \"./index.html\",\n    \"./src/**/*.{js,ts,jsx,tsx}\",\n  ],\n  theme: {\n    extend: {\n      keyframes: {\n        fadeInUp: {\n          '0%': { opacity: '0', transform: 'translateY(20px)' },\n          '100%': { opacity: '1', transform: 'translateY(0)' }\n        },\n        coinSpin: {\n          '0%': { transform: 'rotateY(0deg)' },\n          '100%': { transform: 'rotateY(1440deg)' } // 4 full rotations\n        },\n        pulseSlow: {\n          '0%, 100%': { opacity: '1' },\n          '50%': { opacity: '.7' }\n        }\n      },\n      animation: {\n        'fade-in-up-once': 'fadeInUp 0.8s ease-out forwards',\n        'coin-spin': 'coinSpin 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards', // Bouncy ease-out\n        'pulse-slow': 'pulseSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'\n      }\n    }\n  },\n  plugins: []\n}"
+            },
+            {
+              "filePath": "src/index.css",
+              "code": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
+            },
+            {
+              "filePath": "src/app.tsx",
+              "code": "import { createSignal } from \"solid-js\";\n\nexport default function App() {\n  const [result, setResult] = createSignal<\"Heads\" | \"Tails\" | null>(null);\n  const [isFlipping, setIsFlipping] = createSignal(false);\n\n  const flipCoin = () => {\n    setResult(null); // Clear previous result\n    setIsFlipping(true);\n\n    const flipDuration = 2000; // 2 seconds for the animation\n\n    setTimeout(() => {\n      const outcome = Math.random() < 0.5 ? \"Heads\" : \"Tails\";\n      setResult(outcome);\n      setIsFlipping(false);\n    }, flipDuration);\n  };\n\n  return (\n    <div class=\"min-h-screen bg-gradient-to-br from-purple-900 to-indigo-800 flex flex-col items-center justify-center p-4 font-sans\">\n      <h1 class=\"text-6xl md:text-7xl font-extrabold text-white mb-12 drop-shadow-lg text-center animate-fade-in-up-once leading-tight\">\n        The Ultimate Coin Flipper\n      </h1>\n\n      <div class=\"relative w-48 h-48 mb-12\">\n        <div\n          class={`absolute inset-0 rounded-full flex items-center justify-center\n            bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 shadow-2xl\n            border-4 border-yellow-300 transform transition-transform duration-300\n            ${isFlipping() ? \"animate-coin-spin\" : \"\"} // Apply animation when flipping\n          `}\n        >\n          <span class=\"text-white text-7xl font-black italic drop-shadow-lg opacity-70\">\n            {isFlipping() ? \"✨\" : \"\"} {/* Show a sparkle during flip */}\n          </span>\n        </div>\n      </div>\n\n      <button\n        onClick={flipCoin}\n        disabled={isFlipping()}\n        class={`\n          px-12 py-5 text-2xl md:text-3xl font-bold rounded-full\n          bg-gradient-to-r from-emerald-500 to-teal-600 text-white\n          shadow-lg hover:shadow-xl transform transition-all duration-300\n          ${isFlipping()\n            ? \"opacity-70 cursor-not-allowed animate-pulse-slow\"\n            : \"hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300\"}\n        `}\n      >\n        {isFlipping() ? \"Flipping...\" : \"Flip Coin\"}\n      </button>\n\n      {result() && (\n        <div\n          class=\"mt-12 text-7xl md:text-8xl font-extrabold drop-shadow-lg\n            bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-rose-500\n            animate-fade-in-up-once\"\n        >\n          {result()}\n        </div>\n      )}\n    </div>\n  );\n}"
+            }
+          ],
+          "usage": {
+            "inputTokens": 385,
+            "outputTokens": 1256,
+            "totalTokens": 7640
+          },
+          "reasoning": "**Here's the plan I've come up with for a Solid.js coin flipper application:**\n\nI'll start with a `src/app.tsx` file that houses an `App` component. This component will have a \"Flip Coin\" button, a display for the result (\"Heads\" or \"Tails\"), and a flipping animation. I'll use Tailwind CSS for styling and TypeScript for type safety.\n\nThe `src/app.tsx` file will:\n1.  Import `createSignal` from \"solid-js\".\n2.  Define the `App` component.\n3.  Use Solid.js state for the `result` (initially null or empty) and `isFlipping` (a boolean to control the animation).\n4.  Implement a `flipCoin` function:\n    *   It will set `isFlipping` to `true`.\n    *   After a short delay (for animation duration), a random \"Heads\" or \"Tails\" will be determined.\n    *   The `result` state will be updated.\n    *   `isFlipping` will be set back to `false`.\n5.  The JSX structure will have a main container styled with flexbox for centering.\n6.  The \"Flip Coin\" button will be disabled when `isFlipping` is true.\n7.  A \"coin\" element (a `div`) will visually spin during the flip. I'll use Tailwind's `transform` and `transition` utilities, and define custom keyframes for the animation. It should be a single div spinning.\n8.  The result will be displayed.\n\n**Animation Approach:**\n\nI've decided to go with a single coin element, using a spin animation. When `isFlipping` is true, the animation will run for a set duration, then stop, displaying the final result. The coin can just spin on the Y axis with a nice `cubic-bezier` timing.\n\n**Tailwind Animation:**\n\nI'll create a `tailwind.config.js` with the keyframes for the \"coinSpin\" animation. When `isFlipping` is true, the `animate-coin-spin` class will be applied, making the coin spin. Once `isFlipping` becomes false, the spinning will stop, showing the final result.\n\nThe visual during the flip will be very simple, maybe some sparkles.\nThe result text will appear below the spinning coin.\n\nI'll need to define custom keyframes for the `coinSpin` animation in `tailwind.config.js`.\n\n**Revised Visuals and Animations:**\n\nThe coin will be a static, beautiful gold circle. During the flip, it'll have an `animate-coin-spin` class, indicating activity. The result will display separately after the spin.\n\n**Final Tailwind Config and App Component:**\n\nI'll provide the `tailwind.config.js` file with the custom animations and the `src/app.tsx` component, which will be complete and runnable. I've added a few nice touches:  a bouncy spin for the coin, fade-in animations for the title and result text, and an animated, styled button.\n",
+          "buildResult": {
+            "status": "success",
+            "message": "Application built successfully!",
+            "safetyWebReportJson": [
+              {
+                "summaryVersion": "0.1.0",
+                "packageName": "solid-example",
+                "packageVersion": "__VERSION_NOT_FOUND__",
+                "packagePath": ".",
+                "violations": []
+              },
+              {
+                "summaryVersion": "0.1.0",
+                "packageName": "solid-example-prod",
+                "packageVersion": "0.0.0",
+                "packagePath": ".output/server",
+                "violations": []
+              }
+            ]
+          },
+          "serveTestingResult": {
+            "runtimeErrors": "",
+            "userJourneyAgentOutput": null
+          },
+          "attempt": 0
+        }
+      ],
+      "userJourneys": {
+        "usage": {
+          "inputTokens": 1829,
+          "outputTokens": 408,
+          "totalTokens": 3438
+        },
+        "result": [
+          {
+            "name": "Perform a Coin Flip and View Result",
+            "steps": [
+              "Navigate to the application URL.",
+              "Verify that the title 'The Ultimate Coin Flipper' is visible.",
+              "Verify that the 'Flip Coin' button is visible and enabled.",
+              "Verify that no result (Heads/Tails) is initially displayed.",
+              "Click the 'Flip Coin' button.",
+              "Verify that the 'Flip Coin' button text changes to 'Flipping...' and it becomes disabled.",
+              "Verify that the coin element displays a flipping animation.",
+              "Wait for the animation to complete (approximately 2 seconds).",
+              "Verify that the 'Flipping...' button text reverts to 'Flip Coin' and the button becomes enabled.",
+              "Verify that the coin element animation stops.",
+              "Verify that either 'Heads' or 'Tails' is displayed as the result."
+            ]
+          },
+          {
+            "name": "Perform Multiple Coin Flips",
+            "steps": [
+              "Perform a successful coin flip, verifying the display of either 'Heads' or 'Tails' as described in the previous journey.",
+              "Verify that the 'Flip Coin' button is enabled again.",
+              "Click the 'Flip Coin' button a second time.",
+              "Verify that the previously displayed result ('Heads' or 'Tails') is cleared from the screen.",
+              "Verify that the 'Flip Coin' button text changes to 'Flipping...' and it becomes disabled again.",
+              "Verify that the coin element starts its flipping animation again.",
+              "Wait for the second animation to complete.",
+              "Verify that a new result (either 'Heads' or 'Tails') is displayed, which may or may not be the same as the first result."
+            ]
+          }
+        ]
+      },
+      "axeRepairAttempts": 0,
+      "toolLogs": []
+    }
+  ],
+  "details": {
+    "summary": {
+      "model": "gemini-2.5-flash",
+      "environmentId": "solid-js-example",
+      "displayName": "Solid.js (Example)",
+      "framework": {
+        "fullStackFramework": {
+          "id": "solid",
+          "displayName": "Solid.js"
+        },
+        "clientSideFramework": {
+          "id": "solid",
+          "displayName": "Solid.js"
+        }
+      },
+      "aiSummary": "<p>The report indicates that the <code>coin-flipper</code> app was generated successfully with no failed checks or build errors.</p>\n<ul>\n<li><strong>Common Failures</strong>: None observed in this report.</li>\n<li><strong>Low-Hanging Fruit</strong>: Not applicable as the app is already perfect.</li>\n</ul>\n",
+      "completionStats": {
+        "allPromptsCount": 1,
+        "failedPrompts": []
+      },
+      "usage": {
+        "inputTokens": 1099,
+        "outputTokens": 1312,
+        "totalTokens": 8410
+      },
+      "runner": {
+        "id": "genkit",
+        "displayName": "Genkit"
+      }
+    },
+    "timestamp": "2025-10-20T05:04:47.506Z",
+    "reportName": "2025-10-20T05-03-17-105Z",
+    "systemPromptGeneration": "Follow instructions below CAREFULLY:\n\n- Code MUST be implemented in Solid.js.\n- Put the component code inside `src/app.tsx`\n- The component MUST always be named \"App\" and be exported as a default (e.g. `export default function App`).\n- Use Tailwind CSS\n- Generate TSX (TypeScript) code\n- Completeness: include all necessary code to run independently\n- Use comments sparingly and only for complex parts of the code\n- Make sure the generated code is **complete** and **runnable**\n- Make sure the generated code contains a **complete** implementation of the `App` function\n- Use functional components, hooks, and modern patterns\n- Aesthetics are **crucial**, make the application look amazing\n\nRemember! AESTHETICS ARE VERY IMPORTANT. All web apps should LOOK AMAZING and have GREAT FUNCTIONALITY!\n\n\nYou are an expert in Solid.js, JavaScript, TypeScript, CSS, HTML, and scalable web application development.\nYou write functional, maintainable, performant, and accessible code following web development best practices.\n\n### TypeScript Best Practices\n\n- Use strict type checking\n- Prefer type inference when the type is obvious\n- Avoid the `any` type; use `unknown` when type is uncertain\n\nFollow instructions below CAREFULLY:\n\n- Include all necessary code to run independently\n- Use comments sparingly and only for complex parts of the code\n- Make sure the generated code is **complete** and **runnable**\n- Aesthetics are **crucial**, make the application look amazing!\n\n<!-- TODO: add Solid-specific best practices -->\n",
+    "systemPromptRepair": "Please fix the given errors and return the corrected code.",
+    "labels": []
+  }
+}

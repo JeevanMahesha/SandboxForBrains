@@ -1,0 +1,9 @@
+<mat-card style="width: 50%; margin: 0px 20px 30px 50px">
+    <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" [(ngModel)]="userData">
+    </mat-form-field>
+    <h2>{{userData}}</h2>
+    <button mat-raised-button color="primary" (click)="getNameFun()">Get Name</button>
+    <p>{{userName}}</p>
+</mat-card>

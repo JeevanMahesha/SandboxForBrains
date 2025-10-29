@@ -1,0 +1,86 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404</title>
+    <style>
+   ::-moz-selection {
+  background: transparent;
+  color: #03a9f4;
+}
+::selection {
+  background: transparent;
+  color: #03a9f4;
+}
+
+body {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  max-width: 100%;
+}
+
+.container {
+  max-width: 100%;
+}
+
+.hero {
+  margin: 0;
+  font-size: 6em;
+  font-weight: bold;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+
+  span {
+    display: block;
+    word-wrap: break-word;
+  }
+}
+
+.links {
+  color: #666;
+  margin: 4em 0 0;
+}
+a {
+    color: #666;
+    text-decoration: none;
+    font-size:2em;
+
+}
+
+
+@media (max-width: 720px) {
+  .hero {
+    font-size: 4em;
+  }
+}
+    </style>
+</head>
+
+<body>
+ 
+<main>
+  <div class="container">
+    <p class="hero">
+      <span class="bigger">{{errorText}}</span>
+     
+    </p>
+    <p class="links">
+      <a href="/">Home</a>
+    </p>
+  </div>
+</main>
+    
+</body>
+
+</html>

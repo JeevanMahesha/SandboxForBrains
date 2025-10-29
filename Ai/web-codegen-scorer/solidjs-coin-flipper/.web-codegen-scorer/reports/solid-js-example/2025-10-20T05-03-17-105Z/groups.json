@@ -1,0 +1,77 @@
+[
+  {
+    "id": "79655d99dfd49a9a302ae5395bb0f81e194676dcd94d26075efc6a6f242fad92",
+    "version": 3,
+    "displayName": "Solid.js (Example)",
+    "timestamp": "2025-10-20T05:04:47.506Z",
+    "totalPoints": 100,
+    "maxOverallPoints": 100,
+    "appsCount": 1,
+    "labels": [],
+    "environmentId": "solid-js-example",
+    "framework": {
+      "fullStackFramework": {
+        "id": "solid",
+        "displayName": "Solid.js"
+      },
+      "clientSideFramework": {
+        "id": "solid",
+        "displayName": "Solid.js"
+      }
+    },
+    "model": "gemini-2.5-flash",
+    "stats": {
+      "builds": {
+        "successfulInitialBuilds": 1,
+        "successfulBuildsAfterRepair": 0,
+        "failedBuilds": 0
+      },
+      "buckets": [
+        {
+          "name": "Excellent",
+          "nameWithLabels": "Excellent (98-100%)",
+          "min": 98,
+          "max": 100,
+          "id": "excellent",
+          "appsCount": 1
+        },
+        {
+          "name": "Great",
+          "nameWithLabels": "Great (85-97%)",
+          "min": 85,
+          "max": 97,
+          "id": "great",
+          "appsCount": 0
+        },
+        {
+          "name": "Good",
+          "nameWithLabels": "Good (71-84%)",
+          "min": 71,
+          "max": 84,
+          "id": "good",
+          "appsCount": 0
+        },
+        {
+          "name": "Poor",
+          "nameWithLabels": "Poor (0-70%)",
+          "min": 0,
+          "max": 70,
+          "id": "poor",
+          "appsCount": 0
+        }
+      ],
+      "runtime": {
+        "appsWithErrors": 0,
+        "appsWithoutErrors": 1
+      },
+      "security": {
+        "appsWithErrors": 0,
+        "appsWithoutErrors": 1
+      }
+    },
+    "runner": {
+      "id": "genkit",
+      "displayName": "Genkit"
+    }
+  }
+]

@@ -1,0 +1,152 @@
+body {
+  background-color: #fff8e4;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  width: 48em;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  padding: 30px;
+  text-align: left;
+}
+
+.card__image {
+  margin: 0px 20px 20px 0px;
+  width: 100%;
+}
+
+.card img {
+  border-radius: 10px;
+  width: 100%;
+}
+
+.card__title {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+
+.card__description {
+  font-size: 1em;
+  color: #7a7975;
+  font-weight: 400;
+  margin-bottom: 10px;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+
+.preparation-section {
+  background-color: #faf2fd;
+  border-radius: 10px;
+  padding: 5px 10px;
+  h3 {
+    margin-left: 15px;
+    font-size: 1.2em;
+    color: rebeccapurple;
+    margin-bottom: 20px;
+    font-family: "Courier New", Courier, monospace;
+  }
+  li {
+    margin-top: 0.5em;
+    margin-left: -5px;
+    text-indent: 1em;
+    font-family: monospace;
+    color: #7a7975;
+  }
+  li::marker {
+    color: rebeccapurple;
+  }
+  span {
+    font-weight: bolder;
+    font-family: "Times New Roman", Times, serif;
+    color: #4d4c4c;
+  }
+}
+
+.ingredient-section {
+  h3 {
+    color: saddlebrown;
+    font-size: 1.5em;
+  }
+  li {
+    font-family: monospace;
+    color: #7a7975;
+    margin-top: 0.5em;
+    margin-left: -1.2em;
+    text-indent: 1.5em;
+  }
+  li::marker {
+    color: saddlebrown;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid #d3d3d3;
+    margin: 1em 0;
+  }
+}
+
+.instruction_section {
+  h3 {
+    color: saddlebrown;
+    font-size: 1.5em;
+  }
+  li {
+    font-family: monospace;
+    color: #7a7975;
+    margin-top: 0.5em;
+    margin-left: -1.2em;
+    text-indent: 0.5em;
+  }
+  li::marker {
+    color: saddlebrown;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid #d3d3d3;
+    margin: 1em 0;
+  }
+  span {
+    font-weight: bolder;
+    font-family: "Times New Roman", Times, serif;
+    color: #4d4c4c;
+  }
+}
+
+.nutrition_section {
+  h3 {
+    color: saddlebrown;
+    font-size: 1.5em;
+  }
+  p {
+    font-family: monospace;
+    color: #7a7975;
+    margin-top: 0.5em;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+  }
+
+  th,
+  td {
+    color: #4d4c4c;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  td {
+    font-weight: bold;
+    color: #723d18;
+  }
+}

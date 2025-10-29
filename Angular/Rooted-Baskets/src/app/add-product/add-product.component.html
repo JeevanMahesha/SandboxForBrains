@@ -1,0 +1,82 @@
+<section class="bg-white">
+  <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
+    <aside
+      class="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6"
+    >
+      <img
+        alt=""
+        src="
+        https://images.unsplash.com/photo-1664138303860-11d1abbbc1ee?q=80&w=2304&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+        "
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+    </aside>
+
+    <main
+      class="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6"
+    >
+      <div class="max-w-l lg:max-w-3l">
+        <h1
+          class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl"
+        >
+          Welcome to RootedBaskets
+        </h1>
+
+        <p class="mt-4 leading-relaxed text-gray-500">
+          Add a new product to the store
+        </p>
+
+        <form
+          [formGroup]="productForm"
+          (ngSubmit)="onSubmit()"
+          class="mt-8 grid grid-cols-6 gap-6"
+        >
+          <div class="col-span-6 sm:col-span-3">
+            <mat-form-field class="example-full-width">
+              <mat-label>Product Name</mat-label>
+              <input
+                type="text"
+                formControlName="productName"
+                matInput
+                placeholder="Tomato"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-span-6 sm:col-span-3">
+            <mat-form-field class="example-full-width">
+              <mat-label>Product Amount</mat-label>
+              <input
+                type="number"
+                formControlName="productPrice"
+                matInput
+                placeholder="10"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-span-6">
+            <mat-form-field>
+              <mat-label>Product Type</mat-label>
+              <mat-select formControlName="productType">
+                @for (food of productTypes(); track food) {
+                <mat-option [value]="food">{{ food }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <button
+              type="submit"
+              [disabled]="productForm.invalid"
+              class="inline-block rounded border border-gray-600 px-12 py-3 text-sm font-medium text-gray-600 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring active:bg-gray-500"
+            >
+              @if (saveSpinner()) {
+              <mat-spinner diameter="30"></mat-spinner>
+              }@else { Add Product }
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</section>

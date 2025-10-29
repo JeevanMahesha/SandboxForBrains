@@ -42,7 +42,7 @@ export class ProfilesService {
    * Get filtered profiles from Firestore with sorting and filtering from backend
    */
   getFilteredProfiles(
-    sortField: string = 'createdAt',
+    sortField = 'createdAt',
     sortDirection: 'asc' | 'desc' = 'desc',
     filters?: {
       profileStatus?: keyof typeof PROFILE_STATUS | null;

@@ -10,10 +10,16 @@
     "firebase:deploy": "firebase deploy --only hosting:profilearc",
     "prepare": "cd ../.. && husky Angular/ProfileManager/.husky",
     "format": "prettier --write \"src/**/*.{ts,html,css,scss,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\""
+    "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\"",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
   },
   "lint-staged": {
-    "*.{ts,js,html,css,scss,json}": [
+    "*.{ts,html}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,json}": [
       "prettier --write"
     ]
   },
@@ -48,10 +54,17 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-eslint/builder": "^20.5.0",
+    "@angular-eslint/eslint-plugin": "^20.5.0",
+    "@angular-eslint/eslint-plugin-template": "^20.5.0",
+    "@angular-eslint/schematics": "^20.5.0",
+    "@angular-eslint/template-parser": "^20.5.0",
     "@angular/build": "^20.3.7",
     "@angular/cli": "^20.3.7",
     "@angular/compiler-cli": "^20.3.0",
     "@types/jasmine": "~5.1.0",
+    "eslint": "^9.38.0",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "firebase-tools": "^14.22.0",
     "husky": "^9.1.7",
     "jasmine-core": "~5.9.0",
@@ -62,6 +75,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.46.2"
   }
 }

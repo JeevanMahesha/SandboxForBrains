@@ -13,8 +13,7 @@ import {
   onAuthStateChanged,
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { from, Observable, firstValueFrom } from 'rxjs';
-import { filter, take, timeout } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -83,14 +82,14 @@ export class AuthService {
    * @param forceRefresh - Force refresh the token even if it hasn't expired
    * @returns Promise with the ID token or null
    */
-  async getIdToken(forceRefresh: boolean = false): Promise<string | null> {
+  async getIdToken(forceRefresh = false): Promise<string | null> {
     const user = this.auth.currentUser;
     if (!user) {
       return null;
     }
     try {
       return await user.getIdToken(forceRefresh);
-    } catch (error) {
+    } catch {
       return null;
     }
   }

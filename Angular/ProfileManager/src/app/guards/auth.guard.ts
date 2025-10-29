@@ -31,7 +31,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
 /**
  * Login Guard - Prevents authenticated users from accessing login page
  */
-export const loginGuard: CanActivateFn = async (route, state) => {
+export const loginGuard: CanActivateFn = async (_route, _state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 

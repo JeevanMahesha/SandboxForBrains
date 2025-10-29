@@ -1,17 +1,13 @@
 import {
   Component,
   inject,
-  Signal,
   signal,
   computed,
-  ViewChild,
-  afterNextRender,
   effect,
   DestroyRef,
 } from '@angular/core';
-import { CommonModule, KeyValuePipe, NgClass } from '@angular/common';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { KeyValuePipe, NgClass } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,13 +15,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Router, RouterLink } from '@angular/router';
 import { Profile, ProfileColumn } from '../../models/profile';
 import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
 import { ProfilesService } from '../../services/profiles.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize, tap } from 'rxjs';
+import { finalize } from 'rxjs';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { OrderByDirection } from '@angular/fire/firestore';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';

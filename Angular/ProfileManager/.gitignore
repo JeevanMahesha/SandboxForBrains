@@ -44,3 +44,6 @@ Thumbs.db
 
 # Environment variables with real credentials (never commit)
 src/environments/environment.ts
+
+#Firebase
+.firebase/

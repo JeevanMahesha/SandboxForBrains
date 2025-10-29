@@ -73,7 +73,7 @@ export class AuthService {
           this.authInitialized.set(true);
           unsubscribe();
           resolve();
-        }
+        },
       );
     });
   }

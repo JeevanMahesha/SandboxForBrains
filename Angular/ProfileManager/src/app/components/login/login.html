@@ -14,10 +14,13 @@
           [class.invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
         />
         @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
-        <span class="error-text">
-          @if (loginForm.controls.email.errors?.['required']) { Email is required } @else if
-          (loginForm.controls.email.errors?.['email']) { Please enter a valid email }
-        </span>
+          <span class="error-text">
+            @if (loginForm.controls.email.errors?.['required']) {
+              Email is required
+            } @else if (loginForm.controls.email.errors?.['email']) {
+              Please enter a valid email
+            }
+          </span>
         }
       </div>
 
@@ -34,23 +37,25 @@
           "
         />
         @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-        <span class="error-text">
-          @if (loginForm.controls.password.errors?.['required']) { Password is required } @else if
-          (loginForm.controls.password.errors?.['minlength']) { Password must be at least 6
-          characters }
-        </span>
+          <span class="error-text">
+            @if (loginForm.controls.password.errors?.['required']) {
+              Password is required
+            } @else if (loginForm.controls.password.errors?.['minlength']) {
+              Password must be at least 6 characters
+            }
+          </span>
         }
       </div>
 
       @if (errorMessage()) {
-      <div class="error-message">{{ errorMessage() }}</div>
+        <div class="error-message">{{ errorMessage() }}</div>
       }
 
       <button type="submit" class="login-button" [disabled]="isLoading() || loginForm.invalid">
         @if (isLoading()) {
-        <span>Logging in...</span>
+          <span>Logging in...</span>
         } @else {
-        <span>Login</span>
+          <span>Login</span>
         }
       </button>
     </form>

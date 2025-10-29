@@ -97,13 +97,13 @@ export default class AddProfileComponent {
       ]),
       starMatchScore: new FormControl<(typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | null>(
         null,
-        [Validators.required, Validators.min(0), Validators.max(10)]
+        [Validators.required, Validators.min(0), Validators.max(10)],
       ),
       state: new FormControl<string | null>(null, Validators.required),
       city: new FormControl<string | null>(null, Validators.required),
       profileStatusId: new FormControl<keyof typeof PROFILE_STATUS | null>(
         'NEW',
-        Validators.required
+        Validators.required,
       ),
       matrimonyId: new FormControl<string | null>(null, Validators.required),
     });
@@ -114,10 +114,10 @@ export default class AddProfileComponent {
           (state) =>
             (state && state in DistrictList
               ? DistrictList[state as keyof typeof DistrictList]
-              : []) as string[]
-        )
+              : []) as string[],
+        ),
       ),
-      { initialValue: [] as string[] }
+      { initialValue: [] as string[] },
     );
 
     const starEvent = toSignal(this.profileForm.controls.star.valueChanges);
@@ -127,7 +127,7 @@ export default class AddProfileComponent {
       if (star && star in MATCHING_STARS) {
         this.profileForm.controls.starMatchScore.setValue(
           MATCHING_STARS[star as keyof typeof MATCHING_STARS],
-          { emitEvent: false }
+          { emitEvent: false },
         );
       }
     });

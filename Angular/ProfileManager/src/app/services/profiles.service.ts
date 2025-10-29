@@ -47,7 +47,7 @@ export class ProfilesService {
     filters?: {
       profileStatus?: keyof typeof PROFILE_STATUS | null;
       starMatchScore?: number | null;
-    }
+    },
   ): Observable<Profile[]> {
     let q = query(this.profilesCollection);
 
@@ -78,7 +78,7 @@ export class ProfilesService {
           } as unknown as Profile;
         });
         return profiles;
-      })
+      }),
     );
   }
 
@@ -100,7 +100,7 @@ export class ProfilesService {
           } as unknown as Profile;
         }
         return null;
-      })
+      }),
     );
   }
 
@@ -134,7 +134,7 @@ export class ProfilesService {
       updateDoc(docRef, {
         comments,
         updatedAt: Timestamp.now(),
-      })
+      }),
     );
   }
 }

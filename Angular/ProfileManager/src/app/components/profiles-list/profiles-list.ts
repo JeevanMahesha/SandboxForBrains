@@ -229,7 +229,7 @@ export default class ProfilesList {
       .getFilteredProfiles(this.sortField(), this.sortDirection(), filters)
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((profiles) => {
         this.allProfiles.set(profiles);

@@ -8,16 +8,22 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
     <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Matrimony Profiles</h1>
-    <button
-      mat-raised-button
-      color="primary"
-      routerLink="/profile"
-      [queryParams]="{ action: 'add' }"
-      class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700"
-    >
-      <mat-icon class="mr-2">person_add</mat-icon>
-      Add Profile
-    </button>
+    <div class="flex gap-2 w-full sm:w-auto">
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/profile"
+        [queryParams]="{ action: 'add' }"
+        class="flex-1 sm:flex-none bg-teal-600 hover:bg-teal-700"
+      >
+        <mat-icon class="mr-2">person_add</mat-icon>
+        Add Profile
+      </button>
+      <button mat-raised-button color="warn" (click)="logout()" class="flex-1 sm:flex-none">
+        <mat-icon class="mr-2">logout</mat-icon>
+        Logout
+      </button>
+    </div>
   </div>
 
   <!-- Sort & Filter Section -->

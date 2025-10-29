@@ -7,9 +7,10 @@ import {
   ViewChild,
   afterNextRender,
   effect,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule, KeyValuePipe, NgClass } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +29,7 @@ import { finalize, tap } from 'rxjs';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { OrderByDirection } from '@angular/fire/firestore';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-profiles-list',
   imports: [
@@ -53,7 +55,8 @@ export default class ProfilesList {
   private readonly profilesService = inject(ProfilesService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
-
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
   allProfiles = signal<Profile[]>([]);
   isLoading = signal<boolean>(false);
 
@@ -145,22 +148,25 @@ export default class ProfilesList {
 
   onDelete(profile: Profile): void {
     if (confirm(`Are you sure you want to delete ${profile.name}'s profile?`)) {
-      this.profilesService.deleteProfile(profile.id.toString()).subscribe({
-        next: () => {
-          this.snackBar.open('Profile deleted successfully', 'Close', {
-            duration: 3000,
-            panelClass: ['success-snackbar'],
-          });
-          this.reloadProfiles();
-        },
-        error: (error) => {
-          console.error('Error deleting profile:', error);
-          this.snackBar.open('Error deleting profile', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar'],
-          });
-        },
-      });
+      this.profilesService
+        .deleteProfile(profile.id.toString())
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.snackBar.open('Profile deleted successfully', 'Close', {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            });
+            this.reloadProfiles();
+          },
+          error: (error) => {
+            console.error('Error deleting profile:', error);
+            this.snackBar.open('Error deleting profile', 'Close', {
+              duration: 3000,
+              panelClass: ['error-snackbar'],
+            });
+          },
+        });
     }
   }
 
@@ -189,6 +195,28 @@ export default class ProfilesList {
     this.pageIndex.set(0);
   }
 
+  logout(): void {
+    this.authService
+      .logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Logged out successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+          });
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          console.error('Error logging out:', error);
+          this.snackBar.open('Error logging out', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar'],
+          });
+        },
+      });
+  }
+
   private reloadProfiles(): void {
     this.isLoading.set(true);
 
@@ -199,7 +227,10 @@ export default class ProfilesList {
 
     this.profilesService
       .getFilteredProfiles(this.sortField(), this.sortDirection(), filters)
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe((profiles) => {
         this.allProfiles.set(profiles);
         this.pageIndex.set(0); // Reset to first page when reloading

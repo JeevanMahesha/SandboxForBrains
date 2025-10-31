@@ -1,0 +1,92 @@
+<div class="p-4 md:p-8 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Star Matching Scores</h1>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/" class="flex-none">
+      <mat-icon class="mr-2">arrow_back</mat-icon>
+      Back to Profiles
+    </button>
+  </div>
+
+  <!-- Filter Chips -->
+  <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div class="flex items-center gap-2 flex-wrap">
+      <mat-chip-listbox
+        [value]="selectedFilter()"
+        (change)="selectedFilter.set($event.value)"
+        aria-label="Score filter"
+        class="filter-chips"
+      >
+        <mat-chip-option value="all" class="filter-chip">
+          <mat-icon class="mr-1">filter_list</mat-icon>
+          All ({{ stats().total }})
+        </mat-chip-option>
+        <mat-chip-option value="excellent" class="filter-chip filter-chip-green">
+          <mat-icon class="mr-1">star</mat-icon>
+          Excellent ({{ stats().excellent }})
+        </mat-chip-option>
+        <mat-chip-option value="good" class="filter-chip filter-chip-yellow">
+          <mat-icon class="mr-1">thumb_up</mat-icon>
+          Good ({{ stats().good }})
+        </mat-chip-option>
+        <mat-chip-option value="fair" class="filter-chip filter-chip-orange">
+          <mat-icon class="mr-1">done</mat-icon>
+          Fair ({{ stats().fair }})
+        </mat-chip-option>
+        <mat-chip-option value="low" class="filter-chip filter-chip-red">
+          <mat-icon class="mr-1">info</mat-icon>
+          Low ({{ stats().low }})
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  </div>
+
+  <!-- Grid Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    @for (star of filteredStars(); track star.name) {
+      <mat-card class="star-card hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <mat-card-content class="p-4!">
+          <!-- Star Name & Score -->
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-800 wrap-break-word">{{ star.name }}</h3>
+            </div>
+            <span
+              class="px-3 py-1 rounded-full text-sm font-bold ml-2 shrink-0"
+              [class]="star.scoreColor"
+            >
+              {{ star.score }}
+            </span>
+          </div>
+
+          <!-- Visual Progress Bar -->
+          <div class="mb-2">
+            <mat-progress-bar
+              mode="determinate"
+              [value]="(star.score / 10) * 100"
+              [class]="star.progressBarColor"
+              class="h-2 rounded-full"
+            ></mat-progress-bar>
+          </div>
+
+          <!-- Score Details -->
+          <div class="flex justify-between items-center mt-3">
+            <p class="text-xs text-gray-500">{{ star.scoreLabel }}</p>
+            <div class="flex items-center text-xs text-gray-400">
+              <span>{{ star.score }}/10</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    } @empty {
+      <div class="col-span-full">
+        <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+          <mat-icon class="text-6xl text-gray-400 mb-4">filter_alt_off</mat-icon>
+          <p class="text-lg text-gray-600">No stars match the selected filter</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,160 @@
+/* Progress Bar Colors */
+::ng-deep .progress-bar-green .mdc-linear-progress__bar-inner {
+  border-color: #10b981 !important;
+  background-color: #10b981 !important;
+}
+
+::ng-deep .progress-bar-yellow .mdc-linear-progress__bar-inner {
+  border-color: #f59e0b !important;
+  background-color: #f59e0b !important;
+}
+
+::ng-deep .progress-bar-orange .mdc-linear-progress__bar-inner {
+  border-color: #f97316 !important;
+  background-color: #f97316 !important;
+}
+
+::ng-deep .progress-bar-red .mdc-linear-progress__bar-inner {
+  border-color: #ef4444 !important;
+  background-color: #ef4444 !important;
+}
+
+/* Progress Bar Background */
+::ng-deep .mat-mdc-progress-bar {
+  --mdc-linear-progress-track-color: #e5e7eb;
+}
+
+/* Card Styling */
+::ng-deep .star-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .star-card:hover {
+  transform: translateY(-4px);
+  border-color: #d1d5db;
+}
+
+/* Filter Chips Styling */
+::ng-deep .filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+::ng-deep .filter-chip {
+  border: 2px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #374151;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .filter-chip:hover {
+  background-color: #f9fafb;
+}
+
+::ng-deep .filter-chip.mat-mdc-chip-selected {
+  background-color: #1e40af !important;
+  color: white !important;
+  border-color: #1e40af !important;
+}
+
+::ng-deep .filter-chip-green.mat-mdc-chip-selected {
+  background-color: #10b981 !important;
+  border-color: #10b981 !important;
+}
+
+::ng-deep .filter-chip-yellow.mat-mdc-chip-selected {
+  background-color: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+::ng-deep .filter-chip-orange.mat-mdc-chip-selected {
+  background-color: #f97316 !important;
+  border-color: #f97316 !important;
+}
+
+::ng-deep .filter-chip-red.mat-mdc-chip-selected {
+  background-color: #ef4444 !important;
+  border-color: #ef4444 !important;
+}
+
+/* Icon in chips */
+::ng-deep .filter-chip mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  ::ng-deep .star-card .mat-mdc-card-content {
+    padding: 12px !important;
+  }
+
+  ::ng-deep .filter-chip {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  ::ng-deep .filter-chip mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Animation for cards */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.star-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Stagger animation for multiple cards */
+.star-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.star-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.star-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.star-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.star-card:nth-child(n + 5) {
+  animation-delay: 0.25s;
+}
+
+/* Score badge pulse effect on hover */
+.star-card:hover [ngClass*='bg-green-100'],
+.star-card:hover [ngClass*='bg-yellow-100'],
+.star-card:hover [ngClass*='bg-orange-100'],
+.star-card:hover [ngClass*='bg-red-100'] {
+  animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+

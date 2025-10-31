@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
       <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Matrimony Profiles</h1>
-      <div class="flex gap-2 w-full sm:w-auto">
+      <div class="flex gap-2 w-full sm:w-auto flex-wrap">
         <button
           mat-raised-button
           color="primary"
@@ -17,6 +17,15 @@
         >
           <mat-icon class="mr-2">person_add</mat-icon>
           Add Profile
+        </button>
+        <button
+          mat-stroked-button
+          color="primary"
+          routerLink="/matching-stars"
+          class="flex-1 sm:flex-none"
+        >
+          <mat-icon class="mr-2">stars</mat-icon>
+          Star Scores
         </button>
         <button mat-raised-button color="warn" (click)="logout()" class="flex-1 sm:flex-none">
           <mat-icon class="mr-2">logout</mat-icon>

@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   DestroyRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { KeyValuePipe, NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -46,6 +47,7 @@ import { AuthService } from '../../services/auth.service';
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {
   private readonly profilesService = inject(ProfilesService);

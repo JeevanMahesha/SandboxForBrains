@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
   imports: [ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LoginComponent {
   private fb = inject(FormBuilder);

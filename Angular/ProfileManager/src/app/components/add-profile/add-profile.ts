@@ -1,4 +1,13 @@
-import { Component, computed, effect, inject, input, Signal, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  Signal,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -46,6 +55,7 @@ import { Profile } from '../../models/profile';
   ],
   templateUrl: './add-profile.html',
   styleUrl: './add-profile.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AddProfileComponent {
   public readonly id = input<string | null>();

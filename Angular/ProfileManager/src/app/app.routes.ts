@@ -22,4 +22,9 @@ export const routes: Routes = [
     loadComponent: () => import('./components/matching-stars/matching-stars'),
     canActivate: [authGuard],
   },
+  {
+    path: 'zodiac-list',
+    loadComponent: () => import('./components/zodiac-list/zodiac-list'),
+    canActivate: [authGuard],
+  },
 ];

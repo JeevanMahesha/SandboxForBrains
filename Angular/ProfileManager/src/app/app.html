@@ -45,6 +45,15 @@
           <mat-icon>stars</mat-icon>
           <span class="font-medium">Matching Star</span>
         </a>
+        <a
+          routerLink="/zodiac-list"
+          routerLinkActive="bg-teal-50 text-teal-700"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          (click)="isMobile() && toggleSidebar()"
+        >
+          <mat-icon>calendar_today</mat-icon>
+          <span class="font-medium">Zodiac Signs</span>
+        </a>
       </nav>
     </div>
   </mat-drawer>

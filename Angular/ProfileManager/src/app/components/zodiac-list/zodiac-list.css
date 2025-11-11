@@ -1,0 +1,54 @@
+.zodiac-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.zodiac-table {
+  width: 100%;
+  min-width: 300px;
+}
+
+/* Material table header styling */
+.zodiac-table .mat-mdc-header-cell {
+  background-color: #0d9488;
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px;
+}
+
+/* Material table row styling */
+.zodiac-table .mat-mdc-row {
+  transition: background-color 0.2s ease;
+}
+
+/* Alternating row colors */
+.zodiac-table .mat-mdc-row:nth-child(odd) {
+  background-color: #ebebeb;
+}
+
+.zodiac-table .mat-mdc-row:nth-child(even) {
+  background-color: #ffffff;
+}
+
+.zodiac-table .mat-mdc-row:hover {
+  background-color: #e0f2f1 !important;
+}

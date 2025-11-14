@@ -15,5 +15,5 @@ export default class ZodiacListComponent {
     ...value,
   }));
 
-  displayedColumns: string[] = ['order', 'english', 'tamil', 'tanglish'];
+  displayedColumns: string[] = ['order', 'english', 'tanglish', 'stars'];
 }

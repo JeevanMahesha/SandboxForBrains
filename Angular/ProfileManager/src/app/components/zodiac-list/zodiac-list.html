@@ -15,15 +15,15 @@
       </ng-container>
 
       <!-- Tamil Column -->
-      <ng-container matColumnDef="tamil">
+      <ng-container matColumnDef="tanglish">
         <th mat-header-cell *matHeaderCellDef>Tamil</th>
-        <td mat-cell *matCellDef="let sign">{{ sign.tamil }}</td>
+        <td mat-cell *matCellDef="let sign">{{ sign.tanglish }}</td>
       </ng-container>
 
-      <!-- Tanglish Column -->
-      <ng-container matColumnDef="tanglish">
-        <th mat-header-cell *matHeaderCellDef>Tanglish</th>
-        <td mat-cell *matCellDef="let sign">{{ sign.tanglish }}</td>
+      <!-- Stars Column -->
+      <ng-container matColumnDef="stars">
+        <th mat-header-cell *matHeaderCellDef>Stars</th>
+        <td mat-cell *matCellDef="let sign">{{ sign.stars.join(', ') }}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

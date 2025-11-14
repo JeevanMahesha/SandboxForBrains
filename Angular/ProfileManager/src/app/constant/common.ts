@@ -111,18 +111,78 @@ export const DistrictList = {
 } as const;
 
 export const zodiacSignList = {
-  aries: { english: 'Aries', tamil: 'மேஷம்', tanglish: 'Mesham', order: 1 },
-  taurus: { english: 'Taurus', tamil: 'ரிஷபம்', tanglish: 'Rishabam', order: 2 },
-  gemini: { english: 'Gemini', tamil: 'மிதுனம்', tanglish: 'Mithunam', order: 3 },
-  cancer: { english: 'Cancer', tamil: 'கடகம்', tanglish: 'Kadagam', order: 4 },
-  leo: { english: 'Leo', tamil: 'சிம்மம்', tanglish: 'Simmam', order: 5 },
-  virgo: { english: 'Virgo', tamil: 'கன்னி', tanglish: 'Kanni', order: 6 },
-  libra: { english: 'Libra', tamil: 'துலாம்', tanglish: 'Thulaam', order: 7 },
-  scorpio: { english: 'Scorpio', tamil: 'விருச்சிகம்', tanglish: 'Viruchigam', order: 8 },
-  sagittarius: { english: 'Sagittarius', tamil: 'தனுசு', tanglish: 'Dhanusu', order: 9 },
-  capricorn: { english: 'Capricorn', tamil: 'மகரம்', tanglish: 'Makaram', order: 10 },
-  aquarius: { english: 'Aquarius', tamil: 'கும்பம்', tanglish: 'Kumbam', order: 11 },
-  pisces: { english: 'Pisces', tamil: 'மீனம்', tanglish: 'Meenam', order: 12 },
+  aries: {
+    english: 'Aries',
+    tanglish: 'Mesham',
+    order: 1,
+    stars: ['Aswini', 'Bharani', 'Karthikai'],
+  },
+  taurus: {
+    english: 'Taurus',
+    tanglish: 'Rishabam',
+    order: 2,
+    stars: ['Karthigai', 'Rohini', 'Mirugasheerisham'],
+  },
+  gemini: {
+    english: 'Gemini',
+    tanglish: 'Mithunam',
+    order: 3,
+    stars: ['Mrigaseersham', 'Thiruvathirai', 'Punarvasu'],
+  },
+  cancer: {
+    english: 'Cancer',
+    tanglish: 'Kadagam',
+    order: 4,
+    stars: ['Punarpoosam', 'Poosam', 'Ayilyam'],
+  },
+  leo: {
+    english: 'Leo',
+    tanglish: 'Simmam',
+    order: 5,
+    stars: ['Makam', 'Pooram', 'Uthiram'],
+  },
+  virgo: {
+    english: 'Virgo',
+    tanglish: 'Kanni',
+    order: 6,
+    stars: ['Uthiram', 'Astam', 'Chithirai'],
+  },
+  libra: {
+    english: 'Libra',
+    tanglish: 'Thulaam',
+    order: 7,
+    stars: ['Chithirai', 'Swathi', 'Visagam'],
+  },
+  scorpio: {
+    english: 'Scorpio',
+    tanglish: 'Viruchigam',
+    order: 8,
+    stars: ['Visagam', 'Anusham', 'Kettai'],
+  },
+  sagittarius: {
+    english: 'Sagittarius',
+    tanglish: 'Dhanusu',
+    order: 9,
+    stars: ['Moolam', 'Pooradam', 'Uthiradam'],
+  },
+  capricorn: {
+    english: 'Capricorn',
+    tanglish: 'Makaram',
+    order: 10,
+    stars: ['Uthiradam', 'Thiruvonam', 'Avittam'],
+  },
+  aquarius: {
+    english: 'Aquarius',
+    tanglish: 'Kumbam',
+    order: 11,
+    stars: ['Dhanishta', 'Sadayam', 'Poorattathi'],
+  },
+  pisces: {
+    english: 'Pisces',
+    tanglish: 'Meenam',
+    order: 12,
+    stars: ['Purva Bhadrapada', 'Uthirattathi', 'Revathi'],
+  },
 } as const;
 
 export const PROFILE_STATUS = {

@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Profile, ProfileColumn } from '../../models/profile';
 import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
 import { ProfilesService } from '../../services/profiles.service';
@@ -41,7 +41,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    RouterLink,
     MatButtonToggleModule,
     KeyValuePipe,
     MatSelectModule,

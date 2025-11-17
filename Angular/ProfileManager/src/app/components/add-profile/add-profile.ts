@@ -274,7 +274,6 @@ export default class AddProfileComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar'],
         });
-        console.log('Profile saved with ID:', id);
         this.router.navigate(['/']);
       },
       error: (error) => {
@@ -299,7 +298,6 @@ export default class AddProfileComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar'],
         });
-        console.log('Profile updated successfully!');
         this.router.navigate(['/']);
       },
       error: (error) => {

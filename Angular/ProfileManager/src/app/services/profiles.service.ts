@@ -12,6 +12,8 @@ import {
   orderBy,
   where,
   Timestamp,
+  QueryDocumentSnapshot,
+  DocumentSnapshot,
 } from '@angular/fire/firestore';
 import { Observable, from, map, of } from 'rxjs';
 import { Profile } from '../models/profile';
@@ -65,16 +67,7 @@ export class ProfilesService {
 
     return from(getDocs(q)).pipe(
       map((snapshot) => {
-        const profiles = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            // Convert Firestore Timestamps to Date objects
-            createdAt: data['createdAt']?.toDate() || new Date(),
-            updatedAt: data['updatedAt']?.toDate() || new Date(),
-          } as unknown as Profile;
-        });
+        const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
 
         // Sort profiles: rejected profiles appear at the end
         return profiles.sort((a, b) => {
@@ -102,13 +95,7 @@ export class ProfilesService {
     return from(getDoc(docRef)).pipe(
       map((docSnap) => {
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            ...data,
-            createdAt: data['createdAt']?.toDate() || new Date(),
-            updatedAt: data['updatedAt']?.toDate() || new Date(),
-          } as unknown as Profile;
+          return this.mapDocToProfile(docSnap);
         }
         return null;
       }),
@@ -116,12 +103,14 @@ export class ProfilesService {
   }
 
   getProfilesByMatrimonyId(matrimonyId: string | null): Observable<Profile[]> {
-    if (!matrimonyId) {
+    if (!matrimonyId || matrimonyId.trim() === '') {
       return of([]);
     }
-    const q = query(this.profilesCollection, where('matrimonyId', '==', matrimonyId));
+    const q = query(this.profilesCollection, where('matrimonyId', '==', matrimonyId.trim()));
     return from(getDocs(q)).pipe(
-      map((snapshot) => snapshot.docs.map((doc) => doc.data() as Profile)),
+      map((snapshot) => {
+        return snapshot.docs.map((doc) => this.mapDocToProfile(doc));
+      }),
     );
   }
 
@@ -157,5 +146,16 @@ export class ProfilesService {
         updatedAt: Timestamp.now(),
       }),
     );
+  }
+
+  private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): Profile {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      // Convert Firestore Timestamps to Date objects
+      createdAt: data?.['createdAt']?.toDate() || new Date(),
+      updatedAt: data?.['updatedAt']?.toDate() || new Date(),
+    } as unknown as Profile;
   }
 }

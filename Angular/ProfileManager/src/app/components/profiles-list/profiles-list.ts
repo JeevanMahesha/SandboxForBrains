@@ -138,12 +138,10 @@ export default class ProfilesList {
   }
 
   onView(profile: Profile): void {
-    console.log('View profile:', profile);
     this.router.navigate(['/profile'], { queryParams: { id: profile.id, action: 'view' } });
   }
 
   onEdit(profile: Profile): void {
-    console.log('Edit profile:', profile);
     this.router.navigate(['/profile'], { queryParams: { id: profile.id, action: 'edit' } });
   }
 

@@ -22,11 +22,12 @@ import { Profile, ProfileColumn } from '../../models/profile';
 import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
 import { ProfilesService } from '../../services/profiles.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize } from 'rxjs';
+import { finalize, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { OrderByDirection } from '@angular/fire/firestore';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../services/auth.service';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-profiles-list',
   imports: [
@@ -44,6 +45,7 @@ import { AuthService } from '../../services/auth.service';
     MatButtonToggleModule,
     KeyValuePipe,
     MatSelectModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
@@ -68,6 +70,7 @@ export default class ProfilesList {
   sortField = signal<string>('createdAt');
   selectedProfileStatus = signal<keyof typeof PROFILE_STATUS | null>(null);
   selectedStar = signal<number | null>(null);
+  searchMatrimonyIdControl = new FormControl<string>('');
 
   sortOptions = signal<{ label: string; value: OrderByDirection }[]>([
     {
@@ -103,6 +106,23 @@ export default class ProfilesList {
   ];
 
   constructor() {
+    // Setup debounced search using FormControl valueChanges
+    this.searchMatrimonyIdControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap(() => this.isLoading.set(true)),
+        switchMap((searchValue) => {
+          return this.profilesService.getProfilesByMatrimonyId(searchValue);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((profiles) => {
+        this.allProfiles.set(profiles);
+        this.pageIndex.set(0);
+        this.isLoading.set(false);
+      });
+
     effect(() => {
       this.selectedProfileStatus();
       this.selectedStar();
@@ -188,34 +208,13 @@ export default class ProfilesList {
   clearFilters(): void {
     this.selectedProfileStatus.set(null);
     this.selectedStar.set(null);
+    this.searchMatrimonyIdControl.setValue('');
     this.sortDirection.set('desc');
     this.sortField.set('createdAt');
     this.pageIndex.set(0);
   }
 
-  logout(): void {
-    this.authService
-      .logout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Logged out successfully', 'Close', {
-            duration: 3000,
-            panelClass: ['success-snackbar'],
-          });
-          this.router.navigate(['/login']);
-        },
-        error: (error) => {
-          console.error('Error logging out:', error);
-          this.snackBar.open('Error logging out', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar'],
-          });
-        },
-      });
-  }
-
-  private reloadProfiles(): void {
+  reloadProfiles(): void {
     this.isLoading.set(true);
 
     const filters = {

@@ -13,7 +13,7 @@ import {
   where,
   Timestamp,
 } from '@angular/fire/firestore';
-import { Observable, from, map } from 'rxjs';
+import { Observable, from, map, of } from 'rxjs';
 import { Profile } from '../models/profile';
 import { PROFILE_STATUS } from '../constant/common';
 
@@ -54,8 +54,6 @@ export class ProfilesService {
     // Apply filters using where clauses
     if (filters?.profileStatus) {
       q = query(q, where('profileStatusId', '==', filters.profileStatus));
-    } else {
-      q = query(q, where('profileStatusId', '!=', PROFILE_STATUS.REJECTED.toUpperCase()));
     }
 
     if (filters?.starMatchScore !== null && filters?.starMatchScore !== undefined) {
@@ -77,7 +75,20 @@ export class ProfilesService {
             updatedAt: data['updatedAt']?.toDate() || new Date(),
           } as unknown as Profile;
         });
-        return profiles;
+
+        // Sort profiles: rejected profiles appear at the end
+        return profiles.sort((a, b) => {
+          const aIsRejected = a.profileStatusId === 'REJECTED';
+          const bIsRejected = b.profileStatusId === 'REJECTED';
+
+          // If both are rejected or both are not rejected, maintain original order
+          if (aIsRejected === bIsRejected) {
+            return 0;
+          }
+
+          // Rejected profiles go to the end
+          return aIsRejected ? 1 : -1;
+        });
       }),
     );
   }
@@ -101,6 +112,16 @@ export class ProfilesService {
         }
         return null;
       }),
+    );
+  }
+
+  getProfilesByMatrimonyId(matrimonyId: string | null): Observable<Profile[]> {
+    if (!matrimonyId) {
+      return of([]);
+    }
+    const q = query(this.profilesCollection, where('matrimonyId', '==', matrimonyId));
+    return from(getDocs(q)).pipe(
+      map((snapshot) => snapshot.docs.map((doc) => doc.data() as Profile)),
     );
   }
 

@@ -36,7 +36,7 @@ export default class MatchingStarsComponent {
   // Convert MATCHING_STARS object to array and sort by score descending
   starEntries = computed<StarEntry[]>(() => {
     return Object.entries(MATCHING_STARS)
-      .map(([name, score]) => {
+      .map(([name, score]: [string, number]) => {
         if (score >= 8) {
           return {
             name,

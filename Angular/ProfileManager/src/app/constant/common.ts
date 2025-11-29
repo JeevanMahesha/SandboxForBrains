@@ -1,21 +1,11 @@
 export const MATCHING_STARS = {
-  Revathi: 10,
-  Uthirattathi: 8,
+  Aswini: 8,
   Bharani: 8,
   Poosam: 8,
-  Thiruvonam: 8,
-  Chathayam: 8,
-  Thiruvathirai: 8,
-  Aswini: 7,
-  Rohini: 7,
-  Mirugasheerisham: 7,
-  Swathi: 7,
-  Pooram: 6,
-  Hastham: 6,
-  Kettai: 6,
-  Pooraadam: 6,
-  Anusham: 5,
-  Makam: 4,
+  Swathi: 9,
+  Kettai: 8,
+  Uthirattathi: 8,
+  Revathi: 9,
 } as const;
 
 export const StateList = ['Tamil Nadu', 'Kerala', 'Karnataka'] as const;

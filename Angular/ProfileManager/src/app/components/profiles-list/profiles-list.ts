@@ -7,7 +7,7 @@ import {
   DestroyRef,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { KeyValuePipe, NgClass } from '@angular/common';
+import { KeyValuePipe, NgClass, TitleCasePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,6 +45,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
     KeyValuePipe,
     MatSelectModule,
     ReactiveFormsModule,
+    TitleCasePipe,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',

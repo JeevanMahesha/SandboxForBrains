@@ -7,7 +7,6 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "firebase:deploy": "firebase deploy --only hosting:profilearc",
-    "prepare": "cd ../.. && husky Angular/ProfileManager/.husky",
     "format": "prettier --write \"src/**/*.{ts,html,css,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\"",
     "lint": "ng lint",

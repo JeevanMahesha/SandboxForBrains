@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,7 +22,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
@@ -36,12 +36,13 @@ import { ProfileForm } from './add-profile.forms';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ProfilesService } from '../../services/profiles.service';
-import { Profile } from '../../models/profile';
+import { Comment, Profile } from '../../models/profile';
 
 @Component({
   selector: 'app-add-profile',
   standalone: true,
   imports: [
+    DatePipe,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -49,7 +50,6 @@ import { Profile } from '../../models/profile';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatChipsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
   ],
@@ -61,7 +61,7 @@ export default class AddProfileComponent {
   public readonly id = input<string | null>();
   public readonly action = input<string | null>();
   profileForm: FormGroup<ProfileForm>;
-  comments = signal<string[]>([]);
+  comments = signal<Comment[]>([]);
   newComment = signal<string>('');
   isLoading = signal<boolean>(false);
   zodiacSigns = Object.entries(zodiacSignList).map(([key, value]) => ({
@@ -196,9 +196,13 @@ export default class AddProfileComponent {
   }
 
   addComment() {
-    const comment = this.newComment().trim();
-    if (comment) {
-      this.comments.update((prev) => [...prev, comment]);
+    const commentValue = this.newComment().trim();
+    if (commentValue) {
+      const newComment: Comment = {
+        value: commentValue,
+        createDateAndTime: new Date(),
+      };
+      this.comments.update((prev) => [...prev, newComment]);
       this.newComment.set('');
     }
   }

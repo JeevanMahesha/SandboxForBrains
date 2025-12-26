@@ -9,7 +9,7 @@
         @if (action() !== 'add') {
           <a
             target="_blank"
-            href="https://wa.me/{{ profileForm.value.mobileNumber?.replace('+91', '') }}"
+            href="https://wa.me/{{ profileForm.value.mobileNumber?.replace('+', '') }}"
           >
             <mat-icon>chat_add_on</mat-icon>
           </a>

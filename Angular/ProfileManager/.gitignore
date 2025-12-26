@@ -11,6 +11,10 @@
 npm-debug.log
 yarn-error.log
 
+# Package manager lock files (using pnpm)
+package-lock.json
+yarn.lock
+
 # IDEs and editors
 .idea/
 .project
@@ -47,3 +51,6 @@ src/environments/environment.ts
 
 #Firebase
 .firebase/
+
+# Pnpm
+.pnpm-store/

@@ -16,7 +16,7 @@ import {
   DocumentSnapshot,
 } from '@angular/fire/firestore';
 import { Observable, from, map, of } from 'rxjs';
-import { Profile } from '../models/profile';
+import { Comment, Profile } from '../models/profile';
 import { PROFILE_STATUS } from '../constant/common';
 
 @Injectable({
@@ -138,11 +138,16 @@ export class ProfilesService {
   /**
    * Add a comment to a profile
    */
-  addComment(id: string, comments: string[]): Observable<void> {
+  addComment(id: string, comments: Comment[]): Observable<void> {
     const docRef = doc(this.firestore, 'profiles', id);
+    // Convert Date objects to Firestore Timestamps for storage
+    const commentsForFirestore = comments.map((comment) => ({
+      value: comment.value,
+      createDateAndTime: Timestamp.fromDate(comment.createDateAndTime),
+    }));
     return from(
       updateDoc(docRef, {
-        comments,
+        comments: commentsForFirestore,
         updatedAt: Timestamp.now(),
       }),
     );
@@ -150,9 +155,27 @@ export class ProfilesService {
 
   private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): Profile {
     const data = doc.data();
+    // Convert comment timestamps from Firestore Timestamps to Date objects
+    const comments: Comment[] = (data?.['comments'] || []).map(
+      (comment: { value?: string; createDateAndTime?: { toDate: () => Date } } | string) => {
+        // Handle both old string format and new object format for backwards compatibility
+        if (typeof comment === 'string') {
+          return {
+            value: comment,
+            createDateAndTime: new Date(),
+          };
+        }
+        return {
+          value: comment.value || '',
+          createDateAndTime: comment.createDateAndTime?.toDate?.() || new Date(),
+        };
+      },
+    );
+
     return {
       id: doc.id,
       ...data,
+      comments,
       // Convert Firestore Timestamps to Date objects
       createdAt: data?.['createdAt']?.toDate() || new Date(),
       updatedAt: data?.['updatedAt']?.toDate() || new Date(),

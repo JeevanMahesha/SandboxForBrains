@@ -9,7 +9,7 @@
         @if (action() !== 'add') {
           <a
             target="_blank"
-            href="https://wa.me/{{ profileForm.value.mobileNumber?.replace('+91', '') }}"
+            href="https://wa.me/{{ profileForm.value.mobileNumber?.replace('+', '') }}"
           >
             <mat-icon>chat_add_on</mat-icon>
           </a>
@@ -161,47 +161,79 @@
           }
         </mat-form-field>
 
-        <!-- Comments Section -->
+        <!-- Comments Section - Timeline UI -->
         <div class="comments-section">
           <h3 class="section-title">Comments</h3>
 
-          @if (comments().length > 0) {
-            <div class="comments-list">
-              @for (comment of comments(); track $index) {
-                <mat-chip-row (removed)="removeComment($index)">
-                  {{ comment }}
-                  @if (action() !== 'view') {
-                    <button matChipRemove>
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                  }
-                </mat-chip-row>
-              }
-            </div>
-          }
-          @if (action() !== 'view') {
-            <div class="add-comment-container">
-              <mat-form-field appearance="fill" class="comment-input">
-                <mat-label>Add Comment</mat-label>
-                <input
-                  matInput
-                  [value]="newComment()"
-                  (input)="newComment.set($any($event.target).value)"
-                  (keyup.enter)="addComment()"
-                  placeholder="Enter your comment"
-                />
-              </mat-form-field>
-              <button
-                mat-raised-button
-                type="button"
-                (click)="addComment()"
-                class="add-comment-btn"
-              >
-                <mat-icon>add</mat-icon>
-                Add Comment
-              </button>
-            </div>
-          }
+          <div class="timeline-container">
+            @if (comments().length > 0) {
+              <div class="timeline">
+                @for (comment of comments(); track $index) {
+                  <div class="timeline-item">
+                    <div class="timeline-marker">
+                      <span class="timeline-dot"></span>
+                      <span class="timeline-line"></span>
+                    </div>
+                    <div class="timeline-content">
+                      <div class="timeline-date">
+                        <mat-icon class="date-icon">schedule</mat-icon>
+                        {{ comment.createDateAndTime | date: 'MMM dd, yyyy hh:mm a' }}
+                      </div>
+                      <div class="timeline-bubble">
+                        <span class="comment-text">{{ comment.value }}</span>
+                        @if (action() !== 'view') {
+                          <button
+                            mat-icon-button
+                            type="button"
+                            class="delete-comment-btn"
+                            (click)="removeComment($index)"
+                            aria-label="Delete comment"
+                          >
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-comments">
+                <mat-icon class="no-comments-icon">chat_bubble_outline</mat-icon>
+                <p>No comments yet</p>
+              </div>
+            }
+
+            @if (action() !== 'view') {
+              <div class="add-comment-container">
+                <div class="timeline-marker add-marker">
+                  <span class="timeline-dot add-dot"></span>
+                </div>
+                <div class="add-comment-form">
+                  <mat-form-field appearance="fill" class="comment-input">
+                    <mat-label>Add Comment</mat-label>
+                    <input
+                      matInput
+                      [value]="newComment()"
+                      (input)="newComment.set($any($event.target).value)"
+                      (keyup.enter)="addComment()"
+                      placeholder="Enter your comment"
+                    />
+                  </mat-form-field>
+                  <button
+                    mat-raised-button
+                    type="button"
+                    (click)="addComment()"
+                    class="add-comment-btn"
+                    [disabled]="!newComment().trim()"
+                  >
+                    <mat-icon>add</mat-icon>
+                    Add
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
         </div>
 
         <!-- Action Buttons -->

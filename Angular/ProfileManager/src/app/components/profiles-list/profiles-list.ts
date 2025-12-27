@@ -22,7 +22,17 @@ import { Profile, ProfileColumn } from '../../models/profile';
 import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
 import { ProfilesService } from '../../services/profiles.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import {
+  finalize,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+  from,
+  concatMap,
+  map,
+  toArray,
+} from 'rxjs';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { OrderByDirection } from '@angular/fire/firestore';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -225,6 +235,12 @@ export default class ProfilesList {
       .pipe(
         finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
+        concatMap((profiles) => from(profiles)),
+        map((profiles) => ({
+          ...profiles,
+          profileStatus: PROFILE_STATUS[profiles.profileStatusId as keyof typeof PROFILE_STATUS],
+        })),
+        toArray(),
       )
       .subscribe((profiles) => {
         this.allProfiles.set(profiles);

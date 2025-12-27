@@ -22,6 +22,7 @@ export interface Profile {
   id: number;
   actions: string;
   sNo?: number;
+  profileStatus?: (typeof PROFILE_STATUS)[keyof typeof PROFILE_STATUS];
 }
 
 export type ProfileColumn = keyof Pick<

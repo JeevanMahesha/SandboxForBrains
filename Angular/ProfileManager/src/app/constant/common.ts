@@ -183,14 +183,18 @@ export const PROFILE_STATUS = {
   ACCEPTED: 'Accepted',
   ON_HOLD: 'OnHold',
   PROFILE_SHARED: 'Profile Shared',
+  NEED_TO_CONTACT: 'Need to Contact',
+  SHARE_BY_RM: 'Share by RM',
 } as const;
 
 export const PROFILE_STATUS_COLORS = {
-  NEW: 'bg-teal-100 text-teal-800',
-  REJECTED: 'bg-red-100 text-red-800',
-  CONTACTED: 'bg-blue-100 text-blue-800',
-  MEETING_SCHEDULED: 'bg-green-100 text-green-800',
-  ACCEPTED: 'bg-green-100 text-green-800',
-  ON_HOLD: 'bg-yellow-100 text-yellow-800',
-  PROFILE_SHARED: 'bg-purple-100 text-purple-800',
+  NEW: 'bg-sky-100 text-sky-700',
+  REJECTED: 'bg-rose-100 text-rose-700',
+  CONTACTED: 'bg-indigo-100 text-indigo-700',
+  MEETING_SCHEDULED: 'bg-lime-100 text-lime-700',
+  ACCEPTED: 'bg-emerald-100 text-emerald-700',
+  ON_HOLD: 'bg-amber-100 text-amber-700',
+  PROFILE_SHARED: 'bg-fuchsia-100 text-fuchsia-700',
+  SHARE_BY_RM: 'bg-orange-100 text-orange-700',
+  NEED_TO_CONTACT: 'bg-slate-200 text-slate-700',
 } as const;

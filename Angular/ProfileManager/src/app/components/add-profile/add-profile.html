@@ -24,25 +24,55 @@
     </div>
     <mat-card-content>
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <!-- Name Field -->
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Name</mat-label>
-          <input matInput placeholder="Full Name" formControlName="name" />
-          @if (profileForm.controls.name.invalid && profileForm.controls.name.touched) {
-            <mat-error>{{ getErrorMessage('name') }}</mat-error>
-          }
-        </mat-form-field>
+        <div class="form-row">
+          <!-- Name Field -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Full Name" formControlName="name" />
+            @if (profileForm.controls.name.invalid && profileForm.controls.name.touched) {
+              <mat-error>{{ getErrorMessage('name') }}</mat-error>
+            }
+          </mat-form-field>
+          <!-- Profile Status Field -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Profile Status</mat-label>
+            <mat-select formControlName="profileStatusId">
+              @for (status of profileStatuses; track status.value) {
+                <mat-option [value]="status.value">{{ status.label }}</mat-option>
+              }
+            </mat-select>
+            @if (
+              profileForm.controls.profileStatusId.invalid &&
+              profileForm.controls.profileStatusId.touched
+            ) {
+              <mat-error>{{ getErrorMessage('profileStatusId') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-        <!-- Mobile Number Field -->
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Mobile Number</mat-label>
-          <input matInput placeholder="+91XXXXXXXXXX" formControlName="mobileNumber" />
-          @if (
-            profileForm.controls.mobileNumber.invalid && profileForm.controls.mobileNumber.touched
-          ) {
-            <mat-error>{{ getErrorMessage('mobileNumber') }}</mat-error>
-          }
-        </mat-form-field>
+        <div class="form-row">
+          <!-- Mobile Number Field -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput placeholder="+91XXXXXXXXXX" formControlName="mobileNumber" />
+            @if (
+              profileForm.controls.mobileNumber.invalid && profileForm.controls.mobileNumber.touched
+            ) {
+              <mat-error>{{ getErrorMessage('mobileNumber') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Matrimony ID Field -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Matrimony ID</mat-label>
+            <input matInput placeholder="Matrimony Site Profile ID" formControlName="matrimonyId" />
+            @if (
+              profileForm.controls.matrimonyId.invalid && profileForm.controls.matrimonyId.touched
+            ) {
+              <mat-error>{{ getErrorMessage('matrimonyId') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
         <!-- zodiacSign and Star Row -->
         <div class="form-row">
@@ -136,33 +166,6 @@
             }
           </mat-form-field>
         </div>
-
-        <!-- Profile Status Field -->
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Profile Status</mat-label>
-          <mat-select formControlName="profileStatusId">
-            @for (status of profileStatuses; track status.value) {
-              <mat-option [value]="status.value">{{ status.label }}</mat-option>
-            }
-          </mat-select>
-          @if (
-            profileForm.controls.profileStatusId.invalid &&
-            profileForm.controls.profileStatusId.touched
-          ) {
-            <mat-error>{{ getErrorMessage('profileStatusId') }}</mat-error>
-          }
-        </mat-form-field>
-
-        <!-- Matrimony ID Field -->
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Matrimony ID</mat-label>
-          <input matInput placeholder="Matrimony Site Profile ID" formControlName="matrimonyId" />
-          @if (
-            profileForm.controls.matrimonyId.invalid && profileForm.controls.matrimonyId.touched
-          ) {
-            <mat-error>{{ getErrorMessage('matrimonyId') }}</mat-error>
-          }
-        </mat-form-field>
 
         <!-- Comments Section - Timeline UI -->
         <div class="comments-section">

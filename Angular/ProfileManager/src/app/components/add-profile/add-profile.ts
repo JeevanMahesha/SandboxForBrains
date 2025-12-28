@@ -65,8 +65,8 @@ export default class AddProfileComponent {
   profileForm: FormGroup<ProfileForm>;
   comments = signal<Comment[]>([]);
   newComment = signal<string>('');
-  isLoading = signal<boolean>(true);
-  // Generic copy state tracker - stores { icon, tooltip } per field
+  isPageLoading = signal<boolean>(true);
+  isSaving = signal<boolean>(false);
   copyState = signal<Record<string, { icon: string; tooltip: string }>>({});
   zodiacSigns = Object.entries(zodiacSignList).map(([key, value]) => ({
     value: key,
@@ -184,14 +184,13 @@ export default class AddProfileComponent {
         this.router.navigate(['/']);
         return;
       }
-      // this.isLoading.set(true);
       this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileForm.patchValue(profile);
           this.comments.set(profile.comments);
           this.profileForm.disable();
         }
-        // this.isLoading.set(false);
+        this.isPageLoading.set(false);
       });
     } else if (selectedAction === 'edit') {
       if (!selectedId) {
@@ -204,14 +203,16 @@ export default class AddProfileComponent {
         this.router.navigate(['/']);
         return;
       }
-      // this.isLoading.set(true);
       this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileForm.patchValue(profile);
           this.comments.set(profile.comments);
         }
-        // this.isLoading.set(false);
+        this.isPageLoading.set(false);
       });
+    } else {
+      // For 'add' action, no data to fetch
+      this.isPageLoading.set(false);
     }
   }
 
@@ -290,7 +291,7 @@ export default class AddProfileComponent {
 
   onSubmit() {
     if (this.profileForm.valid) {
-      this.isLoading.set(true);
+      this.isSaving.set(true);
 
       const profileData = {
         name: this.profileForm.value.name,
@@ -348,7 +349,7 @@ export default class AddProfileComponent {
   private addProfile(profileData: Partial<Profile>) {
     this.profilesService.addProfile(profileData).subscribe({
       next: (id) => {
-        this.isLoading.set(false);
+        this.isSaving.set(false);
         this.snackBar.open('Profile added successfully!', 'Close', {
           duration: 3000,
           horizontalPosition: 'center',
@@ -358,7 +359,7 @@ export default class AddProfileComponent {
         this.router.navigate(['/']);
       },
       error: (error) => {
-        this.isLoading.set(false);
+        this.isSaving.set(false);
         console.error('Error saving profile:', error);
         this.snackBar.open('Error adding profile. Please try again.', 'Close', {
           duration: 5000,
@@ -372,7 +373,7 @@ export default class AddProfileComponent {
   private updateProfile(profileData: Partial<Profile>) {
     this.profilesService.updateProfile(this.id() as string, profileData).subscribe({
       next: () => {
-        this.isLoading.set(false);
+        this.isSaving.set(false);
         this.snackBar.open('Profile updated successfully!', 'Close', {
           duration: 3000,
           horizontalPosition: 'center',
@@ -382,7 +383,7 @@ export default class AddProfileComponent {
         this.router.navigate(['/']);
       },
       error: (error) => {
-        this.isLoading.set(false);
+        this.isSaving.set(false);
         console.error('Error updating profile:', error);
         this.snackBar.open('Error updating profile. Please try again.', 'Close', {
           duration: 5000,

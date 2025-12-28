@@ -20,7 +20,7 @@
           routerLink="/"
           routerLinkActive="bg-teal-50 text-teal-700"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-2"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors mb-2"
           (click)="isMobile() && toggleSidebar()"
         >
           <mat-icon>home</mat-icon>
@@ -30,7 +30,7 @@
           routerLink="/profile"
           [queryParams]="{ action: 'add' }"
           routerLinkActive="bg-teal-50 text-teal-700"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
           (click)="isMobile() && toggleSidebar()"
         >
           <mat-icon>person_add</mat-icon>
@@ -39,7 +39,7 @@
         <a
           routerLink="/matching-stars"
           routerLinkActive="bg-teal-50 text-teal-700"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
           (click)="isMobile() && toggleSidebar()"
         >
           <mat-icon>stars</mat-icon>
@@ -48,7 +48,7 @@
         <a
           routerLink="/zodiac-list"
           routerLinkActive="bg-teal-50 text-teal-700"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
           (click)="isMobile() && toggleSidebar()"
         >
           <mat-icon>calendar_today</mat-icon>

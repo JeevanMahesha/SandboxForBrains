@@ -38,18 +38,15 @@ export default class LoginComponent {
     this.authService.login(email!, password!).subscribe({
       next: (userCredential) => {
         this.authService.currentUser.set(userCredential.user);
-        this.snackBar
-          .open('Login successful', 'Close', {
-            duration: 1000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            panelClass: ['success-snackbar'],
-          })
-          .afterDismissed()
-          .subscribe(() => {
-            this.isLoading.set(false);
-            this.router.navigate(['/']);
-          });
+        this.snackBar.open('Login successful', 'Close', {
+          duration: 1000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+
+        this.router.navigate(['/']);
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

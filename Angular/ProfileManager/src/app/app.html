@@ -1,82 +1,86 @@
 <mat-drawer-container class="h-screen">
-  <!-- Sidebar -->
-  <mat-drawer
-    [mode]="getSidebarMode()"
-    [opened]="sidebarOpen()"
-    class="w-64 border-r border-gray-200"
-  >
-    <div class="h-full bg-white flex flex-col">
-      <!-- Sidebar Header -->
-      <div class="p-6 border-b border-gray-200">
-        <div class="flex items-center gap-3">
-          <mat-icon class="text-teal-600 text-3xl">account_circle</mat-icon>
-          <span class="text-xl font-bold text-gray-900">ProfileAce</span>
+  <!-- Sidebar - Only show when authenticated -->
+  @if (isAuthenticated()) {
+    <mat-drawer
+      [mode]="getSidebarMode()"
+      [opened]="sidebarOpen()"
+      class="w-64 border-r border-gray-200"
+    >
+      <div class="h-full bg-white flex flex-col">
+        <!-- Sidebar Header -->
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex items-center gap-3">
+            <mat-icon class="text-teal-600 text-3xl">account_circle</mat-icon>
+            <span class="text-xl font-bold text-gray-900">ProfileAce</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Sidebar Navigation -->
-      <nav class="flex-1 p-4">
-        <a
-          routerLink="/"
-          routerLinkActive="bg-teal-50 text-teal-700"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors mb-2"
-          (click)="isMobile() && toggleSidebar()"
-        >
-          <mat-icon>home</mat-icon>
-          <span class="font-medium">Home</span>
-        </a>
-        <a
-          routerLink="/profile"
-          [queryParams]="{ action: 'add' }"
-          routerLinkActive="bg-teal-50 text-teal-700"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
-          (click)="isMobile() && toggleSidebar()"
-        >
-          <mat-icon>person_add</mat-icon>
-          <span class="font-medium">Add Profile</span>
-        </a>
-        <a
-          routerLink="/matching-stars"
-          routerLinkActive="bg-teal-50 text-teal-700"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
-          (click)="isMobile() && toggleSidebar()"
-        >
-          <mat-icon>stars</mat-icon>
-          <span class="font-medium">Matching Star</span>
-        </a>
-        <a
-          routerLink="/zodiac-list"
-          routerLinkActive="bg-teal-50 text-teal-700"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
-          (click)="isMobile() && toggleSidebar()"
-        >
-          <mat-icon>calendar_today</mat-icon>
-          <span class="font-medium">Zodiac Signs</span>
-        </a>
-        <button
-          (click)="logout()"
-          class="flex items-center gap-3 px-4 py-3 w-full text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
-        >
-          <mat-icon class="text-red-500">logout</mat-icon>
-          <span class="font-medium">Logout</span>
-        </button>
-      </nav>
-    </div>
-  </mat-drawer>
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 p-4">
+          <a
+            routerLink="/"
+            routerLinkActive="bg-teal-50 text-teal-700"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors mb-2"
+            (click)="isMobile() && toggleSidebar()"
+          >
+            <mat-icon>home</mat-icon>
+            <span class="font-medium">Home</span>
+          </a>
+          <a
+            routerLink="/profile"
+            [queryParams]="{ action: 'add' }"
+            routerLinkActive="bg-teal-50 text-teal-700"
+            class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
+            (click)="isMobile() && toggleSidebar()"
+          >
+            <mat-icon>person_add</mat-icon>
+            <span class="font-medium">Add Profile</span>
+          </a>
+          <a
+            routerLink="/matching-stars"
+            routerLinkActive="bg-teal-50 text-teal-700"
+            class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
+            (click)="isMobile() && toggleSidebar()"
+          >
+            <mat-icon>stars</mat-icon>
+            <span class="font-medium">Matching Star</span>
+          </a>
+          <a
+            routerLink="/zodiac-list"
+            routerLinkActive="bg-teal-50 text-teal-700"
+            class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
+            (click)="isMobile() && toggleSidebar()"
+          >
+            <mat-icon>calendar_today</mat-icon>
+            <span class="font-medium">Zodiac Signs</span>
+          </a>
+          <button
+            (click)="logout()"
+            class="flex items-center gap-3 px-4 py-3 w-full text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+          >
+            <mat-icon class="text-red-500">logout</mat-icon>
+            <span class="font-medium">Logout</span>
+          </button>
+        </nav>
+      </div>
+    </mat-drawer>
+  }
 
   <!-- Main Content -->
   <mat-drawer-content class="bg-gray-50">
-    <!-- Mobile Header with Menu Toggle -->
-    <div class="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center gap-4">
-      <button mat-icon-button (click)="toggleSidebar()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <div class="flex items-center gap-2">
-        <mat-icon class="text-teal-600">account_circle</mat-icon>
-        <span class="text-lg font-bold text-gray-900">ProfileAce</span>
+    <!-- Mobile Header with Menu Toggle - Only show when authenticated -->
+    @if (isAuthenticated()) {
+      <div class="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center gap-4">
+        <button mat-icon-button (click)="toggleSidebar()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-teal-600">account_circle</mat-icon>
+          <span class="text-lg font-bold text-gray-900">ProfileAce</span>
+        </div>
       </div>
-    </div>
+    }
 
     <!-- Router Outlet for Components -->
     <router-outlet></router-outlet>

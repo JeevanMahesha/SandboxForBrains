@@ -32,6 +32,7 @@ export class App {
   sidebarOpen = signal(true);
   isMobile = signal(false);
   private authService = inject(AuthService);
+  isAuthenticated = this.authService.isAuthenticated;
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);

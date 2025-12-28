@@ -144,11 +144,24 @@ export default class AddProfileComponent {
         );
       }
     });
+
+    // React to route parameter changes (id and action)
+    effect(() => {
+      const selectedId = this.id();
+      const selectedAction = this.action();
+      this.handleRouteChange(selectedId, selectedAction);
+    });
   }
 
-  ngOnInit() {
-    const selectedId = this.id();
-    const selectedAction = this.action();
+  private handleRouteChange(
+    selectedId: string | null | undefined,
+    selectedAction: string | null | undefined,
+  ): void {
+    // Reset form state first
+    this.profileForm.reset({ mobileNumber: '+91', profileStatusId: 'NEW' });
+    this.profileForm.enable();
+    this.comments.set([]);
+
     if (!selectedAction) {
       this.snackBar.open('Invalid request', 'Close', {
         duration: 3000,
@@ -157,6 +170,7 @@ export default class AddProfileComponent {
         panelClass: ['error-snackbar'],
       });
       this.router.navigate(['/']);
+      return;
     }
 
     if (selectedAction === 'view') {
@@ -168,16 +182,16 @@ export default class AddProfileComponent {
           panelClass: ['error-snackbar'],
         });
         this.router.navigate(['/']);
+        return;
       }
-      this.profilesService.getProfileById(selectedId as string).subscribe((profile) => {
+      this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileForm.patchValue(profile);
           this.comments.set(profile.comments);
           this.profileForm.disable();
         }
       });
-    }
-    if (selectedAction === 'edit') {
+    } else if (selectedAction === 'edit') {
       if (!selectedId) {
         this.snackBar.open('Invalid request', 'Close', {
           duration: 3000,
@@ -185,8 +199,10 @@ export default class AddProfileComponent {
           verticalPosition: 'top',
           panelClass: ['error-snackbar'],
         });
+        this.router.navigate(['/']);
+        return;
       }
-      this.profilesService.getProfileById(selectedId as string).subscribe((profile) => {
+      this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileForm.patchValue(profile);
           this.comments.set(profile.comments);

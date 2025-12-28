@@ -197,7 +197,7 @@ export default class ProfilesList {
   }
 
   addProfile(): void {
-    this.router.navigate(['/add-profile']);
+    this.router.navigate(['/profile'], { queryParams: { action: 'add' } });
   }
 
   getStatusClass(status: keyof typeof PROFILE_STATUS): string {

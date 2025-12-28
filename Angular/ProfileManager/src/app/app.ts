@@ -1,8 +1,6 @@
 import { Component, signal, inject, DestroyRef } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
@@ -18,9 +16,7 @@ import { AuthService } from './services/auth.service';
     RouterLink,
     RouterLinkActive,
     MatSidenavModule,
-    MatListModule,
     MatIconModule,
-    MatToolbarModule,
     MatButtonModule,
   ],
   templateUrl: './app.html',

@@ -3,13 +3,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Auth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signOut,
   user,
   User,
   UserCredential,
   idToken,
-  authState,
   onAuthStateChanged,
 } from '@angular/fire/auth';
 import { from, Observable } from 'rxjs';
@@ -22,7 +20,6 @@ export class AuthService {
 
   user = toSignal(user(this.auth), { initialValue: null });
   idToken = toSignal(idToken(this.auth), { initialValue: null });
-  authState$ = authState(this.auth);
 
   currentUser = signal<User | null>(null);
   currentToken = signal<string | null>(null);
@@ -103,10 +100,6 @@ export class AuthService {
 
   login(email: string, password: string): Observable<UserCredential> {
     return from(signInWithEmailAndPassword(this.auth, email, password));
-  }
-
-  register(email: string, password: string): Observable<UserCredential> {
-    return from(createUserWithEmailAndPassword(this.auth, email, password));
   }
 
   logout(): Observable<void> {

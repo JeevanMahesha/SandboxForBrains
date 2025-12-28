@@ -52,13 +52,9 @@ form {
   font-size: 18px;
   font-weight: 500;
   color: #424242;
-  margin: 16px 0 12px;
 }
 
 /* Comments Section - Timeline Styles */
-.comments-section {
-  margin: 16px 0;
-}
 
 .timeline-container {
   padding: 8px 0;

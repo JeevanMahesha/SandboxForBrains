@@ -16,6 +16,9 @@
           <a target="_blank" href="tel:{{ profileForm.value.mobileNumber }}">
             <mat-icon>call</mat-icon>
           </a>
+          <button mat-icon-button (click)="copyMobileNumber()" [matTooltip]="copyTooltip()">
+            <mat-icon>{{ copyIcon() }}</mat-icon>
+          </button>
         }
       </mat-card-header>
     </div>

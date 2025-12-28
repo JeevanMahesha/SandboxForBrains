@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import {
   PROFILE_STATUS,
@@ -52,6 +53,7 @@ import { Comment, Profile } from '../../models/profile';
     MatCardModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
   ],
   templateUrl: './add-profile.html',
   styleUrl: './add-profile.css',
@@ -64,6 +66,8 @@ export default class AddProfileComponent {
   comments = signal<Comment[]>([]);
   newComment = signal<string>('');
   isLoading = signal<boolean>(false);
+  copyIcon = signal<string>('content_copy');
+  copyTooltip = signal<string>('Copy mobile number');
   zodiacSigns = Object.entries(zodiacSignList).map(([key, value]) => ({
     value: key,
     label: value.tanglish,
@@ -209,6 +213,36 @@ export default class AddProfileComponent {
 
   removeComment(index: number) {
     this.comments.update((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  copyMobileNumber() {
+    const mobileNumber = this.profileForm.value.mobileNumber;
+    if (mobileNumber) {
+      navigator.clipboard.writeText(mobileNumber).then(
+        () => {
+          this.copyIcon.set('check');
+          this.copyTooltip.set('Copied!');
+          this.snackBar.open('Mobile number copied to clipboard!', 'Close', {
+            duration: 2000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['success-snackbar'],
+          });
+          setTimeout(() => {
+            this.copyIcon.set('content_copy');
+            this.copyTooltip.set('Copy mobile number');
+          }, 1500);
+        },
+        () => {
+          this.snackBar.open('Failed to copy mobile number', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar'],
+          });
+        },
+      );
+    }
   }
 
   onSubmit() {

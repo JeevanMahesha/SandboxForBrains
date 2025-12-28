@@ -12,7 +12,6 @@ import {
   authState,
   onAuthStateChanged,
 } from '@angular/fire/auth';
-import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
 
 @Injectable({
@@ -20,7 +19,6 @@ import { from, Observable } from 'rxjs';
 })
 export class AuthService {
   private auth = inject(Auth);
-  private router = inject(Router);
 
   user = toSignal(user(this.auth), { initialValue: null });
   idToken = toSignal(idToken(this.auth), { initialValue: null });

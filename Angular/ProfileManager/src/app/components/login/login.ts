@@ -47,8 +47,8 @@ export default class LoginComponent {
           })
           .afterDismissed()
           .subscribe(() => {
-            this.isLoading.set(false);
             this.router.navigate(['/']);
+            this.isLoading.set(false);
           });
       },
       error: (error: unknown) => {

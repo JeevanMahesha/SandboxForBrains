@@ -7,7 +7,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
-import { browserLocalPersistence, setPersistence } from 'firebase/auth';
+import { browserSessionPersistence, setPersistence } from 'firebase/auth';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
@@ -20,8 +20,8 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => {
       const auth = getAuth();
-      // Set persistence to LOCAL to maintain auth state across page refreshes
-      setPersistence(auth, browserLocalPersistence).catch((error) => {
+      // Set persistence to SESSION - auth state clears when browser is closed
+      setPersistence(auth, browserSessionPersistence).catch((error) => {
         console.error('Error setting auth persistence:', error);
       });
       return auth;

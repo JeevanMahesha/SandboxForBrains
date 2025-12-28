@@ -66,8 +66,8 @@ export default class AddProfileComponent {
   comments = signal<Comment[]>([]);
   newComment = signal<string>('');
   isLoading = signal<boolean>(false);
-  copyIcon = signal<string>('content_copy');
-  copyTooltip = signal<string>('Copy mobile number');
+  // Generic copy state tracker - stores { icon, tooltip } per field
+  copyState = signal<Record<string, { icon: string; tooltip: string }>>({});
   zodiacSigns = Object.entries(zodiacSignList).map(([key, value]) => ({
     value: key,
     label: value.tanglish,
@@ -215,34 +215,57 @@ export default class AddProfileComponent {
     this.comments.update((prev) => prev.filter((_, i) => i !== index));
   }
 
-  copyMobileNumber() {
-    const mobileNumber = this.profileForm.value.mobileNumber;
-    if (mobileNumber) {
-      navigator.clipboard.writeText(mobileNumber).then(
-        () => {
-          this.copyIcon.set('check');
-          this.copyTooltip.set('Copied!');
-          this.snackBar.open('Mobile number copied to clipboard!', 'Close', {
-            duration: 2000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            panelClass: ['success-snackbar'],
+  // Helper method to get copy icon for a field
+  getCopyIcon(field: string): string {
+    return this.copyState()[field]?.icon ?? 'content_copy';
+  }
+
+  // Helper method to get copy tooltip for a field
+  getCopyTooltip(field: string): string {
+    const labels: Record<string, string> = {
+      mobileNumber: 'Copy mobile number',
+      matrimonyId: 'Copy Matrimony ID',
+    };
+    return this.copyState()[field]?.tooltip ?? labels[field] ?? 'Copy';
+  }
+
+  // Generic copy method - works for any field
+  copyField(field: string, value: string | null | undefined, label: string): void {
+    if (!value) return;
+
+    navigator.clipboard.writeText(value).then(
+      () => {
+        // Update state for this field
+        this.copyState.update((state) => ({
+          ...state,
+          [field]: { icon: 'check', tooltip: 'Copied!' },
+        }));
+
+        this.snackBar.open(`${label} copied to clipboard!`, 'Close', {
+          duration: 2000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+
+        // Reset after 1.5s
+        setTimeout(() => {
+          this.copyState.update((state) => {
+            const newState = { ...state };
+            delete newState[field];
+            return newState;
           });
-          setTimeout(() => {
-            this.copyIcon.set('content_copy');
-            this.copyTooltip.set('Copy mobile number');
-          }, 1500);
-        },
-        () => {
-          this.snackBar.open('Failed to copy mobile number', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            panelClass: ['error-snackbar'],
-          });
-        },
-      );
-    }
+        }, 1500);
+      },
+      () => {
+        this.snackBar.open(`Failed to copy ${label.toLowerCase()}`, 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    );
   }
 
   onSubmit() {

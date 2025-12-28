@@ -65,7 +65,7 @@ export default class AddProfileComponent {
   profileForm: FormGroup<ProfileForm>;
   comments = signal<Comment[]>([]);
   newComment = signal<string>('');
-  isLoading = signal<boolean>(false);
+  isLoading = signal<boolean>(true);
   // Generic copy state tracker - stores { icon, tooltip } per field
   copyState = signal<Record<string, { icon: string; tooltip: string }>>({});
   zodiacSigns = Object.entries(zodiacSignList).map(([key, value]) => ({
@@ -184,12 +184,14 @@ export default class AddProfileComponent {
         this.router.navigate(['/']);
         return;
       }
+      // this.isLoading.set(true);
       this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileForm.patchValue(profile);
           this.comments.set(profile.comments);
           this.profileForm.disable();
         }
+        // this.isLoading.set(false);
       });
     } else if (selectedAction === 'edit') {
       if (!selectedId) {
@@ -202,11 +204,13 @@ export default class AddProfileComponent {
         this.router.navigate(['/']);
         return;
       }
+      // this.isLoading.set(true);
       this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileForm.patchValue(profile);
           this.comments.set(profile.comments);
         }
+        // this.isLoading.set(false);
       });
     }
   }

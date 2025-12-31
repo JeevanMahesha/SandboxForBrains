@@ -151,27 +151,35 @@ export default class ProfilesList {
         debounceTime(300),
         distinctUntilChanged(),
         tap((searchValue) => {
-          this.isLoading.set(true);
           // When searching by Matrimony ID, reset status and star filters
           if (searchValue) {
+            this.isLoading.set(true);
             this.router.navigate([], {
               queryParams: { search: searchValue, status: null, star: null },
               queryParamsHandling: 'merge',
             });
           } else {
-            // Update URL with search param only
+            // Clear search param - the effect will handle reloading profiles
             this.updateUrlParams({ search: null });
           }
         }),
+        // Only perform search API call when there's a search value
+        // Empty search is handled by the effect that reloads all profiles
         switchMap((searchValue) => {
+          if (!searchValue) {
+            return [];
+          }
           return this.profilesService.getProfilesByMatrimonyId(searchValue);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((profiles) => {
-        this.allProfiles.set(profiles);
-        this.pageIndex.set(0);
-        this.isLoading.set(false);
+        // Only update profiles if we actually performed a search
+        if (profiles.length > 0 || this.searchMatrimonyIdControl.value) {
+          this.allProfiles.set(profiles);
+          this.pageIndex.set(0);
+          this.isLoading.set(false);
+        }
       });
 
     effect(() => {

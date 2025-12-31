@@ -152,8 +152,16 @@ export default class ProfilesList {
         distinctUntilChanged(),
         tap((searchValue) => {
           this.isLoading.set(true);
-          // Update URL with search param
-          this.updateUrlParams({ search: searchValue || null });
+          // When searching by Matrimony ID, reset status and star filters
+          if (searchValue) {
+            this.router.navigate([], {
+              queryParams: { search: searchValue, status: null, star: null },
+              queryParamsHandling: 'merge',
+            });
+          } else {
+            // Update URL with search param only
+            this.updateUrlParams({ search: null });
+          }
         }),
         switchMap((searchValue) => {
           return this.profilesService.getProfilesByMatrimonyId(searchValue);

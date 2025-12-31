@@ -62,6 +62,7 @@ import { Comment, Profile } from '../../models/profile';
 export default class AddProfileComponent {
   public readonly id = input<string | null>();
   public readonly action = input<string | null>();
+  public readonly returnUrl = input<string | null>();
   profileForm: FormGroup<ProfileForm>;
   comments = signal<Comment[]>([]);
   newComment = signal<string>('');
@@ -323,7 +324,12 @@ export default class AddProfileComponent {
   }
 
   onCancel() {
-    this.router.navigate(['/']);
+    const url = this.returnUrl();
+    if (url) {
+      this.router.navigateByUrl(url);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   getErrorMessage(controlName: keyof ProfileForm): string {
@@ -356,7 +362,7 @@ export default class AddProfileComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar'],
         });
-        this.router.navigate(['/']);
+        this.navigateBack();
       },
       error: (error) => {
         this.isSaving.set(false);
@@ -380,7 +386,7 @@ export default class AddProfileComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar'],
         });
-        this.router.navigate(['/']);
+        this.navigateBack();
       },
       error: (error) => {
         this.isSaving.set(false);
@@ -393,5 +399,14 @@ export default class AddProfileComponent {
         });
       },
     });
+  }
+
+  private navigateBack(): void {
+    const url = this.returnUrl();
+    if (url) {
+      this.router.navigateByUrl(url);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

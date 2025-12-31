@@ -95,7 +95,7 @@
           <div class="flex gap-2 flex-wrap justify-center items-center">
             <span class="text-sm text-gray-600">Active filters:</span>
             @if (searchMatrimonyIdControl.value) {
-              <mat-chip-row (removed)="searchMatrimonyIdControl.setValue(''); pageIndex.set(0)">
+              <mat-chip-row (removed)="clearSearchFilter()">
                 Matrimony ID: {{ searchMatrimonyIdControl.value }}
                 <button matChipRemove>
                   <mat-icon>cancel</mat-icon>
@@ -103,7 +103,7 @@
               </mat-chip-row>
             }
             @if (selectedProfileStatus()) {
-              <mat-chip-row (removed)="selectedProfileStatus.set(null); pageIndex.set(0)">
+              <mat-chip-row (removed)="clearStatusFilter()">
                 Status: {{ getStatusLabel(selectedProfileStatus()) }}
                 <button matChipRemove>
                   <mat-icon>cancel</mat-icon>
@@ -111,7 +111,7 @@
               </mat-chip-row>
             }
             @if (selectedStar()) {
-              <mat-chip-row (removed)="selectedStar.set(null); pageIndex.set(0)">
+              <mat-chip-row (removed)="clearStarFilter()">
                 Score: {{ selectedStar() }}
                 <button matChipRemove>
                   <mat-icon>cancel</mat-icon>

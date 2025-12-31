@@ -1,6 +1,7 @@
 import {
   Component,
   inject,
+  input,
   signal,
   computed,
   effect,
@@ -75,11 +76,21 @@ export default class ProfilesList {
   pageIndex = signal<number>(0);
   pageSizeOptions = [5, 10, 25, 50, 100];
 
-  // Sorting & Filtering
-  sortDirection = signal<OrderByDirection>('desc');
-  sortField = signal<string>('createdAt');
-  selectedProfileStatus = signal<keyof typeof PROFILE_STATUS | null>(null);
-  selectedStar = signal<number | null>(null);
+  // Sorting & Filtering - URL query param inputs
+  sortDirection = input<OrderByDirection, string>('desc', {
+    alias: 'sort',
+    transform: (v) => (v === 'asc' || v === 'desc' ? v : 'desc'),
+  });
+  sortField = input<string>('createdAt');
+  selectedProfileStatus = input<keyof typeof PROFILE_STATUS | null, string | null>(null, {
+    alias: 'status',
+    transform: (v) => (v as keyof typeof PROFILE_STATUS) || null,
+  });
+  selectedStar = input<number | null, string | null>(null, {
+    alias: 'star',
+    transform: (v) => (v ? Number(v) : null),
+  });
+  searchQuery = input<string>('', { alias: 'search' });
   searchMatrimonyIdControl = new FormControl<string>('');
 
   sortOptions = signal<{ label: string; value: OrderByDirection }[]>([
@@ -116,12 +127,34 @@ export default class ProfilesList {
   ];
 
   constructor() {
+    // Initialize search control from URL on component init
+    effect(() => {
+      const searchFromUrl = this.searchQuery();
+      // Only set if different to avoid triggering valueChanges unnecessarily
+      if (this.searchMatrimonyIdControl.value !== searchFromUrl) {
+        this.searchMatrimonyIdControl.setValue(searchFromUrl, { emitEvent: false });
+        // If there's a search query from URL, trigger the search
+        if (searchFromUrl) {
+          this.isLoading.set(true);
+          this.profilesService.getProfilesByMatrimonyId(searchFromUrl).subscribe((profiles) => {
+            this.allProfiles.set(profiles);
+            this.pageIndex.set(0);
+            this.isLoading.set(false);
+          });
+        }
+      }
+    });
+
     // Setup debounced search using FormControl valueChanges
     this.searchMatrimonyIdControl.valueChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        tap(() => this.isLoading.set(true)),
+        tap((searchValue) => {
+          this.isLoading.set(true);
+          // Update URL with search param
+          this.updateUrlParams({ search: searchValue || null });
+        }),
         switchMap((searchValue) => {
           return this.profilesService.getProfilesByMatrimonyId(searchValue);
         }),
@@ -138,7 +171,12 @@ export default class ProfilesList {
       this.selectedStar();
       this.sortDirection();
       this.sortField();
-      this.reloadProfiles();
+      // Only reload profiles if there's no active search query
+      // Search results are handled separately by the search effect
+      const searchActive = this.searchQuery();
+      if (!searchActive) {
+        this.reloadProfiles();
+      }
     });
   }
 
@@ -148,28 +186,39 @@ export default class ProfilesList {
   }
 
   onView(profile: Profile): void {
-    this.router.navigate(['/profile'], { queryParams: { id: profile.id, action: 'view' } });
+    this.router.navigate(['/profile'], {
+      queryParams: { id: profile.id, action: 'view', returnUrl: this.router.url },
+    });
   }
 
   onEdit(profile: Profile): void {
-    this.router.navigate(['/profile'], { queryParams: { id: profile.id, action: 'edit' } });
+    this.router.navigate(['/profile'], {
+      queryParams: { id: profile.id, action: 'edit', returnUrl: this.router.url },
+    });
   }
 
   onSortChange(event: MatButtonToggleChange): void {
     const direction = event.value as OrderByDirection;
-    this.sortDirection.set(direction);
+    this.updateUrlParams({ sort: direction });
   }
 
   onStarSortChange(event: MatSelectChange): void {
     const starScore = event.value === undefined ? null : event.value;
-    this.selectedStar.set(starScore);
+    this.updateUrlParams({ star: starScore });
     this.pageIndex.set(0); // Reset to first page when filtering
   }
 
   onProfileSortChange(event: MatSelectChange): void {
     const status = event.value === undefined ? null : event.value;
-    this.selectedProfileStatus.set(status);
+    this.updateUrlParams({ status: status });
     this.pageIndex.set(0); // Reset to first page when filtering
+  }
+
+  private updateUrlParams(params: Record<string, unknown>): void {
+    this.router.navigate([], {
+      queryParams: params,
+      queryParamsHandling: 'merge',
+    });
   }
 
   onDelete(profile: Profile): void {
@@ -197,7 +246,9 @@ export default class ProfilesList {
   }
 
   addProfile(): void {
-    this.router.navigate(['/profile'], { queryParams: { action: 'add' } });
+    this.router.navigate(['/profile'], {
+      queryParams: { action: 'add', returnUrl: this.router.url },
+    });
   }
 
   getStatusClass(status: keyof typeof PROFILE_STATUS): string {
@@ -213,13 +264,35 @@ export default class ProfilesList {
     return this.pageIndex() * this.pageSize() + index + 1;
   }
 
-  clearFilters(): void {
-    this.selectedProfileStatus.set(null);
-    this.selectedStar.set(null);
-    this.searchMatrimonyIdControl.setValue('');
-    this.sortDirection.set('desc');
-    this.sortField.set('createdAt');
+  clearStatusFilter(): void {
+    this.updateUrlParams({ status: null });
     this.pageIndex.set(0);
+  }
+
+  clearStarFilter(): void {
+    this.updateUrlParams({ star: null });
+    this.pageIndex.set(0);
+  }
+
+  clearSearchFilter(): void {
+    this.searchMatrimonyIdControl.setValue('');
+    this.pageIndex.set(0);
+  }
+
+  clearFilters(): void {
+    this.searchMatrimonyIdControl.setValue('');
+    this.pageIndex.set(0);
+    // Clear all filter params from URL
+    this.router.navigate([], {
+      queryParams: {
+        status: null,
+        star: null,
+        sort: null,
+        sortField: null,
+        search: null,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   reloadProfiles(): void {

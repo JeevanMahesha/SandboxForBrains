@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { form, FormField, min, required } from '@angular/forms/signals';
 import {
   DistrictList,
@@ -15,6 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { KeyValuePipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProfilesService } from '../../services/profiles.service';
 
 export interface ProfileDetail {
   name: string;
@@ -74,7 +84,7 @@ export default class AddProfileSignalForm {
     required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
     min(profileForm.age, 18, { message: 'Age must be greater than 18' });
   });
-  isPageLoading = signal(false);
+  isPageLoading = signal(true);
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = zodiacSignList;
   STARS_DATA = MATCHING_STARS;
@@ -94,6 +104,14 @@ export default class AddProfileSignalForm {
   selectedStateDistrictList = computed(() => DistrictList[this.profileDetailForm.state().value()]);
 
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly profilesService = inject(ProfilesService);
+
+  constructor() {
+    effect(() => {
+      this.handleRouteChange(this.id(), this.action());
+    });
+  }
 
   onCancel() {
     this.navigateBack();
@@ -114,6 +132,68 @@ export default class AddProfileSignalForm {
       this.router.navigateByUrl(url);
     } else {
       this.router.navigate(['/']);
+    }
+  }
+
+  private handleRouteChange(
+    selectedId: string | null | undefined,
+    selectedAction: string | null | undefined,
+  ): void {
+    // Reset form state first
+    this.profileDetailForm().reset();
+    // this.profileDetailForm().enable();
+    // this.comments.set([]);
+
+    if (!selectedAction) {
+      this.snackBar.open('Invalid request', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar'],
+      });
+      this.router.navigate(['/']);
+      return;
+    }
+
+    if (selectedAction === 'view') {
+      if (!selectedId) {
+        this.snackBar.open('Invalid request', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+        this.router.navigate(['/']);
+        return;
+      }
+      this.profilesService.getProfileById(selectedId).subscribe((profile) => {
+        if (profile) {
+          this.profileDetailModel.set(profile);
+          // this.comments.set(profile.comments);
+        }
+        this.isPageLoading.set(false);
+      });
+    } else if (selectedAction === 'edit') {
+      if (!selectedId) {
+        this.snackBar.open('Invalid request', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+        this.router.navigate(['/']);
+        return;
+      }
+      this.profilesService.getProfileById(selectedId).subscribe((profile) => {
+        if (profile) {
+          this.profileDetailModel.set(profile);
+          // this.comments.set(profile.comments);
+        }
+        this.isPageLoading.set(false);
+      });
+    } else {
+      // For 'add' action, no data to fetch
+      this.isPageLoading.set(false);
     }
   }
 }

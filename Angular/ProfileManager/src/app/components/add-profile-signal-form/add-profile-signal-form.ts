@@ -26,6 +26,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfilesService } from '../../services/profiles.service';
 import { Comments } from './comments/comments';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface Comment {
   value: string;
@@ -56,6 +58,8 @@ export interface ProfileDetail {
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
     KeyValuePipe,
     Comments,
   ],
@@ -93,6 +97,8 @@ export default class AddProfileSignalForm {
     required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
     min(profileForm.age, 18, { message: 'Age must be greater than 18' });
   });
+  copyState = signal<Record<string, { icon: string; tooltip: string }>>({});
+
   isPageLoading = signal(true);
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = zodiacSignList;
@@ -133,6 +139,56 @@ export default class AddProfileSignalForm {
 
   onStateChange() {
     this.profileDetailForm.city().reset('');
+  }
+
+  copyField(field: string, value: string | null | undefined, label: string): void {
+    if (!value) return;
+
+    navigator.clipboard.writeText(value).then(
+      () => {
+        // Update state for this field
+        this.copyState.update((state) => ({
+          ...state,
+          [field]: { icon: 'check', tooltip: 'Copied!' },
+        }));
+
+        this.snackBar.open(`${label} copied to clipboard!`, 'Close', {
+          duration: 2000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+
+        // Reset after 1.5s
+        setTimeout(() => {
+          this.copyState.update((state) => {
+            const newState = { ...state };
+            delete newState[field];
+            return newState;
+          });
+        }, 1500);
+      },
+      () => {
+        this.snackBar.open(`Failed to copy ${label.toLowerCase()}`, 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    );
+  }
+
+  getCopyTooltip(field: string): string {
+    const labels: Record<string, string> = {
+      mobileNumber: 'Copy mobile number',
+      matrimonyId: 'Copy Matrimony ID',
+    };
+    return this.copyState()[field]?.tooltip ?? labels[field] ?? 'Copy';
+  }
+
+  getCopyIcon(field: string): string {
+    return this.copyState()[field]?.icon ?? 'content_copy';
   }
 
   private navigateBack(): void {

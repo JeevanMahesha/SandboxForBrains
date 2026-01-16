@@ -62,7 +62,7 @@ export interface ProfileDetail {
   templateUrl: './add-profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class AddProfileSignalForm {
+export default class AddProfile {
   public readonly id = input<string | null>();
   public readonly action = input<string | null>();
   public readonly returnUrl = input<string | null>();

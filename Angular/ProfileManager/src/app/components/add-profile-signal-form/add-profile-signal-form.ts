@@ -19,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { KeyValuePipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
@@ -216,6 +216,10 @@ export default class AddProfileSignalForm {
 
   getCopyIcon(field: string): string {
     return this.copyState()[field]?.icon ?? 'content_copy';
+  }
+
+  onStarChange(event: MatSelectChange<keyof typeof MATCHING_STARS>) {
+    this.profileDetailForm.starMatchScore().setControlValue(MATCHING_STARS[event.value]);
   }
 
   private navigateBack(): void {

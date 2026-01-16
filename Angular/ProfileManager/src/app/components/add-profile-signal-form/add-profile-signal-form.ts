@@ -7,7 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { form, FormField, min, required } from '@angular/forms/signals';
+import { form, FormField, min, pattern, required } from '@angular/forms/signals';
 import {
   DistrictList,
   MATCHING_STARS,
@@ -28,6 +28,7 @@ import { ProfilesService } from '../../services/profiles.service';
 import { Comments } from './comments/comments';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Profile } from '../../models/profile';
 
 export interface Comment {
   value: string;
@@ -96,9 +97,11 @@ export default class AddProfileSignalForm {
     required(profileForm.profileStatusId, { message: 'Profile status is required' });
     required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
     min(profileForm.age, 18, { message: 'Age must be greater than 18' });
+    pattern(profileForm.mobileNumber, /^\+91[0-9]{10}$/, {
+      message: 'Invalid mobile number (e.g., +919876543210)',
+    });
   });
   copyState = signal<Record<string, { icon: string; tooltip: string }>>({});
-
   isPageLoading = signal(true);
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = zodiacSignList;
@@ -134,7 +137,34 @@ export default class AddProfileSignalForm {
 
   onSubmit(event: Event) {
     event.preventDefault();
-    console.log(this.profileDetailForm());
+    if (this.profileDetailForm().valid()) {
+      this.isSaving.set(true);
+
+      const profileData = {
+        name: this.profileDetailForm.name().value(),
+        mobileNumber: this.profileDetailForm.mobileNumber().value(),
+        zodiacSign: this.profileDetailForm.zodiacSign().value(),
+        star: this.profileDetailForm.star().value(),
+        age: this.profileDetailForm.age().value(),
+        starMatchScore: this.profileDetailForm.starMatchScore().value(),
+        state: this.profileDetailForm.state().value(),
+        city: this.profileDetailForm.city().value(),
+        profileStatusId: this.profileDetailForm.profileStatusId().value(),
+        matrimonyId: this.profileDetailForm.matrimonyId().value(),
+        comments: this.profileDetailForm.comments().value(),
+      };
+      switch (this.action()) {
+        case 'add':
+          this.addProfile(profileData as Partial<Profile>);
+          break;
+        case 'edit':
+          this.updateProfile(profileData as Partial<Profile>);
+          break;
+      }
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.profileDetailForm().markAsTouched();
+    }
   }
 
   onStateChange() {
@@ -206,8 +236,6 @@ export default class AddProfileSignalForm {
   ): void {
     // Reset form state first
     this.profileDetailForm().reset();
-    // this.profileDetailForm().enable();
-    // this.comments.set([]);
 
     if (!selectedAction) {
       this.snackBar.open('Invalid request', 'Close', {
@@ -234,7 +262,6 @@ export default class AddProfileSignalForm {
       this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileDetailModel.set(profile);
-          // this.comments.set(profile.comments);
         }
         this.isPageLoading.set(false);
       });
@@ -252,7 +279,6 @@ export default class AddProfileSignalForm {
       this.profilesService.getProfileById(selectedId).subscribe((profile) => {
         if (profile) {
           this.profileDetailModel.set(profile);
-          // this.comments.set(profile.comments);
         }
         this.isPageLoading.set(false);
       });
@@ -260,5 +286,55 @@ export default class AddProfileSignalForm {
       // For 'add' action, no data to fetch
       this.isPageLoading.set(false);
     }
+  }
+
+  private addProfile(profileData: Partial<Profile>) {
+    this.profilesService.addProfile(profileData).subscribe({
+      next: (id) => {
+        this.isSaving.set(false);
+        this.snackBar.open('Profile added successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+        this.navigateBack();
+      },
+      error: (error) => {
+        this.isSaving.set(false);
+        console.error('Error saving profile:', error);
+        this.snackBar.open('Error adding profile. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    });
+  }
+
+  private updateProfile(profileData: Partial<Profile>) {
+    this.profilesService.updateProfile(this.id() as string, profileData).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.snackBar.open('Profile updated successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar'],
+        });
+        this.navigateBack();
+      },
+      error: (error) => {
+        this.isSaving.set(false);
+        console.error('Error updating profile:', error);
+        this.snackBar.open('Error updating profile. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    });
   }
 }

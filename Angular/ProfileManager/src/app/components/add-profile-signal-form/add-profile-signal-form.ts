@@ -7,7 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { form, FormField, min, pattern, required } from '@angular/forms/signals';
+import { form, FormField, min, pattern, readonly, required } from '@angular/forms/signals';
 import {
   DistrictList,
   MATCHING_STARS,
@@ -28,12 +28,7 @@ import { ProfilesService } from '../../services/profiles.service';
 import { Comments } from './comments/comments';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Profile } from '../../models/profile';
-
-export interface Comment {
-  value: string;
-  createDateAndTime: Date;
-}
+import { Comment, Profile } from '../../models/profile';
 
 export interface ProfileDetail {
   name: string;
@@ -41,7 +36,7 @@ export interface ProfileDetail {
   zodiacSign: keyof typeof zodiacSignList;
   star: keyof typeof MATCHING_STARS;
   age: number;
-  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS];
+  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
   state: keyof typeof DistrictList;
   city: string;
   profileStatusId: keyof typeof PROFILE_STATUS;
@@ -73,16 +68,16 @@ export default class AddProfileSignalForm {
   public readonly action = input<string | null>();
   public readonly returnUrl = input<string | null>();
   private readonly profileDetailModel = signal<ProfileDetail>({
-    name: '',
-    mobileNumber: '+91',
+    name: 'Test Name',
+    mobileNumber: '+919876543210',
     zodiacSign: 'aquarius',
     star: 'Aswini',
-    age: 0,
+    age: 25,
     starMatchScore: 8,
     state: 'Tamil Nadu',
-    city: '',
+    city: 'Chennai',
     profileStatusId: 'NEW',
-    matrimonyId: '',
+    matrimonyId: '1234567890',
     comments: [],
   });
   profileDetailForm = form(this.profileDetailModel, (profileForm) => {
@@ -100,7 +95,9 @@ export default class AddProfileSignalForm {
     pattern(profileForm.mobileNumber, /^\+91[0-9]{10}$/, {
       message: 'Invalid mobile number (e.g., +919876543210)',
     });
+    readonly(profileForm.starMatchScore);
   });
+  commentValueState = signal<boolean>(false);
   copyState = signal<Record<string, { icon: string; tooltip: string }>>({});
   isPageLoading = signal(true);
   PROFILE_STATUS_DATA = PROFILE_STATUS;
@@ -155,10 +152,10 @@ export default class AddProfileSignalForm {
       };
       switch (this.action()) {
         case 'add':
-          this.addProfile(profileData as Partial<Profile>);
+          this.addProfile(profileData as unknown as Partial<Profile>);
           break;
         case 'edit':
-          this.updateProfile(profileData as Partial<Profile>);
+          this.updateProfile(profileData as unknown as Partial<Profile>);
           break;
       }
     } else {

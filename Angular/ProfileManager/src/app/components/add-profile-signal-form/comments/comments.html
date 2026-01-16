@@ -2,54 +2,50 @@
   <h3 class="text-base md:text-lg font-medium text-gray-700">Comments</h3>
 
   <div class="py-2">
-    @if (value().length > 0) {
-      <div class="relative">
-        @for (comment of value(); track $index) {
-          <div class="flex relative pb-6 last:pb-4">
-            <div class="flex flex-col items-center w-5 md:w-6 shrink-0 mr-3 md:mr-4">
-              <span
-                class="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-teal-700 border-2 border-teal-700 z-1"
-              ></span>
-              <span class="timeline-line w-0.5 flex-1 bg-gray-300 mt-1"></span>
+    <div class="relative">
+      @for (comment of value(); track $index) {
+        <div class="flex relative pb-6 last:pb-4">
+          <div class="flex flex-col items-center w-5 md:w-6 shrink-0 mr-3 md:mr-4">
+            <span
+              class="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-teal-700 border-2 border-teal-700 z-1"
+            ></span>
+            <span class="timeline-line w-0.5 flex-1 bg-gray-300 mt-1"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 text-xs text-gray-500 mb-2 font-medium">
+              <mat-icon class="text-base w-4 h-4 text-gray-400">schedule</mat-icon>
+              {{ comment.createDateAndTime | date: 'MMM dd, yyyy hh:mm a' }}
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 text-xs text-gray-500 mb-2 font-medium">
-                <mat-icon class="text-base w-4 h-4 text-gray-400">schedule</mat-icon>
-                {{ comment.createDateAndTime | date: 'MMM dd, yyyy hh:mm a' }}
-              </div>
-              <div
-                class="flex items-start justify-between gap-2 bg-gray-100 rounded-lg py-3 px-4 border-l-[3px] border-teal-700 shadow-sm"
-              >
-                <span class="flex-1 text-sm text-gray-700 leading-relaxed wrap-break-word">{{
-                  comment.value
-                }}</span>
-                @if (action() !== 'view') {
-                  <button
-                    mat-icon-button
-                    type="button"
-                    class="delete-comment-btn shrink-0 w-7 h-7 -my-1 -mr-2"
-                    (click)="removeComment($index)"
-                    aria-label="Delete comment"
+            <div
+              class="flex items-start justify-between gap-2 bg-gray-100 rounded-lg py-3 px-4 border-l-[3px] border-teal-700 shadow-sm"
+            >
+              <span class="flex-1 text-sm text-gray-700 leading-relaxed wrap-break-word">{{
+                comment.value
+              }}</span>
+              @if (action() !== 'view') {
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="delete-comment-btn shrink-0 w-7 h-7 -my-1 -mr-2"
+                  (click)="removeComment($index)"
+                  aria-label="Delete comment"
+                >
+                  <mat-icon
+                    class="text-lg w-[18px] h-[18px] text-gray-400 hover:text-red-600 transition-colors"
+                    >close</mat-icon
                   >
-                    <mat-icon
-                      class="text-lg w-[18px] h-[18px] text-gray-400 hover:text-red-600 transition-colors"
-                      >close</mat-icon
-                    >
-                  </button>
-                }
-              </div>
+                </button>
+              }
             </div>
           </div>
-        }
-      </div>
-    } @else {
-      <div
-        class="flex flex-col items-center justify-center py-8 px-4 bg-gray-50 rounded-lg text-gray-400"
-      >
-        <mat-icon class="text-5xl w-12 h-12 mb-2">chat_bubble_outline</mat-icon>
-        <p class="m-0 text-sm">No comments yet</p>
-      </div>
-    }
+        </div>
+      } @empty {
+        <div class="flex items-center justify-center py-8 px-4 bg-gray-50 rounded-lg text-gray-400">
+          <mat-icon class="text-5xl w-12 h-12 mb-2">chat_bubble_outline</mat-icon>
+          <p class="m-0 text-sm">No comments yet</p>
+        </div>
+      }
+    </div>
 
     @if (action() !== 'view') {
       <div class="flex items-start mt-2">

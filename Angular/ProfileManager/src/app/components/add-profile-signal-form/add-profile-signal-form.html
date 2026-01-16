@@ -219,7 +219,11 @@
             </mat-form-field>
           </div>
 
-          <app-comments [formField]="profileDetailForm.comments" [action]="action()"></app-comments>
+          <app-comments
+            [formField]="profileDetailForm.comments"
+            [action]="action()"
+            (commentInputHasValue)="commentValueState.set($event)"
+          ></app-comments>
 
           <!-- Action Buttons -->
           @if (action() !== 'view') {
@@ -240,7 +244,7 @@
                 color="primary"
                 type="submit"
                 class="px-8 h-12 text-base bg-teal-700 text-white flex items-center gap-2 justify-center hover:bg-teal-800 disabled:opacity-60 disabled:cursor-not-allowed w-full md:w-auto"
-                [disabled]="isSaving()"
+                [disabled]="isSaving() || profileDetailForm().invalid() || !commentValueState()"
               >
                 @if (isSaving()) {
                   <mat-spinner diameter="20" class="inline-block"></mat-spinner>

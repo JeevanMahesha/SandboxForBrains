@@ -23,7 +23,7 @@ export interface ProfileDetail {
   star: keyof typeof MATCHING_STARS;
   age: number;
   starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS];
-  state: string;
+  state: keyof typeof DistrictList;
   city: string;
   profileStatusId: keyof typeof PROFILE_STATUS;
   matrimonyId: string;
@@ -54,9 +54,9 @@ export default class AddProfileSignalForm {
     mobileNumber: '+91',
     zodiacSign: 'aquarius',
     star: 'Aswini',
-    age: 1,
+    age: 0,
     starMatchScore: 8,
-    state: '',
+    state: 'Tamil Nadu',
     city: '',
     profileStatusId: 'NEW',
     matrimonyId: '',
@@ -91,34 +91,29 @@ export default class AddProfileSignalForm {
     }
   });
 
-  selectedStateDistrictList = computed(() => {
-    const state = this.profileDetailForm().value().state;
-    return state ? DistrictList[state as keyof typeof DistrictList] : [];
-  });
+  selectedStateDistrictList = computed(() => DistrictList[this.profileDetailForm.state().value()]);
 
   private readonly router = inject(Router);
 
   onCancel() {
-    // this.router.navigate([this.returnUrl()]);
-    const asdas = this.profileDetailForm.age;
-    const asdasq = this.profileDetailForm.name;
-    const tead = this.profileDetailForm.age().errors;
-    const test = tead();
-    console.log(test.at(0)?.message);
-
-    // console.log(this.profileDetailForm().errorSummary());
+    this.navigateBack();
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
     console.log(this.profileDetailForm());
-    // this.profileDetailForm().value().state;
   }
 
   onStateChange() {
-    // this.profileDetailModel.set({
-    //   ...this.profileDetailModel(),
-    //   city: '',
-    // });
+    this.profileDetailForm.city().reset('');
+  }
+
+  private navigateBack(): void {
+    const url = this.returnUrl();
+    if (url) {
+      this.router.navigateByUrl(url);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

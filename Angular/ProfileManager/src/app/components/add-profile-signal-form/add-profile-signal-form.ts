@@ -25,6 +25,12 @@ import { KeyValuePipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfilesService } from '../../services/profiles.service';
+import { Comments } from './comments/comments';
+
+export interface Comment {
+  value: string;
+  createDateAndTime: Date;
+}
 
 export interface ProfileDetail {
   name: string;
@@ -37,6 +43,7 @@ export interface ProfileDetail {
   city: string;
   profileStatusId: keyof typeof PROFILE_STATUS;
   matrimonyId: string;
+  comments: Comment[];
 }
 
 @Component({
@@ -50,6 +57,7 @@ export interface ProfileDetail {
     MatSelectModule,
     MatInputModule,
     KeyValuePipe,
+    Comments,
   ],
   templateUrl: './add-profile-signal-form.html',
   styleUrl: './add-profile-signal-form.css',
@@ -59,7 +67,7 @@ export default class AddProfileSignalForm {
   public readonly id = input<string | null>();
   public readonly action = input<string | null>();
   public readonly returnUrl = input<string | null>();
-  profileDetailModel = signal<ProfileDetail>({
+  private readonly profileDetailModel = signal<ProfileDetail>({
     name: '',
     mobileNumber: '+91',
     zodiacSign: 'aquarius',
@@ -70,6 +78,7 @@ export default class AddProfileSignalForm {
     city: '',
     profileStatusId: 'NEW',
     matrimonyId: '',
+    comments: [],
   });
   profileDetailForm = form(this.profileDetailModel, (profileForm) => {
     required(profileForm.name, { message: 'Name is required' });

@@ -1,4 +1,4 @@
-import { MATCHING_STARS, PROFILE_STATUS, zodiacSignList } from '../constant/common';
+import { DistrictList, MATCHING_STARS, PROFILE_STATUS, zodiacSignList } from '../constant/common';
 
 export interface Comment {
   value: string;
@@ -14,7 +14,7 @@ export interface Profile {
   mobileNumber: string;
   zodiacSign: keyof typeof zodiacSignList;
   age: number;
-  state: string;
+  state: keyof typeof DistrictList;
   name: string;
   profileStatusId: keyof typeof PROFILE_STATUS;
   matrimonyId: string;

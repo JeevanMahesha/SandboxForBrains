@@ -15,13 +15,11 @@
             title()
           }}</mat-card-title>
           @if (action() !== 'add') {
-            <a
-              target="_blank"
-              href="https://wa.me/{{ profileDetailForm().value().mobileNumber?.replace('+', '') }}"
-            >
+            @let mobileNumber = profileDetailForm.mobileNumber().value();
+            <a target="_blank" href="https://wa.me/{{ mobileNumber?.replace('+', '') }}">
               <mat-icon>chat_add_on</mat-icon>
             </a>
-            <a target="_blank" href="tel:{{ profileDetailForm.mobileNumber().value() }}">
+            <a target="_blank" href="tel:{{ mobileNumber }}">
               <mat-icon>call</mat-icon>
             </a>
           }
@@ -199,10 +197,12 @@
 
             <mat-form-field appearance="fill" class="flex-1 min-w-0 block">
               <mat-label>City</mat-label>
-              <mat-select [formField]="profileDetailForm.city">
-                <!-- [placeholder]="
-                  profileDetailForm.value.state ? 'Select city' : 'Select state first'
-                " -->
+              <mat-select
+                [formField]="profileDetailForm.city"
+                [placeholder]="
+                  profileDetailForm.state().value() ? 'Select city' : 'Select state first'
+                "
+              >
                 @for (city of selectedStateDistrictList(); track city) {
                   <mat-option [value]="city">{{ city }}</mat-option>
                 }
@@ -215,95 +215,7 @@
             </mat-form-field>
           </div>
 
-          <!-- Comments Section -->
-          <!-- <div>
-            <h3 class="text-base md:text-lg font-medium text-gray-700">Comments</h3>
-
-            <div class="py-2">
-              @if (comments().length > 0) {
-                <div class="relative">
-                  @for (comment of comments(); track $index) {
-                    <div class="flex relative pb-6 last:pb-4">
-                      <div class="flex flex-col items-center w-5 md:w-6 shrink-0 mr-3 md:mr-4">
-                        <span
-                          class="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-teal-700 border-2 border-teal-700 z-[1]"
-                        ></span>
-                        <span class="timeline-line w-0.5 flex-1 bg-gray-300 mt-1"></span>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <div
-                          class="flex items-center gap-1.5 text-xs text-gray-500 mb-2 font-medium"
-                        >
-                          <mat-icon class="text-base w-4 h-4 text-gray-400">schedule</mat-icon>
-                          {{ comment.createDateAndTime | date: 'MMM dd, yyyy hh:mm a' }}
-                        </div>
-                        <div
-                          class="flex items-start justify-between gap-2 bg-gray-100 rounded-lg py-3 px-4 border-l-[3px] border-teal-700 shadow-sm"
-                        >
-                          <span class="flex-1 text-sm text-gray-700 leading-relaxed break-words">{{
-                            comment.value
-                          }}</span>
-                          @if (action() !== 'view') {
-                            <button
-                              mat-icon-button
-                              type="button"
-                              class="delete-comment-btn shrink-0 w-7 h-7 -my-1 -mr-2"
-                              (click)="removeComment($index)"
-                              aria-label="Delete comment"
-                            >
-                              <mat-icon
-                                class="text-lg w-[18px] h-[18px] text-gray-400 hover:text-red-600 transition-colors"
-                                >close</mat-icon
-                              >
-                            </button>
-                          }
-                        </div>
-                      </div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <div
-                  class="flex flex-col items-center justify-center py-8 px-4 bg-gray-50 rounded-lg text-gray-400"
-                >
-                  <mat-icon class="text-5xl w-12 h-12 mb-2">chat_bubble_outline</mat-icon>
-                  <p class="m-0 text-sm">No comments yet</p>
-                </div>
-              }
-
-              @if (action() !== 'view') {
-                <div class="flex items-start mt-2">
-                  <div class="hidden md:block mr-4">
-                    <span
-                      class="w-3 h-3 rounded-full bg-transparent border-2 border-dashed border-teal-700 block"
-                    ></span>
-                  </div>
-                  <div class="flex flex-1 flex-col md:flex-row gap-2 md:gap-3 items-start">
-                    <mat-form-field appearance="fill" class="flex-1 m-0 block w-full md:w-auto">
-                      <mat-label>Add Comment</mat-label>
-                      <input
-                        matInput
-                        [value]="newComment()"
-                        (input)="newComment.set($any($event.target).value)"
-                        (keyup.enter)="addComment()"
-                        placeholder="Enter your comment"
-                      />
-                    </mat-form-field>
-                    <button
-                      mat-raised-button
-                      type="button"
-                      (click)="addComment()"
-                      class="h-12 flex items-center gap-1 whitespace-nowrap bg-teal-700 text-white hover:bg-teal-800 disabled:bg-gray-400 disabled:text-gray-600 w-full md:w-auto md:mt-2"
-                      [disabled]="!newComment().trim()"
-                    >
-                      <mat-icon class="mr-1">add</mat-icon>
-                      Add
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
-          </div> -->
+          <app-comments [formField]="profileDetailForm.comments" [action]="action()"></app-comments>
 
           <!-- Action Buttons -->
           @if (action() !== 'view') {

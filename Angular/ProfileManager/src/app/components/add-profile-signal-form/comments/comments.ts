@@ -1,4 +1,12 @@
-import { Component, effect, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DatePipe } from '@angular/common';
@@ -11,7 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-comments',
   imports: [MatIconModule, MatFormFieldModule, DatePipe, MatInputModule, MatButtonModule],
   templateUrl: './comments.html',
-  styleUrl: './comments.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Comments implements FormValueControl<Comment[]> {
   value = model<Comment[]>([]);

@@ -60,7 +60,6 @@ export interface ProfileDetail {
     Comments,
   ],
   templateUrl: './add-profile-signal-form.html',
-  styleUrl: './add-profile-signal-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AddProfileSignalForm {

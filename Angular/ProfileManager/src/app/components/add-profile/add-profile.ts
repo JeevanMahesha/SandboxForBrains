@@ -7,7 +7,15 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { form, FormField, min, pattern, readonly, required } from '@angular/forms/signals';
+import {
+  disabled,
+  form,
+  FormField,
+  min,
+  pattern,
+  readonly,
+  required,
+} from '@angular/forms/signals';
 import {
   DistrictList,
   MATCHING_STARS,
@@ -95,6 +103,7 @@ export default class AddProfile {
       message: 'Invalid mobile number (e.g., +919876543210)',
     });
     readonly(profileForm.starMatchScore);
+    disabled(profileForm, () => this.action() === 'view');
   });
   commentValueState = signal<boolean>(false);
   copyState = signal<Record<string, { icon: string; tooltip: string }>>({});

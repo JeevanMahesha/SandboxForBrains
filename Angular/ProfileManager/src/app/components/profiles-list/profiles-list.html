@@ -1,6 +1,6 @@
 @if (isLoading()) {
   <div class="flex justify-center items-center h-screen">
-    <mat-spinner mode="indeterminate"></mat-spinner>
+    <mat-spinner mode="indeterminate" />
   </div>
 } @else {
   <div class="p-4 md:p-8 bg-gray-50 min-h-screen">
@@ -234,7 +234,7 @@
           (page)="onPageChange($event)"
           showFirstLastButtons
           class="border-t"
-        ></mat-paginator>
+        />
       }
     </div>
 
@@ -305,7 +305,7 @@
             [pageSizeOptions]="pageSizeOptions"
             (page)="onPageChange($event)"
             showFirstLastButtons
-          ></mat-paginator>
+          />
         </div>
       }
     </div>

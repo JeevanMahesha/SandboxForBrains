@@ -67,16 +67,16 @@ export default class AddProfile {
   public readonly action = input<string | null>();
   public readonly returnUrl = input<string | null>();
   private readonly profileDetailModel = signal<ProfileDetail>({
-    name: 'Test Name',
-    mobileNumber: '+919876543210',
+    name: '',
+    mobileNumber: '+91',
     zodiacSign: 'aquarius',
     star: 'Aswini',
-    age: 25,
-    starMatchScore: 8,
+    age: 0,
+    starMatchScore: 0,
     state: 'Tamil Nadu',
-    city: 'Chennai',
+    city: '',
     profileStatusId: 'NEW',
-    matrimonyId: '1234567890',
+    matrimonyId: '',
     comments: [],
   });
   profileDetailForm = form(this.profileDetailModel, (profileForm) => {

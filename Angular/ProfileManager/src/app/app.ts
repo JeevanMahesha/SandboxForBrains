@@ -20,10 +20,8 @@ import { AuthService } from './services/auth.service';
     MatButtonModule,
   ],
   templateUrl: './app.html',
-  styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('ProfileManager');
   private breakpointObserver = inject(BreakpointObserver);
   sidebarOpen = signal(true);
   isMobile = signal(false);

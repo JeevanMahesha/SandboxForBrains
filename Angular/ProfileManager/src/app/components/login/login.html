@@ -2,24 +2,20 @@
   <div class="login-card">
     <h1 class="login-title">Login</h1>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form (submit)="onSubmit($event)">
       <div class="form-group">
         <label for="email" class="form-label">Email</label>
         <input
           type="email"
           id="email"
-          formControlName="email"
+          [formField]="loginForm.email"
           class="form-input"
           placeholder="Enter your email"
-          [class.invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+          [class.invalid]="loginForm.email().invalid() && loginForm.email().touched()"
         />
-        @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
+        @if (loginForm.email().invalid() && loginForm.email().touched()) {
           <span class="error-text">
-            @if (loginForm.controls.email.errors?.['required']) {
-              Email is required
-            } @else if (loginForm.controls.email.errors?.['email']) {
-              Please enter a valid email
-            }
+            {{ loginForm.email().errors().at(0)?.message }}
           </span>
         }
       </div>
@@ -29,20 +25,14 @@
         <input
           type="password"
           id="password"
-          formControlName="password"
+          [formField]="loginForm.password"
           class="form-input"
           placeholder="Enter your password"
-          [class.invalid]="
-            loginForm.controls.password.invalid && loginForm.controls.password.touched
-          "
+          [class.invalid]="loginForm.password().invalid() && loginForm.password().touched()"
         />
-        @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+        @if (loginForm.password().invalid() && loginForm.password().touched()) {
           <span class="error-text">
-            @if (loginForm.controls.password.errors?.['required']) {
-              Password is required
-            } @else if (loginForm.controls.password.errors?.['minlength']) {
-              Password must be at least 6 characters
-            }
+            {{ loginForm.password().errors().at(0)?.message }}
           </span>
         }
       </div>
@@ -51,7 +41,7 @@
         <div class="error-message">{{ errorMessage() }}</div>
       }
 
-      <button type="submit" class="login-button" [disabled]="isLoading() || loginForm.invalid">
+      <button type="submit" class="login-button" [disabled]="isLoading() || loginForm().invalid()">
         @if (isLoading()) {
           <span>Logging in...</span>
         } @else {

@@ -2,7 +2,7 @@
   <div class="login-card">
     <h1 class="login-title">Login</h1>
 
-    <form (ngSubmit)="onSubmit()">
+    <form (submit)="onSubmit($event)">
       <div class="form-group">
         <label for="email" class="form-label">Email</label>
         <input

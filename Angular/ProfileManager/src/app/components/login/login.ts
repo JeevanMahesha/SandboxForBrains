@@ -17,7 +17,6 @@ interface Login {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LoginComponent {
-  // private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
@@ -34,12 +33,8 @@ export default class LoginComponent {
     minLength(loginForm.password, 6, { message: 'Password must be at least 6 characters' });
   });
 
-  // loginForm = this.fb.group({
-  //   email: ['', [Validators.required, Validators.email]],
-  //   password: ['', [Validators.required, Validators.minLength(6)]],
-  // });
-
-  onSubmit() {
+  onSubmit(event: Event) {
+    event.preventDefault();
     if (this.loginForm().invalid()) {
       this.loginForm().markAsTouched();
       return;

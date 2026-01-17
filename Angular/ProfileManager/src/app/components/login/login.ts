@@ -1,39 +1,54 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { email, form, FormField, minLength, required } from '@angular/forms/signals';
+
+interface Login {
+  email: string;
+  password: string;
+}
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
-  imports: [ReactiveFormsModule],
+  imports: [FormField],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LoginComponent {
-  private fb = inject(FormBuilder);
+  // private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   errorMessage = signal<string>('');
   isLoading = signal<boolean>(false);
-
-  loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+  loginModel = signal<Login>({
+    email: '',
+    password: '',
+  });
+  loginForm = form(this.loginModel, (loginForm) => {
+    required(loginForm.email, { message: 'Email is required' });
+    email(loginForm.email, { message: 'Invalid email address' });
+    required(loginForm.password, { message: 'Password is required' });
+    minLength(loginForm.password, 6, { message: 'Password must be at least 6 characters' });
   });
 
+  // loginForm = this.fb.group({
+  //   email: ['', [Validators.required, Validators.email]],
+  //   password: ['', [Validators.required, Validators.minLength(6)]],
+  // });
+
   onSubmit() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
+    if (this.loginForm().invalid()) {
+      this.loginForm().markAsTouched();
       return;
     }
 
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const { email, password } = this.loginForm.value;
+    const { email, password } = this.loginForm().value();
 
     this.authService.login(email!, password!).subscribe({
       next: (userCredential) => {

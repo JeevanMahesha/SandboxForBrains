@@ -11,17 +11,19 @@
         <button mat-icon-button (click)="onCancel()">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <mat-card-header class="flex-1 flex items-center gap-5 py-4 px-6">
+        <mat-card-header class="flex-1 flex items-center">
           <mat-card-title class="text-2xl md:text-[28px] font-semibold text-gray-900 m-0">{{
             title()
           }}</mat-card-title>
           @if (action() !== 'add') {
-            <a target="_blank" href="https://wa.me/{{ mobileNumber?.replace('+', '') }}">
-              <mat-icon>chat_add_on</mat-icon>
-            </a>
-            <a target="_blank" href="tel:{{ mobileNumber }}">
-              <mat-icon>call</mat-icon>
-            </a>
+            <div class="flex items-center gap-4 pl-4 pt-2">
+              <a target="_blank" href="https://wa.me/{{ mobileNumber?.replace('+', '') }}">
+                <mat-icon>chat_add_on</mat-icon>
+              </a>
+              <a target="_blank" href="tel:{{ mobileNumber }}">
+                <mat-icon>call</mat-icon>
+              </a>
+            </div>
           }
         </mat-card-header>
       </div>

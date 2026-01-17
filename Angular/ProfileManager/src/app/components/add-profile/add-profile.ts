@@ -68,6 +68,11 @@ export interface ProfileDetail {
     Comments,
   ],
   templateUrl: './add-profile.html',
+  styles: `
+    .mat-mdc-card-header {
+      padding: 0px;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AddProfile {

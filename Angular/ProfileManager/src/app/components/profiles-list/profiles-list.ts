@@ -39,6 +39,7 @@ import { OrderByDirection } from '@angular/fire/firestore';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../services/auth.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatMenuModule } from '@angular/material/menu';
 @Component({
   selector: 'app-profiles-list',
   imports: [
@@ -57,6 +58,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
     MatSelectModule,
     ReactiveFormsModule,
     TitleCasePipe,
+    MatMenuModule,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
@@ -309,6 +311,23 @@ export default class ProfilesList {
       },
       queryParamsHandling: 'merge',
     });
+  }
+
+  copyToClipboard(value: string, label: string): void {
+    navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        this.snackBar.open(`${label} copied to clipboard`, 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar'],
+        });
+      })
+      .catch(() => {
+        this.snackBar.open(`Failed to copy ${label}`, 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar'],
+        });
+      });
   }
 
   reloadProfiles(): void {

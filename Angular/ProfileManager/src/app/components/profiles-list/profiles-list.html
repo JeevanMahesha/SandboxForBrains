@@ -185,32 +185,45 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700">Actions</th>
             <td mat-cell *matCellDef="let profile">
-              <div class="flex gap-2">
-                <button
-                  mat-icon-button
-                  (click)="onView(profile)"
-                  class="text-gray-600 hover:text-gray-900"
-                >
-                  <mat-icon>visibility</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  (click)="onEdit(profile)"
-                  class="text-gray-600 hover:text-gray-900"
-                >
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  (click)="onDelete(profile)"
-                  class="text-red-600 hover:text-red-800"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
+              <button
+                matIconButton
+                [matMenuTriggerFor]="menu"
+                aria-label="Example icon-button with a menu"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <ng-template matMenuContent>
+                  <button mat-menu-item (click)="onView(profile)">
+                    <mat-icon>visibility</mat-icon>
+                    <span>View</span>
+                  </button>
+                  <button mat-menu-item (click)="onEdit(profile)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Edit</span>
+                  </button>
+                  <button mat-menu-item (click)="onDelete(profile)">
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
+                  >
+                    <mat-icon>content_copy</mat-icon>
+                    <span>Matrimony ID</span>
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+                  >
+                    <mat-icon>content_copy</mat-icon>
+                    <span>Mobile Number</span>
+                  </button>
+                </ng-template>
+              </mat-menu>
             </td>
           </ng-container>
-
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns" class="hover:bg-gray-50"></tr>
         </table>

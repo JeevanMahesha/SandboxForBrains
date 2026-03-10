@@ -44,3 +44,5 @@ Thumbs.db
 .nx/polygraph
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+
+storybook-static

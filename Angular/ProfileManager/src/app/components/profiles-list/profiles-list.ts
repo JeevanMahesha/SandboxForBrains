@@ -35,7 +35,7 @@ import {
   toArray,
 } from 'rxjs';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
-import { OrderByDirection } from '@angular/fire/firestore';
+import type { OrderByDirection } from 'firebase/firestore';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../services/auth.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';

@@ -1,0 +1,10 @@
+# Web Components: Pros vs. Cons
+
+| Feature           | Pros (Advantages)                                                                                              | Cons (Disadvantages)                                                                                               |
+| :---------------- | :------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| **Compatibility** | **Framework Agnostic**: Works seamlessly across React, Vue, Angular, or vanilla JS.                            | **Integration Friction**: Some versions of React require wrappers to handle custom events and properties .         |
+| **Encapsulation** | **Shadow DOM**: Total isolation; styles and scripts won't leak out or be overridden by global CSS .            | **Styling Boundaries**: Difficult to apply global themes or utility classes (like Tailwind) to internal elements . |
+| **Longevity**     | **Future-Proof**: Native browser standards ensure components won't break when frameworks update or disappear . | **Ecosystem Size**: Smaller community and fewer pre-built component libraries compared to React or Vue .           |
+| **Performance**   | **Lean & Native**: No heavy runtime required, leading to smaller bundles and faster initial execution.         | **Verbosity**: Writing "vanilla" components involves significant boilerplate for basic reactivity .                |
+| **Data Handling** | **Standard DOM**: Uses familiar HTML tags and attributes easy for any web developer to read .                  | **String Only**: Attributes only support strings; passing objects/arrays requires manual property setting .        |
+| **Modern Needs**  | **Lifecycle Hooks**: Built-in support for connected/disconnected callbacks .                                   | **SSR & SEO**: Server-side rendering is complex and lacks the mature tooling found in framework ecosystems .       |

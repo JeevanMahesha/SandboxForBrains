@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  Firestore,
   collection,
   addDoc,
   updateDoc,
@@ -14,16 +13,17 @@ import {
   Timestamp,
   QueryDocumentSnapshot,
   DocumentSnapshot,
-} from '@angular/fire/firestore';
+} from 'firebase/firestore';
 import { Observable, from, map, of } from 'rxjs';
 import { Comment, Profile } from '../models/profile';
 import { PROFILE_STATUS } from '../constant/common';
+import { FIRESTORE } from '../firebase/provide-firebase';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfilesService {
-  private firestore = inject(Firestore);
+  private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
 
   /**

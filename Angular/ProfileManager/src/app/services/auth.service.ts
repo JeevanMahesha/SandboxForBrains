@@ -1,25 +1,25 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  Auth,
   signInWithEmailAndPassword,
   signOut,
-  user,
   User,
   UserCredential,
-  idToken,
   onAuthStateChanged,
-} from '@angular/fire/auth';
+} from 'firebase/auth';
 import { from, Observable } from 'rxjs';
+
+import { FIREBASE_AUTH } from '../firebase/provide-firebase';
+import { authState$, idToken$ } from '../firebase/firebase-rx';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private auth = inject(Auth);
+  private auth = inject(FIREBASE_AUTH);
 
-  user = toSignal(user(this.auth), { initialValue: null });
-  idToken = toSignal(idToken(this.auth), { initialValue: null });
+  user = toSignal(authState$(this.auth), { initialValue: null });
+  idToken = toSignal(idToken$(this.auth), { initialValue: null });
 
   currentUser = signal<User | null>(null);
   currentToken = signal<string | null>(null);
@@ -52,12 +52,9 @@ export class AuthService {
     }
 
     return new Promise<void>((resolve) => {
-      // onAuthStateChanged is called after Firebase completes session restoration
-      // This is more reliable than subscribing to observables
       const unsubscribe = onAuthStateChanged(
         this.auth,
         (user) => {
-          // Update the user signal immediately
           this.currentUser.set(user);
           this.authInitialized.set(true);
           unsubscribe();
@@ -103,10 +100,9 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    // Reset all auth state immediately
     this.currentUser.set(null);
     this.currentToken.set(null);
-    this.authInitialized.set(false); // Reset so next login waits for auth init
+    this.authInitialized.set(false);
     return from(signOut(this.auth));
   }
 }

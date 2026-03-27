@@ -59,6 +59,7 @@
     "@angular/build": "^21.2.3",
     "@angular/cli": "^21.2.3",
     "@angular/compiler-cli": "^21.2.5",
+    "@eslint/js": "^10.0.1",
     "eslint": "^10.1.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "firebase-tools": "^15.11.0",

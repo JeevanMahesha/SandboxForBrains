@@ -4,7 +4,8 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 import { provideFirebase } from './firebase/provide-firebase';
@@ -15,5 +16,10 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
     provideFirebase(environment.firebase),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+      },
+    }),
   ],
 };

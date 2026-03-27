@@ -232,7 +232,7 @@ export default class AddProfile {
   }
 
   onStarChange(event: MatSelectChange<keyof typeof MATCHING_STARS>) {
-    this.profileDetailForm.starMatchScore().setControlValue(MATCHING_STARS[event.value]);
+    this.profileDetailForm.starMatchScore().value.set(MATCHING_STARS[event.value]);
   }
 
   private navigateBack(): void {

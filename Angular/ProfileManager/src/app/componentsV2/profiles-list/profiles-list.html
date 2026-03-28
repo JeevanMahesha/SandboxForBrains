@@ -1,0 +1,48 @@
+<div class="card p-large">
+  <p-toolbar>
+    <ng-template #start>
+      <p-togglebutton
+        [(ngModel)]="checked"
+        onLabel="Newest"
+        offLabel="Oldest"
+        onIcon="pi pi-sort-amount-down-alt"
+        offIcon="pi pi-sort-amount-up"
+        class="w-36"
+        ariaLabel="Do you confirm"
+      />
+    </ng-template>
+    <ng-template #center>
+      <p-iconfield iconPosition="left">
+        <p-inputicon class="pi pi-search" />
+        <input type="text" pInputText placeholder="Search" />
+      </p-iconfield>
+    </ng-template>
+    <ng-template #end>
+      <div class="flex gap-2">
+        <p-select placeholder="Select Status" />
+        <p-select placeholder="Select Star" />
+      </div>
+    </ng-template>
+  </p-toolbar>
+</div>
+<!-- Table -->
+<div class="card">
+  <p-table [value]="products()" stripedRows [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template #header>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Quantity</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-product>
+      <tr>
+        <td>{{ product.code }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.category }}</td>
+        <td>{{ product.quantity }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

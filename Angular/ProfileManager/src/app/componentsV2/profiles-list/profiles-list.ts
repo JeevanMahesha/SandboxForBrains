@@ -1,0 +1,44 @@
+import { Component, signal } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { ToolbarModule } from 'primeng/toolbar';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+
+interface Product {
+  code: string;
+  name: string;
+  category: string;
+  quantity: number;
+}
+
+@Component({
+  selector: 'app-profiles-list',
+  imports: [
+    ButtonModule,
+    IconFieldModule,
+    InputIconModule,
+    SplitButtonModule,
+    ToolbarModule,
+    InputTextModule,
+    ToggleButtonModule,
+    FormsModule,
+    SelectModule,
+    TableModule,
+  ],
+  templateUrl: './profiles-list.html',
+  styleUrl: './profiles-list.css',
+})
+export default class ProfilesList {
+  checked = signal<boolean>(false);
+  products = signal<Product[]>([
+    { code: '1', name: 'Product 1', category: 'Category 1', quantity: 10 },
+    { code: '2', name: 'Product 2', category: 'Category 2', quantity: 20 },
+    { code: '3', name: 'Product 3', category: 'Category 3', quantity: 30 },
+  ]);
+}

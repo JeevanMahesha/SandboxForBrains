@@ -34,4 +34,14 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: '',
+    redirectTo: 'v2',
+    pathMatch: 'full',
+  },
+  {
+    path: 'v2',
+    loadComponent: () => import('./v2/v2'),
+    canActivate: [authGuard],
+  },
 ];

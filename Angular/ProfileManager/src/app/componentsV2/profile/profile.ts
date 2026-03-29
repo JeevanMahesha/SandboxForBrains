@@ -28,7 +28,7 @@ import { TimelineModule } from 'primeng/timeline';
   styleUrl: './profile.scss',
 })
 export class Profile {
-  isVisable = true;
+  isVisable = false;
   events = [
     {
       status: 'Ordered',

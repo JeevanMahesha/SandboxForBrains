@@ -43,7 +43,7 @@
 </div>
 <!-- Table -->
 <div class="">
-  <p-table [value]="products()" stripedRows [tableStyle]="{ 'min-width': '50rem' }">
+  <p-table [value]="products()" stripedRows [paginator]="true" [rows]="10">
     <ng-template #header>
       <tr>
         <th>Code</th>

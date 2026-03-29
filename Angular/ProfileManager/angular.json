@@ -2,11 +2,6 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "schematics": {
-    "@schematics/angular:component": {
-      "style": "scss"
-    }
-  },
   "projects": {
     "ProfileManager": {
       "projectType": "application",
@@ -26,7 +21,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss", "src/tailwind.css"]
+            "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {

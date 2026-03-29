@@ -2,6 +2,12 @@
 
 /* Import Tailwind */
 @use 'primeicons/primeicons.css';
+/* Import Tailwind */
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import 'primeicons/primeicons.css';
+
+@import 'tailwindcss';
 
 .layout-wrapper {
   min-height: 100vh;

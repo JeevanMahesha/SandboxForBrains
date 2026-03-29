@@ -42,6 +42,11 @@
         <td>{{ product.name }}</td>
         <td>{{ product.category }}</td>
         <td>{{ product.quantity }}</td>
+        <td>
+          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" />
+          <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" />
+          <p-button icon="pi pi-eye" [rounded]="true" severity="warn" [text]="true" />
+        </td>
       </tr>
     </ng-template>
   </p-table>

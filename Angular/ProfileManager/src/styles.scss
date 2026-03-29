@@ -1,0 +1,8 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Import Tailwind */
+@use 'primeicons/primeicons.css';
+@use './styles/variables/common.scss';
+@use './styles/variables/dark.scss';
+@use './styles/variables/light.scss';
+@use './styles/mixins.scss';

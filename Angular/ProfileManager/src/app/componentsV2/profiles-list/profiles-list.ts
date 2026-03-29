@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -41,6 +41,7 @@ interface Product {
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {
   checked = signal<boolean>(false);

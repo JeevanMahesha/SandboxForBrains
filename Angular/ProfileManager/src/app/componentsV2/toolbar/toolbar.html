@@ -1,0 +1,30 @@
+<p-toolbar>
+  <ng-template #start>
+    <div class="flex gap-2">
+      <p-togglebutton
+        [(ngModel)]="checked"
+        onLabel="Newest"
+        offLabel="Oldest"
+        onIcon="pi pi-sort-amount-down-alt"
+        offIcon="pi pi-sort-amount-up"
+        class="w-36"
+        ariaLabel="Do you confirm"
+      />
+      <p-button icon="pi pi-sparkles" variant="outlined" severity="info" label="Zodica Signs" />
+      <p-button icon="pi pi-star-fill" variant="outlined" severity="warn" label="Preferred Star" />
+    </div>
+  </ng-template>
+  <ng-template #center>
+    <p-iconfield iconPosition="left">
+      <p-inputicon class="pi pi-search" />
+      <input type="text" pInputText placeholder="Search" />
+    </p-iconfield>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex gap-2">
+      <p-select placeholder="Select Status" />
+      <p-select placeholder="Select Star" />
+      <p-button icon="pi pi-filter-slash" variant="outlined" severity="secondary" label="Clear" />
+    </div>
+  </ng-template>
+</p-toolbar>

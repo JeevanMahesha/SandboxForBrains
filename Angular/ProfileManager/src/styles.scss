@@ -2,7 +2,4 @@
 
 /* Import Tailwind */
 @use 'primeicons/primeicons.css';
-@use './styles/variables/common.scss';
-@use './styles/variables/dark.scss';
-@use './styles/variables/light.scss';
-@use './styles/mixins.scss';
+@use './assets/layout/layout.scss';

@@ -1,0 +1,11 @@
+<div class="layout-sidebar">
+  <ul class="layout-menu">
+    @for (item of itemsValue; track item.label) {
+      @if (!item.separator) {
+        <li app-menuitem [item]="item" [root]="true"></li>
+      } @else {
+        <li class="menu-separator"></li>
+      }
+    }
+  </ul>
+</div>

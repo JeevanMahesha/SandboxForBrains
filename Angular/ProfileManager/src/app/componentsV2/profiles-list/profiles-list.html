@@ -38,7 +38,7 @@
 <!-- Zodic Signs -->
 <p-popover #zodiacSigns>
   <div class="flex flex-col gap-4 w-100">
-    <p-table [value]="products()" stripedRows>
+    <p-table [value]="[]" stripedRows>
       <ng-template #header>
         <tr>
           <th>Code</th>
@@ -58,8 +58,8 @@
 </p-popover>
 <!-- Star Matching -->
 <p-popover #starMatching>
-  <div class="flex flex-col gap-4 w-[25rem]">
-    <p-table [value]="products()" stripedRows>
+  <div class="flex flex-col gap-4 w-100">
+    <p-table [value]="[]" stripedRows>
       <ng-template #header>
         <tr>
           <th>Code</th>

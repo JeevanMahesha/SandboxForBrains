@@ -2,4 +2,21 @@
 
 /* Import Tailwind */
 @use 'primeicons/primeicons.css';
-@use './assets/layout/layout.scss';
+
+.layout-wrapper {
+  min-height: 100vh;
+}
+
+.layout-main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+  padding: 3rem 2rem 0 2rem;
+  transition: margin-left var(--layout-section-transition-duration);
+}
+
+.layout-main {
+  flex: 1 1 auto;
+  padding-bottom: 2rem;
+}

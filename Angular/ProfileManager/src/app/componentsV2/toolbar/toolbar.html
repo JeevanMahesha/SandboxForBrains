@@ -32,7 +32,13 @@
         [options]="scoreMatchOptions"
         [formField]="$any(filterForm.starMatchScore)"
       />
-      <p-button icon="pi pi-filter-slash" variant="outlined" severity="secondary" label="Clear" />
+      <p-button
+        (onClick)="clearForm()"
+        icon="pi pi-filter-slash"
+        variant="outlined"
+        severity="secondary"
+        label="Clear"
+      />
     </div>
   </ng-template>
 </p-toolbar>

@@ -62,4 +62,13 @@ export class Toolbar {
       this.sortOptionsChanged.emit(this.filterOptions());
     });
   }
+
+  clearForm() {
+    this.filterForm().reset({
+      viewOrderCheck: false,
+      searchQuery: '',
+      profileStatus: null,
+      starMatchScore: null,
+    });
+  }
 }

@@ -1,23 +1,23 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  collection,
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
+  Timestamp,
   addDoc,
-  updateDoc,
+  collection,
   deleteDoc,
   doc,
-  getDocs,
   getDoc,
-  query,
+  getDocs,
   orderBy,
+  query,
+  updateDoc,
   where,
-  Timestamp,
-  QueryDocumentSnapshot,
-  DocumentSnapshot,
 } from 'firebase/firestore';
 import { Observable, from, map, of } from 'rxjs';
-import { Comment, Profile } from '../models/profile';
 import { PROFILE_STATUS } from '../constant/common';
 import { FIRESTORE } from '../firebase/provide-firebase';
+import { Comment, Profile } from '../models/profile';
 
 @Injectable({
   providedIn: 'root',
@@ -180,5 +180,46 @@ export class ProfilesService {
       createdAt: data?.['createdAt']?.toDate() || new Date(),
       updatedAt: data?.['updatedAt']?.toDate() || new Date(),
     } as unknown as Profile;
+  }
+
+  // V2 methods can be added here as needed
+
+  getFilteredProfilesV2(
+    sortDirection: 'asc' | 'desc' = 'desc',
+    profileStatusFilter: keyof typeof PROFILE_STATUS | null = null,
+    starMatchScoreFilter: number | null = null,
+    sortField = 'createdAt',
+  ): Promise<Profile[]> {
+    let q = query(this.profilesCollection);
+
+    // Apply filters using where clauses
+    if (profileStatusFilter) {
+      q = query(q, where('profileStatusId', '==', profileStatusFilter));
+    }
+
+    if (starMatchScoreFilter !== null && starMatchScoreFilter !== undefined) {
+      q = query(q, where('starMatchScore', '==', starMatchScoreFilter));
+    }
+
+    // Apply sorting - must come after where clauses
+    q = query(q, orderBy(sortField, sortDirection));
+
+    return getDocs(q).then((snapshot) => {
+      const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
+
+      // Sort profiles: rejected profiles appear at the end
+      return profiles.sort((a, b) => {
+        const aIsRejected = a.profileStatusId === 'REJECTED';
+        const bIsRejected = b.profileStatusId === 'REJECTED';
+
+        // If both are rejected or both are not rejected, maintain original order
+        if (aIsRejected === bIsRejected) {
+          return 0;
+        }
+
+        // Rejected profiles go to the end
+        return aIsRejected ? 1 : -1;
+      });
+    });
   }
 }

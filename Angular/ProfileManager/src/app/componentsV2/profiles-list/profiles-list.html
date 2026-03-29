@@ -1,29 +1,27 @@
-<!-- Table -->
-<div class="">
-  <p-table [value]="products()" stripedRows [paginator]="true" [rows]="10">
-    <ng-template #header>
-      <tr>
-        <th>Code</th>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Quantity</th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-product>
-      <tr>
-        <td>{{ product.code }}</td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.category }}</td>
-        <td>{{ product.quantity }}</td>
-        <td>
-          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" />
-          <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" />
-          <p-button icon="pi pi-eye" [rounded]="true" severity="warn" [text]="true" />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+<app-toolbar (sortOptionsChanged)="onSortOptionsChanged($event)" />
+<p-table [value]="products()" stripedRows [paginator]="true" [rows]="10">
+  <ng-template #header>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Quantity</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-product>
+    <tr>
+      <td>{{ product.code }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.category }}</td>
+      <td>{{ product.quantity }}</td>
+      <td>
+        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" />
+        <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" />
+        <p-button icon="pi pi-eye" [rounded]="true" severity="warn" [text]="true" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
 <app-profile />
 <!-- Zodic Signs -->
 <p-popover #zodiacSigns>

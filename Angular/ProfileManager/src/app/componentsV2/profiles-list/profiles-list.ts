@@ -13,6 +13,7 @@ import { TableModule } from 'primeng/table';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { Profile } from '../profile/profile';
+import { SortOption, Toolbar } from '../toolbar/toolbar';
 
 interface Product {
   code: string;
@@ -38,13 +39,13 @@ interface Product {
     PopoverModule,
     InputGroupModule,
     InputGroupAddonModule,
+    Toolbar,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {
-  checked = signal<boolean>(false);
   products = signal<Product[]>([
     { code: '1', name: 'Product 1', category: 'Category 1', quantity: 10 },
     { code: '2', name: 'Product 2', category: 'Category 2', quantity: 20 },
@@ -197,4 +198,9 @@ export default class ProfilesList {
     { code: '149', name: 'Product 149', category: 'Category 149', quantity: 1490 },
     { code: '150', name: 'Product 150', category: 'Category 150', quantity: 1500 },
   ]);
+
+  onSortOptionsChanged(sortOptions: SortOption) {
+    console.log('Sort options changed:', sortOptions);
+    // Implement sorting logic based on the received sortOptions
+  }
 }

@@ -1,14 +1,15 @@
 import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { SplitButtonModule } from 'primeng/splitbutton';
-import { ToolbarModule } from 'primeng/toolbar';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
-import { ToggleButtonModule } from 'primeng/togglebutton';
 import { SelectModule } from 'primeng/select';
+import { SplitButtonModule } from 'primeng/splitbutton';
 import { TableModule } from 'primeng/table';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ToolbarModule } from 'primeng/toolbar';
+import { Profile } from '../profile/profile';
 
 interface Product {
   code: string;
@@ -30,6 +31,7 @@ interface Product {
     FormsModule,
     SelectModule,
     TableModule,
+    Profile,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',

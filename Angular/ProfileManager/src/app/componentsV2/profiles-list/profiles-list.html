@@ -1,19 +1,31 @@
-<app-toolbar (sortOptionsChanged)="onSortOptionsChanged($event)" />
-<p-table [value]="products()" stripedRows [paginator]="true" [rows]="10">
+<app-toolbar />
+<p-table
+  [value]="profiles.value()"
+  stripedRows
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  [loading]="profiles.isLoading()"
+>
   <ng-template #header>
     <tr>
-      <th>Code</th>
+      <th>Serial No</th>
       <th>Name</th>
-      <th>Category</th>
-      <th>Quantity</th>
+      <th>Zodiac Sign</th>
+      <th>City</th>
+      <th>Profile Status</th>
+      <th>Star Match Score</th>
+      <th>Actions</th>
     </tr>
   </ng-template>
-  <ng-template #body let-product>
+  <ng-template #body let-profile let-ri="rowIndex">
     <tr>
-      <td>{{ product.code }}</td>
-      <td>{{ product.name }}</td>
-      <td>{{ product.category }}</td>
-      <td>{{ product.quantity }}</td>
+      <td>{{ ri + 1 }}</td>
+      <td>{{ profile.name }}</td>
+      <td>{{ profile.zodiacSign }}</td>
+      <td>{{ profile.city }}</td>
+      <td>{{ profile.profileStatus }}</td>
+      <td>{{ profile.starMatchScore }}</td>
       <td>
         <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" />
         <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" />
@@ -25,7 +37,7 @@
 <app-profile />
 <!-- Zodic Signs -->
 <p-popover #zodiacSigns>
-  <div class="flex flex-col gap-4 w-[25rem]">
+  <div class="flex flex-col gap-4 w-100">
     <p-table [value]="products()" stripedRows>
       <ng-template #header>
         <tr>

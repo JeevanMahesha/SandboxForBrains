@@ -1,4 +1,4 @@
-import { Component, effect, output, signal, WritableSignal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { ButtonModule } from 'primeng/button';
@@ -10,6 +10,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common';
+import { ProfilesService } from '../../services/profiles.service';
 
 export interface SortOption {
   viewOrderCheck: boolean;
@@ -40,12 +41,7 @@ export interface SortOption {
   styleUrl: './toolbar.css',
 })
 export class Toolbar {
-  filterOptions: WritableSignal<SortOption> = signal({
-    viewOrderCheck: false,
-    searchQuery: '',
-    profileStatus: null,
-    starMatchScore: null,
-  });
+  private readonly profileService = inject(ProfilesService);
 
   profileStatusOptions = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
     label: value,
@@ -53,15 +49,7 @@ export class Toolbar {
   }));
 
   scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
-  filterForm = form(this.filterOptions);
-
-  sortOptionsChanged = output<SortOption>();
-
-  constructor() {
-    effect(() => {
-      this.sortOptionsChanged.emit(this.filterOptions());
-    });
-  }
+  filterForm = form(this.profileService.filterOptions);
 
   clearForm() {
     this.filterForm().reset({

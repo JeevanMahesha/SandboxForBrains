@@ -1,6 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, WritableSignal, inject, signal } from '@angular/core';
 import {
   DocumentSnapshot,
+  OrderByDirection,
   QueryDocumentSnapshot,
   Timestamp,
   addDoc,
@@ -15,6 +16,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { Observable, from, map, of } from 'rxjs';
+import { SortOption } from '../componentsV2/toolbar/toolbar';
 import { PROFILE_STATUS } from '../constant/common';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, Profile } from '../models/profile';
@@ -25,6 +27,13 @@ import { Comment, Profile } from '../models/profile';
 export class ProfilesService {
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
+
+  public readonly filterOptions: WritableSignal<SortOption> = signal({
+    viewOrderCheck: false,
+    searchQuery: '',
+    profileStatus: null,
+    starMatchScore: null,
+  });
 
   /**
    * Add a new profile to Firestore
@@ -185,12 +194,17 @@ export class ProfilesService {
   // V2 methods can be added here as needed
 
   getFilteredProfilesV2(
-    sortDirection: 'asc' | 'desc' = 'desc',
+    sortDirection: boolean,
+    matrimonyId: string,
     profileStatusFilter: keyof typeof PROFILE_STATUS | null = null,
     starMatchScoreFilter: number | null = null,
     sortField = 'createdAt',
   ): Promise<Profile[]> {
     let q = query(this.profilesCollection);
+
+    if (matrimonyId && matrimonyId.trim() !== '') {
+      q = query(this.profilesCollection, where('matrimonyId', '==', matrimonyId.trim()));
+    }
 
     // Apply filters using where clauses
     if (profileStatusFilter) {
@@ -201,8 +215,10 @@ export class ProfilesService {
       q = query(q, where('starMatchScore', '==', starMatchScoreFilter));
     }
 
+    const sortDirectionStr = sortDirection ? 'asc' : ('desc' as OrderByDirection);
+
     // Apply sorting - must come after where clauses
-    q = query(q, orderBy(sortField, sortDirection));
+    q = query(q, orderBy(sortField, sortDirectionStr));
 
     return getDocs(q).then((snapshot) => {
       const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));

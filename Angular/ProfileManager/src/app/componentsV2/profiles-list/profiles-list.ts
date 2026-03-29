@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, resource, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -12,8 +12,10 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { TableModule } from 'primeng/table';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
+import { PROFILE_STATUS } from '../../constant/common';
+import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
-import { SortOption, Toolbar } from '../toolbar/toolbar';
+import { Toolbar } from '../toolbar/toolbar';
 
 interface Product {
   code: string;
@@ -199,8 +201,30 @@ export default class ProfilesList {
     { code: '150', name: 'Product 150', category: 'Category 150', quantity: 1500 },
   ]);
 
-  onSortOptionsChanged(sortOptions: SortOption) {
-    console.log('Sort options changed:', sortOptions);
-    // Implement sorting logic based on the received sortOptions
-  }
+  private readonly profileService = inject(ProfilesService);
+
+  profiles = resource({
+    params: () => ({
+      sortDirection: this.profileService.filterOptions().viewOrderCheck,
+      matrimonyId: this.profileService.filterOptions().searchQuery,
+      profileStatusFilter: this.profileService.filterOptions().profileStatus,
+      starMatchScoreFilter: this.profileService.filterOptions().starMatchScore,
+    }),
+    loader: ({ params }) =>
+      this.profileService
+        .getFilteredProfilesV2(
+          params.sortDirection,
+          params.matrimonyId,
+          params.profileStatusFilter,
+          params.starMatchScoreFilter,
+        )
+        .then((profiles) => {
+          console.log('Fetched profiles:', profiles);
+          return profiles.map((profile) => ({
+            ...profile,
+            profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
+          }));
+        }),
+    defaultValue: [],
+  });
 }

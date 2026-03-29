@@ -2,8 +2,11 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { PopoverModule } from 'primeng/popover';
 import { SelectModule } from 'primeng/select';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { TableModule } from 'primeng/table';
@@ -32,6 +35,9 @@ interface Product {
     SelectModule,
     TableModule,
     Profile,
+    PopoverModule,
+    InputGroupModule,
+    InputGroupAddonModule,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',

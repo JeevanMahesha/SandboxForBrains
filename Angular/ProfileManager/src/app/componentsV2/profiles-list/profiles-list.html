@@ -1,15 +1,30 @@
 <div class="p-large">
   <p-toolbar>
     <ng-template #start>
-      <p-togglebutton
-        [(ngModel)]="checked"
-        onLabel="Newest"
-        offLabel="Oldest"
-        onIcon="pi pi-sort-amount-down-alt"
-        offIcon="pi pi-sort-amount-up"
-        class="w-36"
-        ariaLabel="Do you confirm"
-      />
+      <div class="flex gap-2">
+        <p-togglebutton
+          [(ngModel)]="checked"
+          onLabel="Newest"
+          offLabel="Oldest"
+          onIcon="pi pi-sort-amount-down-alt"
+          offIcon="pi pi-sort-amount-up"
+          class="w-36"
+          ariaLabel="Do you confirm"
+        />
+        <p-button
+          icon="pi pi-sparkles"
+          (click)="zodiacSigns.toggle($event)"
+          variant="outlined"
+          severity="info"
+          label="Zodica Signs"
+        />
+        <p-button
+          icon="pi pi-star-fill"
+          variant="outlined"
+          severity="warn"
+          label="Preferred Star"
+        />
+      </div>
     </ng-template>
     <ng-template #center>
       <p-iconfield iconPosition="left">
@@ -52,3 +67,24 @@
   </p-table>
 </div>
 <app-profile />
+<!-- Zodic Signs -->
+<p-popover #zodiacSigns>
+  <div class="flex flex-col gap-4 w-[25rem]">
+    <p-table [value]="products()" stripedRows>
+      <ng-template #header>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Category</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-product>
+        <tr>
+          <td>{{ product.code }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.category }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-popover>

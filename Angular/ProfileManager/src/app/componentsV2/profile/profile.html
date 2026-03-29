@@ -4,9 +4,65 @@
   styleClass="!w-full md:!w-80 lg:!w-[30rem]"
   position="right"
 >
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-    laboris nisi ut aliquip ex ea commodo consequat.
-  </p>
+  <div class="flex flex-col mt-2 gap-4">
+    <p-floatlabel class="w-full" variant="on">
+      <input pInputText type="text" pSize="large" inputId="name" fluid />
+      <label for="name">Name</label>
+    </p-floatlabel>
+
+    <p-floatlabel class="w-full" variant="on">
+      <p-select
+        inputId="profile_status"
+        [options]="[]"
+        optionLabel="Profile Status"
+        class="w-full"
+      />
+      <label for="profile_status">Profile Status</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <input pInputText pInputMask="999-999-9999" pSize="large" inputId="mobile_number" fluid />
+      <label for="mobile_number">Mobile Number</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <input pInputText type="text" pSize="large" inputId="matrimony_id" fluid />
+      <label for="matrimony_id">Matrimony ID</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <p-select inputId="zodiac_sign" [options]="[]" optionLabel="Zodiac Sign" class="w-full" />
+      <label for="zodiac_sign">Zodiac Sign</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <p-select inputId="star_sign" [options]="[]" optionLabel="Star Sign" class="w-full" />
+      <label for="star_sign">Star Sign</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <p-inputnumber fluid inputId="age" mode="decimal" [min]="22" [max]="29" />
+      <label for="age">Age</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <p-inputnumber fluid inputId="star_match_score" mode="decimal" [min]="5" [max]="12" />
+      <label for="star_match_score">Star Match Score</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <p-select inputId="state" [options]="[]" optionLabel="State" class="w-full" />
+      <label for="state">State</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-full" variant="on">
+      <p-select inputId="city" [options]="[]" optionLabel="City" class="w-full" />
+      <label for="city">City</label>
+    </p-floatlabel>
+    <p-inputgroup>
+      <input pInputText placeholder="Comments" />
+      <p-inputgroup-addon>
+        <p-button icon="pi pi-plus" severity="secondary" />
+      </p-inputgroup-addon>
+    </p-inputgroup>
+    <p-timeline [value]="events" class="w-full md:w-80" align="alternate">
+      <ng-template #content let-event>
+        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" />
+        <small class="text-surface-500 dark:text-surface-400">{{ event.date }} </small>
+        {{ event.status }}
+      </ng-template>
+    </p-timeline>
+  </div>
 </p-drawer>

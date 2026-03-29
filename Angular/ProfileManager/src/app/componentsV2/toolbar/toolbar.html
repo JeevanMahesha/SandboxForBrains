@@ -2,7 +2,7 @@
   <ng-template #start>
     <div class="flex gap-2">
       <p-togglebutton
-        [(ngModel)]="checked"
+        [formField]="filterForm.viewOrderCheck"
         onLabel="Newest"
         offLabel="Oldest"
         onIcon="pi pi-sort-amount-down-alt"
@@ -17,13 +17,21 @@
   <ng-template #center>
     <p-iconfield iconPosition="left">
       <p-inputicon class="pi pi-search" />
-      <input type="text" pInputText placeholder="Search" />
+      <input type="text" [formField]="filterForm.searchQuery" pInputText placeholder="Search" />
     </p-iconfield>
   </ng-template>
   <ng-template #end>
     <div class="flex gap-2">
-      <p-select placeholder="Select Status" />
-      <p-select placeholder="Select Star" />
+      <p-select
+        placeholder="Select Status"
+        [options]="profileStatusOptions"
+        [formField]="$any(filterForm.profileStatus)"
+      />
+      <p-select
+        placeholder="Select Star"
+        [options]="scoreMatchOptions"
+        [formField]="$any(filterForm.starMatchScore)"
+      />
       <p-button icon="pi pi-filter-slash" variant="outlined" severity="secondary" label="Clear" />
     </div>
   </ng-template>

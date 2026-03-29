@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { DrawerModule } from 'primeng/drawer';
-import { Toolbar } from '../componentsV2/toolbar/toolbar';
+import ProfilesList from '../componentsV2/profiles-list/profiles-list';
 
 @Component({
   selector: 'app-v2',
-  imports: [DrawerModule, ButtonModule, RouterModule, Toolbar],
+  imports: [ProfilesList],
   templateUrl: './v2.html',
   styleUrl: './v2.css',
 })

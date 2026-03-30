@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,7 +12,7 @@ import { MATCHING_STARS } from '../../constant/common';
 
 @Component({
   selector: 'app-star-match',
-  imports: [PopoverModule, TableModule, CommonModule],
+  imports: [PopoverModule, TableModule],
   template: `<p-popover #starMatching (onHide)="onStarMatchHidden()">
     @for (star of starMatchData; track $index) {
       <ul class="max-w-md divide-y divide-default">

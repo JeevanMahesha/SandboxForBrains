@@ -6,17 +6,14 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { SharedModule } from 'primeng/api';
-import { DataViewModule } from 'primeng/dataview';
 import { ListboxModule } from 'primeng/listbox';
 import { Popover, PopoverModule } from 'primeng/popover';
-import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { zodiacSignList } from '../../constant/common';
 
 @Component({
   selector: 'app-zodiac-signs',
-  imports: [PopoverModule, TableModule, ListboxModule, TagModule, DataViewModule, SharedModule],
+  imports: [PopoverModule, ListboxModule, TagModule],
   template: `<p-popover #zodiacSigns (onHide)="onZodiacSignsHidden()">
     <p-listbox
       [options]="zodiacSignsData"
@@ -32,9 +29,7 @@ import { zodiacSignList } from '../../constant/common';
           </div>
           <div class="flex flex-wrap gap-1">
             @for (star of item.stars; track star) {
-              <span class="text-[10px] bg-surface-100 px-1 rounded border border-surface-200">{{
-                star
-              }}</span>
+              <p-tag severity="secondary" [value]="star" [rounded]="true" />
             }
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -10,6 +11,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common';
+import { UserActions } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 
 export interface SortOption {
@@ -41,6 +43,7 @@ export interface SortOption {
 })
 export class Toolbar {
   private readonly profileService = inject(ProfilesService);
+  private readonly router = inject(Router);
 
   profileStatusOptions = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
     label: value,
@@ -58,6 +61,17 @@ export class Toolbar {
 
   openZodiacSignPopover(event: MouseEvent) {
     this.openZodiacSign.emit(event);
+  }
+
+  addNewProfileAction() {
+    const userAction: UserActions = {
+      actionType: 'create',
+      selectedProfileId: null,
+      openDrawer: true,
+    };
+    this.router.navigate(['v2'], {
+      queryParams: { ...userAction },
+    });
   }
 
   clearForm() {

@@ -16,6 +16,7 @@ import {
   PROFILE_STATUS,
   zodiacSignList,
 } from '../../constant/common';
+import { ToolbarAction } from '../../models/toolbar.model';
 
 export interface ProfileDetail {
   name: string;
@@ -50,6 +51,10 @@ export interface ProfileDetail {
 })
 export class Profile {
   isVisable = false;
+  actionType = input<ToolbarAction>();
+
+  selectedProfileId = input<string | null>(null);
+  openDrawer = input<boolean>(false);
   public readonly action = input<string | null>();
 
   events = [

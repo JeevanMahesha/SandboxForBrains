@@ -20,7 +20,9 @@ import { MATCHING_STARS } from '../../constant/common';
         <li class="pb-3 sm:pb-4">
           <div class="flex items-center space-x-4 rtl:space-x-reverse">
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-heading truncate">{{ star.starName }}</p>
+              <p class="text-sm font-medium text-heading truncate">
+                {{ $index + 1 }}. {{ star.starName }}
+              </p>
             </div>
             <div class="inline-flex items-center text-base font-semibold text-heading">
               {{ star.score }}

@@ -1,6 +1,6 @@
 <p-toolbar>
   <ng-template #start>
-    <div class="flex gap-2">
+    <div class="flex flex-col gap-2 md:flex-row">
       <p-togglebutton
         [formField]="filterForm.viewOrderCheck"
         onLabel="Newest"
@@ -27,7 +27,7 @@
     </p-iconfield>
   </ng-template>
   <ng-template #end>
-    <div class="flex gap-2">
+    <div class="flex flex-col gap-2 md:flex-row">
       <p-select
         placeholder="Select Status"
         [options]="profileStatusOptions"

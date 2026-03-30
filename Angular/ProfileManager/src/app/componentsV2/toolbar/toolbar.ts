@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { ButtonModule } from 'primeng/button';
@@ -50,6 +50,11 @@ export class Toolbar {
 
   scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
   filterForm = form(this.profileService.filterOptions);
+  openStarMatch = output<MouseEvent>();
+
+  openStarMatchPopover(event: MouseEvent) {
+    this.openStarMatch.emit(event);
+  }
 
   clearForm() {
     this.filterForm().reset({

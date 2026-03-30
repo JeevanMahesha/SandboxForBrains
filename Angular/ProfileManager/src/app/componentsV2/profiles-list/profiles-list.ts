@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, resource } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, resource, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -15,6 +15,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { PROFILE_STATUS } from '../../constant/common';
 import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
+import { StarMatch } from '../star-match/star-match';
 import { Toolbar } from '../toolbar/toolbar';
 
 @Component({
@@ -35,6 +36,7 @@ import { Toolbar } from '../toolbar/toolbar';
     InputGroupModule,
     InputGroupAddonModule,
     Toolbar,
+    StarMatch,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
@@ -66,4 +68,6 @@ export default class ProfilesList {
         }),
     defaultValue: [],
   });
+
+  toggleStarMatch = signal<MouseEvent | null>(null);
 }

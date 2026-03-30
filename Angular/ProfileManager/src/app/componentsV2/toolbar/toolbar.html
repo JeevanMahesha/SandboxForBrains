@@ -10,8 +10,14 @@
         class="w-36"
         ariaLabel="Do you confirm"
       />
-      <p-button icon="pi pi-sparkles" variant="outlined" severity="info" label="Zodica Signs" />
-      <p-button icon="pi pi-star-fill" variant="outlined" severity="warn" label="Preferred Star" />
+      <p-button icon="pi pi-sparkles" variant="outlined" severity="info" label="Zodiac Signs" />
+      <p-button
+        icon="pi pi-star-fill"
+        variant="outlined"
+        severity="warn"
+        label="Preferred Star"
+        (onClick)="openStarMatchPopover($event)"
+      />
     </div>
   </ng-template>
   <ng-template #center>

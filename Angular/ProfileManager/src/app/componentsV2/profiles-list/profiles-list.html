@@ -1,4 +1,4 @@
-<app-toolbar />
+<app-toolbar (openStarMatch)="toggleStarMatch.set($event)" />
 @let profileValue = profiles.value();
 <p-table
   [value]="profileValue"
@@ -83,23 +83,4 @@
   </div>
 </p-popover>
 <!-- Star Matching -->
-<p-popover #starMatching>
-  <div class="flex flex-col gap-4 w-100">
-    <p-table [value]="[]" stripedRows>
-      <ng-template #header>
-        <tr>
-          <th>Code</th>
-          <th>Name</th>
-          <th>Category</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-product>
-        <tr>
-          <td>{{ product.code }}</td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.category }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-</p-popover>
+<app-star-match [togglePopover]="toggleStarMatch()" (starMatchHidden)="toggleStarMatch.set(null)" />

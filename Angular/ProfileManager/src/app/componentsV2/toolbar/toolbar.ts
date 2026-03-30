@@ -38,7 +38,6 @@ export interface SortOption {
     FormField,
   ],
   templateUrl: './toolbar.html',
-  styleUrl: './toolbar.css',
 })
 export class Toolbar {
   private readonly profileService = inject(ProfilesService);
@@ -51,9 +50,14 @@ export class Toolbar {
   scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
   filterForm = form(this.profileService.filterOptions);
   openStarMatch = output<MouseEvent>();
+  openZodiacSign = output<MouseEvent>();
 
   openStarMatchPopover(event: MouseEvent) {
     this.openStarMatch.emit(event);
+  }
+
+  openZodiacSignPopover(event: MouseEvent) {
+    this.openZodiacSign.emit(event);
   }
 
   clearForm() {

@@ -1,4 +1,7 @@
-<app-toolbar (openStarMatch)="toggleStarMatch.set($event)" />
+<app-toolbar
+  (openStarMatch)="toggleStarMatch.set($event)"
+  (openZodiacSign)="toggleZodiacSigns.set($event)"
+/>
 @let profileValue = profiles.value();
 <p-table
   [value]="profileValue"
@@ -8,6 +11,7 @@
   [rowsPerPageOptions]="[10, 25, 50]"
   [loading]="profiles.isLoading()"
   [totalRecords]="profileValue.length"
+  class="p-treetable-sm"
 >
   <ng-template #header>
     <tr>
@@ -62,25 +66,9 @@
 </p-table>
 <app-profile />
 <!-- Zodic Signs -->
-<p-popover #zodiacSigns>
-  <div class="flex flex-col gap-4 w-100">
-    <p-table [value]="[]" stripedRows>
-      <ng-template #header>
-        <tr>
-          <th>Code</th>
-          <th>Name</th>
-          <th>Category</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-product>
-        <tr>
-          <td>{{ product.code }}</td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.category }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-</p-popover>
+<app-zodiac-signs
+  [togglePopover]="toggleZodiacSigns()"
+  (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
+/>
 <!-- Star Matching -->
 <app-star-match [togglePopover]="toggleStarMatch()" (starMatchHidden)="toggleStarMatch.set(null)" />

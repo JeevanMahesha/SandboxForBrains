@@ -10,7 +10,13 @@
         class="w-36"
         ariaLabel="Do you confirm"
       />
-      <p-button icon="pi pi-sparkles" variant="outlined" severity="info" label="Zodiac Signs" />
+      <p-button
+        icon="pi pi-sparkles"
+        variant="outlined"
+        severity="info"
+        label="Zodiac Signs"
+        (onClick)="openZodiacSignPopover($event)"
+      />
       <p-button
         icon="pi pi-star-fill"
         variant="outlined"

@@ -17,6 +17,7 @@ import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
 import { StarMatch } from '../star-match/star-match';
 import { Toolbar } from '../toolbar/toolbar';
+import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 
 @Component({
   selector: 'app-profiles-list',
@@ -37,6 +38,7 @@ import { Toolbar } from '../toolbar/toolbar';
     InputGroupAddonModule,
     Toolbar,
     StarMatch,
+    ZodiacSigns,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',
@@ -70,4 +72,5 @@ export default class ProfilesList {
   });
 
   toggleStarMatch = signal<MouseEvent | null>(null);
+  toggleZodiacSigns = signal<MouseEvent | null>(null);
 }

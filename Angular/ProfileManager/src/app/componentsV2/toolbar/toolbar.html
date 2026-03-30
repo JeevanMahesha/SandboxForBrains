@@ -27,10 +27,13 @@
     </div>
   </ng-template>
   <ng-template #center>
-    <p-iconfield iconPosition="left">
-      <p-inputicon class="pi pi-search" />
-      <input type="text" [formField]="filterForm.searchQuery" pInputText placeholder="Search" />
-    </p-iconfield>
+    <div class="flex flex-col gap-1.5 md:flex-row">
+      <p-iconfield iconPosition="left">
+        <p-inputicon class="pi pi-search" />
+        <input type="text" [formField]="filterForm.searchQuery" pInputText placeholder="Search" />
+      </p-iconfield>
+      <p-button icon="pi pi-user-plus" variant="outlined" severity="success" label="Add Profile" />
+    </div>
   </ng-template>
   <ng-template #end>
     <div class="flex flex-col gap-2 md:flex-row">

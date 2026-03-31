@@ -21,7 +21,7 @@ import { zodiacSignList } from '../../constant/common';
       [listStyle]="{ 'max-height': '350px' }"
       class="w-full border-none"
     >
-      <ng-template pTemplate="item" let-item>
+      <ng-template #item let-item>
         <div class="flex flex-col gap-1 w-full py-2">
           <div class="flex justify-between items-center">
             <span class="font-semibold">{{ item.tanglish }}</span>

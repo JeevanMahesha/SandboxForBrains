@@ -22,6 +22,8 @@ import { Profile } from '../profile/profile';
 import { StarMatch } from '../star-match/star-match';
 import { Toolbar } from '../toolbar/toolbar';
 import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
+import { ProfilesListDesktopView } from './profiles-list-desktop-view/profiles-list-desktop-view';
+import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-list-mobile-view';
 
 @Component({
   selector: 'app-profiles-list',
@@ -47,6 +49,8 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
     DataViewModule,
     CommonModule,
     SkeletonModule,
+    ProfilesListMobileView,
+    ProfilesListDesktopView,
   ],
   templateUrl: './profiles-list.html',
   styleUrl: './profiles-list.css',

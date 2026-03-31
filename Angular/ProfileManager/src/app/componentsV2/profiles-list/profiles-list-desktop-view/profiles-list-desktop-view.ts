@@ -1,7 +1,9 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { Profile } from '../../../models/profile';
+import { ToolbarAction } from '../../../models/toolbar.model';
+import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
   selector: 'app-profiles-list-desktop-view',
@@ -12,4 +14,10 @@ import { Profile } from '../../../models/profile';
 export class ProfilesListDesktopView {
   profileData = input.required<Profile[]>();
   isLoading = input.required<boolean>();
+
+  private profileService = inject(ProfilesService);
+
+  userActionEvent(userActionType: ToolbarAction, profileId: string): void {
+    this.profileService.userActionEvent(userActionType, profileId);
+  }
 }

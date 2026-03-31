@@ -94,12 +94,14 @@
                     [rounded]="true"
                     [text]="true"
                     severity="danger"
+                    (onClick)="userActionEvent('delete', profile.id)"
                   ></p-button>
                   <p-button
                     icon="pi pi-eye"
                     [rounded]="true"
                     [text]="true"
                     severity="info"
+                    (onClick)="userActionEvent('view', profile.id)"
                   ></p-button>
                 </div>
               </div>

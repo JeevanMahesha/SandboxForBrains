@@ -47,9 +47,26 @@
       </td>
       <td>{{ profile.starMatchScore }}</td>
       <td>
-        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" />
-        <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" />
-        <p-button icon="pi pi-eye" [rounded]="true" severity="info" [text]="true" />
+        <p-button
+          icon="pi pi-pencil"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="userActionEvent('edit', profile.id)"
+        />
+        <p-button
+          icon="pi pi-trash"
+          [rounded]="true"
+          severity="danger"
+          [text]="true"
+          (onClick)="userActionEvent('delete', profile.id)"
+        />
+        <p-button
+          icon="pi pi-eye"
+          [rounded]="true"
+          severity="info"
+          [text]="true"
+          (onClick)="userActionEvent('view', profile.id)"
+        />
       </td>
     </tr>
   </ng-template>

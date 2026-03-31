@@ -1,4 +1,4 @@
-export type ToolbarAction = 'create' | 'edit' | 'view';
+export type ToolbarAction = 'create' | 'edit' | 'view' | 'delete';
 
 export interface UserActions {
   actionType: ToolbarAction;

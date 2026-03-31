@@ -1,6 +1,9 @@
 <div class="layout-wrapper">
   <div class="layout-main-container">
     <div class="layout-main">
+      @let openDrawerValue = openDrawer();
+      @let actionTypeValue = actionType();
+      @let selectedProfileIdValue = selectedProfileId();
       <app-toolbar
         (openStarMatch)="toggleStarMatch.set($event)"
         (openZodiacSign)="toggleZodiacSigns.set($event)"
@@ -12,7 +15,12 @@
           [isLoading]="profiles.isLoading()"
         />
       </div>
-      <app-profile />
+
+      <app-profile
+        [actionType]="actionTypeValue"
+        [openDrawer]="openDrawerValue"
+        [selectedProfileId]="selectedProfileIdValue"
+      />
       <div class="block md:hidden">
         <app-profiles-list-mobile-view
           [profileData]="profileValue ?? []"

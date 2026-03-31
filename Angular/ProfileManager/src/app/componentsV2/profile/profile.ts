@@ -1,5 +1,6 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, computed, inject, input, model, signal } from '@angular/core';
 import { disabled, form, min, pattern, readonly, required } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -50,12 +51,21 @@ export interface ProfileDetail {
   styleUrl: './profile.scss',
 })
 export class Profile {
-  isVisable = false;
-  actionType = input<ToolbarAction>();
+  actionType = input.required<ToolbarAction | undefined>();
+  openDrawer = model<boolean | undefined>();
+  selectedProfileId = input.required<string | undefined>();
 
-  selectedProfileId = input<string | null>(null);
-  openDrawer = input<boolean>(false);
-  public readonly action = input<string | null>();
+  title = computed(() => {
+    switch (this.actionType()) {
+      case 'view':
+        return 'View Profile';
+      case 'edit':
+        return 'Edit Profile';
+      default:
+        return 'Add New Profile';
+    }
+  });
+  private readonly router = inject(Router);
 
   events = [
     {
@@ -107,6 +117,11 @@ export class Profile {
       message: 'Invalid mobile number (e.g., +919876543210)',
     });
     readonly(profileForm.starMatchScore);
-    disabled(profileForm, () => this.action() === 'view');
+    disabled(profileForm, () => this.actionType() === 'view');
   });
+
+  closeDrawer() {
+    this.openDrawer.set(false);
+    this.router.navigate(['/']);
+  }
 }

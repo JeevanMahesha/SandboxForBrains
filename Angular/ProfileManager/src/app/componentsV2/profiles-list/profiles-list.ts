@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, resource, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
@@ -17,6 +17,7 @@ import { TagModule } from 'primeng/tag';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { PROFILE_STATUS } from '../../constant/common';
+import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
 import { StarMatch } from '../star-match/star-match';
@@ -57,6 +58,10 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {
+  actionType = input<ToolbarAction>();
+  openDrawer = input<boolean>();
+  selectedProfileId = input<string>();
+
   private readonly profileService = inject(ProfilesService);
 
   profiles = resource({

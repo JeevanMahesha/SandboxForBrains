@@ -1,8 +1,9 @@
 <p-drawer
-  (visible)="openDrawer()"
-  header="Drawer"
-  styleClass="!w-full md:!w-80 lg:!w-[30rem]"
+  [visible]="openDrawer() ?? false"
+  header="{{ title() }}"
+  styleClass="!w-full md:!w-80 md:mt-5 lg:!w-[30rem]"
   position="right"
+  (onHide)="closeDrawer()"
 >
   <div class="flex flex-col mt-2 gap-4">
     <p-floatlabel class="w-full" variant="on">

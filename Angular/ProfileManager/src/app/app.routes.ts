@@ -36,11 +36,6 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'v2',
-    pathMatch: 'full',
-  },
-  {
-    path: 'v2',
     loadComponent: () => import('./componentsV2/profiles-list/profiles-list'),
     canActivate: [authGuard],
   },

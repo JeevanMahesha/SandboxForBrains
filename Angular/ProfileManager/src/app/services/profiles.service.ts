@@ -1,4 +1,5 @@
 import { Injectable, WritableSignal, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   DocumentSnapshot,
   OrderByDirection,
@@ -20,6 +21,7 @@ import { SortOption } from '../componentsV2/toolbar/toolbar';
 import { PROFILE_STATUS } from '../constant/common';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, Profile } from '../models/profile';
+import { ToolbarAction, UserActions } from '../models/toolbar.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +29,7 @@ import { Comment, Profile } from '../models/profile';
 export class ProfilesService {
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
+  private readonly router = inject(Router);
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
     viewOrderCheck: false,
@@ -236,6 +239,17 @@ export class ProfilesService {
         // Rejected profiles go to the end
         return aIsRejected ? 1 : -1;
       });
+    });
+  }
+
+  userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
+    const userAction: UserActions = {
+      actionType: userActionType,
+      selectedProfileId: profileId,
+      openDrawer: true,
+    };
+    this.router.navigate([], {
+      queryParams: { ...userAction },
     });
   }
 }

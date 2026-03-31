@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { Profile } from '../../../models/profile';
+import { ToolbarAction } from '../../../models/toolbar.model';
+import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
   selector: 'app-profiles-list-mobile-view',
@@ -15,4 +17,9 @@ import { Profile } from '../../../models/profile';
 export class ProfilesListMobileView {
   profileData = input.required<Profile[]>();
   isLoading = input.required<boolean>();
+  private profileService = inject(ProfilesService);
+
+  userActionEvent(userActionType: ToolbarAction, profileId: string): void {
+    this.profileService.userActionEvent(userActionType, profileId);
+  }
 }

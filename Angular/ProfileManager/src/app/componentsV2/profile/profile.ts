@@ -1,5 +1,15 @@
+import { KeyValuePipe } from '@angular/common';
 import { Component, computed, inject, input, model, signal } from '@angular/core';
-import { disabled, form, min, pattern, readonly, required } from '@angular/forms/signals';
+import {
+  disabled,
+  form,
+  FormField,
+  FormRoot,
+  min,
+  pattern,
+  readonly,
+  required,
+} from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
@@ -15,6 +25,7 @@ import {
   DistrictList,
   MATCHING_STARS,
   PROFILE_STATUS,
+  StateList,
   zodiacSignList,
 } from '../../constant/common';
 import { ToolbarAction } from '../../models/toolbar.model';
@@ -46,6 +57,9 @@ export interface ProfileDetail {
     InputGroupAddonModule,
     ButtonModule,
     TimelineModule,
+    FormField,
+    KeyValuePipe,
+    FormRoot,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
@@ -54,7 +68,6 @@ export class Profile {
   actionType = input.required<ToolbarAction | undefined>();
   openDrawer = model<boolean | undefined>();
   selectedProfileId = input.required<string | undefined>();
-
   title = computed(() => {
     switch (this.actionType()) {
       case 'view':
@@ -65,6 +78,18 @@ export class Profile {
         return 'Add New Profile';
     }
   });
+
+  PROFILE_STATUS_DATA = PROFILE_STATUS;
+  ZODIAC_SIGN_DATA = Object.entries(zodiacSignList).map(([key, value]) => ({
+    key,
+    value: `${value.tanglish} (${value.english})`,
+  }));
+  STARS_DATA = Object.entries(MATCHING_STARS).map(([key, value]) => ({
+    key: value,
+    value: `${key} (${value})`,
+  }));
+  STATE_LIST = StateList as unknown as string[];
+  cityList = computed(() => DistrictList[this.profileDetail().state] as unknown as string[]);
   private readonly router = inject(Router);
 
   events = [
@@ -76,32 +101,24 @@ export class Profile {
       image: 'game-controller.jpg',
     },
     { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-    { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
     { status: 'Shipped', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
     { status: 'Delivered', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' },
   ];
 
-  private readonly profileDetailModel = signal<ProfileDetail>({
+  private readonly profileDetail = signal<ProfileDetail>({
     name: '',
     mobileNumber: '+91',
     zodiacSign: 'aquarius',
     star: 'Aswini',
-    age: 0,
-    starMatchScore: 0,
+    age: 25,
+    starMatchScore: 8,
     state: 'Tamil Nadu',
-    city: '',
+    city: 'Chennai',
     profileStatusId: 'NEW',
     matrimonyId: '',
     comments: [],
   });
-  profileDetailForm = form(this.profileDetailModel, (profileForm) => {
+  profileDetailForm = form(this.profileDetail, (profileForm) => {
     required(profileForm.name, { message: 'Name is required' });
     required(profileForm.mobileNumber, { message: 'Mobile number is required' });
     required(profileForm.zodiacSign, { message: 'Zodiac sign is required' });
@@ -113,8 +130,8 @@ export class Profile {
     required(profileForm.profileStatusId, { message: 'Profile status is required' });
     required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
     min(profileForm.age, 18, { message: 'Age must be greater than 18' });
-    pattern(profileForm.mobileNumber, /^\+91[0-9]{10}$/, {
-      message: 'Invalid mobile number (e.g., +919876543210)',
+    pattern(profileForm.mobileNumber, /^(\+91)?[6-9]\d{9}$/, {
+      message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
     });
     readonly(profileForm.starMatchScore);
     disabled(profileForm, () => this.actionType() === 'view');
@@ -123,5 +140,11 @@ export class Profile {
   closeDrawer() {
     this.openDrawer.set(false);
     this.router.navigate(['/']);
+  }
+
+  onSubmit() {
+    console.log(this.profileDetailForm().value());
+    console.log(this.profileDetailForm().valid());
+    console.log(this.profileDetailForm().errorSummary());
   }
 }

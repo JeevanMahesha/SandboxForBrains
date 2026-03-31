@@ -41,13 +41,7 @@ export const routes: Routes = [
   },
   {
     path: 'v2',
-    loadComponent: () => import('./v2/v2'),
+    loadComponent: () => import('./componentsV2/profiles-list/profiles-list'),
     canActivate: [authGuard],
-    children: [
-      {
-        path: '',
-        loadComponent: () => import('./componentsV2/profiles-list/profiles-list'),
-      },
-    ],
   },
 ];

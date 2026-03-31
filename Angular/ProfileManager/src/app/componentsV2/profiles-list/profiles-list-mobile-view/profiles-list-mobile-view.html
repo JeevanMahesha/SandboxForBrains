@@ -29,7 +29,7 @@
     </div>
   </div>
 } @else {
-  <p-dataView [value]="profileData()" [paginator]="true" [rows]="10" layout="list">
+  <p-dataView [value]="profileData()" [paginator]="true" [rows]="10" layout="list" class="mt-2">
     <ng-template #list let-items>
       <div class="grid grid-cols-1 w-full gap-0">
         @for (profile of items; track profile.id; let first = $first; let ri = $index) {

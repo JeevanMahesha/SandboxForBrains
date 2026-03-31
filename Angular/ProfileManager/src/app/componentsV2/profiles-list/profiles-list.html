@@ -1,25 +1,34 @@
-<app-toolbar
-  (openStarMatch)="toggleStarMatch.set($event)"
-  (openZodiacSign)="toggleZodiacSigns.set($event)"
-/>
-@let profileValue = profiles.value();
-<div class="hidden md:block">
-  <app-profiles-list-desktop-view
-    [profileData]="profileValue ?? []"
-    [isLoading]="profiles.isLoading()"
-  />
+<div class="layout-wrapper">
+  <div class="layout-main-container">
+    <div class="layout-main">
+      <app-toolbar
+        (openStarMatch)="toggleStarMatch.set($event)"
+        (openZodiacSign)="toggleZodiacSigns.set($event)"
+      />
+      @let profileValue = profiles.value();
+      <div class="hidden md:block">
+        <app-profiles-list-desktop-view
+          [profileData]="profileValue ?? []"
+          [isLoading]="profiles.isLoading()"
+        />
+      </div>
+      <app-profile />
+      <div class="block md:hidden">
+        <app-profiles-list-mobile-view
+          [profileData]="profileValue ?? []"
+          [isLoading]="profiles.isLoading()"
+        />
+      </div>
+      <!-- Zodic Signs -->
+      <app-zodiac-signs
+        [togglePopover]="toggleZodiacSigns()"
+        (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
+      />
+      <!-- Star Matching -->
+      <app-star-match
+        [togglePopover]="toggleStarMatch()"
+        (starMatchHidden)="toggleStarMatch.set(null)"
+      />
+    </div>
+  </div>
 </div>
-<app-profile />
-<div class="block md:hidden">
-  <app-profiles-list-mobile-view
-    [profileData]="profileValue ?? []"
-    [isLoading]="profiles.isLoading()"
-  />
-</div>
-<!-- Zodic Signs -->
-<app-zodiac-signs
-  [togglePopover]="toggleZodiacSigns()"
-  (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
-/>
-<!-- Star Matching -->
-<app-star-match [togglePopover]="toggleStarMatch()" (starMatchHidden)="toggleStarMatch.set(null)" />

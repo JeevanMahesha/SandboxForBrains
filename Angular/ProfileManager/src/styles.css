@@ -8,6 +8,9 @@
 @import 'primeicons/primeicons.css';
 
 @import 'tailwindcss';
+body {
+  background-color: #8b9198;
+}
 
 .layout-wrapper {
   min-height: 100vh;

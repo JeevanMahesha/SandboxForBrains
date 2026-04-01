@@ -160,6 +160,19 @@ export class Profile {
     this.newComment.set('');
   }
 
+  deleteComment(comment: Comment) {
+    const currentComments = this.profileDetailForm.comments().value();
+    this.profileDetailForm
+      .comments()
+      .value.set(
+        currentComments.filter(
+          (eachComment) =>
+            eachComment.createDateAndTime !== comment.createDateAndTime &&
+            eachComment.value !== comment.value,
+        ),
+      );
+  }
+
   onSubmit() {
     console.log(this.profileDetailForm().value());
     console.log(this.profileDetailForm().valid());

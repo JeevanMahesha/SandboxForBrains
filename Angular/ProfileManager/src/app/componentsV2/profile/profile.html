@@ -151,7 +151,13 @@
       >
         <ng-template #content let-comment>
           <div class="flex flex-col gap-1">
-            <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" />
+            <p-button
+              icon="pi pi-trash"
+              (onClick)="deleteComment(comment)"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+            />
             <small class="text-surface-500 dark:text-surface-400"
               >{{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
             </small>

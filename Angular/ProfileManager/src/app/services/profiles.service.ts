@@ -158,7 +158,7 @@ export class ProfilesService {
     const docRef = doc(this.firestore, 'profiles', id);
     const updateData = {
       ...profileData,
-      updatedAt: Timestamp.now(),
+      updatedAt: new Date(),
     };
 
     return from(updateDoc(docRef, updateData));
@@ -246,6 +246,16 @@ export class ProfilesService {
   }
 
   // V2 methods can be added here as needed
+
+  async updateProfileV2(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
+    const docRef = doc(this.firestore, 'profiles', id);
+    const updateData = {
+      ...profileData,
+      updatedAt: new Date(),
+    };
+
+    await updateDoc(docRef, updateData);
+  }
 
   async getFilteredProfilesV2(
     sortDirection: boolean,

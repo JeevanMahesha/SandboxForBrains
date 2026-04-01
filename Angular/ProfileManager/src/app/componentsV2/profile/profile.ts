@@ -185,27 +185,52 @@ export class Profile {
 
   async onSubmit() {
     this.isSubmitting.set(true);
-    this.profileService
-      .addProfileV2(this.profileDetailForm().value())
-      .then(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Profile added successfully',
-          life: 3000,
+    if (this.actionType() === 'edit') {
+      this.profileService
+        .updateProfileV2(this.selectedProfileId()!, this.profileDetailForm().value())
+        .then(() => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Profile updated successfully',
+            life: 3000,
+          });
+          this.profileService.profiles.reload();
+          this.closeDrawer();
+        })
+        .catch(() => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update profile',
+          });
+        })
+        .finally(() => {
+          this.isSubmitting.set(false);
         });
-        this.profileService.profiles.reload();
-        this.closeDrawer();
-      })
-      .catch(() => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to add profile',
+    } else {
+      this.profileService
+        .addProfileV2(this.profileDetailForm().value())
+        .then(() => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Profile added successfully',
+            life: 3000,
+          });
+          this.profileService.profiles.reload();
+          this.closeDrawer();
+        })
+        .catch(() => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to add profile',
+          });
+        })
+        .finally(() => {
+          this.isSubmitting.set(false);
         });
-      })
-      .finally(() => {
-        this.isSubmitting.set(false);
-      });
+    }
   }
 }

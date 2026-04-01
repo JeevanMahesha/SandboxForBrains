@@ -1,4 +1,4 @@
-import { Injectable, WritableSignal, inject, signal } from '@angular/core';
+import { Injectable, WritableSignal, inject, resource, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   DocumentSnapshot,
@@ -16,6 +16,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable, from, map, of, tap } from 'rxjs';
 import { SortOption } from '../componentsV2/toolbar/toolbar';
 import { PROFILE_STATUS } from '../constant/common';
@@ -27,9 +28,32 @@ import { ToolbarAction, UserActions } from '../models/toolbar.model';
   providedIn: 'root',
 })
 export class ProfilesService {
+  profiles = resource({
+    params: () => ({
+      sortDirection: this.filterOptions().viewOrderCheck,
+      matrimonyId: this.filterOptions().searchQuery,
+      profileStatusFilter: this.filterOptions().profileStatus,
+      starMatchScoreFilter: this.filterOptions().starMatchScore,
+    }),
+    loader: ({ params }) =>
+      this.getFilteredProfilesV2(
+        params.sortDirection,
+        params.matrimonyId,
+        params.profileStatusFilter,
+        params.starMatchScoreFilter,
+      ).then((profiles) => {
+        return profiles.map((profile) => ({
+          ...profile,
+          profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
+        }));
+      }),
+    defaultValue: [],
+  });
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
   private readonly router = inject(Router);
+  private readonly messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
     viewOrderCheck: false,
@@ -143,27 +167,58 @@ export class ProfilesService {
   /**
    * Delete a profile
    */
-  deleteProfile(id: string): Observable<void> {
-    const docRef = doc(this.firestore, 'profiles', id);
-    return from(deleteDoc(docRef));
-  }
+  deleteProfile(id: string, event: Event): void {
+    console.log('deleteProfile', id);
 
-  /**
-   * Add a comment to a profile
-   */
-  addComment(id: string, comments: Comment[]): Observable<void> {
-    const docRef = doc(this.firestore, 'profiles', id);
-    // Convert Date objects to Firestore Timestamps for storage
-    const commentsForFirestore = comments.map((comment) => ({
-      value: comment.value,
-      createDateAndTime: Timestamp.fromDate(comment.createDateAndTime),
-    }));
-    return from(
-      updateDoc(docRef, {
-        comments: commentsForFirestore,
-        updatedAt: Timestamp.now(),
-      }),
-    );
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Do you want to delete this record?',
+      header: 'Confirm Delete',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Delete',
+        severity: 'danger',
+      },
+      closable: false,
+
+      accept: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmed',
+          detail: 'Record deleted',
+        });
+        const docRef = doc(this.firestore, 'profiles', id);
+        deleteDoc(docRef)
+          .then(() => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Profile deleted successfully',
+            });
+            this.profiles.reload();
+          })
+          .catch(() => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to delete profile',
+            });
+          });
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Rejected',
+          detail: 'You have rejected',
+        });
+      },
+    });
   }
 
   private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): ProfileDetail {
@@ -261,12 +316,16 @@ export class ProfilesService {
     return null;
   }
 
-  userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
+  userActionEvent(userActionType: ToolbarAction, profileId: string | null, event?: Event): void {
     const userAction: UserActions = {
       actionType: userActionType,
       selectedProfileId: profileId,
       openDrawer: true,
     };
+    if (userActionType === 'delete') {
+      this.deleteProfile(profileId!, event!);
+      return;
+    }
     this.router.navigate([], {
       queryParams: { ...userAction },
     });

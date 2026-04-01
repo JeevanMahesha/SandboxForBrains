@@ -58,7 +58,7 @@
           [rounded]="true"
           severity="danger"
           [text]="true"
-          (onClick)="userActionEvent('delete', profile.id)"
+          (onClick)="userActionEvent('delete', profile.id, $event)"
         />
         <p-button
           icon="pi pi-eye"

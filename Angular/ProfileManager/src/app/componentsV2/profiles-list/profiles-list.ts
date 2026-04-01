@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, Resource, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
@@ -16,7 +16,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
-import { PROFILE_STATUS } from '../../constant/common';
+import { ProfileDetail } from '../../models/profile';
 import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
@@ -61,33 +61,12 @@ export default class ProfilesList {
   actionType = input<ToolbarAction>();
   openDrawer = input<boolean>();
   selectedProfileId = input<string>();
-
-  private readonly profileService = inject(ProfilesService);
-
-  profiles = resource({
-    params: () => ({
-      sortDirection: this.profileService.filterOptions().viewOrderCheck,
-      matrimonyId: this.profileService.filterOptions().searchQuery,
-      profileStatusFilter: this.profileService.filterOptions().profileStatus,
-      starMatchScoreFilter: this.profileService.filterOptions().starMatchScore,
-    }),
-    loader: ({ params }) =>
-      this.profileService
-        .getFilteredProfilesV2(
-          params.sortDirection,
-          params.matrimonyId,
-          params.profileStatusFilter,
-          params.starMatchScoreFilter,
-        )
-        .then((profiles) => {
-          return profiles.map((profile) => ({
-            ...profile,
-            profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
-          }));
-        }),
-    defaultValue: [],
-  });
-
+  profiles: Resource<ProfileDetail[]>;
   toggleStarMatch = signal<MouseEvent | null>(null);
   toggleZodiacSigns = signal<MouseEvent | null>(null);
+  private readonly profileService = inject(ProfilesService);
+
+  constructor() {
+    this.profiles = this.profileService.profiles;
+  }
 }

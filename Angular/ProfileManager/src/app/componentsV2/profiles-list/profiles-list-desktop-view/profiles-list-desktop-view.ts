@@ -17,7 +17,7 @@ export class ProfilesListDesktopView {
 
   private profileService = inject(ProfilesService);
 
-  userActionEvent(userActionType: ToolbarAction, profileId: string): void {
-    this.profileService.userActionEvent(userActionType, profileId);
+  userActionEvent(userActionType: ToolbarAction, profileId: string, event?: Event): void {
+    this.profileService.userActionEvent(userActionType, profileId, event);
   }
 }

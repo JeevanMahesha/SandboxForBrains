@@ -240,25 +240,25 @@ export default class ProfilesList {
 
   onDelete(profile: ProfileDetail): void {
     if (confirm(`Are you sure you want to delete ${profile.name}'s profile?`)) {
-      this.profilesService
-        .deleteProfile(profile.id?.toString() ?? '')
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => {
-            this.snackBar.open('Profile deleted successfully', 'Close', {
-              duration: 3000,
-              panelClass: ['success-snackbar'],
-            });
-            this.reloadProfiles();
-          },
-          error: (error) => {
-            console.error('Error deleting profile:', error);
-            this.snackBar.open('Error deleting profile', 'Close', {
-              duration: 3000,
-              panelClass: ['error-snackbar'],
-            });
-          },
-        });
+      // this.profilesService
+      //   .deleteProfile(profile.id?.toString() ?? '')
+      //   .pipe(takeUntilDestroyed(this.destroyRef))
+      //   .subscribe({
+      //     next: () => {
+      //       this.snackBar.open('Profile deleted successfully', 'Close', {
+      //         duration: 3000,
+      //         panelClass: ['success-snackbar'],
+      //       });
+      //       this.reloadProfiles();
+      //     },
+      //     error: (error) => {
+      //       console.error('Error deleting profile:', error);
+      //       this.snackBar.open('Error deleting profile', 'Close', {
+      //         duration: 3000,
+      //         panelClass: ['error-snackbar'],
+      //       });
+      //     },
+      //   });
     }
   }
 

@@ -149,6 +149,10 @@ export class Profile {
     });
   }
 
+  copyToClipboard(value: string | null | undefined, label: string): void {
+    this.profileService.copyToClipboard(value, label);
+  }
+
   closeDrawer() {
     this.openDrawer.set(false);
     this.router.navigate(['/']);

@@ -57,7 +57,7 @@
 
               <div class="flex gap-2 w-full mt-2">
                 <p-button
-                  label="MatrimonyId"
+                  [label]="profile.matrimonyId"
                   icon="pi pi-copy"
                   iconPos="right"
                   [outlined]="true"
@@ -65,10 +65,11 @@
                   size="small"
                   class="flex-1 w-full"
                   styleClass="w-full"
+                  (onClick)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
                 >
                 </p-button>
                 <p-button
-                  label="MobileNo"
+                  [label]="profile.mobileNumber"
                   icon="pi pi-copy"
                   iconPos="right"
                   [outlined]="true"
@@ -76,6 +77,7 @@
                   size="small"
                   class="flex-1 w-full"
                   styleClass="w-full"
+                  (onClick)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
                 >
                 </p-button>
               </div>

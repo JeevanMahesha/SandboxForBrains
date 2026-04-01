@@ -325,4 +325,26 @@ export class ProfilesService {
       queryParams: { ...userAction },
     });
   }
+
+  copyToClipboard(value: string | null | undefined, label: string): void {
+    if (!value) return;
+    navigator.clipboard.writeText(value).then(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `${label} copied to clipboard!`,
+          life: 2000,
+        });
+      },
+      () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Failed to copy ${label.toLowerCase()}`,
+          life: 3000,
+        });
+      },
+    );
+  }
 }

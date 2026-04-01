@@ -22,4 +22,7 @@ export class ProfilesListMobileView {
   userActionEvent(userActionType: ToolbarAction, profileId: string): void {
     this.profileService.userActionEvent(userActionType, profileId);
   }
+  copyToClipboard(value: string | null | undefined, label: string): void {
+    this.profileService.copyToClipboard(value, label);
+  }
 }

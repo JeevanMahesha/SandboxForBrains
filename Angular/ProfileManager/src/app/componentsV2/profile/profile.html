@@ -39,21 +39,25 @@
         />
         <label for="profile_status">Profile Status</label>
       </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
+      <p-inputgroup>
         <input
           [class.p-invalid]="
             profileDetailForm.mobileNumber().touched() && profileDetailForm.mobileNumber().invalid()
           "
           [formField]="profileDetailForm.mobileNumber"
           pInputText
-          type="tel"
-          inputId="mobile_number"
-          pSize="large"
-          placeholder="+91XXXXXXXXXX"
-          fluid
+          placeholder="Matrimony ID"
         />
-        <label for="mobile_number">Mobile Number</label>
-      </p-floatlabel>
+        @if (actionType() === 'view') {
+          <p-inputgroup-addon>
+            <p-button
+              icon="pi pi-copy"
+              severity="secondary"
+              (onClick)="copyToClipboard(profileDetailForm.mobileNumber().value(), 'Mobile Number')"
+            />
+          </p-inputgroup-addon>
+        }
+      </p-inputgroup>
 
       <p-inputgroup>
         <input
@@ -66,10 +70,15 @@
         />
         @if (actionType() === 'view') {
           <p-inputgroup-addon>
-            <p-button icon="pi pi-copy" severity="secondary" />
+            <p-button
+              icon="pi pi-copy"
+              severity="secondary"
+              (onClick)="copyToClipboard(profileDetailForm.matrimonyId().value(), 'Matrimony ID')"
+            />
           </p-inputgroup-addon>
         }
       </p-inputgroup>
+
       <p-floatlabel class="w-full" variant="on">
         <p-select
           [formField]="$any(profileDetailForm.zodiacSign)"

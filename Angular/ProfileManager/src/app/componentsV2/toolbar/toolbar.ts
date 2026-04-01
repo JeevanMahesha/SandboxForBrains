@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -36,6 +38,8 @@ export interface SortOption {
     ToolbarModule,
     InputTextModule,
     FormField,
+    InputGroupModule,
+    InputGroupAddonModule,
   ],
   templateUrl: './toolbar.html',
 })

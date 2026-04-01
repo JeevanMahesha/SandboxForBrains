@@ -9,7 +9,16 @@
   <form [formRoot]="profileDetailForm">
     <div class="flex flex-col mt-2 gap-4">
       <p-floatlabel class="w-full" variant="on">
+        <!-- 
+        FIX:ME        
+        [class.p-invalid]="" This is temporary fix
+        https://github.com/primefaces/primeng/issues/19119 
+        -->
+
         <input
+          [class.p-invalid]="
+            profileDetailForm.name().touched() && profileDetailForm.name().invalid()
+          "
           [formField]="profileDetailForm.name"
           pInputText
           type="text"
@@ -33,6 +42,9 @@
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <input
+          [class.p-invalid]="
+            profileDetailForm.mobileNumber().touched() && profileDetailForm.mobileNumber().invalid()
+          "
           [formField]="profileDetailForm.mobileNumber"
           pInputText
           type="tel"
@@ -45,7 +57,14 @@
       </p-floatlabel>
 
       <p-inputgroup>
-        <input [formField]="profileDetailForm.matrimonyId" pInputText placeholder="Matrimony ID" />
+        <input
+          [class.p-invalid]="
+            profileDetailForm.matrimonyId().touched() && profileDetailForm.matrimonyId().invalid()
+          "
+          [formField]="profileDetailForm.matrimonyId"
+          pInputText
+          placeholder="Matrimony ID"
+        />
         @if (actionType() === 'view') {
           <p-inputgroup-addon>
             <p-button icon="pi pi-copy" severity="secondary" />

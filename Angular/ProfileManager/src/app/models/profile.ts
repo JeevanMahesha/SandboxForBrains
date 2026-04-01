@@ -26,5 +26,5 @@ export interface ProfileDetail {
 
 export type ProfileColumn = keyof Pick<
   ProfileDetail,
-  'name' | 'zodiacSign' | 'city' | 'profileStatusId' | 'starMatchScore' | 'actions' | 'sNo'
+  'name' | 'zodiacSign' | 'city' | 'profileStatusId' | 'starMatchScore' | 'sNo'
 >;

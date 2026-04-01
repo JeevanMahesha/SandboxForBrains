@@ -125,7 +125,6 @@ export default class ProfilesList {
     'city',
     'profileStatusId',
     'starMatchScore',
-    'actions',
   ];
 
   constructor() {

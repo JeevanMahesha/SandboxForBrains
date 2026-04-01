@@ -34,23 +34,9 @@ import {
   StateList,
   zodiacSignList,
 } from '../../constant/common';
-import { Comment, ProfileDetail } from '../../models/profile';
+import { ProfileDetail } from '../../models/profile';
 import { ProfilesService } from '../../services/profiles.service';
 import { Comments } from './comments/comments';
-
-export interface ProfileDetail {
-  name: string;
-  mobileNumber: string;
-  zodiacSign: keyof typeof zodiacSignList;
-  star: keyof typeof MATCHING_STARS;
-  age: number;
-  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
-  state: keyof typeof DistrictList;
-  city: string;
-  profileStatusId: keyof typeof PROFILE_STATUS;
-  matrimonyId: string;
-  comments: Comment[];
-}
 
 @Component({
   selector: 'app-add-profile',

@@ -85,7 +85,7 @@ export class Profile {
     value: `${value.tanglish} (${value.english})`,
   }));
   STARS_DATA = Object.entries(MATCHING_STARS).map(([key, value]) => ({
-    key: value,
+    key,
     value: `${key} (${value})`,
   }));
   STATE_LIST = StateList as unknown as string[];

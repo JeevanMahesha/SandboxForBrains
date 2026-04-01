@@ -176,7 +176,13 @@
     <div
       class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
     >
-      <p-button type="submit" label="Save Changes" icon="pi pi-check" (onClick)="onSubmit()" />
+      <p-button
+        type="submit"
+        label="Save Changes"
+        icon="pi pi-check"
+        (onClick)="onSubmit()"
+        [disabled]="profileDetailForm().invalid() || !!newComment()"
+      />
     </div>
   </ng-template>
 </p-drawer>

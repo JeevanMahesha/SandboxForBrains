@@ -1,5 +1,6 @@
-import { KeyValuePipe } from '@angular/common';
+import { DatePipe, KeyValuePipe } from '@angular/common';
 import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   disabled,
   form,
@@ -28,6 +29,7 @@ import {
   StateList,
   zodiacSignList,
 } from '../../constant/common';
+import { Comment } from '../../models/profile';
 import { ToolbarAction } from '../../models/toolbar.model';
 
 export interface ProfileDetail {
@@ -60,6 +62,8 @@ export interface ProfileDetail {
     FormField,
     KeyValuePipe,
     FormRoot,
+    FormsModule,
+    DatePipe,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
@@ -105,6 +109,8 @@ export class Profile {
     { status: 'Delivered', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' },
   ];
 
+  newComment = model<string>('');
+
   private readonly profileDetail = signal<ProfileDetail>({
     name: '',
     mobileNumber: '+91',
@@ -142,9 +148,21 @@ export class Profile {
     this.router.navigate(['/']);
   }
 
+  addComment() {
+    const currentComments = this.profileDetailForm.comments().value();
+    this.profileDetailForm.comments().value.set([
+      ...currentComments,
+      {
+        value: this.newComment(),
+        createDateAndTime: new Date(),
+      },
+    ]);
+    this.newComment.set('');
+  }
+
   onSubmit() {
     console.log(this.profileDetailForm().value());
     console.log(this.profileDetailForm().valid());
-    console.log(this.profileDetailForm().errorSummary());
+    console.log(this.profileDetailForm.name().touched());
   }
 }

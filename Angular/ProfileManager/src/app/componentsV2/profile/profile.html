@@ -134,16 +134,29 @@
         <label for="city">City</label>
       </p-floatlabel>
       <p-inputgroup>
-        <input pInputText placeholder="Comments" />
+        <input
+          pInputText
+          [(ngModel)]="newComment"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Comments"
+        />
         <p-inputgroup-addon>
-          <p-button icon="pi pi-plus" severity="secondary" />
+          <p-button (click)="addComment()" icon="pi pi-plus" severity="secondary" />
         </p-inputgroup-addon>
       </p-inputgroup>
-      <p-timeline [value]="events" class="w-full md:w-80" align="alternate">
-        <ng-template #content let-event>
-          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" />
-          <small class="text-surface-500 dark:text-surface-400">{{ event.date }} </small>
-          {{ event.status }}
+      <p-timeline
+        [value]="profileDetailForm.comments().value()"
+        class="w-full md:w-80"
+        align="alternate"
+      >
+        <ng-template #content let-comment>
+          <div class="flex flex-col gap-1">
+            <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" />
+            <small class="text-surface-500 dark:text-surface-400"
+              >{{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
+            </small>
+            {{ comment.value }}
+          </div>
         </ng-template>
       </p-timeline>
     </div>

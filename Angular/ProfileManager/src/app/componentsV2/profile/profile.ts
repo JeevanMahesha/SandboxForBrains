@@ -72,6 +72,7 @@ export class Profile {
         return 'Add New Profile';
     }
   });
+  buttonLabel = computed(() => (this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes'));
 
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = Object.entries(zodiacSignList).map(([key, value]) => ({

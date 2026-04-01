@@ -9,10 +9,10 @@
   <form [formRoot]="profileDetailForm">
     <div class="flex flex-col mt-2 gap-4">
       <p-floatlabel class="w-full" variant="on">
-        <!-- 
-        FIX:ME        
+        <!--
+        FIX:ME
         [class.p-invalid]="" This is temporary fix
-        https://github.com/primefaces/primeng/issues/19119 
+        https://github.com/primefaces/primeng/issues/19119
         -->
         <input
           [class.p-invalid]="
@@ -183,7 +183,7 @@
         <p-button
           type="submit"
           severity="success"
-          label="Save Changes"
+          [label]="buttonLabel()"
           icon="pi pi-check"
           [loading]="isSubmitting()"
           (onClick)="onSubmit()"

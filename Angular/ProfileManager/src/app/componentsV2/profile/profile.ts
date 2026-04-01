@@ -187,7 +187,10 @@ export class Profile {
           severity: 'success',
           summary: 'Success',
           detail: 'Profile added successfully',
+          life: 3000,
         });
+        this.profileService.profiles.reload();
+        this.closeDrawer();
       })
       .catch(() => {
         this.messageService.add({

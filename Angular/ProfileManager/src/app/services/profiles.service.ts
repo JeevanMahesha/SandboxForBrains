@@ -164,12 +164,7 @@ export class ProfilesService {
     return from(updateDoc(docRef, updateData));
   }
 
-  /**
-   * Delete a profile
-   */
   deleteProfile(id: string, event: Event): void {
-    console.log('deleteProfile', id);
-
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Do you want to delete this record?',

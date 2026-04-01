@@ -141,7 +141,12 @@
           placeholder="Comments"
         />
         <p-inputgroup-addon>
-          <p-button (click)="addComment()" icon="pi pi-plus" severity="secondary" />
+          <p-button
+            (click)="addComment()"
+            [disabled]="!newComment()"
+            icon="pi pi-plus"
+            severity="success"
+          />
         </p-inputgroup-addon>
       </p-inputgroup>
       <p-timeline

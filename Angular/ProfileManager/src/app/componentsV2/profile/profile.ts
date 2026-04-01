@@ -175,7 +175,5 @@ export class Profile {
 
   onSubmit() {
     console.log(this.profileDetailForm().value());
-    console.log(this.profileDetailForm().valid());
-    console.log(this.profileDetailForm.name().touched());
   }
 }

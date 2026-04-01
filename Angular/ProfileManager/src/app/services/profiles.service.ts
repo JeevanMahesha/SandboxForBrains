@@ -240,6 +240,17 @@ export class ProfilesService {
     });
   }
 
+  async addProfileV2(profileData: Partial<ProfileDetail>) {
+    const now = Timestamp.now();
+    const profileToAdd = {
+      ...profileData,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    return addDoc(this.profilesCollection, profileToAdd);
+  }
+
   userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
     const userAction: UserActions = {
       actionType: userActionType,

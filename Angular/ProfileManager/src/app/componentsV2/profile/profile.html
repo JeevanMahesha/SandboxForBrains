@@ -14,7 +14,6 @@
         [class.p-invalid]="" This is temporary fix
         https://github.com/primefaces/primeng/issues/19119 
         -->
-
         <input
           [class.p-invalid]="
             profileDetailForm.name().touched() && profileDetailForm.name().invalid()
@@ -145,7 +144,7 @@
             (click)="addComment()"
             [disabled]="!newComment()"
             icon="pi pi-plus"
-            severity="success"
+            severity="help"
           />
         </p-inputgroup-addon>
       </p-inputgroup>
@@ -178,11 +177,15 @@
     >
       <p-button
         type="submit"
+        severity="success"
         label="Save Changes"
         icon="pi pi-check"
+        [loading]="isSubmitting()"
         (onClick)="onSubmit()"
         [disabled]="profileDetailForm().invalid() || !!newComment()"
       />
     </div>
   </ng-template>
 </p-drawer>
+
+<p-toast />

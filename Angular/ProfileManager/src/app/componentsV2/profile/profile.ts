@@ -12,6 +12,7 @@ import {
   required,
 } from '@angular/forms/signals';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -22,6 +23,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TimelineModule } from 'primeng/timeline';
+import { ToastModule } from 'primeng/toast';
 import {
   DistrictList,
   MATCHING_STARS,
@@ -29,22 +31,9 @@ import {
   StateList,
   zodiacSignList,
 } from '../../constant/common';
-import { Comment } from '../../models/profile';
+import { Comment, ProfileDetail } from '../../models/profile';
 import { ToolbarAction } from '../../models/toolbar.model';
-
-export interface ProfileDetail {
-  name: string;
-  mobileNumber: string;
-  zodiacSign: keyof typeof zodiacSignList;
-  star: keyof typeof MATCHING_STARS;
-  age: number;
-  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
-  state: keyof typeof DistrictList;
-  city: string;
-  profileStatusId: keyof typeof PROFILE_STATUS;
-  matrimonyId: string;
-  comments: Comment[];
-}
+import { ProfilesService } from '../../services/profiles.service';
 
 @Component({
   selector: 'app-profile',
@@ -64,7 +53,9 @@ export interface ProfileDetail {
     FormRoot,
     FormsModule,
     DatePipe,
+    ToastModule,
   ],
+  providers: [MessageService],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })
@@ -95,6 +86,8 @@ export class Profile {
   STATE_LIST = StateList as unknown as string[];
   cityList = computed(() => DistrictList[this.profileDetail().state] as unknown as string[]);
   private readonly router = inject(Router);
+  private readonly profileService = inject(ProfilesService);
+  private messageService = inject(MessageService);
 
   events = [
     {
@@ -110,10 +103,11 @@ export class Profile {
   ];
 
   newComment = model<string>('');
+  isSubmitting = signal<boolean>(false);
 
   private readonly profileDetail = signal<ProfileDetail>({
-    name: '',
-    mobileNumber: '+91',
+    name: 'Test',
+    mobileNumber: '+919876543210',
     zodiacSign: 'aquarius',
     star: 'Aswini',
     age: 25,
@@ -121,7 +115,7 @@ export class Profile {
     state: 'Tamil Nadu',
     city: 'Chennai',
     profileStatusId: 'NEW',
-    matrimonyId: '',
+    matrimonyId: '123456',
     comments: [],
   });
   profileDetailForm = form(this.profileDetail, (profileForm) => {
@@ -173,7 +167,29 @@ export class Profile {
       );
   }
 
-  onSubmit() {
-    console.log(this.profileDetailForm().value());
+  async onSubmit() {
+    this.isSubmitting.set(true);
+    this.profileService
+      .addProfileV2(this.profileDetailForm().value())
+      .then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Profile added successfully',
+          closable: false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add profile',
+          closable: false,
+        });
+      })
+      .finally(() => {
+        this.isSubmitting.set(false);
+      });
   }
 }

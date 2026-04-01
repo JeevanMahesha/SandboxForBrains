@@ -1,45 +1,45 @@
+import { KeyValuePipe, NgClass, TitleCasePipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
+  DestroyRef,
+  effect,
   inject,
   input,
   signal,
-  computed,
-  effect,
-  DestroyRef,
-  ChangeDetectionStrategy,
 } from '@angular/core';
-import { KeyValuePipe, NgClass, TitleCasePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTableModule } from '@angular/material/table';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
-import { Profile, ProfileColumn } from '../../models/profile';
-import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
-import { ProfilesService } from '../../services/profiles.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
+import type { OrderByDirection } from 'firebase/firestore';
 import {
-  finalize,
+  concatMap,
   debounceTime,
   distinctUntilChanged,
+  finalize,
+  from,
+  map,
   switchMap,
   tap,
-  from,
-  concatMap,
-  map,
   toArray,
 } from 'rxjs';
-import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
-import type { OrderByDirection } from 'firebase/firestore';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MATCHING_STARS, PROFILE_STATUS, PROFILE_STATUS_COLORS } from '../../constant/common';
+import { ProfileColumn, ProfileDetail } from '../../models/profile';
 import { AuthService } from '../../services/auth.service';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatMenuModule } from '@angular/material/menu';
+import { ProfilesService } from '../../services/profiles.service';
 @Component({
   selector: 'app-profiles-list',
   imports: [
@@ -70,7 +70,7 @@ export default class ProfilesList {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  allProfiles = signal<Profile[]>([]);
+  allProfiles = signal<ProfileDetail[]>([]);
   isLoading = signal<boolean>(false);
 
   // Pagination
@@ -203,13 +203,13 @@ export default class ProfilesList {
     this.pageSize.set(event.pageSize);
   }
 
-  onView(profile: Profile): void {
+  onView(profile: ProfileDetail): void {
     this.router.navigate(['/profile'], {
       queryParams: { id: profile.id, action: 'view', returnUrl: this.router.url },
     });
   }
 
-  onEdit(profile: Profile): void {
+  onEdit(profile: ProfileDetail): void {
     this.router.navigate(['/profile'], {
       queryParams: { id: profile.id, action: 'edit', returnUrl: this.router.url },
     });
@@ -239,10 +239,10 @@ export default class ProfilesList {
     });
   }
 
-  onDelete(profile: Profile): void {
+  onDelete(profile: ProfileDetail): void {
     if (confirm(`Are you sure you want to delete ${profile.name}'s profile?`)) {
       this.profilesService
-        .deleteProfile(profile.id.toString())
+        .deleteProfile(profile.id?.toString() ?? '')
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {

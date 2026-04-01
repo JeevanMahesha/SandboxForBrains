@@ -4,7 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
-import { Profile } from '../../../models/profile';
+import { ProfileDetail } from '../../../models/profile';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { ProfilesService } from '../../../services/profiles.service';
 
@@ -15,7 +15,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   styleUrl: './profiles-list-mobile-view.css',
 })
 export class ProfilesListMobileView {
-  profileData = input.required<Profile[]>();
+  profileData = input.required<ProfileDetail[]>();
   isLoading = input.required<boolean>();
   private profileService = inject(ProfilesService);
 

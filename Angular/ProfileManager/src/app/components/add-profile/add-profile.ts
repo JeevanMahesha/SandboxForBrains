@@ -1,3 +1,4 @@
+import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,6 +17,16 @@ import {
   readonly,
   required,
 } from '@angular/forms/signals';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import {
   DistrictList,
   MATCHING_STARS,
@@ -23,20 +34,9 @@ import {
   StateList,
   zodiacSignList,
 } from '../../constant/common';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { Router } from '@angular/router';
-import { KeyValuePipe } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Comment, ProfileDetail } from '../../models/profile';
 import { ProfilesService } from '../../services/profiles.service';
 import { Comments } from './comments/comments';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { Comment, Profile } from '../../models/profile';
 
 export interface ProfileDetail {
   name: string;
@@ -165,10 +165,10 @@ export default class AddProfile {
       };
       switch (this.action()) {
         case 'add':
-          this.addProfile(profileData as unknown as Partial<Profile>);
+          this.addProfile(profileData as unknown as Partial<ProfileDetail>);
           break;
         case 'edit':
-          this.updateProfile(profileData as unknown as Partial<Profile>);
+          this.updateProfile(profileData as unknown as Partial<ProfileDetail>);
           break;
       }
     } else {
@@ -302,7 +302,7 @@ export default class AddProfile {
     }
   }
 
-  private addProfile(profileData: Partial<Profile>) {
+  private addProfile(profileData: Partial<ProfileDetail>) {
     this.profilesService.addProfile(profileData).subscribe({
       next: (id) => {
         this.isSaving.set(false);
@@ -327,7 +327,7 @@ export default class AddProfile {
     });
   }
 
-  private updateProfile(profileData: Partial<Profile>) {
+  private updateProfile(profileData: Partial<ProfileDetail>) {
     this.profilesService.updateProfile(this.id() as string, profileData).subscribe({
       next: () => {
         this.isSaving.set(false);

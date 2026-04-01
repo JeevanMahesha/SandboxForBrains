@@ -16,11 +16,11 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { Observable, from, map, of } from 'rxjs';
+import { Observable, from, map, of, tap } from 'rxjs';
 import { SortOption } from '../componentsV2/toolbar/toolbar';
 import { PROFILE_STATUS } from '../constant/common';
 import { FIRESTORE } from '../firebase/provide-firebase';
-import { Comment, Profile } from '../models/profile';
+import { Comment, ProfileDetail } from '../models/profile';
 import { ToolbarAction, UserActions } from '../models/toolbar.model';
 
 @Injectable({
@@ -41,7 +41,7 @@ export class ProfilesService {
   /**
    * Add a new profile to Firestore
    */
-  addProfile(profileData: Partial<Profile>): Observable<string> {
+  addProfile(profileData: Partial<ProfileDetail>): Observable<string> {
     const now = Timestamp.now();
     const profileToAdd = {
       ...profileData,
@@ -62,7 +62,7 @@ export class ProfilesService {
       profileStatus?: keyof typeof PROFILE_STATUS | null;
       starMatchScore?: number | null;
     },
-  ): Observable<Profile[]> {
+  ): Observable<ProfileDetail[]> {
     let q = query(this.profilesCollection);
 
     // Apply filters using where clauses
@@ -95,13 +95,14 @@ export class ProfilesService {
           return aIsRejected ? 1 : -1;
         });
       }),
+      tap((profiles) => console.log(profiles)),
     );
   }
 
   /**
    * Get a single profile by ID
    */
-  getProfileById(id: string): Observable<Profile | null> {
+  getProfileById(id: string): Observable<ProfileDetail | null> {
     const docRef = doc(this.firestore, 'profiles', id);
 
     return from(getDoc(docRef)).pipe(
@@ -114,7 +115,7 @@ export class ProfilesService {
     );
   }
 
-  getProfilesByMatrimonyId(matrimonyId: string | null): Observable<Profile[]> {
+  getProfilesByMatrimonyId(matrimonyId: string | null): Observable<ProfileDetail[]> {
     if (!matrimonyId || matrimonyId.trim() === '') {
       return of([]);
     }
@@ -129,7 +130,7 @@ export class ProfilesService {
   /**
    * Update an existing profile
    */
-  updateProfile(id: string, profileData: Partial<Profile>): Observable<void> {
+  updateProfile(id: string, profileData: Partial<ProfileDetail>): Observable<void> {
     const docRef = doc(this.firestore, 'profiles', id);
     const updateData = {
       ...profileData,
@@ -165,7 +166,7 @@ export class ProfilesService {
     );
   }
 
-  private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): Profile {
+  private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): ProfileDetail {
     const data = doc.data();
     // Convert comment timestamps from Firestore Timestamps to Date objects
     const comments: Comment[] = (data?.['comments'] || []).map(
@@ -191,18 +192,18 @@ export class ProfilesService {
       // Convert Firestore Timestamps to Date objects
       createdAt: data?.['createdAt']?.toDate() || new Date(),
       updatedAt: data?.['updatedAt']?.toDate() || new Date(),
-    } as unknown as Profile;
+    } as unknown as ProfileDetail;
   }
 
   // V2 methods can be added here as needed
 
-  getFilteredProfilesV2(
+  async getFilteredProfilesV2(
     sortDirection: boolean,
     matrimonyId: string,
     profileStatusFilter: keyof typeof PROFILE_STATUS | null = null,
     starMatchScoreFilter: number | null = null,
     sortField = 'createdAt',
-  ): Promise<Profile[]> {
+  ): Promise<ProfileDetail[]> {
     let q = query(this.profilesCollection);
 
     if (matrimonyId && matrimonyId.trim() !== '') {
@@ -223,22 +224,19 @@ export class ProfilesService {
     // Apply sorting - must come after where clauses
     q = query(q, orderBy(sortField, sortDirectionStr));
 
-    return getDocs(q).then((snapshot) => {
-      const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
+    const snapshot = await getDocs(q);
+    const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
+    return profiles.sort((a, b) => {
+      const aIsRejected = a.profileStatusId === 'REJECTED';
+      const bIsRejected = b.profileStatusId === 'REJECTED';
 
-      // Sort profiles: rejected profiles appear at the end
-      return profiles.sort((a, b) => {
-        const aIsRejected = a.profileStatusId === 'REJECTED';
-        const bIsRejected = b.profileStatusId === 'REJECTED';
+      // If both are rejected or both are not rejected, maintain original order
+      if (aIsRejected === bIsRejected) {
+        return 0;
+      }
 
-        // If both are rejected or both are not rejected, maintain original order
-        if (aIsRejected === bIsRejected) {
-          return 0;
-        }
-
-        // Rejected profiles go to the end
-        return aIsRejected ? 1 : -1;
-      });
+      // Rejected profiles go to the end
+      return aIsRejected ? 1 : -1;
     });
   }
 

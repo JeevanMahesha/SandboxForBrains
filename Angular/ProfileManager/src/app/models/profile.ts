@@ -5,12 +5,12 @@ export interface Comment {
   createDateAndTime: Date;
 }
 
-export interface Profile {
-  updatedAt: Date;
-  createdAt: Date;
+export interface ProfileDetail {
+  updatedAt?: Date;
+  createdAt?: Date;
   comments: Comment[];
   star: keyof typeof MATCHING_STARS;
-  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS];
+  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
   mobileNumber: string;
   zodiacSign: keyof typeof zodiacSignList;
   age: number;
@@ -19,13 +19,12 @@ export interface Profile {
   profileStatusId: keyof typeof PROFILE_STATUS;
   matrimonyId: string;
   city: string;
-  id: number;
-  actions: string;
+  id?: number;
   sNo?: number;
   profileStatus?: (typeof PROFILE_STATUS)[keyof typeof PROFILE_STATUS];
 }
 
 export type ProfileColumn = keyof Pick<
-  Profile,
+  ProfileDetail,
   'name' | 'zodiacSign' | 'city' | 'profileStatusId' | 'starMatchScore' | 'actions' | 'sNo'
 >;

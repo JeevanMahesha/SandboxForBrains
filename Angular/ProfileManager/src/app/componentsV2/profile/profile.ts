@@ -1,5 +1,5 @@
 import { DatePipe, KeyValuePipe } from '@angular/common';
-import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   disabled,
@@ -137,6 +137,31 @@ export class Profile {
     disabled(profileForm, () => this.actionType() === 'view');
   });
 
+  constructor() {
+    effect(() => {
+      const actionType = this.actionType();
+      if (actionType && ['view', 'edit'].includes(actionType)) {
+        this.profileService
+          .getProfileByIdV2(this.selectedProfileId()!)
+          .then((profile) => {
+            if (profile) {
+              this.profileDetail.set(profile);
+            }
+            if (actionType === 'view') {
+              this.profileDetailForm().disabled();
+            }
+          })
+          .catch(() => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to fetch profile',
+            });
+          });
+      }
+    });
+  }
+
   closeDrawer() {
     this.openDrawer.set(false);
     this.router.navigate(['/']);
@@ -176,16 +201,13 @@ export class Profile {
           severity: 'success',
           summary: 'Success',
           detail: 'Profile added successfully',
-          closable: false,
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Failed to add profile',
-          closable: false,
         });
       })
       .finally(() => {

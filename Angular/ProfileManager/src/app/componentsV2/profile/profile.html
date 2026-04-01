@@ -132,22 +132,24 @@
         />
         <label for="city">City</label>
       </p-floatlabel>
-      <p-inputgroup>
-        <input
-          pInputText
-          [(ngModel)]="newComment"
-          [ngModelOptions]="{ standalone: true }"
-          placeholder="Comments"
-        />
-        <p-inputgroup-addon>
-          <p-button
-            (click)="addComment()"
-            [disabled]="!newComment()"
-            icon="pi pi-plus"
-            severity="help"
+      @if (actionType() !== 'view') {
+        <p-inputgroup>
+          <input
+            pInputText
+            [(ngModel)]="newComment"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Comments"
           />
-        </p-inputgroup-addon>
-      </p-inputgroup>
+          <p-inputgroup-addon>
+            <p-button
+              (click)="addComment()"
+              [disabled]="!newComment()"
+              icon="pi pi-plus"
+              severity="help"
+            />
+          </p-inputgroup-addon>
+        </p-inputgroup>
+      }
       <p-timeline
         [value]="profileDetailForm.comments().value()"
         class="w-full md:w-80"
@@ -155,13 +157,15 @@
       >
         <ng-template #content let-comment>
           <div class="flex flex-col gap-1">
-            <p-button
-              icon="pi pi-trash"
-              (onClick)="deleteComment(comment)"
-              [rounded]="true"
-              [text]="true"
-              severity="danger"
-            />
+            @if (actionType() !== 'view') {
+              <p-button
+                icon="pi pi-trash"
+                (onClick)="deleteComment(comment)"
+                [rounded]="true"
+                [text]="true"
+                severity="danger"
+              />
+            }
             <small class="text-surface-500 dark:text-surface-400"
               >{{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
             </small>
@@ -171,21 +175,23 @@
       </p-timeline>
     </div>
   </form>
-  <ng-template #footer>
-    <div
-      class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
-    >
-      <p-button
-        type="submit"
-        severity="success"
-        label="Save Changes"
-        icon="pi pi-check"
-        [loading]="isSubmitting()"
-        (onClick)="onSubmit()"
-        [disabled]="profileDetailForm().invalid() || !!newComment()"
-      />
-    </div>
-  </ng-template>
+  @if (actionType() !== 'view') {
+    <ng-template #footer>
+      <div
+        class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
+      >
+        <p-button
+          type="submit"
+          severity="success"
+          label="Save Changes"
+          icon="pi pi-check"
+          [loading]="isSubmitting()"
+          (onClick)="onSubmit()"
+          [disabled]="profileDetailForm().invalid() || !!newComment()"
+        />
+      </div>
+    </ng-template>
+  }
 </p-drawer>
 
 <p-toast />

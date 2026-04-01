@@ -251,6 +251,16 @@ export class ProfilesService {
     return addDoc(this.profilesCollection, profileToAdd);
   }
 
+  async getProfileByIdV2(id: string): Promise<ProfileDetail | null> {
+    const docRef = doc(this.firestore, 'profiles', id);
+
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return this.mapDocToProfile(docSnap);
+    }
+    return null;
+  }
+
   userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
     const userAction: UserActions = {
       actionType: userActionType,

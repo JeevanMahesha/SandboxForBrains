@@ -92,6 +92,7 @@
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <p-select
+          (onChange)="onStarChange($event)"
           [formField]="$any(profileDetailForm.star)"
           inputId="star_sign"
           [options]="STARS_DATA"

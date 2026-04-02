@@ -29,7 +29,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { SelectChangeEvent, SelectModule } from 'primeng/select';
 import { TimelineModule } from 'primeng/timeline';
 import {
   DISTRICT_LIST,
@@ -154,16 +154,22 @@ export class Profile {
     });
   }
 
+  onStarChange(event: SelectChangeEvent): void {
+    this.profileDetailForm
+      .starMatchScore()
+      .value.set(MATCHING_STARS[event.value as keyof typeof MATCHING_STARS]);
+  }
+
   copyToClipboard(value: string | null | undefined, label: string): void {
     this.profileService.copyToClipboard(value, label);
   }
 
-  closeDrawer() {
+  closeDrawer(): void {
     this.openDrawer.set(false);
     this.router.navigate(['/']);
   }
 
-  addComment() {
+  addComment(): void {
     const currentComments = this.profileDetailForm.comments().value();
     this.profileDetailForm.comments().value.set([
       ...currentComments,
@@ -175,7 +181,7 @@ export class Profile {
     this.newComment.set('');
   }
 
-  deleteComment(comment: Comment) {
+  deleteComment(comment: Comment): void {
     const currentComments = this.profileDetailForm.comments().value();
     this.profileDetailForm
       .comments()
@@ -188,7 +194,7 @@ export class Profile {
       );
   }
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     this.isSubmitting.set(true);
     if (this.actionType() === 'edit') {
       this.profileService

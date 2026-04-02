@@ -1,16 +1,16 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
   User,
   UserCredential,
-  onAuthStateChanged,
 } from 'firebase/auth';
 import { from, Observable } from 'rxjs';
 
-import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 import { authState$, idToken$ } from '../firebase/firebase-rx';
+import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 
 @Injectable({
   providedIn: 'root',
@@ -95,8 +95,8 @@ export class AuthService {
     return !!token;
   }
 
-  login(email: string, password: string): Observable<UserCredential> {
-    return from(signInWithEmailAndPassword(this.auth, email, password));
+  login(email: string, password: string): Promise<UserCredential> {
+    return signInWithEmailAndPassword(this.auth, email, password);
   }
 
   logout(): Observable<void> {

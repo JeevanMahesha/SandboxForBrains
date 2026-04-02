@@ -129,7 +129,7 @@ export class Profile {
       const actionType = this.actionType();
       if (actionType && ['view', 'edit'].includes(actionType)) {
         this.profileService
-          .getProfileByIdV2(this.selectedProfileId()!)
+          .getProfileById(this.selectedProfileId()!)
           .then((profile) => {
             if (profile) {
               this.profileDetail.set(profile);
@@ -187,7 +187,7 @@ export class Profile {
     this.isSubmitting.set(true);
     if (this.actionType() === 'edit') {
       this.profileService
-        .updateProfileV2(this.selectedProfileId()!, this.profileDetailForm().value())
+        .updateProfile(this.selectedProfileId()!, this.profileDetailForm().value())
         .then(() => {
           this.messageService.add({
             severity: 'success',
@@ -210,7 +210,7 @@ export class Profile {
         });
     } else {
       this.profileService
-        .addProfileV2(this.profileDetailForm().value())
+        .addProfile(this.profileDetailForm().value())
         .then(() => {
           this.messageService.add({
             severity: 'success',

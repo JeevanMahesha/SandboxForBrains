@@ -17,8 +17,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable, from, map, of, tap } from 'rxjs';
-import { SortOption } from '../componentsV2/toolbar/toolbar';
+import { SortOption } from '../components/toolbar/toolbar';
 import { PROFILE_STATUS } from '../constant/common';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile';
@@ -36,7 +35,7 @@ export class ProfilesService {
       starMatchScoreFilter: this.filterOptions().starMatchScore,
     }),
     loader: ({ params }) =>
-      this.getFilteredProfilesV2(
+      this.getFilteredProfiles(
         params.sortDirection,
         params.matrimonyId,
         params.profileStatusFilter,
@@ -61,108 +60,6 @@ export class ProfilesService {
     profileStatus: null,
     starMatchScore: null,
   });
-
-  /**
-   * Add a new profile to Firestore
-   */
-  addProfile(profileData: Partial<ProfileDetail>): Observable<string> {
-    const now = Timestamp.now();
-    const profileToAdd = {
-      ...profileData,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    return from(addDoc(this.profilesCollection, profileToAdd)).pipe(map((docRef) => docRef.id));
-  }
-
-  /**
-   * Get filtered profiles from Firestore with sorting and filtering from backend
-   */
-  getFilteredProfiles(
-    sortField = 'createdAt',
-    sortDirection: 'asc' | 'desc' = 'desc',
-    filters?: {
-      profileStatus?: keyof typeof PROFILE_STATUS | null;
-      starMatchScore?: number | null;
-    },
-  ): Observable<ProfileDetail[]> {
-    let q = query(this.profilesCollection);
-
-    // Apply filters using where clauses
-    if (filters?.profileStatus) {
-      q = query(q, where('profileStatusId', '==', filters.profileStatus));
-    }
-
-    if (filters?.starMatchScore !== null && filters?.starMatchScore !== undefined) {
-      q = query(q, where('starMatchScore', '==', filters.starMatchScore));
-    }
-
-    // Apply sorting - must come after where clauses
-    q = query(q, orderBy(sortField, sortDirection));
-
-    return from(getDocs(q)).pipe(
-      map((snapshot) => {
-        const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
-
-        // Sort profiles: rejected profiles appear at the end
-        return profiles.sort((a, b) => {
-          const aIsRejected = a.profileStatusId === 'REJECTED';
-          const bIsRejected = b.profileStatusId === 'REJECTED';
-
-          // If both are rejected or both are not rejected, maintain original order
-          if (aIsRejected === bIsRejected) {
-            return 0;
-          }
-
-          // Rejected profiles go to the end
-          return aIsRejected ? 1 : -1;
-        });
-      }),
-      tap((profiles) => console.log(profiles)),
-    );
-  }
-
-  /**
-   * Get a single profile by ID
-   */
-  getProfileById(id: string): Observable<ProfileDetail | null> {
-    const docRef = doc(this.firestore, 'profiles', id);
-
-    return from(getDoc(docRef)).pipe(
-      map((docSnap) => {
-        if (docSnap.exists()) {
-          return this.mapDocToProfile(docSnap);
-        }
-        return null;
-      }),
-    );
-  }
-
-  getProfilesByMatrimonyId(matrimonyId: string | null): Observable<ProfileDetail[]> {
-    if (!matrimonyId || matrimonyId.trim() === '') {
-      return of([]);
-    }
-    const q = query(this.profilesCollection, where('matrimonyId', '==', matrimonyId.trim()));
-    return from(getDocs(q)).pipe(
-      map((snapshot) => {
-        return snapshot.docs.map((doc) => this.mapDocToProfile(doc));
-      }),
-    );
-  }
-
-  /**
-   * Update an existing profile
-   */
-  updateProfile(id: string, profileData: Partial<ProfileDetail>): Observable<void> {
-    const docRef = doc(this.firestore, 'profiles', id);
-    const updateData = {
-      ...profileData,
-      updatedAt: new Date(),
-    };
-
-    return from(updateDoc(docRef, updateData));
-  }
 
   deleteProfile(id: string, event: Event): void {
     this.confirmationService.confirm({
@@ -216,38 +113,7 @@ export class ProfilesService {
     });
   }
 
-  private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): ProfileDetail {
-    const data = doc.data();
-    // Convert comment timestamps from Firestore Timestamps to Date objects
-    const comments: Comment[] = (data?.['comments'] || []).map(
-      (comment: { value?: string; createDateAndTime?: { toDate: () => Date } } | string) => {
-        // Handle both old string format and new object format for backwards compatibility
-        if (typeof comment === 'string') {
-          return {
-            value: comment,
-            createDateAndTime: new Date(),
-          };
-        }
-        return {
-          value: comment.value || '',
-          createDateAndTime: comment.createDateAndTime?.toDate?.() || new Date(),
-        };
-      },
-    );
-
-    return {
-      id: doc.id,
-      ...data,
-      comments,
-      // Convert Firestore Timestamps to Date objects
-      createdAt: data?.['createdAt']?.toDate() || new Date(),
-      updatedAt: data?.['updatedAt']?.toDate() || new Date(),
-    } as unknown as ProfileDetail;
-  }
-
-  // V2 methods can be added here as needed
-
-  async updateProfileV2(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
+  async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
     const docRef = doc(this.firestore, 'profiles', id);
     const updateData = {
       ...profileData,
@@ -257,7 +123,7 @@ export class ProfilesService {
     await updateDoc(docRef, updateData);
   }
 
-  async getFilteredProfilesV2(
+  async getFilteredProfiles(
     sortDirection: boolean,
     matrimonyId: string,
     profileStatusFilter: keyof typeof PROFILE_STATUS | null = null,
@@ -300,7 +166,7 @@ export class ProfilesService {
     });
   }
 
-  async addProfileV2(profileData: Partial<ProfileDetail>) {
+  async addProfile(profileData: Partial<ProfileDetail>) {
     const now = Timestamp.now();
     const profileToAdd = {
       ...profileData,
@@ -311,7 +177,7 @@ export class ProfilesService {
     return addDoc(this.profilesCollection, profileToAdd);
   }
 
-  async getProfileByIdV2(id: string): Promise<ProfileDetail | null> {
+  async getProfileById(id: string): Promise<ProfileDetail | null> {
     const docRef = doc(this.firestore, 'profiles', id);
 
     const docSnap = await getDoc(docRef);
@@ -356,5 +222,34 @@ export class ProfilesService {
         });
       },
     );
+  }
+
+  private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): ProfileDetail {
+    const data = doc.data();
+    // Convert comment timestamps from Firestore Timestamps to Date objects
+    const comments: Comment[] = (data?.['comments'] || []).map(
+      (comment: { value?: string; createDateAndTime?: { toDate: () => Date } } | string) => {
+        // Handle both old string format and new object format for backwards compatibility
+        if (typeof comment === 'string') {
+          return {
+            value: comment,
+            createDateAndTime: new Date(),
+          };
+        }
+        return {
+          value: comment.value || '',
+          createDateAndTime: comment.createDateAndTime?.toDate?.() || new Date(),
+        };
+      },
+    );
+
+    return {
+      id: doc.id,
+      ...data,
+      comments,
+      // Convert Firestore Timestamps to Date objects
+      createdAt: data?.['createdAt']?.toDate() || new Date(),
+      updatedAt: data?.['updatedAt']?.toDate() || new Date(),
+    } as unknown as ProfileDetail;
   }
 }

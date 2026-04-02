@@ -16,15 +16,15 @@ interface Login {
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.html',
   imports: [FloatLabelModule, FormField, FormRoot, ButtonModule, CardModule, InputTextModule],
+  templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private messageService = inject(MessageService);
-  loginModel = signal<Login>({
+  readonly loginModel = signal<Login>({
     email: '',
     password: '',
   });

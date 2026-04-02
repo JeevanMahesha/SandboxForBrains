@@ -23,12 +23,12 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {
-  actionType = input<ToolbarAction>();
-  openDrawer = input<boolean>();
-  selectedProfileId = input<string>();
-  profiles: Resource<ProfileDetail[]>;
-  toggleStarMatch = signal<MouseEvent | null>(null);
-  toggleZodiacSigns = signal<MouseEvent | null>(null);
+  readonly actionType = input<ToolbarAction>();
+  readonly openDrawer = input<boolean>();
+  readonly selectedProfileId = input<string>();
+  readonly profiles: Resource<ProfileDetail[]>;
+  readonly toggleStarMatch = signal<MouseEvent | null>(null);
+  readonly toggleZodiacSigns = signal<MouseEvent | null>(null);
   private readonly profileService = inject(ProfilesService);
 
   constructor() {

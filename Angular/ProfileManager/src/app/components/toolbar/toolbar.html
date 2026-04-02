@@ -2,13 +2,13 @@
   <ng-template #start>
     <div class="flex flex-col gap-2 md:flex-row">
       <p-togglebutton
-        [formField]="filterForm.viewOrderCheck"
         onLabel="Newest"
         offLabel="Oldest"
-        onIcon="pi pi-sort-amount-down-alt"
-        offIcon="pi pi-sort-amount-up"
+        offIcon="pi pi-sort-amount-down-alt"
+        onIcon="pi pi-sort-amount-up"
         class="w-36"
         ariaLabel="Do you confirm"
+        [formField]="filterForm.viewOrderCheck"
       />
       <p-select
         placeholder="Select Status"
@@ -26,27 +26,27 @@
     <div class="flex flex-col gap-1.5 md:flex-row">
       <p-iconfield iconPosition="left">
         <p-inputicon class="pi pi-search" />
-        <input type="text" [formField]="filterForm.searchQuery" pInputText placeholder="Search" />
+        <input type="text" pInputText placeholder="Search" [formField]="filterForm.searchQuery" />
       </p-iconfield>
     </div>
   </ng-template>
   <ng-template #end>
     <div class="flex flex-col gap-2 md:flex-row">
       <p-button
-        [disabled]="!filterHasValue()"
-        (onClick)="clearForm()"
         icon="pi pi-filter-slash"
         variant="outlined"
         severity="secondary"
         label="Clear"
+        [disabled]="!filterHasValue()"
+        (onClick)="clearForm()"
       />
       <p-splitbutton
         label="Add Profile"
         icon="pi pi-user-plus"
-        [model]="items"
-        (onClick)="addNewProfileAction()"
         outlined
         severity="success"
+        [model]="items"
+        (onClick)="addNewProfileAction()"
       />
     </div>
   </ng-template>

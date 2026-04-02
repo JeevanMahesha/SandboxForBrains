@@ -13,8 +13,8 @@ import { ProfilesService } from '../../../services/profiles.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListDesktopView {
-  profileData = input.required<ProfileDetail[]>();
-  isLoading = input.required<boolean>();
+  readonly profileData = input.required<ProfileDetail[]>();
+  readonly isLoading = input.required<boolean>();
 
   private profileService = inject(ProfilesService);
 

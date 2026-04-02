@@ -1,4 +1,6 @@
 // @ts-check
+// @ts-ignore
+
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('@angular-eslint/eslint-plugin');
@@ -27,11 +29,30 @@ module.exports = tseslint.config(
       ...tseslint.configs.recommended,
       ...tseslint.configs.stylistic,
     ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        // @ts-ignore
+        tsconfigRootDir: __dirname,
+      },
+    },
     plugins: {
       '@angular-eslint': angular,
       'unused-imports': unusedImports,
     },
+    // @ts-ignore
     rules: {
+      ...angular.configs.all.rules,
+      '@angular-eslint/component-max-inline-declarations': [
+        'error',
+        {
+          template: 30,
+          styles: 30,
+          animations: 30,
+        },
+      ],
+      "@angular-eslint/component-class-suffix": 'off',
+      "@angular-eslint/no-experimental": 'warn',
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -72,8 +93,10 @@ module.exports = tseslint.config(
       parser: angularParser,
     },
     rules: {
-      '@angular-eslint/template/banana-in-box': 'error',
-      '@angular-eslint/template/no-negated-async': 'error',
+      ...angularTemplate.configs.all.rules,
+      "@angular-eslint/template/i18n": 'off',
+      "@angular-eslint/template/no-any": 'warn',
+      "@angular-eslint/template/no-call-expression": 'off',
     },
   }
 );

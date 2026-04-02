@@ -17,14 +17,14 @@ import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 export class AuthService {
   private auth = inject(FIREBASE_AUTH);
 
-  user = toSignal(authState$(this.auth), { initialValue: null });
-  idToken = toSignal(idToken$(this.auth), { initialValue: null });
+  readonly user = toSignal(authState$(this.auth), { initialValue: null });
+  readonly idToken = toSignal(idToken$(this.auth), { initialValue: null });
 
-  currentUser = signal<User | null>(null);
-  currentToken = signal<string | null>(null);
-  authInitialized = signal<boolean>(false);
+  readonly currentUser = signal<User | null>(null);
+  readonly currentToken = signal<string | null>(null);
+  readonly authInitialized = signal<boolean>(false);
 
-  isAuthenticated = computed(() => {
+  readonly isAuthenticated = computed(() => {
     const hasUser = !!this.currentUser();
     const initialized = this.authInitialized();
     return hasUser && initialized;

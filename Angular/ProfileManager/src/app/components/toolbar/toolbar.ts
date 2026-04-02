@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -27,16 +27,17 @@ import { ProfilesService } from '../../services/profiles.service';
     InputTextModule,
   ],
   templateUrl: './toolbar.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Toolbar {
   private readonly profileService = inject(ProfilesService);
   private readonly authService = inject(AuthService);
-  profileStatusOptions = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
+  readonly profileStatusOptions = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
     label: value,
     value: key,
   }));
 
-  items: MenuItem[] = [
+  readonly items: MenuItem[] = [
     {
       label: 'Zodiac Signs',
       icon: 'pi pi-sparkles',
@@ -74,12 +75,12 @@ export class Toolbar {
     },
   ];
 
-  scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
-  filterForm = form(this.profileService.filterOptions);
-  openStarMatch = output<MouseEvent>();
-  openZodiacSign = output<MouseEvent>();
+  readonly scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
+  readonly filterForm = form(this.profileService.filterOptions);
+  readonly openStarMatch = output<MouseEvent>();
+  readonly openZodiacSign = output<MouseEvent>();
 
-  filterHasValue = computed(() => {
+  readonly filterHasValue = computed(() => {
     const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } =
       this.profileService.filterOptions();
     const searchTrimmed = (searchQuery ?? '').trim();

@@ -15,8 +15,8 @@ import { ProfilesService } from '../../../services/profiles.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListMobileView {
-  profileData = input.required<ProfileDetail[]>();
-  isLoading = input.required<boolean>();
+  readonly profileData = input.required<ProfileDetail[]>();
+  readonly isLoading = input.required<boolean>();
   private profileService = inject(ProfilesService);
 
   userActionEvent(userActionType: ToolbarAction, profileId: string): void {

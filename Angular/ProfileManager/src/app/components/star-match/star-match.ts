@@ -33,9 +33,9 @@ import { MATCHING_STARS } from '../../constant/common.const';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StarMatch {
-  togglePopover = input.required<MouseEvent | null>();
-  starMatchHidden = output<void>();
-  starMatchingElement = viewChild<Popover>('starMatching');
+  readonly togglePopover = input.required<MouseEvent | null>();
+  readonly starMatchHidden = output<void>();
+  readonly starMatchingElement = viewChild<Popover>('starMatching');
   starMatchData = Object.entries(MATCHING_STARS).map(([key, value]) => ({
     starName: key,
     score: value as number,

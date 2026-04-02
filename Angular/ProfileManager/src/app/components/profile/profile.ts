@@ -64,10 +64,10 @@ import { ProfilesService } from '../../services/profiles.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Profile {
-  actionType = input.required<ToolbarAction | undefined>();
-  openDrawer = model<boolean | undefined>();
-  selectedProfileId = input.required<string | undefined>();
-  title = computed(() => {
+  readonly actionType = input.required<ToolbarAction | undefined>();
+  readonly openDrawer = model<boolean | undefined>();
+  readonly selectedProfileId = input.required<string | undefined>();
+  readonly title = computed(() => {
     switch (this.actionType()) {
       case 'view':
         return 'View Profile';
@@ -77,7 +77,9 @@ export class Profile {
         return 'Add New Profile';
     }
   });
-  buttonLabel = computed(() => (this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes'));
+  readonly buttonLabel = computed(() =>
+    this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes',
+  );
 
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
@@ -89,13 +91,15 @@ export class Profile {
     value: `${key} (${value})`,
   }));
   STATE_LIST = STATE_LIST as unknown as string[];
-  cityList = computed(() => DISTRICT_LIST[this.profileDetail().state] as unknown as string[]);
+  readonly cityList = computed(
+    () => DISTRICT_LIST[this.profileDetail().state] as unknown as string[],
+  );
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
   private messageService = inject(MessageService);
 
-  newComment = model<string>('');
-  isSubmitting = signal<boolean>(false);
+  readonly newComment = model<string>('');
+  readonly isSubmitting = signal<boolean>(false);
 
   private readonly profileDetail = signal<ProfileDetail>({
     name: 'Test-'.concat(Math.random().toString(36).substring(2, 15)),

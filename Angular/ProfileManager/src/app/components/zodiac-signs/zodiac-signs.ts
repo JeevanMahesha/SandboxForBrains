@@ -39,9 +39,9 @@ import { ZODIAC_SIGN_LIST } from '../../constant/common.const';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZodiacSigns {
-  togglePopover = input.required<MouseEvent | null>();
-  zodiacSignsHidden = output<void>();
-  zodiacSignsElement = viewChild<Popover>('zodiacSigns');
+  readonly togglePopover = input.required<MouseEvent | null>();
+  readonly zodiacSignsHidden = output<void>();
+  readonly zodiacSignsElement = viewChild<Popover>('zodiacSigns');
   zodiacSignsData = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
     key,
     ...value,

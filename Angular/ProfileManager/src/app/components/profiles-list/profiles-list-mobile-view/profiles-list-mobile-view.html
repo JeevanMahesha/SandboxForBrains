@@ -29,15 +29,18 @@
     </div>
   </div>
 } @else {
-  <p-dataView [value]="profileData()" [paginator]="true" [rows]="10" layout="list" class="mt-2">
+  <p-dataView layout="list" class="mt-2" [value]="profileData()" [paginator]="true" [rows]="10">
     <ng-template #list let-items>
       <div class="grid grid-cols-1 w-full gap-0">
-        @for (profile of items; track profile.id; let first = $first; let ri = $index) {
+        @for (profile of items; track profile.id) {
           <div class="w-full">
-            <div class="flex flex-col p-4 gap-4" [ngClass]="{ 'border-t border-gray-200': !first }">
+            <div
+              class="flex flex-col p-4 gap-4"
+              [ngClass]="{ 'border-t border-gray-200': !$first }"
+            >
               <div class="flex justify-between items-center">
                 <div class="text-xl font-bold text-gray-900">{{ profile.name }}</div>
-                <div class="text-gray-500 text-sm">#{{ ri + 1 }}</div>
+                <div class="text-gray-500 text-sm">#{{ $index + 1 }}</div>
               </div>
 
               <div class="flex flex-wrap gap-2 items-center text-sm text-gray-700">
@@ -52,59 +55,57 @@
               </div>
 
               <div>
-                <p-tag [value]="profile.profileStatus"></p-tag>
+                <p-tag [value]="profile.profileStatus" />
               </div>
 
               <div class="flex gap-2 w-full mt-2">
                 <p-button
+                  icon="pi pi-copy"
+                  iconPos="right"
+                  severity="secondary"
+                  size="small"
+                  class="flex-1 w-full"
+                  styleClass="w-full"
                   [label]="profile.matrimonyId"
-                  icon="pi pi-copy"
-                  iconPos="right"
                   [outlined]="true"
-                  severity="secondary"
-                  size="small"
-                  class="flex-1 w-full"
-                  styleClass="w-full"
                   (onClick)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
-                >
-                </p-button>
+                />
                 <p-button
-                  [label]="profile.mobileNumber"
                   icon="pi pi-copy"
                   iconPos="right"
-                  [outlined]="true"
                   severity="secondary"
                   size="small"
                   class="flex-1 w-full"
                   styleClass="w-full"
+                  [label]="profile.mobileNumber"
+                  [outlined]="true"
                   (onClick)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
-                >
-                </p-button>
+                />
               </div>
 
               <div class="flex justify-center items-center mt-2 pt-4 border-t border-gray-200">
                 <div class="flex gap-2">
                   <p-button
                     icon="pi pi-pencil"
+                    severity="success"
                     [rounded]="true"
                     [text]="true"
-                    severity="success"
                     (onClick)="userActionEvent('edit', profile.id)"
-                  ></p-button>
+                  />
                   <p-button
                     icon="pi pi-trash"
+                    severity="danger"
                     [rounded]="true"
                     [text]="true"
-                    severity="danger"
                     (onClick)="userActionEvent('delete', profile.id)"
-                  ></p-button>
+                  />
                   <p-button
                     icon="pi pi-eye"
+                    severity="info"
                     [rounded]="true"
                     [text]="true"
-                    severity="info"
                     (onClick)="userActionEvent('view', profile.id)"
-                  ></p-button>
+                  />
                 </div>
               </div>
             </div>

@@ -1,10 +1,10 @@
 <p-drawer
-  [visible]="openDrawer() ?? false"
-  header="{{ title() }}"
   styleClass="!w-full md:!w-80 lg:!w-[30rem]"
   position="right"
-  (onHide)="closeDrawer()"
   dismissible="false"
+  [header]="title()"
+  [visible]="openDrawer() ?? false"
+  (onHide)="closeDrawer()"
 >
   <form [formRoot]="profileDetailForm">
     <div class="flex flex-col mt-2 gap-4">
@@ -15,38 +15,38 @@
         https://github.com/primefaces/primeng/issues/19119
         -->
         <input
-          [class.p-invalid]="
-            profileDetailForm.name().touched() && profileDetailForm.name().invalid()
-          "
-          [formField]="profileDetailForm.name"
           pInputText
           type="text"
           pSize="large"
           inputId="name"
           fluid
+          [class.p-invalid]="
+            profileDetailForm.name().touched() && profileDetailForm.name().invalid()
+          "
+          [formField]="profileDetailForm.name"
         />
         <label for="name">Name</label>
       </p-floatlabel>
 
       <p-floatlabel class="w-full" variant="on">
         <p-select
-          [formField]="$any(profileDetailForm.profileStatusId)"
           inputId="profile_status"
-          [options]="PROFILE_STATUS_DATA | keyvalue"
           optionLabel="value"
           optionValue="key"
           class="w-full"
+          [formField]="$any(profileDetailForm.profileStatusId)"
+          [options]="PROFILE_STATUS_DATA | keyvalue"
         />
         <label for="profile_status">Profile Status</label>
       </p-floatlabel>
       <p-inputgroup>
         <input
+          pInputText
+          placeholder="Matrimony ID"
           [class.p-invalid]="
             profileDetailForm.mobileNumber().touched() && profileDetailForm.mobileNumber().invalid()
           "
           [formField]="profileDetailForm.mobileNumber"
-          pInputText
-          placeholder="Matrimony ID"
         />
         @if (actionType() === 'view') {
           <p-inputgroup-addon>
@@ -61,12 +61,12 @@
 
       <p-inputgroup>
         <input
+          pInputText
+          placeholder="Matrimony ID"
           [class.p-invalid]="
             profileDetailForm.matrimonyId().touched() && profileDetailForm.matrimonyId().invalid()
           "
           [formField]="profileDetailForm.matrimonyId"
-          pInputText
-          placeholder="Matrimony ID"
         />
         @if (actionType() === 'view') {
           <p-inputgroup-addon>
@@ -81,33 +81,33 @@
 
       <p-floatlabel class="w-full" variant="on">
         <p-select
-          [formField]="$any(profileDetailForm.zodiacSign)"
           inputId="zodiac_sign"
-          [options]="ZODIAC_SIGN_DATA"
           optionLabel="value"
           optionValue="key"
           class="w-full"
+          [formField]="$any(profileDetailForm.zodiacSign)"
+          [options]="ZODIAC_SIGN_DATA"
         />
         <label for="zodiac_sign">Zodiac Sign</label>
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <p-select
-          (onChange)="onStarChange($event)"
-          [formField]="$any(profileDetailForm.star)"
           inputId="star_sign"
-          [options]="STARS_DATA"
           optionLabel="value"
           optionValue="key"
           class="w-full"
+          [formField]="$any(profileDetailForm.star)"
+          [options]="STARS_DATA"
+          (onChange)="onStarChange($event)"
         />
         <label for="star_sign">Star Sign</label>
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <p-inputnumber
-          [formField]="$any(profileDetailForm.age)"
           fluid
           inputId="age"
           mode="decimal"
+          [formField]="$any(profileDetailForm.age)"
           [min]="22"
           [max]="29"
         />
@@ -115,10 +115,10 @@
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <p-inputnumber
-          [formField]="$any(profileDetailForm.starMatchScore)"
           fluid
           inputId="star_match_score"
           mode="decimal"
+          [formField]="$any(profileDetailForm.starMatchScore)"
           [min]="5"
           [max]="12"
         />
@@ -126,19 +126,19 @@
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <p-select
-          [formField]="$any(profileDetailForm.state)"
           inputId="state"
-          [options]="STATE_LIST"
           class="w-full"
+          [formField]="$any(profileDetailForm.state)"
+          [options]="STATE_LIST"
         />
         <label for="state">State</label>
       </p-floatlabel>
       <p-floatlabel class="w-full" variant="on">
         <p-select
-          [formField]="$any(profileDetailForm.city)"
           inputId="city"
-          [options]="cityList()"
           class="w-full"
+          [formField]="$any(profileDetailForm.city)"
+          [options]="cityList()"
         />
         <label for="city">City</label>
       </p-floatlabel>
@@ -146,34 +146,34 @@
         <p-inputgroup>
           <input
             pInputText
-            [(ngModel)]="newComment"
-            [ngModelOptions]="{ standalone: true }"
             placeholder="Comments"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="newComment"
           />
           <p-inputgroup-addon>
             <p-button
-              (click)="addComment()"
-              [disabled]="!newComment()"
               icon="pi pi-plus"
               severity="help"
+              [disabled]="!newComment()"
+              (click)="addComment()"
             />
           </p-inputgroup-addon>
         </p-inputgroup>
       }
       <p-timeline
-        [value]="profileDetailForm.comments().value()"
         class="w-full md:w-80"
         align="alternate"
+        [value]="profileDetailForm.comments().value()"
       >
         <ng-template #content let-comment>
           <div class="flex flex-col gap-1">
             @if (actionType() !== 'view') {
               <p-button
                 icon="pi pi-trash"
-                (onClick)="deleteComment(comment)"
+                severity="danger"
                 [rounded]="true"
                 [text]="true"
-                severity="danger"
+                (onClick)="deleteComment(comment)"
               />
             }
             <small class="text-surface-500 dark:text-surface-400"
@@ -193,11 +193,11 @@
         <p-button
           type="submit"
           severity="success"
-          [label]="buttonLabel()"
           icon="pi pi-check"
+          [label]="buttonLabel()"
           [loading]="isSubmitting()"
-          (onClick)="onSubmit()"
           [disabled]="profileDetailForm().invalid() || !!newComment()"
+          (onClick)="onSubmit()"
         />
       </div>
     </ng-template>

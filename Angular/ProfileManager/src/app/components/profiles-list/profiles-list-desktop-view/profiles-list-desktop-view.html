@@ -1,12 +1,12 @@
 <p-table
-  [value]="profileData()"
   stripedRows
+  class="p-treetable-sm mt-2"
+  [value]="profileData()"
   [paginator]="true"
   [rows]="10"
   [rowsPerPageOptions]="[10, 25, 50]"
   [loading]="isLoading()"
   [totalRecords]="profileData().length"
-  class="p-treetable-sm mt-2"
 >
   <ng-template #header>
     <tr>
@@ -32,21 +32,21 @@
       </td>
       <td>
         <p-button
-          [label]="profile.matrimonyId"
-          [rounded]="true"
           severity="secondary"
           icon="pi pi-copy"
           iconPos="right"
+          [label]="profile.matrimonyId"
+          [rounded]="true"
           (onClick)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
         />
       </td>
       <td>
         <p-button
-          [label]="profile.mobileNumber"
-          [rounded]="true"
           severity="secondary"
           icon="pi pi-copy"
           iconPos="right"
+          [label]="profile.mobileNumber"
+          [rounded]="true"
           (onClick)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
         />
       </td>
@@ -60,15 +60,15 @@
         />
         <p-button
           icon="pi pi-trash"
-          [rounded]="true"
           severity="danger"
+          [rounded]="true"
           [text]="true"
           (onClick)="userActionEvent('delete', profile.id, $event)"
         />
         <p-button
           icon="pi pi-eye"
-          [rounded]="true"
           severity="info"
+          [rounded]="true"
           [text]="true"
           (onClick)="userActionEvent('view', profile.id)"
         />

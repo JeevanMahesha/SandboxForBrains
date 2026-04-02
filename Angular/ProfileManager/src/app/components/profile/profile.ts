@@ -92,7 +92,10 @@ export class Profile {
   }));
   STATE_LIST = STATE_LIST as unknown as string[];
   readonly cityList = computed(
-    () => DISTRICT_LIST[this.profileDetail().state] as unknown as string[],
+    () =>
+      DISTRICT_LIST[
+        this.profileDetail().state as keyof typeof DISTRICT_LIST
+      ] as unknown as string[],
   );
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
@@ -102,16 +105,16 @@ export class Profile {
   readonly isSubmitting = signal<boolean>(false);
 
   private readonly profileDetail = signal<ProfileDetail>({
-    name: 'Test-'.concat(Math.random().toString(36).substring(2, 15)),
-    mobileNumber: '+919876543210',
-    zodiacSign: 'aquarius',
-    star: 'Aswini',
-    age: 25,
-    starMatchScore: 8,
-    state: 'Tamil Nadu',
-    city: 'Chennai',
-    profileStatusId: 'NEW',
-    matrimonyId: '123456',
+    name: '',
+    mobileNumber: '+91',
+    zodiacSign: '',
+    star: '',
+    age: 0,
+    starMatchScore: 0,
+    state: '',
+    city: '',
+    profileStatusId: '',
+    matrimonyId: '',
     comments: [],
   });
   profileDetailForm = form(this.profileDetail, (profileForm) => {

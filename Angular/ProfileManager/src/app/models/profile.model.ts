@@ -14,14 +14,14 @@ export interface ProfileDetail {
   updatedAt?: Date;
   createdAt?: Date;
   comments: Comment[];
-  star: keyof typeof MATCHING_STARS;
+  star: keyof typeof MATCHING_STARS | '';
   starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
   mobileNumber: string;
-  zodiacSign: keyof typeof ZODIAC_SIGN_LIST;
+  zodiacSign: keyof typeof ZODIAC_SIGN_LIST | '';
   age: number;
-  state: keyof typeof DISTRICT_LIST;
+  state: keyof typeof DISTRICT_LIST | '';
   name: string;
-  profileStatusId: keyof typeof PROFILE_STATUS;
+  profileStatusId: keyof typeof PROFILE_STATUS | '';
   matrimonyId: string;
   city: string;
   id?: number;

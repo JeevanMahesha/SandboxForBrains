@@ -94,7 +94,7 @@ export class AuthService {
     return !!token;
   }
 
-  login(email: string, password: string): Promise<UserCredential> {
+  async login(email: string, password: string): Promise<UserCredential> {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 

@@ -18,9 +18,9 @@ import {
 } from 'firebase/firestore';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { SortOption } from '../components/toolbar/toolbar';
-import { PROFILE_STATUS } from '../constant/common';
+import { PROFILE_STATUS } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
-import { Comment, ProfileDetail } from '../models/profile';
+import { Comment, ProfileDetail } from '../models/profile.model';
 import { ToolbarAction, UserActions } from '../models/toolbar.model';
 
 @Injectable({

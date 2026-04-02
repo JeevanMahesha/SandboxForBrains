@@ -9,7 +9,7 @@ import { SelectModule } from 'primeng/select';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
-import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common';
+import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
 

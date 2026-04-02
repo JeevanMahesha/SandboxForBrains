@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input, Resource, signal } from '@angular/core';
-import { ProfileDetail } from '../../models/profile';
+import { ProfileDetail } from '../../models/profile.model';
 import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
@@ -20,7 +20,6 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
     StarMatch,
   ],
   templateUrl: './profiles-list.html',
-  styleUrl: './profiles-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {

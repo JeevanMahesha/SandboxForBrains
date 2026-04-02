@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { ProfileDetail } from '../../../models/profile';
+import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { ProfilesService } from '../../../services/profiles.service';
 
@@ -10,7 +10,6 @@ import { ProfilesService } from '../../../services/profiles.service';
   selector: 'app-profiles-list-desktop-view',
   imports: [TableModule, ButtonModule, TagModule],
   templateUrl: './profiles-list-desktop-view.html',
-  styleUrl: './profiles-list-desktop-view.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListDesktopView {

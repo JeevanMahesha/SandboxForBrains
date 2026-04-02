@@ -9,7 +9,7 @@ import {
 import { ListboxModule } from 'primeng/listbox';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { TagModule } from 'primeng/tag';
-import { zodiacSignList } from '../../constant/common';
+import { ZODIAC_SIGN_LIST } from '../../constant/common.const';
 
 @Component({
   selector: 'app-zodiac-signs',
@@ -42,7 +42,7 @@ export class ZodiacSigns {
   togglePopover = input.required<MouseEvent | null>();
   zodiacSignsHidden = output<void>();
   zodiacSignsElement = viewChild<Popover>('zodiacSigns');
-  zodiacSignsData = Object.entries(zodiacSignList).map(([key, value]) => ({
+  zodiacSignsData = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
     key,
     ...value,
   }));

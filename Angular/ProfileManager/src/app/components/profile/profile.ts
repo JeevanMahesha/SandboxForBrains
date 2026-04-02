@@ -32,13 +32,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TimelineModule } from 'primeng/timeline';
 import {
-  DistrictList,
+  DISTRICT_LIST,
   MATCHING_STARS,
   PROFILE_STATUS,
-  StateList,
-  zodiacSignList,
-} from '../../constant/common';
-import { Comment, ProfileDetail } from '../../models/profile';
+  STATE_LIST,
+  ZODIAC_SIGN_LIST,
+} from '../../constant/common.const';
+import { Comment, ProfileDetail } from '../../models/profile.model';
 import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 
@@ -61,7 +61,6 @@ import { ProfilesService } from '../../services/profiles.service';
     FormRoot,
   ],
   templateUrl: './profile.html',
-  styleUrl: './profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Profile {
@@ -81,7 +80,7 @@ export class Profile {
   buttonLabel = computed(() => (this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes'));
 
   PROFILE_STATUS_DATA = PROFILE_STATUS;
-  ZODIAC_SIGN_DATA = Object.entries(zodiacSignList).map(([key, value]) => ({
+  ZODIAC_SIGN_DATA = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
     key,
     value: `${value.tanglish} (${value.english})`,
   }));
@@ -89,8 +88,8 @@ export class Profile {
     key,
     value: `${key} (${value})`,
   }));
-  STATE_LIST = StateList as unknown as string[];
-  cityList = computed(() => DistrictList[this.profileDetail().state] as unknown as string[]);
+  STATE_LIST = STATE_LIST as unknown as string[];
+  cityList = computed(() => DISTRICT_LIST[this.profileDetail().state] as unknown as string[]);
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
   private messageService = inject(MessageService);

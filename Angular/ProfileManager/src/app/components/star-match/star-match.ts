@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { Popover, PopoverModule } from 'primeng/popover';
-import { MATCHING_STARS } from '../../constant/common';
+import { MATCHING_STARS } from '../../constant/common.const';
 
 @Component({
   selector: 'app-star-match',

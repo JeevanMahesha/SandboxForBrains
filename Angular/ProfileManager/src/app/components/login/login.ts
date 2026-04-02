@@ -5,9 +5,8 @@ import { UserCredential } from 'firebase/auth';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { FloatLabel } from 'primeng/floatlabel';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../services/auth.service';
 
 interface Login {
@@ -18,15 +17,7 @@ interface Login {
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
-  imports: [
-    FormField,
-    CardModule,
-    InputTextModule,
-    ButtonModule,
-    FormRoot,
-    FloatLabel,
-    PasswordModule,
-  ],
+  imports: [FloatLabelModule, FormField, FormRoot, ButtonModule, CardModule, InputTextModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LoginComponent {

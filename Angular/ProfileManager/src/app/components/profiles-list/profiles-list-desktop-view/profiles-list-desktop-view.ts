@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -11,6 +11,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   imports: [TableModule, ButtonModule, TagModule],
   templateUrl: './profiles-list-desktop-view.html',
   styleUrl: './profiles-list-desktop-view.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListDesktopView {
   profileData = input.required<ProfileDetail[]>();

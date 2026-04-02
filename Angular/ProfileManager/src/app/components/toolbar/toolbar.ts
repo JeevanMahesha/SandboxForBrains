@@ -1,11 +1,8 @@
 import { Component, computed, inject, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -28,21 +25,13 @@ export interface SortOption {
   imports: [
     ToolbarModule,
     ToggleButtonModule,
-    ButtonModule,
-    IconFieldModule,
-    InputIconModule,
     SelectModule,
-    FormsModule,
-    ButtonModule,
     IconFieldModule,
     InputIconModule,
+    ButtonModule,
     SplitButtonModule,
-    ToolbarModule,
-    InputTextModule,
     FormField,
-    InputGroupModule,
-    InputGroupAddonModule,
-    SplitButtonModule,
+    InputTextModule,
   ],
   templateUrl: './toolbar.html',
 })

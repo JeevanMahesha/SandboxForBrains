@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -13,6 +13,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   imports: [SkeletonModule, DataViewModule, CommonModule, TagModule, ButtonModule],
   templateUrl: './profiles-list-mobile-view.html',
   styleUrl: './profiles-list-mobile-view.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListMobileView {
   profileData = input.required<ProfileDetail[]>();

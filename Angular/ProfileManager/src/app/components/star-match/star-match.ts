@@ -7,12 +7,11 @@ import {
   viewChild,
 } from '@angular/core';
 import { Popover, PopoverModule } from 'primeng/popover';
-import { TableModule } from 'primeng/table';
 import { MATCHING_STARS } from '../../constant/common';
 
 @Component({
   selector: 'app-star-match',
-  imports: [PopoverModule, TableModule],
+  imports: [PopoverModule],
   template: `<p-popover #starMatching (onHide)="onStarMatchHidden()">
     @for (star of starMatchData; track $index) {
       <ul class="max-w-md divide-y divide-default">

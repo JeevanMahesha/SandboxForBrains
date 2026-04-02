@@ -1,5 +1,14 @@
 import { DatePipe, KeyValuePipe } from '@angular/common';
-import { Component, computed, effect, inject, input, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   disabled,
@@ -18,12 +27,10 @@ import { DrawerModule } from 'primeng/drawer';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TimelineModule } from 'primeng/timeline';
-import { ToastModule } from 'primeng/toast';
 import {
   DistrictList,
   MATCHING_STARS,
@@ -40,23 +47,22 @@ import { ProfilesService } from '../../services/profiles.service';
   imports: [
     DrawerModule,
     InputTextModule,
-    SelectModule,
     FloatLabelModule,
-    InputMaskModule,
-    InputNumberModule,
+    SelectModule,
     InputGroupModule,
     InputGroupAddonModule,
+    InputNumberModule,
+    FormField,
+    FormsModule,
     ButtonModule,
     TimelineModule,
-    FormField,
     KeyValuePipe,
-    FormRoot,
-    FormsModule,
     DatePipe,
-    ToastModule,
+    FormRoot,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Profile {
   actionType = input.required<ToolbarAction | undefined>();

@@ -1,0 +1,205 @@
+<p-drawer
+  styleClass="!w-full md:!w-80 lg:!w-[30rem]"
+  position="right"
+  dismissible="false"
+  [header]="title()"
+  [visible]="openDrawer() ?? false"
+  (onHide)="closeDrawer()"
+>
+  <form [formRoot]="profileDetailForm">
+    <div class="flex flex-col mt-2 gap-4">
+      <p-floatlabel class="w-full" variant="on">
+        <!--
+        FIX:ME
+        [class.p-invalid]="" This is temporary fix
+        https://github.com/primefaces/primeng/issues/19119
+        -->
+        <input
+          pInputText
+          type="text"
+          pSize="large"
+          inputId="name"
+          fluid
+          [class.p-invalid]="
+            profileDetailForm.name().touched() && profileDetailForm.name().invalid()
+          "
+          [formField]="profileDetailForm.name"
+        />
+        <label for="name">Name</label>
+      </p-floatlabel>
+
+      <p-floatlabel class="w-full" variant="on">
+        <p-select
+          inputId="profile_status"
+          optionLabel="value"
+          optionValue="key"
+          class="w-full"
+          [formField]="$any(profileDetailForm.profileStatusId)"
+          [options]="PROFILE_STATUS_DATA | keyvalue"
+        />
+        <label for="profile_status">Profile Status</label>
+      </p-floatlabel>
+      <p-inputgroup>
+        <input
+          pInputText
+          placeholder="Matrimony ID"
+          [class.p-invalid]="
+            profileDetailForm.mobileNumber().touched() && profileDetailForm.mobileNumber().invalid()
+          "
+          [formField]="profileDetailForm.mobileNumber"
+        />
+        @if (actionType() === 'view') {
+          <p-inputgroup-addon>
+            <p-button
+              icon="pi pi-copy"
+              severity="secondary"
+              (onClick)="copyToClipboard(profileDetailForm.mobileNumber().value(), 'Mobile Number')"
+            />
+          </p-inputgroup-addon>
+        }
+      </p-inputgroup>
+
+      <p-inputgroup>
+        <input
+          pInputText
+          placeholder="Matrimony ID"
+          [class.p-invalid]="
+            profileDetailForm.matrimonyId().touched() && profileDetailForm.matrimonyId().invalid()
+          "
+          [formField]="profileDetailForm.matrimonyId"
+        />
+        @if (actionType() === 'view') {
+          <p-inputgroup-addon>
+            <p-button
+              icon="pi pi-copy"
+              severity="secondary"
+              (onClick)="copyToClipboard(profileDetailForm.matrimonyId().value(), 'Matrimony ID')"
+            />
+          </p-inputgroup-addon>
+        }
+      </p-inputgroup>
+
+      <p-floatlabel class="w-full" variant="on">
+        <p-select
+          inputId="zodiac_sign"
+          optionLabel="value"
+          optionValue="key"
+          class="w-full"
+          [formField]="$any(profileDetailForm.zodiacSign)"
+          [options]="ZODIAC_SIGN_DATA"
+        />
+        <label for="zodiac_sign">Zodiac Sign</label>
+      </p-floatlabel>
+      <p-floatlabel class="w-full" variant="on">
+        <p-select
+          inputId="star_sign"
+          optionLabel="value"
+          optionValue="key"
+          class="w-full"
+          [formField]="$any(profileDetailForm.star)"
+          [options]="STARS_DATA"
+          (onChange)="onStarChange($event)"
+        />
+        <label for="star_sign">Star Sign</label>
+      </p-floatlabel>
+      <p-floatlabel class="w-full" variant="on">
+        <p-inputnumber
+          fluid
+          inputId="age"
+          mode="decimal"
+          [formField]="$any(profileDetailForm.age)"
+          [min]="22"
+          [max]="29"
+        />
+        <label for="age">Age</label>
+      </p-floatlabel>
+      <p-floatlabel class="w-full" variant="on">
+        <p-inputnumber
+          fluid
+          inputId="star_match_score"
+          mode="decimal"
+          [formField]="$any(profileDetailForm.starMatchScore)"
+          [min]="5"
+          [max]="12"
+        />
+        <label for="star_match_score">Star Match Score</label>
+      </p-floatlabel>
+      <p-floatlabel class="w-full" variant="on">
+        <p-select
+          inputId="state"
+          class="w-full"
+          [formField]="$any(profileDetailForm.state)"
+          [options]="STATE_LIST"
+        />
+        <label for="state">State</label>
+      </p-floatlabel>
+      <p-floatlabel class="w-full" variant="on">
+        <p-select
+          inputId="city"
+          class="w-full"
+          [formField]="$any(profileDetailForm.city)"
+          [options]="cityList()"
+        />
+        <label for="city">City</label>
+      </p-floatlabel>
+      @if (actionType() !== 'view') {
+        <p-inputgroup>
+          <input
+            pInputText
+            placeholder="Comments"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="newComment"
+          />
+          <p-inputgroup-addon>
+            <p-button
+              icon="pi pi-plus"
+              severity="help"
+              [disabled]="!newComment()"
+              (click)="addComment()"
+            />
+          </p-inputgroup-addon>
+        </p-inputgroup>
+      }
+      <p-timeline
+        class="w-full md:w-80"
+        align="alternate"
+        [value]="profileDetailForm.comments().value()"
+      >
+        <ng-template #content let-comment>
+          <div class="flex flex-col gap-1">
+            @if (actionType() !== 'view') {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [rounded]="true"
+                [text]="true"
+                (onClick)="deleteComment(comment)"
+              />
+            }
+            <small class="text-surface-500 dark:text-surface-400"
+              >{{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
+            </small>
+            {{ comment.value }}
+          </div>
+        </ng-template>
+      </p-timeline>
+    </div>
+  </form>
+  @if (actionType() !== 'view') {
+    <ng-template #footer>
+      <div
+        class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
+      >
+        <p-button
+          type="submit"
+          severity="success"
+          icon="pi pi-check"
+          [label]="buttonLabel()"
+          [loading]="isSubmitting()"
+          [disabled]="profileDetailForm().invalid() || !!newComment()"
+          (onClick)="onSubmit()"
+        />
+      </div>
+    </ng-template>
+  }
+</p-drawer>

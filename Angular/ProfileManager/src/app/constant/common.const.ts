@@ -8,9 +8,9 @@ export const MATCHING_STARS = {
   Revathi: 9,
 } as const;
 
-export const StateList = ['Tamil Nadu', 'Kerala', 'Karnataka'] as const;
+export const STATE_LIST = ['Tamil Nadu', 'Kerala', 'Karnataka'] as const;
 
-export const DistrictList = {
+export const DISTRICT_LIST = {
   'Tamil Nadu': [
     'Ariyalur',
     'Chengalpattu',
@@ -100,7 +100,7 @@ export const DistrictList = {
   ],
 } as const;
 
-export const zodiacSignList = {
+export const ZODIAC_SIGN_LIST = {
   aries: {
     english: 'Aries',
     tanglish: 'Mesham',

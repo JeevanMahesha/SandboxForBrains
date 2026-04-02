@@ -1,33 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* Import Material prebuilt theme - required for Material components */
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
-
+/* Import Tailwind */
+@use 'primeicons/primeicons.css';
 /* Import Tailwind */
 @import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import 'primeicons/primeicons.css';
 
-html,
+@import 'tailwindcss';
 body {
-  height: 100%;
-  margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #8b9198;
 }
 
-/* Snackbar custom styles */
-.success-snackbar {
-  background-color: #4caf50 !important;
-  color: white !important;
+.layout-wrapper {
+  min-height: 100vh;
 }
 
-.error-snackbar {
-  background-color: #f44336 !important;
-  color: white !important;
+.layout-main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+  padding: 3rem 2rem 0 2rem;
+  transition: margin-left var(--layout-section-transition-duration);
 }
 
-.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  background-color: inherit !important;
-}
-
-.mat-mdc-snack-bar-container .mat-mdc-button {
-  color: white !important;
+.layout-main {
+  flex: 1 1 auto;
+  padding-bottom: 2rem;
 }

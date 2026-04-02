@@ -1,0 +1,53 @@
+<p-toolbar>
+  <ng-template #start>
+    <div class="flex flex-col gap-2 md:flex-row">
+      <p-togglebutton
+        onLabel="Newest"
+        offLabel="Oldest"
+        offIcon="pi pi-sort-amount-down-alt"
+        onIcon="pi pi-sort-amount-up"
+        class="w-36"
+        ariaLabel="Do you confirm"
+        [formField]="filterForm.viewOrderCheck"
+      />
+      <p-select
+        placeholder="Select Status"
+        [options]="profileStatusOptions"
+        [formField]="$any(filterForm.profileStatus)"
+      />
+      <p-select
+        placeholder="Select Star"
+        [options]="scoreMatchOptions"
+        [formField]="$any(filterForm.starMatchScore)"
+      />
+    </div>
+  </ng-template>
+  <ng-template #center>
+    <div class="flex flex-col gap-1.5 md:flex-row">
+      <p-iconfield iconPosition="left">
+        <p-inputicon class="pi pi-search" />
+        <input type="text" pInputText placeholder="Search" [formField]="filterForm.searchQuery" />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex flex-col gap-2 md:flex-row">
+      <p-button
+        icon="pi pi-filter-slash"
+        variant="outlined"
+        severity="secondary"
+        label="Clear"
+        [disabled]="!filterHasValue()"
+        (onClick)="clearForm()"
+      />
+      <p-splitbutton
+        label="Add Profile"
+        icon="pi pi-user-plus"
+        outlined
+        severity="success"
+        [model]="items"
+        (onClick)="addNewProfileAction()"
+      />
+    </div>
+  </ng-template>
+</p-toolbar>

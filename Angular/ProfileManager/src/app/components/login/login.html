@@ -1,53 +1,38 @@
-<div class="login-container">
-  <div class="login-card">
-    <h1 class="login-title">Login</h1>
-
-    <form (submit)="onSubmit($event)">
-      <div class="form-group">
-        <label for="email" class="form-label">Email</label>
+<div class="mb-4 p-8 flex items-center justify-center h-screen">
+  <p-card class="w-full max-w-md">
+    <ng-template #title> Login </ng-template>
+    <form class="flex flex-col gap-4" [formRoot]="loginForm">
+      <p-floatlabel class="w-full" variant="on">
         <input
+          pInputText
           type="email"
-          id="email"
+          inputId="login-email"
+          pSize="large"
+          fluid
+          [class.p-invalid]="loginForm.email().touched() && loginForm.email().invalid()"
           [formField]="loginForm.email"
-          class="form-input"
-          placeholder="Enter your email"
-          [class.invalid]="loginForm.email().invalid() && loginForm.email().touched()"
         />
-        @if (loginForm.email().invalid() && loginForm.email().touched()) {
-          <span class="error-text">
-            {{ loginForm.email().errors().at(0)?.message }}
-          </span>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="password" class="form-label">Password</label>
+        <label for="login-email">Email</label>
+      </p-floatlabel>
+      <p-floatlabel class="w-full" variant="on">
         <input
+          pInputText
           type="password"
-          id="password"
-          [formField]="loginForm.password"
-          class="form-input"
-          placeholder="Enter your password"
-          [class.invalid]="loginForm.password().invalid() && loginForm.password().touched()"
+          inputId="login-password"
+          pSize="large"
+          fluid
+          [class.p-invalid]="loginForm.password().touched() && loginForm.password().invalid()"
+          [formField]="$any(loginForm.password)"
         />
-        @if (loginForm.password().invalid() && loginForm.password().touched()) {
-          <span class="error-text">
-            {{ loginForm.password().errors().at(0)?.message }}
-          </span>
-        }
-      </div>
-
-      @if (errorMessage()) {
-        <div class="error-message">{{ errorMessage() }}</div>
-      }
-
-      <button type="submit" class="login-button" [disabled]="isLoading() || loginForm().invalid()">
-        @if (isLoading()) {
-          <span>Logging in...</span>
-        } @else {
-          <span>Login</span>
-        }
-      </button>
+        <label for="login-password">Password</label>
+      </p-floatlabel>
+      <p-button
+        label="Save"
+        class="w-full"
+        styleClass="w-full"
+        type="submit"
+        [loading]="loginForm().submitting()"
+      />
     </form>
-  </div>
+  </p-card>
 </div>

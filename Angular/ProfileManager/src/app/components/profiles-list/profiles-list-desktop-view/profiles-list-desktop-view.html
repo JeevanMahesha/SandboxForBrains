@@ -1,0 +1,85 @@
+<p-table
+  stripedRows
+  class="p-treetable-sm mt-2"
+  [value]="profileData()"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  [loading]="isLoading()"
+  [totalRecords]="profileData().length"
+>
+  <ng-template #header>
+    <tr>
+      <th>Serial No</th>
+      <th>Name</th>
+      <th>Zodiac Sign</th>
+      <th>City</th>
+      <th>Profile Status</th>
+      <th>Matrimony ID</th>
+      <th>Mobile Number</th>
+      <th>Star Match Score</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-profile let-ri="rowIndex">
+    <tr>
+      <td>{{ ri + 1 }}</td>
+      <td>{{ profile.name }}</td>
+      <td>{{ profile.zodiacSign }}</td>
+      <td>{{ profile.city }}</td>
+      <td>
+        <p-tag class="w-full" [value]="profile.profileStatus" />
+      </td>
+      <td>
+        <p-button
+          severity="secondary"
+          icon="pi pi-copy"
+          iconPos="right"
+          [label]="profile.matrimonyId"
+          [rounded]="true"
+          (onClick)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
+        />
+      </td>
+      <td>
+        <p-button
+          severity="secondary"
+          icon="pi pi-copy"
+          iconPos="right"
+          [label]="profile.mobileNumber"
+          [rounded]="true"
+          (onClick)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+        />
+      </td>
+      <td>{{ profile.starMatchScore }}</td>
+      <td>
+        <p-button
+          icon="pi pi-pencil"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="userActionEvent('edit', profile.id)"
+        />
+        <p-button
+          icon="pi pi-trash"
+          severity="danger"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="userActionEvent('delete', profile.id, $event)"
+        />
+        <p-button
+          icon="pi pi-eye"
+          severity="info"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="userActionEvent('view', profile.id)"
+        />
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #footer>
+    <tr>
+      <td colspan="9" class="text-center!">
+        In total there are {{ profileData().length }} profiles.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

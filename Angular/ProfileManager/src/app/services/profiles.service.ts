@@ -51,9 +51,9 @@ export class ProfilesService {
   });
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
-  private readonly router = inject(Router);
-  private readonly messageService = inject(MessageService);
-  private confirmationService = inject(ConfirmationService);
+  public readonly router = inject(Router);
+  public readonly messageService = inject(MessageService);
+  public readonly confirmationService = inject(ConfirmationService);
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
     viewOrderCheck: false,

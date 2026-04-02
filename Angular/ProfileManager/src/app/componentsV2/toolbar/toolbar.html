@@ -10,42 +10,6 @@
         class="w-36"
         ariaLabel="Do you confirm"
       />
-      <p-button
-        type="button"
-        icon="pi pi-sparkles"
-        variant="outlined"
-        severity="info"
-        label="Zodiac Signs"
-        (onClick)="openZodiacSignPopover($event)"
-      />
-      <p-button
-        type="button"
-        icon="pi pi-star-fill"
-        variant="outlined"
-        severity="warn"
-        label="Preferred Star"
-        (onClick)="openStarMatchPopover($event)"
-      />
-    </div>
-  </ng-template>
-  <ng-template #center>
-    <div class="flex flex-col gap-1.5 md:flex-row">
-      <p-iconfield iconPosition="left">
-        <p-inputicon class="pi pi-search" />
-        <input type="text" [formField]="filterForm.searchQuery" pInputText placeholder="Search" />
-      </p-iconfield>
-      <p-button
-        type="button"
-        icon="pi pi-user-plus"
-        variant="outlined"
-        severity="success"
-        label="Add Profile"
-        (onClick)="addNewProfileAction()"
-      />
-    </div>
-  </ng-template>
-  <ng-template #end>
-    <div class="flex flex-col gap-2 md:flex-row">
       <p-select
         placeholder="Select Status"
         [options]="profileStatusOptions"
@@ -56,12 +20,33 @@
         [options]="scoreMatchOptions"
         [formField]="$any(filterForm.starMatchScore)"
       />
+    </div>
+  </ng-template>
+  <ng-template #center>
+    <div class="flex flex-col gap-1.5 md:flex-row">
+      <p-iconfield iconPosition="left">
+        <p-inputicon class="pi pi-search" />
+        <input type="text" [formField]="filterForm.searchQuery" pInputText placeholder="Search" />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex flex-col gap-2 md:flex-row">
       <p-button
+        [disabled]="!filterHasValue()"
         (onClick)="clearForm()"
         icon="pi pi-filter-slash"
         variant="outlined"
         severity="secondary"
         label="Clear"
+      />
+      <p-splitbutton
+        label="Add Profile"
+        icon="pi pi-user-plus"
+        [model]="items"
+        (onClick)="addNewProfileAction()"
+        outlined
+        severity="success"
       />
     </div>
   </ng-template>

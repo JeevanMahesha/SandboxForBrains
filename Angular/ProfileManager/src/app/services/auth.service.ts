@@ -7,7 +7,6 @@ import {
   User,
   UserCredential,
 } from 'firebase/auth';
-import { from, Observable } from 'rxjs';
 
 import { authState$, idToken$ } from '../firebase/firebase-rx';
 import { FIREBASE_AUTH } from '../firebase/provide-firebase';
@@ -99,10 +98,10 @@ export class AuthService {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 
-  logout(): Observable<void> {
+  async logout(): Promise<void> {
     this.currentUser.set(null);
     this.currentToken.set(null);
     this.authInitialized.set(false);
-    return from(signOut(this.auth));
+    return await signOut(this.auth);
   }
 }

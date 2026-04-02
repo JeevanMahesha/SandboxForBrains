@@ -1,12 +1,11 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-v1',
@@ -49,24 +48,24 @@ export default class V1 {
   }
 
   logout(): void {
-    this.authService
-      .logout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Logged out successfully', 'Close', {
-            duration: 3000,
-            panelClass: ['success-snackbar'],
-          });
-          this.router.navigate(['/login']);
-        },
-        error: (error) => {
-          console.error('Error logging out:', error);
-          this.snackBar.open('Error logging out', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar'],
-          });
-        },
-      });
+    // this.authService
+    //   .logout()
+    //   .pipe(takeUntilDestroyed(this.destroyRef))
+    //   .subscribe({
+    //     next: () => {
+    //       this.snackBar.open('Logged out successfully', 'Close', {
+    //         duration: 3000,
+    //         panelClass: ['success-snackbar'],
+    //       });
+    //       this.router.navigate(['/login']);
+    //     },
+    //     error: (error) => {
+    //       console.error('Error logging out:', error);
+    //       this.snackBar.open('Error logging out', 'Close', {
+    //         duration: 3000,
+    //         panelClass: ['error-snackbar'],
+    //       });
+    //     },
+    //   });
   }
 }

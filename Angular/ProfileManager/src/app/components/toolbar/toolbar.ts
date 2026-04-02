@@ -13,13 +13,6 @@ import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
 
-export interface SortOption {
-  viewOrderCheck: boolean;
-  searchQuery: string;
-  profileStatus: keyof typeof PROFILE_STATUS | null;
-  starMatchScore: number | null;
-}
-
 @Component({
   selector: 'app-toolbar',
   imports: [

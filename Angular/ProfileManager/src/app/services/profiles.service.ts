@@ -17,7 +17,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { PROFILE_STATUS } from '../constant/common.const';
+import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model';
@@ -26,26 +26,25 @@ import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model'
   providedIn: 'root',
 })
 export class ProfilesService {
-  profiles = resource({
-    params: () => ({
-      sortDirection: this.filterOptions().viewOrderCheck,
-      matrimonyId: this.filterOptions().searchQuery,
-      profileStatusFilter: this.filterOptions().profileStatus,
-      starMatchScoreFilter: this.filterOptions().starMatchScore,
-    }),
+  profiles = resource<ProfileDetail[], SortOption>({
+    defaultValue: [],
+    params: () => this.filterOptions(),
     loader: ({ params }) =>
       this.getFilteredProfiles(
-        params.sortDirection,
-        params.matrimonyId,
-        params.profileStatusFilter,
-        params.starMatchScoreFilter,
+        params.viewOrderCheck,
+        params.searchQuery,
+        params.profileStatus,
+        params.starMatchScore,
       ).then((profiles) => {
         return profiles.map((profile) => ({
           ...profile,
           profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
+          profileStatusColor:
+            PROFILE_STATUS_COLORS_MAP[
+              profile.profileStatusId as keyof typeof PROFILE_STATUS_COLORS_MAP
+            ],
         }));
       }),
-    defaultValue: [],
   });
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');

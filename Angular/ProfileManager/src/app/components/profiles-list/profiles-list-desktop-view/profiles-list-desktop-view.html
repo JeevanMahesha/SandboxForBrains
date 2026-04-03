@@ -28,7 +28,7 @@
       <td>{{ profile.zodiacSign }}</td>
       <td>{{ profile.city }}</td>
       <td>
-        <p-tag class="w-full" [value]="profile.profileStatus" />
+        <p-tag [class]="profile.profileStatusColor ?? ''" [value]="profile.profileStatus" />
       </td>
       <td>
         <p-button

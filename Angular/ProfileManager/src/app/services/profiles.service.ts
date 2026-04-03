@@ -175,7 +175,6 @@ export class ProfilesService {
 
   async getProfileById(id: string): Promise<ProfileDetail | null> {
     const docRef = doc(this.firestore, 'profiles', id);
-
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return this.mapDocToProfile(docSnap);

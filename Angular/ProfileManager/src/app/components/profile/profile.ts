@@ -4,10 +4,14 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   input,
   model,
+  OnDestroy,
+  resource,
   signal,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -30,6 +34,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectChangeEvent, SelectModule } from 'primeng/select';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TimelineModule } from 'primeng/timeline';
 import {
   DISTRICT_LIST,
@@ -59,11 +64,12 @@ import { ProfilesService } from '../../services/profiles.service';
     KeyValuePipe,
     DatePipe,
     FormRoot,
+    SkeletonModule,
   ],
   templateUrl: './profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Profile {
+export class Profile implements OnDestroy {
   readonly actionType = input.required<ToolbarAction | undefined>();
   readonly openDrawer = model<boolean | undefined>();
   readonly selectedProfileId = input.required<string | undefined>();
@@ -80,7 +86,7 @@ export class Profile {
   readonly buttonLabel = computed(() =>
     this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes',
   );
-
+  readonly submitButtonRef = viewChild<ElementRef<HTMLButtonElement>>('submitButton');
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
     key,
@@ -100,9 +106,7 @@ export class Profile {
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
   private messageService = inject(MessageService);
-
   readonly newComment = model<string>('');
-
   private readonly profileDetail = signal<ProfileDetail>({
     name: '',
     mobileNumber: '+91',
@@ -150,27 +154,24 @@ export class Profile {
     },
   );
 
+  readonly selectedProfile = resource<ProfileDetail | null, string>({
+    params: () => this.selectedProfileId()!,
+    loader: ({ params }) =>
+      params ? this.profileService.getProfileById(params) : Promise.resolve(null),
+    defaultValue: null,
+  });
+
   constructor() {
     effect(() => {
       const actionType = this.actionType();
       if (actionType && ['view', 'edit'].includes(actionType)) {
-        this.profileService
-          .getProfileById(this.selectedProfileId()!)
-          .then((profile) => {
-            if (profile) {
-              this.profileDetail.set(profile);
-            }
-            if (actionType === 'view') {
-              this.profileDetailForm().disabled();
-            }
-          })
-          .catch(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch profile',
-            });
-          });
+        const selectedProfile = this.selectedProfile.value();
+        if (selectedProfile) {
+          this.profileDetail.set(selectedProfile);
+        }
+        if (actionType === 'view') {
+          this.profileDetailForm().disabled();
+        }
       }
     });
   }
@@ -213,6 +214,10 @@ export class Profile {
             eachComment.value !== comment.value,
         ),
       );
+  }
+
+  ngOnDestroy(): void {
+    this.profileDetailForm().reset();
   }
 
   private async addProfile(profileData: Partial<ProfileDetail>): Promise<void> {

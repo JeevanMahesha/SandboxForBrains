@@ -119,8 +119,6 @@
           mode="decimal"
           [class.p-invalid]="profileDetailForm.age().touched() && profileDetailForm.age().invalid()"
           [formField]="$any(profileDetailForm.age)"
-          [min]="22"
-          [max]="29"
         />
         <label for="age">Age</label>
       </p-floatlabel>
@@ -134,8 +132,6 @@
             profileDetailForm.starMatchScore().invalid()
           "
           [formField]="$any(profileDetailForm.starMatchScore)"
-          [min]="5"
-          [max]="12"
         />
         <label for="star_match_score">Star Match Score</label>
       </p-floatlabel>

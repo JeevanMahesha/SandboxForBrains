@@ -6,6 +6,18 @@
   [visible]="openDrawer() ?? false"
   (onHide)="closeDrawer()"
 >
+  <ng-template #header>
+    @if (actionType() === 'view') {
+      <div class="flex items-center gap-2">
+        <a target="_blank" [href]="whatsappLink()">
+          <p-button icon="pi pi-whatsapp" [rounded]="true" [outlined]="true" />
+        </a>
+        <a target="_blank" [href]="phoneLink()">
+          <p-button icon="pi pi-phone" severity="help" [rounded]="true" [outlined]="true" />
+        </a>
+      </div>
+    }
+  </ng-template>
   @if (selectedProfile.isLoading()) {
     <p-skeleton height="3rem" class="mb-2" />
     <p-skeleton height="3rem" class="mb-2" />

@@ -175,6 +175,12 @@ export class Profile implements OnDestroy {
       }
     });
   }
+  readonly whatsappLink = computed(() => {
+    return `https://wa.me/${this.profileDetail().mobileNumber}?text=${encodeURIComponent('Hello, Jeevan.')}`;
+  });
+  readonly phoneLink = computed(() => {
+    return `tel:${this.profileDetail().mobileNumber}`;
+  });
 
   onStarChange(event: SelectChangeEvent): void {
     this.profileDetailForm

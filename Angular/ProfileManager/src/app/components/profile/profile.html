@@ -201,6 +201,7 @@
         </ng-template>
       </p-timeline>
     </div>
+    <button #submitButton hidden type="submit"></button>
   </form>
   @if (actionType() !== 'view') {
     <ng-template #footer>
@@ -208,13 +209,13 @@
         class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
       >
         <p-button
-          type="submit"
+          type="button"
           severity="success"
           icon="pi pi-check"
           [label]="buttonLabel()"
-          [loading]="isSubmitting()"
+          [loading]="profileDetailForm().submitting()"
           [disabled]="profileDetailForm().invalid() || !!newComment()"
-          (onClick)="onSubmit()"
+          (onClick)="submitButton.click()"
         />
       </div>
     </ng-template>

@@ -102,7 +102,6 @@ export class Profile {
   private messageService = inject(MessageService);
 
   readonly newComment = model<string>('');
-  readonly isSubmitting = signal<boolean>(false);
 
   private readonly profileDetail = signal<ProfileDetail>({
     name: '',
@@ -117,24 +116,39 @@ export class Profile {
     matrimonyId: '',
     comments: [],
   });
-  profileDetailForm = form(this.profileDetail, (profileForm) => {
-    required(profileForm.name, { message: 'Name is required' });
-    required(profileForm.mobileNumber, { message: 'Mobile number is required' });
-    required(profileForm.zodiacSign, { message: 'Zodiac sign is required' });
-    required(profileForm.star, { message: 'Star is required' });
-    required(profileForm.age, { message: 'Age is required' });
-    required(profileForm.starMatchScore, { message: 'Star match score is required' });
-    required(profileForm.state, { message: 'State is required' });
-    required(profileForm.city, { message: 'City is required' });
-    required(profileForm.profileStatusId, { message: 'Profile status is required' });
-    required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
-    min(profileForm.age, 18, { message: 'Age must be greater than 18' });
-    pattern(profileForm.mobileNumber, /^(\+91)?[6-9]\d{9}$/, {
-      message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
-    });
-    readonly(profileForm.starMatchScore);
-    disabled(profileForm, () => this.actionType() === 'view');
-  });
+
+  profileDetailForm = form(
+    this.profileDetail,
+    (profileForm) => {
+      required(profileForm.name, { message: 'Name is required' });
+      required(profileForm.mobileNumber, { message: 'Mobile number is required' });
+      required(profileForm.zodiacSign, { message: 'Zodiac sign is required' });
+      required(profileForm.star, { message: 'Star is required' });
+      required(profileForm.age, { message: 'Age is required' });
+      required(profileForm.starMatchScore, { message: 'Star match score is required' });
+      required(profileForm.state, { message: 'State is required' });
+      required(profileForm.city, { message: 'City is required' });
+      required(profileForm.profileStatusId, { message: 'Profile status is required' });
+      required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
+      min(profileForm.age, 18, { message: 'Age must be greater than 18' });
+      pattern(profileForm.mobileNumber, /^(\+91)?[6-9]\d{9}$/, {
+        message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
+      });
+      readonly(profileForm.starMatchScore);
+      disabled(profileForm, () => this.actionType() === 'view');
+    },
+    {
+      submission: {
+        action: async (profileForm) => {
+          if (this.actionType() === 'edit') {
+            return this.updateProfile(profileForm().value());
+          } else {
+            return this.addProfile(profileForm().value());
+          }
+        },
+      },
+    },
+  );
 
   constructor() {
     effect(() => {
@@ -201,54 +215,47 @@ export class Profile {
       );
   }
 
-  async onSubmit(): Promise<void> {
-    this.isSubmitting.set(true);
-    if (this.actionType() === 'edit') {
-      this.profileService
-        .updateProfile(this.selectedProfileId()!, this.profileDetailForm().value())
-        .then(() => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Profile updated successfully',
-            life: 3000,
-          });
-          this.profileService.profiles.reload();
-          this.closeDrawer();
-        })
-        .catch(() => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update profile',
-          });
-        })
-        .finally(() => {
-          this.isSubmitting.set(false);
+  private async addProfile(profileData: Partial<ProfileDetail>): Promise<void> {
+    return await this.profileService
+      .addProfile(profileData)
+      .then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Profile added successfully',
+          life: 3000,
         });
-    } else {
-      this.profileService
-        .addProfile(this.profileDetailForm().value())
-        .then(() => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Profile added successfully',
-            life: 3000,
-          });
-          this.profileService.profiles.reload();
-          this.closeDrawer();
-        })
-        .catch(() => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to add profile',
-          });
-        })
-        .finally(() => {
-          this.isSubmitting.set(false);
+        this.profileService.profiles.reload();
+        this.closeDrawer();
+      })
+      .catch(() => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add profile',
         });
-    }
+      });
+  }
+
+  private async updateProfile(profileData: Partial<ProfileDetail>): Promise<void> {
+    return await this.profileService
+      .updateProfile(this.selectedProfileId()!, profileData)
+      .then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Profile updated successfully',
+          life: 3000,
+        });
+        this.profileService.profiles.reload();
+        this.closeDrawer();
+      })
+      .catch(() => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update profile',
+        });
+      });
   }
 }

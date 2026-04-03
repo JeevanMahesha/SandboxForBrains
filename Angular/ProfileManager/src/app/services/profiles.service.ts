@@ -17,7 +17,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { PROFILE_STATUS } from '../constant/common.const';
+import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model';
@@ -26,26 +26,25 @@ import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model'
   providedIn: 'root',
 })
 export class ProfilesService {
-  profiles = resource({
-    params: () => ({
-      sortDirection: this.filterOptions().viewOrderCheck,
-      matrimonyId: this.filterOptions().searchQuery,
-      profileStatusFilter: this.filterOptions().profileStatus,
-      starMatchScoreFilter: this.filterOptions().starMatchScore,
-    }),
+  profiles = resource<ProfileDetail[], SortOption>({
+    defaultValue: [],
+    params: () => this.filterOptions(),
     loader: ({ params }) =>
       this.getFilteredProfiles(
-        params.sortDirection,
-        params.matrimonyId,
-        params.profileStatusFilter,
-        params.starMatchScoreFilter,
+        params.viewOrderCheck,
+        params.searchQuery,
+        params.profileStatus,
+        params.starMatchScore,
       ).then((profiles) => {
         return profiles.map((profile) => ({
           ...profile,
           profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
+          profileStatusColor:
+            PROFILE_STATUS_COLORS_MAP[
+              profile.profileStatusId as keyof typeof PROFILE_STATUS_COLORS_MAP
+            ],
         }));
       }),
-    defaultValue: [],
   });
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
@@ -79,11 +78,6 @@ export class ProfilesService {
       closable: false,
 
       accept: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmed',
-          detail: 'Record deleted',
-        });
         const docRef = doc(this.firestore, 'profiles', id);
         deleteDoc(docRef)
           .then(() => {
@@ -91,6 +85,7 @@ export class ProfilesService {
               severity: 'success',
               summary: 'Success',
               detail: 'Profile deleted successfully',
+              life: 2000,
             });
             this.profiles.reload();
           })
@@ -99,6 +94,7 @@ export class ProfilesService {
               severity: 'error',
               summary: 'Error',
               detail: 'Failed to delete profile',
+              life: 3000,
             });
           });
       },
@@ -107,6 +103,7 @@ export class ProfilesService {
           severity: 'error',
           summary: 'Rejected',
           detail: 'You have rejected',
+          life: 2000,
         });
       },
     });

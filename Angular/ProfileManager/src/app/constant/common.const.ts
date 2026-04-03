@@ -187,6 +187,18 @@ export const PROFILE_STATUS = {
   SHARE_BY_RM: 'Share by RM',
 } as const;
 
+export const PROFILE_STATUS_COLORS_MAP = {
+  NEW: 'bg-sky-100! text-sky-700!',
+  REJECTED: 'bg-rose-100! text-rose-700!',
+  CONTACTED: 'bg-indigo-100! text-indigo-700!',
+  MEETING_SCHEDULED: 'bg-lime-100! text-lime-700!',
+  ACCEPTED: 'bg-emerald-100! text-emerald-700!',
+  ON_HOLD: 'bg-amber-100! text-amber-700!',
+  PROFILE_SHARED: 'bg-fuchsia-100! text-fuchsia-700!',
+  SHARE_BY_RM: 'bg-orange-100! text-orange-700!',
+  NEED_TO_CONTACT: 'bg-slate-200! text-slate-700!',
+} as const;
+
 export const PROFILE_STATUS_COLORS = {
   NEW: 'bg-sky-100 text-sky-700',
   REJECTED: 'bg-rose-100 text-rose-700',

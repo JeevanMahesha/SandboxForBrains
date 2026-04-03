@@ -34,6 +34,10 @@
           optionLabel="value"
           optionValue="key"
           class="w-full"
+          [class.p-invalid]="
+            profileDetailForm.profileStatusId().touched() &&
+            profileDetailForm.profileStatusId().invalid()
+          "
           [formField]="$any(profileDetailForm.profileStatusId)"
           [options]="PROFILE_STATUS_DATA | keyvalue"
         />
@@ -85,6 +89,9 @@
           optionLabel="value"
           optionValue="key"
           class="w-full"
+          [class.p-invalid]="
+            profileDetailForm.zodiacSign().touched() && profileDetailForm.zodiacSign().invalid()
+          "
           [formField]="$any(profileDetailForm.zodiacSign)"
           [options]="ZODIAC_SIGN_DATA"
         />
@@ -96,6 +103,9 @@
           optionLabel="value"
           optionValue="key"
           class="w-full"
+          [class.p-invalid]="
+            profileDetailForm.star().touched() && profileDetailForm.star().invalid()
+          "
           [formField]="$any(profileDetailForm.star)"
           [options]="STARS_DATA"
           (onChange)="onStarChange($event)"
@@ -107,9 +117,8 @@
           fluid
           inputId="age"
           mode="decimal"
+          [class.p-invalid]="profileDetailForm.age().touched() && profileDetailForm.age().invalid()"
           [formField]="$any(profileDetailForm.age)"
-          [min]="22"
-          [max]="29"
         />
         <label for="age">Age</label>
       </p-floatlabel>
@@ -118,9 +127,11 @@
           fluid
           inputId="star_match_score"
           mode="decimal"
+          [class.p-invalid]="
+            profileDetailForm.starMatchScore().touched() &&
+            profileDetailForm.starMatchScore().invalid()
+          "
           [formField]="$any(profileDetailForm.starMatchScore)"
-          [min]="5"
-          [max]="12"
         />
         <label for="star_match_score">Star Match Score</label>
       </p-floatlabel>
@@ -128,6 +139,9 @@
         <p-select
           inputId="state"
           class="w-full"
+          [class.p-invalid]="
+            profileDetailForm.state().touched() && profileDetailForm.state().invalid()
+          "
           [formField]="$any(profileDetailForm.state)"
           [options]="STATE_LIST"
         />
@@ -137,6 +151,9 @@
         <p-select
           inputId="city"
           class="w-full"
+          [class.p-invalid]="
+            profileDetailForm.city().touched() && profileDetailForm.city().invalid()
+          "
           [formField]="$any(profileDetailForm.city)"
           [options]="cityList()"
         />
@@ -184,6 +201,7 @@
         </ng-template>
       </p-timeline>
     </div>
+    <button #submitButton hidden type="submit"></button>
   </form>
   @if (actionType() !== 'view') {
     <ng-template #footer>
@@ -191,13 +209,13 @@
         class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
       >
         <p-button
-          type="submit"
+          type="button"
           severity="success"
           icon="pi pi-check"
           [label]="buttonLabel()"
-          [loading]="isSubmitting()"
+          [loading]="profileDetailForm().submitting()"
           [disabled]="profileDetailForm().invalid() || !!newComment()"
-          (onClick)="onSubmit()"
+          (onClick)="submitButton.click()"
         />
       </div>
     </ng-template>

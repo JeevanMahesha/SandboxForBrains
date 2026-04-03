@@ -44,14 +44,20 @@
         <label for="profile_status">Profile Status</label>
       </p-floatlabel>
       <p-inputgroup>
-        <input
-          pInputText
-          placeholder="Matrimony ID"
-          [class.p-invalid]="
-            profileDetailForm.mobileNumber().touched() && profileDetailForm.mobileNumber().invalid()
-          "
-          [formField]="profileDetailForm.mobileNumber"
-        />
+        <p-floatlabel variant="on" class="w-full">
+          <input
+            pInputText
+            inputId="mobile_number"
+            pSize="large"
+            fluid
+            [class.p-invalid]="
+              profileDetailForm.mobileNumber().touched() &&
+              profileDetailForm.mobileNumber().invalid()
+            "
+            [formField]="profileDetailForm.mobileNumber"
+          />
+          <label for="mobile_number">Mobile Number</label>
+        </p-floatlabel>
         @if (actionType() === 'view') {
           <p-inputgroup-addon>
             <p-button
@@ -64,14 +70,19 @@
       </p-inputgroup>
 
       <p-inputgroup>
-        <input
-          pInputText
-          placeholder="Matrimony ID"
-          [class.p-invalid]="
-            profileDetailForm.matrimonyId().touched() && profileDetailForm.matrimonyId().invalid()
-          "
-          [formField]="profileDetailForm.matrimonyId"
-        />
+        <p-floatlabel variant="on" class="w-full">
+          <input
+            pInputText
+            inputId="matrimony_id"
+            pSize="large"
+            fluid
+            [class.p-invalid]="
+              profileDetailForm.matrimonyId().touched() && profileDetailForm.matrimonyId().invalid()
+            "
+            [formField]="profileDetailForm.matrimonyId"
+          />
+          <label for="matrimony_id">Matrimony ID</label>
+        </p-floatlabel>
         @if (actionType() === 'view') {
           <p-inputgroup-addon>
             <p-button

@@ -55,7 +55,11 @@
               </div>
 
               <div>
-                <p-tag [value]="profile.profileStatus" [class]="profile.profileStatusColor ?? ''" />
+                <p-tag
+                  icon="pi pi-tag"
+                  [value]="profile.profileStatus"
+                  [class]="profile.profileStatusColor ?? ''"
+                />
               </div>
 
               <div class="flex gap-2 w-full mt-2">

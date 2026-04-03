@@ -82,6 +82,7 @@ export class ProfilesService {
           severity: 'info',
           summary: 'Confirmed',
           detail: 'Record deleted',
+          life: 2000,
         });
         const docRef = doc(this.firestore, 'profiles', id);
         deleteDoc(docRef)
@@ -90,6 +91,7 @@ export class ProfilesService {
               severity: 'success',
               summary: 'Success',
               detail: 'Profile deleted successfully',
+              life: 2000,
             });
             this.profiles.reload();
           })
@@ -98,6 +100,7 @@ export class ProfilesService {
               severity: 'error',
               summary: 'Error',
               detail: 'Failed to delete profile',
+              life: 3000,
             });
           });
       },
@@ -106,6 +109,7 @@ export class ProfilesService {
           severity: 'error',
           summary: 'Rejected',
           detail: 'You have rejected',
+          life: 2000,
         });
       },
     });

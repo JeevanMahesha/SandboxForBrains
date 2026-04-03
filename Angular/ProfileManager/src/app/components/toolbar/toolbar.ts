@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { debounce, form, FormField } from '@angular/forms/signals';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -76,7 +76,9 @@ export class Toolbar {
   ];
 
   readonly scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
-  readonly filterForm = form(this.profileService.filterOptions);
+  readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
+    debounce(formControl.searchQuery, 800);
+  });
   readonly openStarMatch = output<MouseEvent>();
   readonly openZodiacSign = output<MouseEvent>();
 

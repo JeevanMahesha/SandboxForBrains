@@ -78,12 +78,6 @@ export class ProfilesService {
       closable: false,
 
       accept: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmed',
-          detail: 'Record deleted',
-          life: 2000,
-        });
         const docRef = doc(this.firestore, 'profiles', id);
         deleteDoc(docRef)
           .then(() => {

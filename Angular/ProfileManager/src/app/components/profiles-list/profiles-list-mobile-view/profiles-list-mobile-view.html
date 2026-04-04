@@ -52,6 +52,22 @@
                   <i class="pi pi-map-marker"></i>
                   {{ profile.city }}
                 </span>
+                <span>|</span>
+                <a
+                  target="_blank"
+                  [href]="`https://wa.me/${profile.mobileNumber}?text=${'Hello, I am Jeevan.'.replace(' ', '%20')}`"
+                >
+                  <p-button
+                    icon="pi pi-whatsapp"
+                    severity="success"
+                    text="true"
+                    [outlined]="true"
+                  />
+                </a>
+                <span>|</span>
+                <a target="_blank" [href]="`tel:${profile.mobileNumber}`">
+                  <p-button icon="pi pi-phone" severity="help" text="true" [outlined]="true" />
+                </a>
               </div>
 
               <div>

@@ -9,35 +9,49 @@
         (openZodiacSign)="toggleZodiacSigns.set($event)"
       />
       @let profileValue = profiles.value();
-      <div class="hidden md:block">
-        <app-profiles-list-desktop-view
-          [profileData]="profileValue ?? []"
-          [isLoading]="profiles.isLoading()"
-        />
-      </div>
-      @if (openDrawerValue) {
-        <app-profile
-          [actionType]="actionTypeValue"
-          [openDrawer]="openDrawerValue"
-          [selectedProfileId]="selectedProfileIdValue"
-        />
+      @defer (on viewport) {
+        <div class="hidden md:block">
+          <app-profiles-list-desktop-view
+            [profileData]="profileValue ?? []"
+            [isLoading]="profiles.isLoading()"
+          />
+        </div>
+      } @placeholder {
+        <div class="hidden md:block"></div>
       }
-      <div class="block md:hidden">
-        <app-profiles-list-mobile-view
-          [profileData]="profileValue ?? []"
-          [isLoading]="profiles.isLoading()"
+      @defer (when openDrawer()) {
+        @if (openDrawerValue) {
+          <app-profile
+            [actionType]="actionTypeValue"
+            [openDrawer]="openDrawerValue"
+            [selectedProfileId]="selectedProfileIdValue"
+          />
+        }
+      } @placeholder {}
+      @defer (on viewport) {
+        <div class="block md:hidden">
+          <app-profiles-list-mobile-view
+            [profileData]="profileValue ?? []"
+            [isLoading]="profiles.isLoading()"
+          />
+        </div>
+      } @placeholder {
+        <div class="block md:hidden"></div>
+      }
+      @defer (when toggleZodiacSigns()) {
+        <!-- Zodic Signs -->
+        <app-zodiac-signs
+          [togglePopover]="toggleZodiacSigns()"
+          (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
         />
-      </div>
-      <!-- Zodic Signs -->
-      <app-zodiac-signs
-        [togglePopover]="toggleZodiacSigns()"
-        (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
-      />
-      <!-- Star Matching -->
-      <app-star-match
-        [togglePopover]="toggleStarMatch()"
-        (starMatchHidden)="toggleStarMatch.set(null)"
-      />
+      } @placeholder {}
+      @defer (when toggleStarMatch()) {
+        <!-- Star Matching -->
+        <app-star-match
+          [togglePopover]="toggleStarMatch()"
+          (starMatchHidden)="toggleStarMatch.set(null)"
+        />
+      } @placeholder {}
     </div>
   </div>
 </div>

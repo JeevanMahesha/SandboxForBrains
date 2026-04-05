@@ -24,8 +24,8 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
 })
 export default class ProfilesList {
   readonly actionType = input<ToolbarAction>();
-  readonly openDrawer = input<boolean>();
-  readonly selectedProfileId = input<string>();
+  readonly openDrawer = input<boolean>(false);
+  readonly selectedProfileId = input<string>('');
   readonly profiles: Resource<ProfileDetail[]>;
   readonly toggleStarMatch = signal<MouseEvent | null>(null);
   readonly toggleZodiacSigns = signal<MouseEvent | null>(null);

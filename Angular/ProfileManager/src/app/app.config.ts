@@ -18,7 +18,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
-    provideFirebase(environment.firebase),
+    provideFirebase({
+      firebase: environment.firebase,
+      useFirebaseEmulators: environment.useFirebaseEmulators === true,
+      appCheck: environment.appCheck,
+    }),
     providePrimeNG({
       theme: {
         preset: Aura,

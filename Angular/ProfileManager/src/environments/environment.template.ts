@@ -3,6 +3,8 @@
 
 export const environment = {
   production: false,
+  /** Set true when using `firebase emulators:start` (Auth 9099, Firestore 8080). */
+  useFirebaseEmulators: false,
   firebase: {
     apiKey: 'YOUR_API_KEY',
     authDomain: 'YOUR_PROJECT.firebaseapp.com',
@@ -13,4 +15,15 @@ export const environment = {
     appId: 'YOUR_APP_ID',
     measurementId: 'YOUR_MEASUREMENT_ID',
   },
+  /**
+   * Optional App Check (reCAPTCHA Enterprise). Register the key in Firebase Console > App Check.
+   * Use debugToken: true in development to print a debug token in the browser console, then
+   * register it in the console before enabling enforcement.
+   */
+  appCheck: undefined as
+    | undefined
+    | {
+        recaptchaEnterpriseKey: string;
+        debugToken?: boolean | string;
+      },
 };

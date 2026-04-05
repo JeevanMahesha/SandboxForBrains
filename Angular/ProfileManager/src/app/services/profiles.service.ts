@@ -4,7 +4,6 @@ import {
   DocumentSnapshot,
   OrderByDirection,
   QueryDocumentSnapshot,
-  Timestamp,
   addDoc,
   collection,
   deleteDoc,
@@ -13,6 +12,7 @@ import {
   getDocs,
   orderBy,
   query,
+  serverTimestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -113,7 +113,7 @@ export class ProfilesService {
     const docRef = doc(this.firestore, 'profiles', id);
     const updateData = {
       ...profileData,
-      updatedAt: new Date(),
+      updatedAt: serverTimestamp(),
     };
 
     await updateDoc(docRef, updateData);
@@ -163,11 +163,10 @@ export class ProfilesService {
   }
 
   async addProfile(profileData: Partial<ProfileDetail>) {
-    const now = Timestamp.now();
     const profileToAdd = {
       ...profileData,
-      createdAt: now,
-      updatedAt: now,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     };
 
     return addDoc(this.profilesCollection, profileToAdd);

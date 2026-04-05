@@ -1,14 +1,13 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import {
   onAuthStateChanged,
+  onIdTokenChanged,
   signInWithEmailAndPassword,
   signOut,
   User,
   UserCredential,
 } from 'firebase/auth';
 
-import { authState$, idToken$ } from '../firebase/firebase-rx';
 import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 
 @Injectable({
@@ -16,13 +15,11 @@ import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 })
 export class AuthService {
   private auth = inject(FIREBASE_AUTH);
-
-  readonly user = toSignal(authState$(this.auth), { initialValue: null });
-  readonly idToken = toSignal(idToken$(this.auth), { initialValue: null });
+  private destroyRef = inject(DestroyRef);
 
   readonly currentUser = signal<User | null>(null);
   readonly currentToken = signal<string | null>(null);
-  readonly authInitialized = signal<boolean>(false);
+  readonly authInitialized = signal(false);
 
   readonly isAuthenticated = computed(() => {
     const hasUser = !!this.currentUser();
@@ -31,12 +28,34 @@ export class AuthService {
   });
 
   constructor() {
-    effect(() => {
-      this.currentUser.set(this.user());
-    });
+    const unsubAuth = onAuthStateChanged(
+      this.auth,
+      (user) => {
+        this.currentUser.set(user);
+        this.authInitialized.set(true);
+      },
+      () => {
+        this.authInitialized.set(true);
+      },
+    );
 
-    effect(() => {
-      this.currentToken.set(this.idToken());
+    const unsubToken = onIdTokenChanged(
+      this.auth,
+      async (user) => {
+        try {
+          this.currentToken.set(user ? await user.getIdToken() : null);
+        } catch {
+          this.currentToken.set(null);
+        }
+      },
+      () => {
+        this.currentToken.set(null);
+      },
+    );
+
+    this.destroyRef.onDestroy(() => {
+      unsubAuth();
+      unsubToken();
     });
   }
 

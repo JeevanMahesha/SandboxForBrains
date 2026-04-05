@@ -7,6 +7,10 @@
     "primeng": {
       "command": "npx",
       "args": ["-y", "@primeng/mcp"]
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "firebase-tools@latest", "mcp"]
     }
   }
 }

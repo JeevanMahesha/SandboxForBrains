@@ -1,32 +1,27 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import BentoItem from '../components/BentoItem.astro';
-
-const allPhotos = await getCollection('photos');
-
-// Sort to bring featured to front if desired, but we'll map mostly normally.
-// For true bento flexibiliy, you'd manage spans via collections fields (which we added).
+import StoryLightbox from '../components/StoryLightbox.astro';
+import StoryAboutMe from '../components/StoryAboutMe.astro';
+import StoryFamily from '../components/StoryFamily.astro';
+import StoryFriends from '../components/StoryFriends.astro';
+import StoryHobbies from '../components/StoryHobbies.astro';
+import StoryCooking from '../components/StoryCooking.astro';
+import StoryPhotos from '../components/StoryPhotos.astro';
+import StoryFinalGallery from '../components/StoryFinalGallery.astro';
 ---
 
-<Layout title="My Portfolio">
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32">
-    <!-- Header Section -->
-    <header class="mb-16 max-w-2xl animate-slide-up">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-appleGray-900 dark:text-appleGray-50">
-        Hi, I'm <span class="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">Alex</span>.
-      </h1>
-      <p class="text-lg text-appleGray-600 dark:text-appleGray-400">
-        A passionate photographer based in the creative intersection of light and technology. 
-        Welcome to my digital gallery.
-      </p>
-    </header>
+<Layout title="My Story - Portfolio">
+  
+  <StoryLightbox />
 
-    <!-- Bento Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[250px] gap-6 animate-fade-in" style="animation-delay: 150ms; animation-fill-mode: both;">
-      {allPhotos.map((photo, index) => (
-        <BentoItem photo={photo} eager={index < 2} />
-      ))}
-    </div>
+  <main class="w-full text-appleGray-900 dark:text-appleGray-50 overflow-hidden">
+    <StoryAboutMe />
+    <StoryFamily />
+    <StoryFriends />
+    <StoryHobbies />
+    <StoryCooking />
+    <StoryPhotos />
+    <StoryFinalGallery />
   </main>
+  
 </Layout>

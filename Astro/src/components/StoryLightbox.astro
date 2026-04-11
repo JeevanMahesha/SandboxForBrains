@@ -1,0 +1,66 @@
+---
+// src/components/StoryLightbox.astro
+---
+<!-- Lightbox Overlay -->
+<div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center opacity-0 transition-opacity duration-300 cursor-zoom-out">
+  <img id="lightbox-img" src="" alt="Expanded View" class="max-w-[95vw] max-h-[95vh] object-contain scale-95 transition-transform duration-300" />
+  <button id="lightbox-close" class="absolute top-6 right-6 text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const zoomableImages = document.querySelectorAll('.zoomable');
+
+    // Open lightbox on image click
+    zoomableImages.forEach(img => {
+      img.addEventListener('click', () => {
+        const src = img.getAttribute('src');
+        if (lightbox && lightboxImg && src) {
+          lightboxImg.setAttribute('src', src);
+          lightbox.classList.remove('hidden');
+          // Small delay to allow the element to become visible before animating opacity
+          requestAnimationFrame(() => {
+            lightbox.classList.replace('opacity-0', 'opacity-100');
+            lightboxImg.classList.replace('scale-95', 'scale-100');
+          });
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+      });
+    });
+
+    // Close lightbox function
+    const closeLightbox = () => {
+      if (lightbox && lightboxImg) {
+        lightbox.classList.replace('opacity-100', 'opacity-0');
+        lightboxImg.classList.replace('scale-100', 'scale-95');
+        // Wait for transition to finish before hiding
+        setTimeout(() => {
+          lightbox.classList.add('hidden');
+          lightboxImg.setAttribute('src', '');
+          document.body.style.overflow = ''; // Restore scrolling
+        }, 300); // matches duration-300
+      }
+    };
+
+    // Close on clicking overlay or close button
+    if (lightbox) {
+      lightbox.addEventListener('click', closeLightbox);
+    }
+    
+    // Prevent closing when clicking the image itself
+    if (lightboxImg) {
+      lightboxImg.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  });
+</script>

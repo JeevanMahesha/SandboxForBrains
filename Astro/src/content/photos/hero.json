@@ -1,0 +1,8 @@
+{
+  "title": "Mountain Sunset",
+  "date": "2026-04-11",
+  "location": "New Zealand",
+  "image": "../../assets/images/hero.png",
+  "featured": true,
+  "span": "col-span-2 row-span-2"
+}

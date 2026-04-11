@@ -1,0 +1,8 @@
+{
+  "title": "Cyberpunk City",
+  "date": "2025-11-20",
+  "location": "Tokyo",
+  "image": "../../assets/images/city.png",
+  "featured": false,
+  "span": "col-span-1 row-span-2"
+}

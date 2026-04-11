@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased scroll-smooth;
+  }
+  
+  body {
+    @apply bg-appleGray-50 text-appleGray-900 transition-colors duration-300 min-h-screen selection:bg-blue-500/30;
+  }
+  
+  .dark body {
+    @apply bg-appleGray-900 text-appleGray-50 selection:bg-blue-400/30;
+  }
+}

@@ -1,5 +1,17 @@
 ---
 // src/components/StoryHobbies.astro
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+const localImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/StoryHobbies/*.{jpeg,jpg,png,gif,webp,avif}', { eager: true });
+const imageList = Object.values(localImages).map(img => img.default);
+const hasLocalImages = imageList.length > 0;
+
+const fallbackImages = [
+  { src: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=800&auto=format&fit=crop", title: "Hiking" },
+  { src: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=800&auto=format&fit=crop", title: "Photography" },
+  { src: "https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?q=80&w=800&auto=format&fit=crop", title: "Reading" }
+];
 ---
 <section class="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white dark:bg-appleGray-900 border-t border-appleGray-200 dark:border-appleGray-800">
   <div class="max-w-6xl mx-auto">
@@ -11,24 +23,25 @@
       </p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-      <div class="space-y-4 group">
-        <div class="overflow-hidden rounded-2xl shadow-lg">
-          <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=800&auto=format&fit=crop" alt="Hiking" class="zoomable w-full h-80 object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-center">Hiking</h3>
-      </div>
-      <div class="space-y-4 group">
-        <div class="overflow-hidden rounded-2xl shadow-lg">
-          <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=800&auto=format&fit=crop" alt="Photography" class="zoomable w-full h-80 object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-center">Photography</h3>
-      </div>
-      <div class="space-y-4 group">
-        <div class="overflow-hidden rounded-2xl shadow-lg">
-          <img src="https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?q=80&w=800&auto=format&fit=crop" alt="Reading" class="zoomable w-full h-80 object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-center">Reading</h3>
-      </div>
+      {hasLocalImages ? (
+        imageList.map((img, index) => (
+          <div class="space-y-4 group">
+            <div class="overflow-hidden rounded-2xl shadow-lg">
+              <Image src={img} alt={`Hobby ${index + 1}`} class="zoomable w-full h-80 object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <h3 class="text-xl font-semibold text-center">{fallbackImages[index] ? fallbackImages[index].title : `Hobby ${index + 1}`}</h3>
+          </div>
+        ))
+      ) : (
+        fallbackImages.map((item) => (
+          <div class="space-y-4 group">
+            <div class="overflow-hidden rounded-2xl shadow-lg">
+              <img src={item.src} alt={item.title} class="zoomable w-full h-80 object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <h3 class="text-xl font-semibold text-center">{item.title}</h3>
+          </div>
+        ))
+      )}
     </div>
   </div>
 </section>

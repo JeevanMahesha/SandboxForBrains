@@ -1,5 +1,18 @@
 ---
 // src/components/StoryCooking.astro
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+const localImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/StoryCooking/*.{jpeg,jpg,png,gif,webp,avif}', { eager: true });
+const imageList = Object.values(localImages).map(img => img.default);
+const hasLocalImages = imageList.length > 0;
+
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?q=80&w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1466637574441-749b8f19452f?q=80&w=800&auto=format&fit=crop"
+];
 ---
 <section class="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-appleGray-50 dark:bg-appleGray-950 border-t border-appleGray-200 dark:border-appleGray-800">
   <div class="max-w-6xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-16">
@@ -11,14 +24,31 @@
       </p>
     </div>
     <div class="flex-1 w-full grid grid-cols-2 gap-4 lg:gap-6">
-      <div class="space-y-4 lg:space-y-6">
-         <img src="https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop" alt="Cooking Prep" class="zoomable w-full h-56 sm:h-64 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
-         <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=800&auto=format&fit=crop" alt="Pasta Dish" class="zoomable w-full h-40 sm:h-48 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
-      </div>
-      <div class="space-y-4 lg:space-y-6 mt-8 lg:mt-12">
-         <img src="https://images.unsplash.com/photo-1516594798947-e65505dbb29d?q=80&w=800&auto=format&fit=crop" alt="Healthy Bowl" class="zoomable w-full h-40 sm:h-48 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
-         <img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?q=80&w=800&auto=format&fit=crop" alt="Cooking action" class="zoomable w-full h-56 sm:h-64 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
-      </div>
+      {hasLocalImages ? (
+        <>
+          <div class="space-y-4 lg:space-y-6">
+             {imageList.slice(0, Math.ceil(imageList.length / 2)).map((img, index) => (
+               <Image src={img} alt={`Cooking ${index + 1}`} class={`zoomable w-full ${index % 2 === 0 ? 'h-56 sm:h-64' : 'h-40 sm:h-48'} object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow`} />
+             ))}
+          </div>
+          <div class="space-y-4 lg:space-y-6 mt-8 lg:mt-12">
+             {imageList.slice(Math.ceil(imageList.length / 2)).map((img, index) => (
+               <Image src={img} alt={`Cooking ${index + 1}`} class={`zoomable w-full ${index % 2 === 0 ? 'h-40 sm:h-48' : 'h-56 sm:h-64'} object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow`} />
+             ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <div class="space-y-4 lg:space-y-6">
+             <img src={fallbackImages[0]} alt="Cooking Prep" class="zoomable w-full h-56 sm:h-64 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
+             <img src={fallbackImages[1]} alt="Pasta Dish" class="zoomable w-full h-40 sm:h-48 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
+          </div>
+          <div class="space-y-4 lg:space-y-6 mt-8 lg:mt-12">
+             <img src={fallbackImages[2]} alt="Healthy Bowl" class="zoomable w-full h-40 sm:h-48 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
+             <img src={fallbackImages[3]} alt="Cooking action" class="zoomable w-full h-56 sm:h-64 object-cover rounded-2xl cursor-zoom-in shadow-md hover:shadow-xl transition-shadow" />
+          </div>
+        </>
+      )}
     </div>
   </div>
 </section>

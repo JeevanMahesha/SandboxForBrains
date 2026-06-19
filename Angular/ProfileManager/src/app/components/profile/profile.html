@@ -4,7 +4,10 @@
   [state]="(openDrawer() ?? false) ? 'open' : 'closed'"
   (closed)="closeDrawer()"
 >
-  <hlm-sheet-content *brnSheetContent class="flex w-full! flex-col gap-0 sm:max-w-md! lg:max-w-120!">
+  <hlm-sheet-content
+    *brnSheetContent
+    class="flex w-full! flex-col gap-0 sm:max-w-md! lg:max-w-120!"
+  >
     <hlm-sheet-header>
       <h3 hlmSheetTitle>{{ title() }}</h3>
     </hlm-sheet-header>
@@ -126,11 +129,7 @@
 
         <div hlmField>
           <label hlmFieldLabel for="zodiac_sign">Zodiac Sign</label>
-          <hlm-select
-            id="zodiac_sign"
-            class="w-full"
-            [formField]="profileDetailForm.zodiacSign"
-          >
+          <hlm-select id="zodiac_sign" class="w-full" [formField]="profileDetailForm.zodiacSign">
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select Zodiac Sign" />
             </hlm-select-trigger>
@@ -215,7 +214,7 @@
           <label hlmFieldLabel for="city">City</label>
           <hlm-select id="city" class="w-full" [formField]="profileDetailForm.city">
             <hlm-select-trigger class="w-full">
-              <hlm-select-value placeholder="Select City" />
+              <hlm-select-value [placeholder]="cityPlaceholder()" />
             </hlm-select-trigger>
             <hlm-select-content *hlmSelectPortal>
               @for (city of cityList(); track city) {

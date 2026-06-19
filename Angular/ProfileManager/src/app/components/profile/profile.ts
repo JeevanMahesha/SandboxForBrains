@@ -24,8 +24,8 @@ import {
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCheck, lucideCopy, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
-import { toast } from '@spartan-ng/brain/sonner';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
@@ -98,6 +98,9 @@ export class Profile {
         this.profileDetail().state as keyof typeof DISTRICT_LIST
       ] as unknown as string[],
   );
+  readonly cityPlaceholder = computed(() =>
+    this.profileDetailForm.state().value() ? 'Select City' : 'Select a state to choose a city',
+  );
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
 
@@ -106,13 +109,13 @@ export class Profile {
   private readonly profileDetail = signal<ProfileDetail>({
     name: '',
     mobileNumber: '+91',
-    zodiacSign: '',
-    star: '',
+    zodiacSign: null,
+    star: null,
     age: null,
     starMatchScore: null,
-    state: '',
-    city: '',
-    profileStatusId: '',
+    state: null,
+    city: null,
+    profileStatusId: null,
     matrimonyId: '',
     comments: [],
   });
@@ -135,7 +138,8 @@ export class Profile {
         message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
       });
       readonly(profileForm.starMatchScore);
-      disabled(profileForm, () => this.actionType() === 'view');
+      disabled(profileForm, { when: () => this.actionType() === 'view' });
+      disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
     },
     {
       submission: {
@@ -181,6 +185,17 @@ export class Profile {
         const score = MATCHING_STARS[star as keyof typeof MATCHING_STARS];
         untracked(() => this.profileDetailForm.starMatchScore().value.set(score));
       }
+    });
+
+    // Clear a stale city when the state changes to one that no longer lists it.
+    effect(() => {
+      this.profileDetailForm.state().value();
+      untracked(() => {
+        const currentCity = this.profileDetailForm.city().value();
+        if (currentCity && !(this.cityList() ?? []).includes(currentCity)) {
+          this.profileDetailForm.city().value.set(null);
+        }
+      });
     });
   }
 

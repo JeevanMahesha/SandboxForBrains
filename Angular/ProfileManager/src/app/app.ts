@@ -4,6 +4,7 @@ import { BrnAlertDialogContent } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmToaster } from '@spartan-ng/helm/sonner';
 import { ProfilesService } from './services/profiles.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -13,4 +14,6 @@ import { ProfilesService } from './services/profiles.service';
 })
 export class App {
   protected readonly profileService = inject(ProfilesService);
+  // Instantiated eagerly so its theme-applying effects run for the session.
+  private readonly themeService = inject(ThemeService);
 }

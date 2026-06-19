@@ -11,6 +11,16 @@
       rel="stylesheet"
     />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+      // Apply the persisted/device theme before paint to avoid a flash of the wrong theme.
+      (function () {
+        var stored = localStorage.getItem('theme-preference');
+        var dark =
+          stored === 'dark' ||
+          (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

@@ -54,6 +54,18 @@
       type="button"
       hlmBtn
       variant="outline"
+      size="icon"
+      aria-label="Toggle theme"
+      [attr.title]="`Theme: ${themeService.preference()}`"
+      (click)="themeService.cyclePreference()"
+    >
+      <ng-icon hlm size="sm" [name]="themeIcon()" />
+    </button>
+
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
       [disabled]="!filterHasValue()"
       (click)="clearForm()"
     >

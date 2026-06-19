@@ -5,9 +5,12 @@ import {
   lucideChevronDown,
   lucideFilterX,
   lucideLogOut,
+  lucideMonitor,
+  lucideMoon,
   lucideSearch,
   lucideSparkles,
   lucideStar,
+  lucideSun,
   lucideUserPlus,
 } from '@ng-icons/lucide';
 import { HlmButton } from '@spartan-ng/helm/button';
@@ -20,6 +23,7 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
+import { ThemeService } from '../../services/theme.service';
 import { StarMatch } from '../star-match/star-match';
 import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 
@@ -46,6 +50,9 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
       lucideSparkles,
       lucideStar,
       lucideLogOut,
+      lucideSun,
+      lucideMoon,
+      lucideMonitor,
     }),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +60,18 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 export class Toolbar {
   private readonly profileService = inject(ProfilesService);
   private readonly authService = inject(AuthService);
+  protected readonly themeService = inject(ThemeService);
+
+  readonly themeIcon = computed(() => {
+    switch (this.themeService.preference()) {
+      case 'light':
+        return 'lucideSun';
+      case 'dark':
+        return 'lucideMoon';
+      default:
+        return 'lucideMonitor';
+    }
+  });
   readonly profileStatusOptions = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
     label: value,
     value: key,

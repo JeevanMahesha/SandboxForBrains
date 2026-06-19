@@ -1,10 +1,10 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, Service, signal } from '@angular/core';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
 const STORAGE_KEY = 'theme-preference';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ThemeService {
   private readonly media = window.matchMedia('(prefers-color-scheme: dark)');
 

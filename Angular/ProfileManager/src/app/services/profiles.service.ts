@@ -1,5 +1,6 @@
-import { Injectable, WritableSignal, inject, resource, signal } from '@angular/core';
+import { Service, WritableSignal, inject, resource, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { toast } from '@spartan-ng/brain/sonner';
 import {
   DocumentSnapshot,
   OrderByDirection,
@@ -16,16 +17,13 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { toast } from '@spartan-ng/brain/sonner';
 import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model';
 import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ProfilesService {
   private authService = inject(AuthService);
 

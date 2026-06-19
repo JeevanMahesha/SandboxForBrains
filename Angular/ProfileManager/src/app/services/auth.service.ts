@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Service, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   onAuthStateChanged,
@@ -11,9 +11,7 @@ import {
 import { authState$, idToken$ } from '../firebase/firebase-rx';
 import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService {
   private auth = inject(FIREBASE_AUTH);
 

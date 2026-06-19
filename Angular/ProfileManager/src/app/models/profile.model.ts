@@ -14,17 +14,18 @@ export interface ProfileDetail {
   updatedAt?: Date;
   createdAt?: Date;
   comments: Comment[];
-  star: keyof typeof MATCHING_STARS | '';
-  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
+  star: keyof typeof MATCHING_STARS | null;
+  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0 | null;
   mobileNumber: string;
-  zodiacSign: keyof typeof ZODIAC_SIGN_LIST | '';
-  age: number;
-  state: keyof typeof DISTRICT_LIST | '';
+  zodiacSign: keyof typeof ZODIAC_SIGN_LIST | null;
+  age: number | null;
+  state: keyof typeof DISTRICT_LIST | null;
   name: string;
-  profileStatusId: keyof typeof PROFILE_STATUS | '';
+  profileStatusId: keyof typeof PROFILE_STATUS | null;
   matrimonyId: string;
-  city: string;
+  city: string | null;
   id?: number;
   sNo?: number;
   profileStatus?: (typeof PROFILE_STATUS)[keyof typeof PROFILE_STATUS];
+  profileStatusColor?: string;
 }

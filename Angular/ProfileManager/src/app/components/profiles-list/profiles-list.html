@@ -4,10 +4,7 @@
       @let openDrawerValue = openDrawer();
       @let actionTypeValue = actionType();
       @let selectedProfileIdValue = selectedProfileId();
-      <app-toolbar
-        (openStarMatch)="toggleStarMatch.set($event)"
-        (openZodiacSign)="toggleZodiacSigns.set($event)"
-      />
+      <app-toolbar />
       @let profileValue = profiles.value();
       <div class="hidden md:block">
         <app-profiles-list-desktop-view
@@ -28,16 +25,6 @@
           [isLoading]="profiles.isLoading()"
         />
       </div>
-      <!-- Zodic Signs -->
-      <app-zodiac-signs
-        [togglePopover]="toggleZodiacSigns()"
-        (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
-      />
-      <!-- Star Matching -->
-      <app-star-match
-        [togglePopover]="toggleStarMatch()"
-        (starMatchHidden)="toggleStarMatch.set(null)"
-      />
     </div>
   </div>
 </div>

@@ -3,9 +3,7 @@
 
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
-const angular = require('@angular-eslint/eslint-plugin');
-const angularTemplate = require('@angular-eslint/eslint-plugin-template');
-const angularParser = require('@angular-eslint/template-parser');
+const angular = require('angular-eslint');
 const unusedImports = require('eslint-plugin-unused-imports');
 
 module.exports = tseslint.config(
@@ -19,7 +17,7 @@ module.exports = tseslint.config(
       '.env.production',
       'coverage/',
       '**/*.log',
-      'libs/**'
+      'libs/**',
     ],
   },
   {
@@ -28,6 +26,7 @@ module.exports = tseslint.config(
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
       ...tseslint.configs.stylistic,
+      ...angular.configs.tsAll,
     ],
     languageOptions: {
       parserOptions: {
@@ -37,12 +36,10 @@ module.exports = tseslint.config(
       },
     },
     plugins: {
-      '@angular-eslint': angular,
       'unused-imports': unusedImports,
     },
     // @ts-ignore
     rules: {
-      ...angular.configs.all.rules,
       '@angular-eslint/component-max-inline-declarations': [
         'error',
         {
@@ -51,8 +48,7 @@ module.exports = tseslint.config(
           animations: 30,
         },
       ],
-      "@angular-eslint/component-class-suffix": 'off',
-      "@angular-eslint/no-experimental": 'warn',
+      '@angular-eslint/component-class-suffix': 'off',
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -86,18 +82,15 @@ module.exports = tseslint.config(
   },
   {
     files: ['**/*.html'],
-    plugins: {
-      '@angular-eslint/template': angularTemplate,
-    },
-    languageOptions: {
-      parser: angularParser,
-    },
+    extends: [...angular.configs.templateAll],
     rules: {
-      ...angularTemplate.configs.all.rules,
-      "@angular-eslint/template/i18n": 'off',
-      "@angular-eslint/template/no-any": 'warn',
-      "@angular-eslint/template/no-call-expression": 'off',
+      '@angular-eslint/template/i18n': 'off',
+      '@angular-eslint/template/no-any': 'warn',
+      '@angular-eslint/template/no-call-expression': 'off',
+      // Spartan NG composes UI from directives + @for/@if in templates (e.g. rendering
+      // select options and table rows), so templates are inherently more branch-heavy than
+      // PrimeNG's input-driven components. Raise the default limit (5) accordingly.
+      '@angular-eslint/template/cyclomatic-complexity': ['error', { maxComplexity: 20 }],
     },
-  }
+  },
 );
-

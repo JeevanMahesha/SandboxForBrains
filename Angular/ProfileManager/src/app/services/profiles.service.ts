@@ -1,5 +1,8 @@
-import { Injectable, WritableSignal, inject, resource, signal } from '@angular/core';
+import { Service, WritableSignal, inject, resource, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { toast } from '@spartan-ng/brain/sonner';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
+import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import {
   DocumentSnapshot,
   OrderByDirection,
@@ -16,19 +19,24 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model';
+import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ProfilesService {
-  profiles = resource<ProfileDetail[], SortOption>({
+  private authService = inject(AuthService);
+
+  profiles = resource<ProfileDetail[], SortOption | undefined>({
     defaultValue: [],
-    params: () => this.filterOptions(),
+    // Gate the query on auth: this service can be instantiated before login, so without
+    // this guard the Firestore query would fire before login and fail with a permission
+    // error, then never re-run. Returning
+    // `undefined` keeps the resource idle until the user is authenticated, at which point
+    // the param flips and the loader runs automatically (covers both fresh login and reload).
+    params: () => (this.authService.isAuthenticated() ? this.filterOptions() : undefined),
     loader: ({ params }) =>
       this.getFilteredProfiles(
         params.viewOrderCheck,
@@ -49,8 +57,6 @@ export class ProfilesService {
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
   public readonly router = inject(Router);
-  public readonly messageService = inject(MessageService);
-  public readonly confirmationService = inject(ConfirmationService);
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
     viewOrderCheck: false,
@@ -59,54 +65,37 @@ export class ProfilesService {
     starMatchScore: null,
   });
 
-  deleteProfile(id: string, event: Event): void {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: 'Do you want to delete this record?',
-      header: 'Confirm Delete',
-      icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptButtonProps: {
-        label: 'Delete',
-        severity: 'danger',
-      },
-      closable: false,
+  private readonly dialogService = inject(HlmDialogService);
 
-      accept: () => {
-        const docRef = doc(this.firestore, 'profiles', id);
-        deleteDoc(docRef)
-          .then(() => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Profile deleted successfully',
-              life: 2000,
-            });
-            this.profiles.reload();
-          })
-          .catch(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to delete profile',
-              life: 3000,
-            });
-          });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rejected',
-          detail: 'You have rejected',
-          life: 2000,
-        });
-      },
+  /** Opens a confirmation dialog and deletes the profile when the user confirms. */
+  deleteProfile(id: string): void {
+    const dialogRef = this.dialogService.open(ConfirmDialog, {
+      context: {
+        title: 'Confirm Delete',
+        description: 'Do you want to delete this record?',
+        confirmLabel: 'Delete',
+        destructive: true,
+      } satisfies ConfirmDialogContext,
+      contentClass: 'sm:max-w-md',
     });
+
+    dialogRef.closed$.subscribe((confirmed) => {
+      if (confirmed) {
+        this.removeProfile(id);
+      }
+    });
+  }
+
+  private removeProfile(id: string): void {
+    const docRef = doc(this.firestore, 'profiles', id);
+    deleteDoc(docRef)
+      .then(() => {
+        toast.success('Profile deleted successfully');
+        this.profiles.reload();
+      })
+      .catch(() => {
+        toast.error('Failed to delete profile');
+      });
   }
 
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
@@ -183,14 +172,14 @@ export class ProfilesService {
     return null;
   }
 
-  userActionEvent(userActionType: ToolbarAction, profileId: string | null, event?: Event): void {
+  userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
     const userAction: UserActions = {
       actionType: userActionType,
       selectedProfileId: profileId,
       openDrawer: true,
     };
     if (userActionType === 'delete') {
-      this.deleteProfile(profileId!, event!);
+      this.deleteProfile(profileId!);
       return;
     }
     this.router.navigate([], {
@@ -202,20 +191,10 @@ export class ProfilesService {
     if (!value) return;
     navigator.clipboard.writeText(value).then(
       () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `${label} copied to clipboard!`,
-          life: 2000,
-        });
+        toast.success(`${label} copied to clipboard!`);
       },
       () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Failed to copy ${label.toLowerCase()}`,
-          life: 3000,
-        });
+        toast.error(`Failed to copy ${label.toLowerCase()}`);
       },
     );
   }

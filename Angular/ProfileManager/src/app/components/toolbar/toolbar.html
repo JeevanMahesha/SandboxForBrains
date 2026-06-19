@@ -1,53 +1,119 @@
-<p-toolbar>
-  <ng-template #start>
-    <div class="flex flex-col gap-2 md:flex-row">
-      <p-togglebutton
-        onLabel="Newest"
-        offLabel="Oldest"
-        onIcon="pi pi-sort-amount-down-alt"
-        offIcon="pi pi-sort-amount-up"
-        class="w-36"
-        ariaLabel="Do you confirm"
-        [formField]="filterForm.viewOrderCheck"
-      />
-      <p-select
-        placeholder="Select Status"
-        [options]="profileStatusOptions"
-        [formField]="$any(filterForm.profileStatus)"
-      />
-      <p-select
-        placeholder="Select Star"
-        [options]="scoreMatchOptions"
-        [formField]="$any(filterForm.starMatchScore)"
-      />
+<div
+  class="bg-card text-card-foreground flex flex-col gap-3 rounded-md border p-3 lg:flex-row lg:items-center lg:justify-between"
+>
+  <!-- Start: sort + filters -->
+  <div class="flex flex-col gap-2 md:flex-row md:items-center">
+    <div class="flex w-36 items-center gap-2 text-sm">
+      <hlm-switch aria-label="Sort order" [formField]="filterForm.viewOrderCheck" />
+      <span>{{ filterForm.viewOrderCheck().value() ? 'Newest' : 'Oldest' }}</span>
     </div>
-  </ng-template>
-  <ng-template #center>
-    <div class="flex flex-col gap-1.5 md:flex-row">
-      <p-iconfield iconPosition="left">
-        <p-inputicon class="pi pi-search" />
-        <input type="text" pInputText placeholder="Search" [formField]="filterForm.searchQuery" />
-      </p-iconfield>
-    </div>
-  </ng-template>
-  <ng-template #end>
-    <div class="flex flex-col gap-2 md:flex-row">
-      <p-button
-        icon="pi pi-filter-slash"
-        variant="outlined"
-        severity="secondary"
-        label="Clear"
-        [disabled]="!filterHasValue()"
-        (onClick)="clearForm()"
+
+    <hlm-select placeholder="Select Status" [formField]="filterForm.profileStatus">
+      <hlm-select-trigger class="w-44">
+        <hlm-select-value placeholder="Select Status" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (status of profileStatusOptions; track status.value) {
+          <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+
+    <hlm-select placeholder="Select Star" [formField]="filterForm.starMatchScore">
+      <hlm-select-trigger class="w-44">
+        <hlm-select-value placeholder="Select Star" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (score of scoreMatchOptions; track score) {
+          <hlm-select-item [value]="score">{{ score }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </div>
+
+  <!-- Center: search -->
+  <div class="relative md:w-64">
+    <ng-icon
+      hlm
+      name="lucideSearch"
+      size="sm"
+      class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
+    />
+    <input
+      hlmInput
+      type="text"
+      placeholder="Search"
+      class="w-full pl-8"
+      [formField]="filterForm.searchQuery"
+    />
+  </div>
+
+  <!-- End: actions -->
+  <div class="flex flex-col gap-2 md:flex-row">
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      size="icon"
+      aria-label="Toggle theme"
+      [attr.title]="`Theme: ${themeService.preference()}`"
+      (click)="themeService.cyclePreference()"
+    >
+      <ng-icon hlm size="sm" [name]="themeIcon()" />
+    </button>
+
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      [disabled]="!filterHasValue()"
+      (click)="clearForm()"
+    >
+      <ng-icon hlm name="lucideFilterX" size="sm" />
+      Clear
+    </button>
+
+    <div class="flex">
+      <button type="button" hlmBtn class="rounded-r-none" (click)="addNewProfileAction()">
+        <ng-icon hlm name="lucideUserPlus" size="sm" />
+        Add Profile
+      </button>
+      <button
+        #moreActionsBtn
+        type="button"
+        hlmBtn
+        class="rounded-l-none border-l border-l-primary-foreground/20 px-2"
+        aria-label="More actions"
+        [hlmDropdownMenuTrigger]="addMenu"
+      >
+        <ng-icon hlm name="lucideChevronDown" size="sm" />
+      </button>
+      <app-star-match
+        [togglePopover]="toggleStarMatch()"
+        [attachTo]="moreActionsBtn"
+        (starMatchHidden)="toggleStarMatch.set(false)"
       />
-      <p-splitbutton
-        label="Add Profile"
-        icon="pi pi-user-plus"
-        outlined
-        severity="success"
-        [model]="items"
-        (onClick)="addNewProfileAction()"
+      <app-zodiac-signs
+        [togglePopover]="toggleZodiacSigns()"
+        [attachTo]="moreActionsBtn"
+        (zodiacSignsHidden)="toggleZodiacSigns.set(false)"
       />
+      <ng-template #addMenu>
+        <hlm-dropdown-menu>
+          <button type="button" hlmDropdownMenuItem (click)="openZodiacSignPopover()">
+            <ng-icon hlm name="lucideSparkles" size="sm" />
+            Zodiac Signs
+          </button>
+          <button type="button" hlmDropdownMenuItem (click)="openStarMatchPopover()">
+            <ng-icon hlm name="lucideStar" size="sm" />
+            Preferred Star
+          </button>
+          <button type="button" hlmDropdownMenuItem (click)="logout()">
+            <ng-icon hlm name="lucideLogOut" size="sm" />
+            Log Out
+          </button>
+        </hlm-dropdown-menu>
+      </ng-template>
     </div>
-  </ng-template>
-</p-toolbar>
+  </div>
+</div>

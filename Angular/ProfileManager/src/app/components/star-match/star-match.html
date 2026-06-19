@@ -1,0 +1,45 @@
+@if (viewport.isMobile()) {
+  <hlm-sheet
+    side="bottom"
+    [state]="togglePopover() ? 'open' : 'closed'"
+    (closed)="starMatchHidden.emit()"
+  >
+    <hlm-sheet-content *hlmSheetPortal class="max-h-[85vh] overflow-y-auto">
+      <hlm-sheet-header>
+        <h3 hlmSheetTitle>Preferred Star</h3>
+      </hlm-sheet-header>
+      <ul class="divide-border divide-y px-4 pb-4">
+        <ng-container [ngTemplateOutlet]="starBody" />
+      </ul>
+    </hlm-sheet-content>
+  </hlm-sheet>
+} @else {
+  <hlm-popover
+    align="end"
+    [state]="togglePopover() ? 'open' : 'closed'"
+    [attachTo]="attachTo()"
+    [sideOffset]="4"
+    (closed)="starMatchHidden.emit()"
+  >
+    <hlm-popover-content
+      *hlmPopoverPortal="let ctx"
+      class="max-h-[80vh] w-72 max-w-[calc(100vw-2rem)] overflow-y-auto"
+    >
+      <hlm-popover-header>
+        <h3 hlmPopoverTitle>Preferred Star</h3>
+      </hlm-popover-header>
+      <ul class="divide-border divide-y">
+        <ng-container [ngTemplateOutlet]="starBody" />
+      </ul>
+    </hlm-popover-content>
+  </hlm-popover>
+}
+
+<ng-template #starBody>
+  @for (star of starMatchData; track $index) {
+    <li class="flex items-center justify-between py-3">
+      <p class="truncate text-sm font-medium">{{ $index + 1 }}. {{ star.starName }}</p>
+      <span class="text-base font-semibold">{{ star.score }}</span>
+    </li>
+  }
+</ng-template>

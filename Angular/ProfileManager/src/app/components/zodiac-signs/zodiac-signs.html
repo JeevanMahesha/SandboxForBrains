@@ -1,31 +1,52 @@
-<hlm-popover
-  align="end"
-  [state]="togglePopover() ? 'open' : 'closed'"
-  [attachTo]="attachTo()"
-  [sideOffset]="4"
-  (closed)="zodiacSignsHidden.emit()"
->
-  <hlm-popover-content
-    *hlmPopoverPortal="let ctx"
-    class="max-h-[80vh] w-96 max-w-[calc(100vw-2rem)] overflow-y-auto"
+@if (viewport.isMobile()) {
+  <hlm-sheet
+    side="bottom"
+    [state]="togglePopover() ? 'open' : 'closed'"
+    (closed)="zodiacSignsHidden.emit()"
   >
-    <hlm-popover-header>
-      <h3 hlmPopoverTitle>Zodiac Signs</h3>
-    </hlm-popover-header>
-    <div class="flex flex-col gap-2">
-      @for (item of zodiacSignsData; track item.key) {
-        <div class="flex flex-col gap-1 border-b py-2 last:border-b-0">
-          <div class="flex items-center justify-between">
-            <span class="font-semibold">{{ item.tanglish }}</span>
-            <span class="text-muted-foreground text-xs">{{ item.english }}</span>
-          </div>
-          <div class="flex flex-wrap gap-1">
-            @for (star of item.stars; track star) {
-              <span hlmBadge variant="secondary">{{ star }}</span>
-            }
-          </div>
-        </div>
-      }
+    <hlm-sheet-content *hlmSheetPortal class="max-h-[85vh] overflow-y-auto">
+      <hlm-sheet-header>
+        <h3 hlmSheetTitle>Zodiac Signs</h3>
+      </hlm-sheet-header>
+      <div class="flex flex-col gap-2 px-4 pb-4">
+        <ng-container [ngTemplateOutlet]="zodiacBody" />
+      </div>
+    </hlm-sheet-content>
+  </hlm-sheet>
+} @else {
+  <hlm-popover
+    align="end"
+    [state]="togglePopover() ? 'open' : 'closed'"
+    [attachTo]="attachTo()"
+    [sideOffset]="4"
+    (closed)="zodiacSignsHidden.emit()"
+  >
+    <hlm-popover-content
+      *hlmPopoverPortal="let ctx"
+      class="max-h-[80vh] w-96 max-w-[calc(100vw-2rem)] overflow-y-auto"
+    >
+      <hlm-popover-header>
+        <h3 hlmPopoverTitle>Zodiac Signs</h3>
+      </hlm-popover-header>
+      <div class="flex flex-col gap-2">
+        <ng-container [ngTemplateOutlet]="zodiacBody" />
+      </div>
+    </hlm-popover-content>
+  </hlm-popover>
+}
+
+<ng-template #zodiacBody>
+  @for (item of zodiacSignsData; track item.key) {
+    <div class="flex flex-col gap-1 border-b py-2 last:border-b-0">
+      <div class="flex items-center justify-between">
+        <span class="font-semibold">{{ item.tanglish }}</span>
+        <span class="text-muted-foreground text-xs">{{ item.english }}</span>
+      </div>
+      <div class="flex flex-wrap gap-1">
+        @for (star of item.stars; track star) {
+          <span hlmBadge variant="secondary">{{ star }}</span>
+        }
+      </div>
     </div>
-  </hlm-popover-content>
-</hlm-popover>
+  }
+</ng-template>

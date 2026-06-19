@@ -47,6 +47,8 @@
     "@primeuix/themes": "^2.0.3",
     "@spartan-ng/brain": "0.0.1-alpha.717",
     "@tailwindcss/postcss": "^4.2.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "firebase": "^12.11.0",
     "postcss": "^8.5.8",
     "primeicons": "^7.0.0",

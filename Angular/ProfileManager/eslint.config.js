@@ -49,7 +49,6 @@ module.exports = tseslint.config(
         },
       ],
       '@angular-eslint/component-class-suffix': 'off',
-      '@angular-eslint/no-experimental': 'warn',
       '@angular-eslint/directive-selector': [
         'error',
         {

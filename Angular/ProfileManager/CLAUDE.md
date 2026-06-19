@@ -27,9 +27,10 @@ The Husky pre-commit hook `cd`s into `Angular/ProfileManager` and runs `lint-sta
 
 ## Architecture
 
-A single-feature Angular 21 SPA for managing matrimony profiles, backed entirely by Firebase (Auth + Firestore). There is no backend server — the browser talks to Firestore directly.
+A single-feature Angular 22 SPA for managing matrimony profiles, backed entirely by Firebase (Auth + Firestore). There is no backend server — the browser talks to Firestore directly.
 
-**This codebase targets bleeding-edge Angular 21 APIs.** When writing code, match these patterns:
+**This codebase targets bleeding-edge Angular 22 APIs.** When writing code, match these patterns:
+
 - **Zoneless** change detection (`provideZonelessChangeDetection`) — no zone.js. All components use `ChangeDetectionStrategy.OnPush`.
 - **Signals everywhere** for state; `computed()` for derived state; `resource()` for async data.
 - **Signal forms** (`@angular/forms/signals`: `form`, `FormField`, `required`, `pattern`, etc.) — experimental. See [profile.ts](src/app/components/profile/profile.ts).
@@ -39,6 +40,7 @@ A single-feature Angular 21 SPA for managing matrimony profiles, backed entirely
 ### Firebase layer (`src/app/firebase/`)
 
 Firebase is wired manually via the **modular Firebase JS SDK** — NOT AngularFire. Do not add `@angular/fire`.
+
 - [provide-firebase.ts](src/app/firebase/provide-firebase.ts) exposes `provideFirebase(config)` and three `InjectionToken`s: `FIREBASE_APP`, `FIREBASE_AUTH`, `FIRESTORE`. Inject these tokens to get Firebase instances. Auth uses **session persistence** (`browserSessionPersistence`).
 - [firebase-rx.ts](src/app/firebase/firebase-rx.ts) bridges Firebase callback listeners (`onAuthStateChanged`, `onIdTokenChanged`) into shared RxJS observables.
 
@@ -49,6 +51,7 @@ Firebase is wired manually via the **modular Firebase JS SDK** — NOT AngularFi
 ### Profiles data (`src/app/services/profiles.service.ts`)
 
 The `providedIn: 'root'` `ProfilesService` is the data hub. Key pattern:
+
 - A `filterOptions` **signal** (`SortOption`: search/status/star-match/sort-direction) drives a `resource()` named `profiles`. Changing `filterOptions` re-runs the Firestore query automatically; mutations call `this.profiles.reload()`.
 - Firestore queries are composed with `where`/`orderBy`; rejected profiles are always sorted to the end client-side.
 - `mapDocToProfile` converts Firestore `Timestamp`s to `Date`s and handles legacy comment formats (string vs object) for backwards compatibility — preserve this when touching profile mapping.
@@ -56,18 +59,16 @@ The `providedIn: 'root'` `ProfilesService` is the data hub. Key pattern:
 
 ### UI
 
-PrimeNG 21 (Aura theme, dark mode via `.my-app-dark` selector) + Tailwind CSS 4 (configured via PostCSS, imported in `src/styles.css`). The profiles list renders a separate desktop view and mobile view component.
+**Spartan-ng** (Brain + Helm) + Tailwind CSS 4 — NOT PrimeNG (do not add it). Tailwind is configured via PostCSS and imported in `src/styles.css`, which also imports `@spartan-ng/brain/hlm-tailwind-preset.css` and defines the theme tokens (oklch CSS variables for `:root` and `.dark`).
 
-## Conventions (enforced by ESLint — see eslint.config.js)
-
-The config extends `@angular-eslint`'s **`all`** rule set, so linting is strict. Notable rules:
-- Component selectors: `app-` prefix, kebab-case element; directives: `app` prefix, camelCase attribute.
-- Inline template/style declarations capped at 30 lines (`component-max-inline-declarations`).
-- `unused-imports/no-unused-imports` is an **error** (auto-fixed); unused vars warn unless prefixed `_`.
-- From `.cursor/rules/cursor.mdc`: never set `standalone: true` (it's the default); no `@HostBinding`/`@HostListener` (use `host` object); no `ngClass`/`ngStyle` (use `class`/`style` bindings); native control flow (`@if`/`@for`/`@switch`) only; reactive/signal forms over template-driven; avoid `any` (use `unknown`); don't use signal `.mutate()`.
+- **Brain** (`@spartan-ng/brain/*`) = headless behavior primitives (`Brn*`); **Helm** (`@spartan-ng/helm/*`) = styled wrappers (`Hlm*`). Import the `Hlm*` components/import-arrays into a component's `imports`.
+- Helm components are **vendored into the repo** at `libs/ui/` (one folder per component), aliased as `@spartan-ng/helm` (see `components.json`). `libs/**` is gitignored from ESLint. Add new components with the Spartan CLI (`nx generate @spartan-ng/cli:ui` / the `spartan-ng` MCP) rather than hand-writing them.
+- Icons via `@ng-icons/lucide`.
+- **Dark mode** is driven by `ThemeService` ([theme.service.ts](src/app/services/theme.service.ts)), which toggles the `.dark` class on `<html>` and persists a `'light' | 'dark' | 'system'` preference. `App` injects it eagerly so its theme `effect()` runs for the session.
+- The profiles list renders a separate desktop view and mobile view component.
 
 TypeScript is in **strict** mode with `noPropertyAccessFromIndexSignature` — access dynamic Firestore fields with bracket notation (`data?.['field']`).
 
 ## MCP servers
 
-`.cursor/mcp.json` configures `angular-cli` and `primeng` MCP servers — useful for Angular schematics and PrimeNG component lookups.
+`.mcp.json` / `.vscode/mcp.json` configure `angular-cli` (schematics, best practices, docs), `spartan-ng` (Spartan component lookup/add), and `firebase` (Firestore/Auth) MCP servers. Prefer these over raw shell for equivalent actions.

@@ -67,6 +67,7 @@
         Add Profile
       </button>
       <button
+        #moreActionsBtn
         type="button"
         hlmBtn
         class="rounded-l-none border-l border-l-primary-foreground/20 px-2"
@@ -75,6 +76,16 @@
       >
         <ng-icon hlm name="lucideChevronDown" size="sm" />
       </button>
+      <app-star-match
+        [togglePopover]="toggleStarMatch()"
+        [attachTo]="moreActionsBtn"
+        (starMatchHidden)="toggleStarMatch.set(false)"
+      />
+      <app-zodiac-signs
+        [togglePopover]="toggleZodiacSigns()"
+        [attachTo]="moreActionsBtn"
+        (zodiacSignsHidden)="toggleZodiacSigns.set(false)"
+      />
       <ng-template #addMenu>
         <hlm-dropdown-menu>
           <button type="button" hlmDropdownMenuItem (click)="openZodiacSignPopover()">

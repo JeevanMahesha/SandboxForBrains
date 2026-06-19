@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -20,6 +20,8 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
+import { StarMatch } from '../star-match/star-match';
+import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 
 @Component({
   selector: 'app-toolbar',
@@ -31,6 +33,8 @@ import { ProfilesService } from '../../services/profiles.service';
     ...HlmSwitchImports,
     ...HlmDropdownMenuImports,
     ...HlmIconImports,
+    StarMatch,
+    ZodiacSigns,
   ],
   templateUrl: './toolbar.html',
   providers: [
@@ -58,8 +62,8 @@ export class Toolbar {
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, 800);
   });
-  readonly openStarMatch = output<void>();
-  readonly openZodiacSign = output<void>();
+  readonly toggleStarMatch = signal<boolean>(false);
+  readonly toggleZodiacSigns = signal<boolean>(false);
 
   readonly filterHasValue = computed(() => {
     const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } =
@@ -74,11 +78,11 @@ export class Toolbar {
   });
 
   openStarMatchPopover() {
-    this.openStarMatch.emit();
+    this.toggleStarMatch.set(true);
   }
 
   openZodiacSignPopover() {
-    this.openZodiacSign.emit();
+    this.toggleZodiacSigns.set(true);
   }
 
   addNewProfileAction() {

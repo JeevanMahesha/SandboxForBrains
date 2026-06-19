@@ -35,7 +35,8 @@
       "@spartan-ng/helm/input-group": ["./libs/ui/input-group/src/index.ts"],
       "@spartan-ng/helm/textarea": ["./libs/ui/textarea/src/index.ts"],
       "@spartan-ng/helm/sonner": ["./libs/ui/sonner/src/index.ts"],
-      "@spartan-ng/helm/alert-dialog": ["./libs/ui/alert-dialog/src/index.ts"]
+      "@spartan-ng/helm/alert-dialog": ["./libs/ui/alert-dialog/src/index.ts"],
+      "@spartan-ng/helm/spinner": ["./libs/ui/spinner/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

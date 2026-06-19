@@ -22,7 +22,13 @@ import {
 } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
-import { lucideCheck, lucideCopy, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
+import {
+  lucideCheck,
+  lucideCopy,
+  lucideLoaderCircle,
+  lucidePlus,
+  lucideTrash2,
+} from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '@spartan-ng/helm/button';
@@ -31,6 +37,7 @@ import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
+import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
   DISTRICT_LIST,
   MATCHING_STARS,
@@ -58,9 +65,12 @@ import { ProfilesService } from '../../services/profiles.service';
     ...HlmFieldImports,
     ...HlmSelectImports,
     ...HlmIconImports,
+    HlmSpinner,
   ],
   templateUrl: './profile.html',
-  providers: [provideIcons({ lucideCopy, lucidePlus, lucideTrash2, lucideCheck })],
+  providers: [
+    provideIcons({ lucideCopy, lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle }),
+  ],
 })
 export class Profile {
   readonly actionType = input.required<ToolbarAction | undefined>();

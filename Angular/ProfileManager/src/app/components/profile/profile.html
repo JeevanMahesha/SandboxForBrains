@@ -306,8 +306,13 @@
           [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
           (click)="submitButton.click()"
         >
-          <ng-icon hlm name="lucideCheck" size="sm" />
-          {{ buttonLabel() }}
+          @if (profileDetailForm().submitting()) {
+            <hlm-spinner data-icon="inline-start" />
+            Saving…
+          } @else {
+            <ng-icon hlm name="lucideCheck" size="sm" />
+            {{ buttonLabel() }}
+          }
         </button>
       </hlm-sheet-footer>
     }

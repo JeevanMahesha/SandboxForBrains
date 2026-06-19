@@ -37,6 +37,7 @@
         </div>
         <button hlmBtn type="submit" class="w-full" [disabled]="loginForm().submitting()">
           @if (loginForm().submitting()) {
+            <hlm-spinner data-icon="inline-start" />
             Signing in…
           } @else {
             Login

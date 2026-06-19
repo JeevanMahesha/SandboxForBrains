@@ -1,11 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
+import { provideIcons } from '@ng-icons/core';
+import { lucideLoaderCircle } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { UserCredential } from 'firebase/auth';
 import { AuthService } from '../../services/auth.service';
 
@@ -16,8 +19,17 @@ interface Login {
 
 @Component({
   selector: 'app-login',
-  imports: [FormField, FormRoot, HlmButton, HlmInput, ...HlmCardImports, ...HlmFieldImports],
+  imports: [
+    FormField,
+    FormRoot,
+    HlmButton,
+    HlmInput,
+    ...HlmCardImports,
+    ...HlmFieldImports,
+    HlmSpinnerImports,
+  ],
   templateUrl: './login.html',
+  providers: [provideIcons({ lucideLoaderCircle })],
 })
 export default class LoginComponent {
   private authService = inject(AuthService);

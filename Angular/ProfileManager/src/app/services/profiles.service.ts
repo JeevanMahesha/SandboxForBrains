@@ -1,6 +1,10 @@
 import { Service, WritableSignal, inject, resource, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
+import ConfirmDialog, {
+  ConfirmDialogContext,
+} from '../components/confirm-dialog/confirm-dialog';
 import {
   DocumentSnapshot,
   OrderByDirection,
@@ -29,9 +33,9 @@ export class ProfilesService {
 
   profiles = resource<ProfileDetail[], SortOption | undefined>({
     defaultValue: [],
-    // Gate the query on auth: this service is instantiated at app startup (the global
-    // confirm dialog injects it), so without this guard the Firestore query would fire
-    // before login and fail with a permission error, then never re-run. Returning
+    // Gate the query on auth: this service can be instantiated before login, so without
+    // this guard the Firestore query would fire before login and fail with a permission
+    // error, then never re-run. Returning
     // `undefined` keeps the resource idle until the user is authenticated, at which point
     // the param flips and the loader runs automatically (covers both fresh login and reload).
     params: () => (this.authService.isAuthenticated() ? this.filterOptions() : undefined),
@@ -63,21 +67,28 @@ export class ProfilesService {
     starMatchScore: null,
   });
 
-  /** Id of the profile awaiting delete confirmation; drives the confirm alert-dialog. */
-  public readonly pendingDeleteId = signal<string | null>(null);
+  private readonly dialogService = inject(HlmDialogService);
 
-  /** Opens the delete confirmation dialog for the given profile. */
+  /** Opens a confirmation dialog and deletes the profile when the user confirms. */
   deleteProfile(id: string): void {
-    this.pendingDeleteId.set(id);
+    const dialogRef = this.dialogService.open(ConfirmDialog, {
+      context: {
+        title: 'Confirm Delete',
+        description: 'Do you want to delete this record?',
+        confirmLabel: 'Delete',
+        destructive: true,
+      } satisfies ConfirmDialogContext,
+      contentClass: 'sm:max-w-md',
+    });
+
+    dialogRef.closed$.subscribe((confirmed) => {
+      if (confirmed) {
+        this.removeProfile(id);
+      }
+    });
   }
 
-  /** Confirms the pending delete (invoked by the alert-dialog's Delete action). */
-  confirmDelete(): void {
-    const id = this.pendingDeleteId();
-    this.pendingDeleteId.set(null);
-    if (!id) {
-      return;
-    }
+  private removeProfile(id: string): void {
     const docRef = doc(this.firestore, 'profiles', id);
     deleteDoc(docRef)
       .then(() => {
@@ -87,11 +98,6 @@ export class ProfilesService {
       .catch(() => {
         toast.error('Failed to delete profile');
       });
-  }
-
-  /** Cancels the pending delete (invoked by the alert-dialog's Cancel action). */
-  cancelDelete(): void {
-    this.pendingDeleteId.set(null);
   }
 
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {

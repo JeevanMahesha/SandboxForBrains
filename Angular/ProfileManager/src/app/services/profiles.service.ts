@@ -16,7 +16,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { toast } from '@spartan-ng/brain/sonner';
 import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
@@ -49,8 +49,6 @@ export class ProfilesService {
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
   public readonly router = inject(Router);
-  public readonly messageService = inject(MessageService);
-  public readonly confirmationService = inject(ConfirmationService);
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
     viewOrderCheck: false,
@@ -59,54 +57,35 @@ export class ProfilesService {
     starMatchScore: null,
   });
 
-  deleteProfile(id: string, event: Event): void {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: 'Do you want to delete this record?',
-      header: 'Confirm Delete',
-      icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptButtonProps: {
-        label: 'Delete',
-        severity: 'danger',
-      },
-      closable: false,
+  /** Id of the profile awaiting delete confirmation; drives the confirm alert-dialog. */
+  public readonly pendingDeleteId = signal<string | null>(null);
 
-      accept: () => {
-        const docRef = doc(this.firestore, 'profiles', id);
-        deleteDoc(docRef)
-          .then(() => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Profile deleted successfully',
-              life: 2000,
-            });
-            this.profiles.reload();
-          })
-          .catch(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to delete profile',
-              life: 3000,
-            });
-          });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rejected',
-          detail: 'You have rejected',
-          life: 2000,
-        });
-      },
-    });
+  /** Opens the delete confirmation dialog for the given profile. */
+  deleteProfile(id: string): void {
+    this.pendingDeleteId.set(id);
+  }
+
+  /** Confirms the pending delete (invoked by the alert-dialog's Delete action). */
+  confirmDelete(): void {
+    const id = this.pendingDeleteId();
+    this.pendingDeleteId.set(null);
+    if (!id) {
+      return;
+    }
+    const docRef = doc(this.firestore, 'profiles', id);
+    deleteDoc(docRef)
+      .then(() => {
+        toast.success('Profile deleted successfully');
+        this.profiles.reload();
+      })
+      .catch(() => {
+        toast.error('Failed to delete profile');
+      });
+  }
+
+  /** Cancels the pending delete (invoked by the alert-dialog's Cancel action). */
+  cancelDelete(): void {
+    this.pendingDeleteId.set(null);
   }
 
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
@@ -183,14 +162,14 @@ export class ProfilesService {
     return null;
   }
 
-  userActionEvent(userActionType: ToolbarAction, profileId: string | null, event?: Event): void {
+  userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
     const userAction: UserActions = {
       actionType: userActionType,
       selectedProfileId: profileId,
       openDrawer: true,
     };
     if (userActionType === 'delete') {
-      this.deleteProfile(profileId!, event!);
+      this.deleteProfile(profileId!);
       return;
     }
     this.router.navigate([], {
@@ -202,20 +181,10 @@ export class ProfilesService {
     if (!value) return;
     navigator.clipboard.writeText(value).then(
       () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `${label} copied to clipboard!`,
-          life: 2000,
-        });
+        toast.success(`${label} copied to clipboard!`);
       },
       () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Failed to copy ${label.toLowerCase()}`,
-          life: 3000,
-        });
+        toast.error(`Failed to copy ${label.toLowerCase()}`);
       },
     );
   }

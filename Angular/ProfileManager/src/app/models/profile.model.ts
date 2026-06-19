@@ -27,4 +27,5 @@ export interface ProfileDetail {
   id?: number;
   sNo?: number;
   profileStatus?: (typeof PROFILE_STATUS)[keyof typeof PROFILE_STATUS];
+  profileStatusColor?: string;
 }

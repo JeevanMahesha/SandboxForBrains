@@ -8,6 +8,7 @@ import {
   input,
   model,
   signal,
+  untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -21,16 +22,16 @@ import {
   required,
 } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { DrawerModule } from 'primeng/drawer';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectChangeEvent, SelectModule } from 'primeng/select';
-import { TimelineModule } from 'primeng/timeline';
+import { provideIcons } from '@ng-icons/core';
+import { lucideCheck, lucideCopy, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
+import { toast } from '@spartan-ng/brain/sonner';
+import { BrnSheetContent } from '@spartan-ng/brain/sheet';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import {
   DISTRICT_LIST,
   MATCHING_STARS,
@@ -45,22 +46,21 @@ import { ProfilesService } from '../../services/profiles.service';
 @Component({
   selector: 'app-profile',
   imports: [
-    DrawerModule,
-    InputTextModule,
-    FloatLabelModule,
-    SelectModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    InputNumberModule,
     FormField,
+    FormRoot,
     FormsModule,
-    ButtonModule,
-    TimelineModule,
     KeyValuePipe,
     DatePipe,
-    FormRoot,
+    BrnSheetContent,
+    HlmButton,
+    HlmInput,
+    ...HlmSheetImports,
+    ...HlmFieldImports,
+    ...HlmSelectImports,
+    ...HlmIconImports,
   ],
   templateUrl: './profile.html',
+  providers: [provideIcons({ lucideCopy, lucidePlus, lucideTrash2, lucideCheck })],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Profile {
@@ -99,7 +99,6 @@ export class Profile {
   );
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
-  private messageService = inject(MessageService);
 
   readonly newComment = model<string>('');
 
@@ -165,20 +164,19 @@ export class Profile {
             }
           })
           .catch(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch profile',
-            });
+            toast.error('Failed to fetch profile');
           });
       }
     });
-  }
 
-  onStarChange(event: SelectChangeEvent): void {
-    this.profileDetailForm
-      .starMatchScore()
-      .value.set(MATCHING_STARS[event.value as keyof typeof MATCHING_STARS]);
+    // Derive starMatchScore from the selected star (replaces PrimeNG's (onChange) handler).
+    effect(() => {
+      const star = this.profileDetailForm.star().value();
+      if (star && star in MATCHING_STARS) {
+        const score = MATCHING_STARS[star as keyof typeof MATCHING_STARS];
+        untracked(() => this.profileDetailForm.starMatchScore().value.set(score));
+      }
+    });
   }
 
   copyToClipboard(value: string | null | undefined, label: string): void {
@@ -219,21 +217,12 @@ export class Profile {
     return await this.profileService
       .addProfile(profileData)
       .then(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Profile added successfully',
-          life: 3000,
-        });
+        toast.success('Profile added successfully');
         this.profileService.profiles.reload();
         this.closeDrawer();
       })
       .catch(() => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to add profile',
-        });
+        toast.error('Failed to add profile');
       });
   }
 
@@ -241,21 +230,12 @@ export class Profile {
     return await this.profileService
       .updateProfile(this.selectedProfileId()!, profileData)
       .then(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Profile updated successfully',
-          life: 3000,
-        });
+        toast.success('Profile updated successfully');
         this.profileService.profiles.reload();
         this.closeDrawer();
       })
       .catch(() => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update profile',
-        });
+        toast.error('Failed to update profile');
       });
   }
 }

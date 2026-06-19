@@ -1,223 +1,254 @@
-<p-drawer
-  styleClass="!w-full md:!w-80 lg:!w-[30rem]"
-  position="right"
-  dismissible="false"
-  [header]="title()"
-  [visible]="openDrawer() ?? false"
-  (onHide)="closeDrawer()"
+<hlm-sheet
+  side="right"
+  [closeOnBackdropClick]="false"
+  [state]="(openDrawer() ?? false) ? 'open' : 'closed'"
+  (closed)="closeDrawer()"
 >
-  <form [formRoot]="profileDetailForm">
-    <div class="flex flex-col mt-2 gap-4">
-      <p-floatlabel class="w-full" variant="on">
-        <!--
-        FIX:ME
-        [class.p-invalid]="" This is temporary fix
-        https://github.com/primefaces/primeng/issues/19119
-        -->
-        <input
-          pInputText
-          type="text"
-          pSize="large"
-          inputId="name"
-          fluid
-          [class.p-invalid]="
-            profileDetailForm.name().touched() && profileDetailForm.name().invalid()
-          "
-          [formField]="profileDetailForm.name"
-        />
-        <label for="name">Name</label>
-      </p-floatlabel>
+  <hlm-sheet-content
+    *brnSheetContent
+    class="flex w-full flex-col gap-0 sm:max-w-md! lg:max-w-120!"
+  >
+    <hlm-sheet-header>
+      <h3 hlmSheetTitle>{{ title() }}</h3>
+    </hlm-sheet-header>
 
-      <p-floatlabel class="w-full" variant="on">
-        <p-select
-          inputId="profile_status"
-          optionLabel="value"
-          optionValue="key"
-          class="w-full"
-          [class.p-invalid]="
-            profileDetailForm.profileStatusId().touched() &&
-            profileDetailForm.profileStatusId().invalid()
-          "
-          [formField]="$any(profileDetailForm.profileStatusId)"
-          [options]="PROFILE_STATUS_DATA | keyvalue"
-        />
-        <label for="profile_status">Profile Status</label>
-      </p-floatlabel>
-      <p-inputgroup>
-        <input
-          pInputText
-          placeholder="Matrimony ID"
-          [class.p-invalid]="
-            profileDetailForm.mobileNumber().touched() && profileDetailForm.mobileNumber().invalid()
-          "
-          [formField]="profileDetailForm.mobileNumber"
-        />
-        @if (actionType() === 'view') {
-          <p-inputgroup-addon>
-            <p-button
-              icon="pi pi-copy"
-              severity="secondary"
-              (onClick)="copyToClipboard(profileDetailForm.mobileNumber().value(), 'Mobile Number')"
-            />
-          </p-inputgroup-addon>
-        }
-      </p-inputgroup>
-
-      <p-inputgroup>
-        <input
-          pInputText
-          placeholder="Matrimony ID"
-          [class.p-invalid]="
-            profileDetailForm.matrimonyId().touched() && profileDetailForm.matrimonyId().invalid()
-          "
-          [formField]="profileDetailForm.matrimonyId"
-        />
-        @if (actionType() === 'view') {
-          <p-inputgroup-addon>
-            <p-button
-              icon="pi pi-copy"
-              severity="secondary"
-              (onClick)="copyToClipboard(profileDetailForm.matrimonyId().value(), 'Matrimony ID')"
-            />
-          </p-inputgroup-addon>
-        }
-      </p-inputgroup>
-
-      <p-floatlabel class="w-full" variant="on">
-        <p-select
-          inputId="zodiac_sign"
-          optionLabel="value"
-          optionValue="key"
-          class="w-full"
-          [class.p-invalid]="
-            profileDetailForm.zodiacSign().touched() && profileDetailForm.zodiacSign().invalid()
-          "
-          [formField]="$any(profileDetailForm.zodiacSign)"
-          [options]="ZODIAC_SIGN_DATA"
-        />
-        <label for="zodiac_sign">Zodiac Sign</label>
-      </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
-        <p-select
-          inputId="star_sign"
-          optionLabel="value"
-          optionValue="key"
-          class="w-full"
-          [class.p-invalid]="
-            profileDetailForm.star().touched() && profileDetailForm.star().invalid()
-          "
-          [formField]="$any(profileDetailForm.star)"
-          [options]="STARS_DATA"
-          (onChange)="onStarChange($event)"
-        />
-        <label for="star_sign">Star Sign</label>
-      </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
-        <p-inputnumber
-          fluid
-          inputId="age"
-          mode="decimal"
-          [class.p-invalid]="profileDetailForm.age().touched() && profileDetailForm.age().invalid()"
-          [formField]="$any(profileDetailForm.age)"
-        />
-        <label for="age">Age</label>
-      </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
-        <p-inputnumber
-          fluid
-          inputId="star_match_score"
-          mode="decimal"
-          [class.p-invalid]="
-            profileDetailForm.starMatchScore().touched() &&
-            profileDetailForm.starMatchScore().invalid()
-          "
-          [formField]="$any(profileDetailForm.starMatchScore)"
-        />
-        <label for="star_match_score">Star Match Score</label>
-      </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
-        <p-select
-          inputId="state"
-          class="w-full"
-          [class.p-invalid]="
-            profileDetailForm.state().touched() && profileDetailForm.state().invalid()
-          "
-          [formField]="$any(profileDetailForm.state)"
-          [options]="STATE_LIST"
-        />
-        <label for="state">State</label>
-      </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
-        <p-select
-          inputId="city"
-          class="w-full"
-          [class.p-invalid]="
-            profileDetailForm.city().touched() && profileDetailForm.city().invalid()
-          "
-          [formField]="$any(profileDetailForm.city)"
-          [options]="cityList()"
-        />
-        <label for="city">City</label>
-      </p-floatlabel>
-      @if (actionType() !== 'view') {
-        <p-inputgroup>
+    <form class="flex-1 overflow-y-auto px-1 pb-4" [formRoot]="profileDetailForm">
+      <div class="mt-2 flex flex-col gap-4">
+        <div hlmField>
+          <label hlmFieldLabel for="name">Name</label>
           <input
-            pInputText
-            placeholder="Comments"
-            [ngModelOptions]="{ standalone: true }"
-            [(ngModel)]="newComment"
+            hlmInput
+            id="name"
+            type="text"
+            class="w-full"
+            [formField]="profileDetailForm.name"
+            [forceInvalid]="profileDetailForm.name().touched() && profileDetailForm.name().invalid()"
           />
-          <p-inputgroup-addon>
-            <p-button
-              icon="pi pi-plus"
-              severity="help"
-              [disabled]="!newComment()"
-              (click)="addComment()"
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="profile_status">Profile Status</label>
+          <hlm-select id="profile_status" class="w-full" [formField]="$any(profileDetailForm.profileStatusId)">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (status of PROFILE_STATUS_DATA | keyvalue; track status.key) {
+                <hlm-select-item [value]="status.key">{{ status.value }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="mobile">Mobile Number</label>
+          <div class="flex gap-2">
+            <input
+              hlmInput
+              id="mobile"
+              class="w-full"
+              placeholder="Mobile Number"
+              [formField]="profileDetailForm.mobileNumber"
+              [forceInvalid]="
+                profileDetailForm.mobileNumber().touched() &&
+                profileDetailForm.mobileNumber().invalid()
+              "
             />
-          </p-inputgroup-addon>
-        </p-inputgroup>
-      }
-      <p-timeline
-        class="w-full md:w-80"
-        align="alternate"
-        [value]="profileDetailForm.comments().value()"
-      >
-        <ng-template #content let-comment>
-          <div class="flex flex-col gap-1">
-            @if (actionType() !== 'view') {
-              <p-button
-                icon="pi pi-trash"
-                severity="danger"
-                [rounded]="true"
-                [text]="true"
-                (onClick)="deleteComment(comment)"
-              />
+            @if (actionType() === 'view') {
+              <button
+                type="button"
+                hlmBtn
+                variant="secondary"
+                size="icon"
+                aria-label="Copy mobile number"
+                (click)="copyToClipboard(profileDetailForm.mobileNumber().value(), 'Mobile Number')"
+              >
+                <ng-icon hlm name="lucideCopy" size="sm" />
+              </button>
             }
-            <small class="text-surface-500 dark:text-surface-400"
-              >{{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
-            </small>
-            {{ comment.value }}
           </div>
-        </ng-template>
-      </p-timeline>
-    </div>
-    <button #submitButton hidden type="submit"></button>
-  </form>
-  @if (actionType() !== 'view') {
-    <ng-template #footer>
-      <div
-        class="flex items-center gap-2 justify-end w-full bg-white border-t border-surface-200 p-3"
-      >
-        <p-button
-          type="button"
-          severity="success"
-          icon="pi pi-check"
-          [label]="buttonLabel()"
-          [loading]="profileDetailForm().submitting()"
-          [disabled]="profileDetailForm().invalid() || !!newComment()"
-          (onClick)="submitButton.click()"
-        />
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="matrimony">Matrimony ID</label>
+          <div class="flex gap-2">
+            <input
+              hlmInput
+              id="matrimony"
+              class="w-full"
+              placeholder="Matrimony ID"
+              [formField]="profileDetailForm.matrimonyId"
+              [forceInvalid]="
+                profileDetailForm.matrimonyId().touched() &&
+                profileDetailForm.matrimonyId().invalid()
+              "
+            />
+            @if (actionType() === 'view') {
+              <button
+                type="button"
+                hlmBtn
+                variant="secondary"
+                size="icon"
+                aria-label="Copy matrimony ID"
+                (click)="copyToClipboard(profileDetailForm.matrimonyId().value(), 'Matrimony ID')"
+              >
+                <ng-icon hlm name="lucideCopy" size="sm" />
+              </button>
+            }
+          </div>
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="zodiac_sign">Zodiac Sign</label>
+          <hlm-select id="zodiac_sign" class="w-full" [formField]="$any(profileDetailForm.zodiacSign)">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (zodiac of ZODIAC_SIGN_DATA; track zodiac.key) {
+                <hlm-select-item [value]="zodiac.key">{{ zodiac.value }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="star_sign">Star Sign</label>
+          <hlm-select id="star_sign" class="w-full" [formField]="$any(profileDetailForm.star)">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (star of STARS_DATA; track star.key) {
+                <hlm-select-item [value]="star.key">{{ star.value }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="age">Age</label>
+          <input
+            hlmInput
+            id="age"
+            type="number"
+            class="w-full"
+            [formField]="$any(profileDetailForm.age)"
+            [forceInvalid]="profileDetailForm.age().touched() && profileDetailForm.age().invalid()"
+          />
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="star_match_score">Star Match Score</label>
+          <input
+            hlmInput
+            id="star_match_score"
+            type="number"
+            class="w-full"
+            [formField]="$any(profileDetailForm.starMatchScore)"
+          />
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="state">State</label>
+          <hlm-select id="state" class="w-full" [formField]="$any(profileDetailForm.state)">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (state of STATE_LIST; track state) {
+                <hlm-select-item [value]="state">{{ state }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+        </div>
+
+        <div hlmField>
+          <label hlmFieldLabel for="city">City</label>
+          <hlm-select id="city" class="w-full" [formField]="$any(profileDetailForm.city)">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (city of cityList(); track city) {
+                <hlm-select-item [value]="city">{{ city }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+        </div>
+
+        @if (actionType() !== 'view') {
+          <div hlmField>
+            <label hlmFieldLabel for="comment">Comments</label>
+            <div class="flex gap-2">
+              <input
+                hlmInput
+                id="comment"
+                class="w-full"
+                placeholder="Add a comment"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="newComment"
+              />
+              <button
+                type="button"
+                hlmBtn
+                size="icon"
+                aria-label="Add comment"
+                [disabled]="!newComment()"
+                (click)="addComment()"
+              >
+                <ng-icon hlm name="lucidePlus" size="sm" />
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (profileDetailForm.comments().value().length) {
+          <div class="border-border ml-2 flex flex-col gap-3 border-l pl-4">
+            @for (comment of profileDetailForm.comments().value(); track $index) {
+              <div class="relative">
+                <div class="flex items-center justify-between gap-2">
+                  <small class="text-muted-foreground">
+                    {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
+                  </small>
+                  @if (actionType() !== 'view') {
+                    <button
+                      type="button"
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      class="text-destructive"
+                      aria-label="Delete comment"
+                      (click)="deleteComment(comment)"
+                    >
+                      <ng-icon hlm name="lucideTrash2" size="sm" />
+                    </button>
+                  }
+                </div>
+                <p class="text-sm">{{ comment.value }}</p>
+              </div>
+            }
+          </div>
+        }
       </div>
-    </ng-template>
-  }
-</p-drawer>
+      <button #submitButton hidden type="submit"></button>
+    </form>
+
+    @if (actionType() !== 'view') {
+      <hlm-sheet-footer>
+        <button
+          type="button"
+          hlmBtn
+          class="w-full"
+          [disabled]="
+            profileDetailForm().submitting() || profileDetailForm().invalid() || !!newComment()
+          "
+          (click)="submitButton.click()"
+        >
+          <ng-icon hlm name="lucideCheck" size="sm" />
+          {{ buttonLabel() }}
+        </button>
+      </hlm-sheet-footer>
+    }
+  </hlm-sheet-content>
+</hlm-sheet>

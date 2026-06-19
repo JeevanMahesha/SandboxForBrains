@@ -16,6 +16,7 @@ import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSwitchImports } from '@spartan-ng/helm/switch';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
@@ -88,19 +89,11 @@ export class Toolbar {
     await this.authService
       .logout()
       .then(() => {
-        this.profileService.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Logged out successfully',
-        });
+        toast.success('Logged out successfully');
         this.profileService.router.navigate(['/login']);
       })
       .catch((error) => {
-        this.profileService.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to log out',
-        });
+        toast.error('Failed to log out');
         console.error('Error logging out:', error);
       });
   }

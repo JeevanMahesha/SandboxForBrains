@@ -26,7 +26,16 @@
       "@spartan-ng/helm/dropdown-menu": ["./libs/ui/dropdown-menu/src/index.ts"],
       "@spartan-ng/helm/popover": ["./libs/ui/popover/src/index.ts"],
       "@spartan-ng/helm/badge": ["./libs/ui/badge/src/index.ts"],
-      "@spartan-ng/helm/dialog": ["./libs/ui/dialog/src/index.ts"]
+      "@spartan-ng/helm/dialog": ["./libs/ui/dialog/src/index.ts"],
+      "@spartan-ng/helm/table": ["./libs/ui/table/src/index.ts"],
+      "@spartan-ng/helm/skeleton": ["./libs/ui/skeleton/src/index.ts"],
+      "@spartan-ng/helm/pagination": ["./libs/ui/pagination/src/index.ts"],
+      "@spartan-ng/helm/tooltip": ["./libs/ui/tooltip/src/index.ts"],
+      "@spartan-ng/helm/sheet": ["./libs/ui/sheet/src/index.ts"],
+      "@spartan-ng/helm/input-group": ["./libs/ui/input-group/src/index.ts"],
+      "@spartan-ng/helm/textarea": ["./libs/ui/textarea/src/index.ts"],
+      "@spartan-ng/helm/sonner": ["./libs/ui/sonner/src/index.ts"],
+      "@spartan-ng/helm/alert-dialog": ["./libs/ui/alert-dialog/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

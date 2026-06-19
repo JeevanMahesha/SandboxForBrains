@@ -1,14 +1,16 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
+import { BrnAlertDialogContent } from '@spartan-ng/brain/alert-dialog';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmToaster } from '@spartan-ng/helm/sonner';
+import { ProfilesService } from './services/profiles.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmDialogModule, ToastModule],
-  template: `<p-toast />
-    <p-confirmdialog />
-    <router-outlet /> `,
+  imports: [RouterOutlet, HlmToaster, BrnAlertDialogContent, ...HlmAlertDialogImports],
+  templateUrl: './app.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {}
+export class App {
+  protected readonly profileService = inject(ProfilesService);
+}

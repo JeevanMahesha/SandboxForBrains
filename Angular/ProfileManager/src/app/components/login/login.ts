@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { UserCredential } from 'firebase/auth';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 
 interface Login {
@@ -23,7 +23,6 @@ interface Login {
 export default class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private messageService = inject(MessageService);
   readonly loginModel = signal<Login>({
     email: '',
     password: '',
@@ -43,19 +42,11 @@ export default class LoginComponent {
             .login(email().value(), password().value())
             .then((userCredential: UserCredential) => {
               this.authService.currentUser.set(userCredential.user);
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Login successful',
-              });
+              toast.success('Login successful');
               this.router.navigate(['/']);
             })
             .catch(() => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Login failed',
-              });
+              toast.error('Login failed');
             });
         },
       },

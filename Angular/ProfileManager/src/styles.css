@@ -5,12 +5,6 @@
 @import 'tailwindcss/utilities.css';
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
 
-/* ── PrimeNG bridges (TEMPORARY) ─────────────────────────────────────────────
-   Kept while the migration is in progress so existing PrimeNG components keep
-   rendering. Removed in Phase 5 once PrimeNG is fully decommissioned. */
-@import 'tailwindcss-primeui';
-@import 'primeicons/primeicons.css';
-
 /* ── Spartan theme tokens (light) ───────────────────────────────────────── */
 :root {
   color-scheme: light;
@@ -92,10 +86,6 @@
 }
 
 /* ── App layout (existing) ──────────────────────────────────────────────── */
-body {
-  background-color: #8b9198;
-}
-
 .layout-wrapper {
   min-height: 100vh;
 }

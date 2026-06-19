@@ -1,88 +1,116 @@
-<p-table
-  stripedRows
-  class="p-treetable-sm mt-2"
-  [value]="profileData()"
-  [paginator]="true"
-  [rows]="10"
-  [rowsPerPageOptions]="[10, 25, 50]"
-  [loading]="isLoading()"
-  [totalRecords]="profileData().length"
->
-  <ng-template #header>
-    <tr>
-      <th>Sl No</th>
-      <th>Name</th>
-      <th>Zodiac Sign</th>
-      <th>City</th>
-      <th>Profile Status</th>
-      <th>Matrimony ID</th>
-      <th>Mobile Number</th>
-      <th>
-        <span class="pi pi-star"></span>
-        Score
-      </th>
-      <th>Actions</th>
-    </tr>
-  </ng-template>
-  <ng-template #body let-profile let-ri="rowIndex">
-    <tr>
-      <td>{{ ri + 1 }}</td>
-      <td>{{ profile.name }}</td>
-      <td>{{ profile.zodiacSign }}</td>
-      <td>{{ profile.city }}</td>
-      <td>
-        <p-tag [class]="profile.profileStatusColor ?? ''" [value]="profile.profileStatus" />
-      </td>
-      <td>
-        <p-button
-          severity="secondary"
-          icon="pi pi-copy"
-          iconPos="right"
-          [label]="profile.matrimonyId"
-          [rounded]="true"
-          (onClick)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
-        />
-      </td>
-      <td>
-        <p-button
-          severity="secondary"
-          icon="pi pi-copy"
-          iconPos="right"
-          [label]="profile.mobileNumber"
-          [rounded]="true"
-          (onClick)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
-        />
-      </td>
-      <td>{{ profile.starMatchScore }}</td>
-      <td>
-        <p-button
-          icon="pi pi-pencil"
-          [rounded]="true"
-          [text]="true"
-          (onClick)="userActionEvent('edit', profile.id)"
-        />
-        <p-button
-          icon="pi pi-trash"
-          severity="danger"
-          [rounded]="true"
-          [text]="true"
-          (onClick)="userActionEvent('delete', profile.id, $event)"
-        />
-        <p-button
-          icon="pi pi-eye"
-          severity="info"
-          [rounded]="true"
-          [text]="true"
-          (onClick)="userActionEvent('view', profile.id)"
-        />
-      </td>
-    </tr>
-  </ng-template>
-  <ng-template #footer>
-    <tr>
-      <td colspan="9" class="text-center!">
-        In total there are {{ profileData().length }} profiles.
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+<div hlmTableContainer class="mt-2">
+  <table hlmTable class="w-full">
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th hlmTh>Sl No</th>
+        <th hlmTh>Name</th>
+        <th hlmTh>Zodiac Sign</th>
+        <th hlmTh>City</th>
+        <th hlmTh>Profile Status</th>
+        <th hlmTh>Matrimony ID</th>
+        <th hlmTh>Mobile Number</th>
+        <th hlmTh>
+          <ng-icon hlm name="lucideStar" size="sm" />
+          Score
+        </th>
+        <th hlmTh>Actions</th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+      @if (isLoading()) {
+        @for (row of skeletonRows; track $index) {
+          <tr hlmTr>
+            <td hlmTd colspan="9"><div hlmSkeleton class="h-8 w-full"></div></td>
+          </tr>
+        }
+      } @else {
+        @for (profile of pagedData(); track profile.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ (currentPage() - 1) * pageSize() + $index + 1 }}</td>
+            <td hlmTd>{{ profile.name }}</td>
+            <td hlmTd>{{ profile.zodiacSign }}</td>
+            <td hlmTd>{{ profile.city }}</td>
+            <td hlmTd>
+              <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
+                {{ profile.profileStatus }}
+              </span>
+            </td>
+            <td hlmTd>
+              <button
+                type="button"
+                hlmBtn
+                variant="secondary"
+                size="sm"
+                (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
+              >
+                {{ profile.matrimonyId }}
+                <ng-icon hlm name="lucideCopy" size="sm" />
+              </button>
+            </td>
+            <td hlmTd>
+              <button
+                type="button"
+                hlmBtn
+                variant="secondary"
+                size="sm"
+                (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+              >
+                {{ profile.mobileNumber }}
+                <ng-icon hlm name="lucideCopy" size="sm" />
+              </button>
+            </td>
+            <td hlmTd>{{ profile.starMatchScore }}</td>
+            <td hlmTd>
+              <div class="flex items-center gap-1">
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Edit"
+                  (click)="userActionEvent('edit', profile.id)"
+                >
+                  <ng-icon hlm name="lucideSquarePen" size="sm" />
+                </button>
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Delete"
+                  class="text-destructive"
+                  (click)="userActionEvent('delete', profile.id)"
+                >
+                  <ng-icon hlm name="lucideTrash2" size="sm" />
+                </button>
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="View"
+                  (click)="userActionEvent('view', profile.id)"
+                >
+                  <ng-icon hlm name="lucideEye" size="sm" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+    <tfoot hlmTFoot>
+      <tr hlmTr>
+        <td hlmTd colspan="9" class="text-center">
+          In total there are {{ profileData().length }} profiles.
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<hlm-numbered-pagination
+  [totalItems]="profileData().length"
+  [pageSizes]="[10, 25, 50]"
+  [(currentPage)]="currentPage"
+  [(itemsPerPage)]="pageSize"
+/>

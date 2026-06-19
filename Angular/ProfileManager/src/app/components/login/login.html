@@ -28,7 +28,7 @@
             type="password"
             class="w-full"
             placeholder="••••••••"
-            [formField]="$any(loginForm.password)"
+            [formField]="loginForm.password"
             [forceInvalid]="loginForm.password().touched() && loginForm.password().invalid()"
           />
           @if (loginForm.password().touched() && loginForm.password().invalid()) {

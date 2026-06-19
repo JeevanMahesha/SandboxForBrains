@@ -8,7 +8,7 @@
       <span>{{ filterForm.viewOrderCheck().value() ? 'Newest' : 'Oldest' }}</span>
     </div>
 
-    <hlm-select placeholder="Select Status" [formField]="$any(filterForm.profileStatus)">
+    <hlm-select placeholder="Select Status" [formField]="filterForm.profileStatus">
       <hlm-select-trigger class="w-44">
         <hlm-select-value placeholder="Select Status" />
       </hlm-select-trigger>
@@ -19,7 +19,7 @@
       </hlm-select-content>
     </hlm-select>
 
-    <hlm-select placeholder="Select Star" [formField]="$any(filterForm.starMatchScore)">
+    <hlm-select placeholder="Select Star" [formField]="filterForm.starMatchScore">
       <hlm-select-trigger class="w-44">
         <hlm-select-value placeholder="Select Star" />
       </hlm-select-trigger>

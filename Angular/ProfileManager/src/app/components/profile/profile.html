@@ -30,7 +30,7 @@
           <hlm-select
             id="profile_status"
             class="w-full"
-            [formField]="$any(profileDetailForm.profileStatusId)"
+            [formField]="profileDetailForm.profileStatusId"
           >
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select Profile Status" />
@@ -106,7 +106,7 @@
           <hlm-select
             id="zodiac_sign"
             class="w-full"
-            [formField]="$any(profileDetailForm.zodiacSign)"
+            [formField]="profileDetailForm.zodiacSign"
           >
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select Zodiac Sign" />
@@ -121,7 +121,7 @@
 
         <div hlmField>
           <label hlmFieldLabel for="star_sign">Star Sign</label>
-          <hlm-select id="star_sign" class="w-full" [formField]="$any(profileDetailForm.star)">
+          <hlm-select id="star_sign" class="w-full" [formField]="profileDetailForm.star">
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select Star Sign" />
             </hlm-select-trigger>
@@ -140,7 +140,7 @@
             id="age"
             type="number"
             class="w-full"
-            [formField]="$any(profileDetailForm.age)"
+            [formField]="profileDetailForm.age"
             [forceInvalid]="profileDetailForm.age().touched() && profileDetailForm.age().invalid()"
           />
         </div>
@@ -152,13 +152,13 @@
             id="star_match_score"
             type="number"
             class="w-full"
-            [formField]="$any(profileDetailForm.starMatchScore)"
+            [formField]="profileDetailForm.starMatchScore"
           />
         </div>
 
         <div hlmField>
           <label hlmFieldLabel for="state">State</label>
-          <hlm-select id="state" class="w-full" [formField]="$any(profileDetailForm.state)">
+          <hlm-select id="state" class="w-full" [formField]="profileDetailForm.state">
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select State" />
             </hlm-select-trigger>
@@ -172,7 +172,7 @@
 
         <div hlmField>
           <label hlmFieldLabel for="city">City</label>
-          <hlm-select id="city" class="w-full" [formField]="$any(profileDetailForm.city)">
+          <hlm-select id="city" class="w-full" [formField]="profileDetailForm.city">
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select City" />
             </hlm-select-trigger>

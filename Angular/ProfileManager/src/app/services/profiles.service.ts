@@ -2,9 +2,7 @@ import { Service, WritableSignal, inject, resource, signal } from '@angular/core
 import { Router } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
-import ConfirmDialog, {
-  ConfirmDialogContext,
-} from '../components/confirm-dialog/confirm-dialog';
+import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import {
   DocumentSnapshot,
   OrderByDirection,

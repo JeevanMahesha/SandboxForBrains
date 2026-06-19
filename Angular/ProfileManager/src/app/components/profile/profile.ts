@@ -92,6 +92,20 @@ export class Profile {
     value: `${key} (${value})`,
   }));
   STATE_LIST = STATE_LIST as unknown as string[];
+
+  // The select trigger renders the stored *value* (the key) via itemToString — not the
+  // projected <hlm-select-item> content. Map each key back to its readable label so the
+  // trigger shows the same text as the dropdown option. (state/city need none: value === label.)
+  readonly statusToLabel = (key: string): string =>
+    PROFILE_STATUS[key as keyof typeof PROFILE_STATUS] ?? key;
+  readonly zodiacToLabel = (key: string): string => {
+    const zodiac = ZODIAC_SIGN_LIST[key as keyof typeof ZODIAC_SIGN_LIST];
+    return zodiac ? `${zodiac.tanglish} (${zodiac.english})` : key;
+  };
+  readonly starToLabel = (key: string): string => {
+    const score = MATCHING_STARS[key as keyof typeof MATCHING_STARS];
+    return score === undefined ? key : `${key} (${score})`;
+  };
   readonly cityList = computed(
     () =>
       DISTRICT_LIST[

@@ -44,6 +44,7 @@
           <hlm-select
             id="profile_status"
             class="w-full"
+            [itemToString]="statusToLabel"
             [formField]="profileDetailForm.profileStatusId"
           >
             <hlm-select-trigger class="w-full">
@@ -129,7 +130,12 @@
 
         <div hlmField>
           <label hlmFieldLabel for="zodiac_sign">Zodiac Sign</label>
-          <hlm-select id="zodiac_sign" class="w-full" [formField]="profileDetailForm.zodiacSign">
+          <hlm-select
+            id="zodiac_sign"
+            class="w-full"
+            [itemToString]="zodiacToLabel"
+            [formField]="profileDetailForm.zodiacSign"
+          >
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select Zodiac Sign" />
             </hlm-select-trigger>
@@ -147,7 +153,12 @@
 
         <div hlmField>
           <label hlmFieldLabel for="star_sign">Star Sign</label>
-          <hlm-select id="star_sign" class="w-full" [formField]="profileDetailForm.star">
+          <hlm-select
+            id="star_sign"
+            class="w-full"
+            [itemToString]="starToLabel"
+            [formField]="profileDetailForm.star"
+          >
             <hlm-select-trigger class="w-full">
               <hlm-select-value placeholder="Select Star Sign" />
             </hlm-select-trigger>

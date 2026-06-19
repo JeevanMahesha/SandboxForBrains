@@ -5,8 +5,8 @@
       @let actionTypeValue = actionType();
       @let selectedProfileIdValue = selectedProfileId();
       <app-toolbar
-        (openStarMatch)="toggleStarMatch.set($event)"
-        (openZodiacSign)="toggleZodiacSigns.set($event)"
+        (openStarMatch)="toggleStarMatch.set(true)"
+        (openZodiacSign)="toggleZodiacSigns.set(true)"
       />
       @let profileValue = profiles.value();
       <div class="hidden md:block">
@@ -31,12 +31,12 @@
       <!-- Zodic Signs -->
       <app-zodiac-signs
         [togglePopover]="toggleZodiacSigns()"
-        (zodiacSignsHidden)="toggleZodiacSigns.set(null)"
+        (zodiacSignsHidden)="toggleZodiacSigns.set(false)"
       />
       <!-- Star Matching -->
       <app-star-match
         [togglePopover]="toggleStarMatch()"
-        (starMatchHidden)="toggleStarMatch.set(null)"
+        (starMatchHidden)="toggleStarMatch.set(false)"
       />
     </div>
   </div>

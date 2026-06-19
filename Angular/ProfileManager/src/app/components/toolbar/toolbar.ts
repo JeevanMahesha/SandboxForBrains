@@ -1,14 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
 import { debounce, form, FormField } from '@angular/forms/signals';
-import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
-import { SplitButtonModule } from 'primeng/splitbutton';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { ToolbarModule } from 'primeng/toolbar';
+import { provideIcons } from '@ng-icons/core';
+import {
+  lucideChevronDown,
+  lucideFilterX,
+  lucideLogOut,
+  lucideSearch,
+  lucideSparkles,
+  lucideStar,
+  lucideUserPlus,
+} from '@ng-icons/lucide';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSwitchImports } from '@spartan-ng/helm/switch';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
@@ -16,17 +23,26 @@ import { ProfilesService } from '../../services/profiles.service';
 @Component({
   selector: 'app-toolbar',
   imports: [
-    ToolbarModule,
-    ToggleButtonModule,
-    SelectModule,
-    IconFieldModule,
-    InputIconModule,
-    ButtonModule,
-    SplitButtonModule,
     FormField,
-    InputTextModule,
+    HlmButton,
+    HlmInput,
+    ...HlmSelectImports,
+    ...HlmSwitchImports,
+    ...HlmDropdownMenuImports,
+    ...HlmIconImports,
   ],
   templateUrl: './toolbar.html',
+  providers: [
+    provideIcons({
+      lucideSearch,
+      lucideFilterX,
+      lucideUserPlus,
+      lucideChevronDown,
+      lucideSparkles,
+      lucideStar,
+      lucideLogOut,
+    }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Toolbar {
@@ -37,50 +53,12 @@ export class Toolbar {
     value: key,
   }));
 
-  readonly items: MenuItem[] = [
-    {
-      label: 'Zodiac Signs',
-      icon: 'pi pi-sparkles',
-      command: (event: MenuItemCommandEvent) =>
-        this.openZodiacSignPopover(event.originalEvent as MouseEvent),
-    },
-    {
-      label: 'Preferred Star',
-      icon: 'pi pi-star-fill',
-      command: (event: MenuItemCommandEvent) =>
-        this.openStarMatchPopover(event.originalEvent as MouseEvent),
-    },
-    {
-      label: 'Log Out',
-      icon: 'pi pi-sign-out',
-      command: async () =>
-        await this.authService
-          .logout()
-          .then(() => {
-            this.profileService.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Logged out successfully',
-            });
-            this.profileService.router.navigate(['/login']);
-          })
-          .catch((error) => {
-            this.profileService.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to log out',
-            });
-            console.error('Error logging out:', error);
-          }),
-    },
-  ];
-
   readonly scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, 800);
   });
-  readonly openStarMatch = output<MouseEvent>();
-  readonly openZodiacSign = output<MouseEvent>();
+  readonly openStarMatch = output<void>();
+  readonly openZodiacSign = output<void>();
 
   readonly filterHasValue = computed(() => {
     const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } =
@@ -94,16 +72,37 @@ export class Toolbar {
     );
   });
 
-  openStarMatchPopover(event: MouseEvent) {
-    this.openStarMatch.emit(event);
+  openStarMatchPopover() {
+    this.openStarMatch.emit();
   }
 
-  openZodiacSignPopover(event: MouseEvent) {
-    this.openZodiacSign.emit(event);
+  openZodiacSignPopover() {
+    this.openZodiacSign.emit();
   }
 
   addNewProfileAction() {
     this.profileService.userActionEvent('create', null);
+  }
+
+  async logout() {
+    await this.authService
+      .logout()
+      .then(() => {
+        this.profileService.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Logged out successfully',
+        });
+        this.profileService.router.navigate(['/login']);
+      })
+      .catch((error) => {
+        this.profileService.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to log out',
+        });
+        console.error('Error logging out:', error);
+      });
   }
 
   clearForm() {

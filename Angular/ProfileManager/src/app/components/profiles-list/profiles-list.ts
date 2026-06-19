@@ -27,8 +27,8 @@ export default class ProfilesList {
   readonly openDrawer = input<boolean>();
   readonly selectedProfileId = input<string>();
   readonly profiles: Resource<ProfileDetail[]>;
-  readonly toggleStarMatch = signal<MouseEvent | null>(null);
-  readonly toggleZodiacSigns = signal<MouseEvent | null>(null);
+  readonly toggleStarMatch = signal<boolean>(false);
+  readonly toggleZodiacSigns = signal<boolean>(false);
   private readonly profileService = inject(ProfilesService);
 
   constructor() {

@@ -1,38 +1,48 @@
-<div class="mb-4 p-8 flex items-center justify-center h-screen">
-  <p-card class="w-full max-w-md">
-    <ng-template #title> Login </ng-template>
-    <form class="flex flex-col gap-4" [formRoot]="loginForm">
-      <p-floatlabel class="w-full" variant="on">
-        <input
-          pInputText
-          type="email"
-          inputId="login-email"
-          pSize="large"
-          fluid
-          [class.p-invalid]="loginForm.email().touched() && loginForm.email().invalid()"
-          [formField]="loginForm.email"
-        />
-        <label for="login-email">Email</label>
-      </p-floatlabel>
-      <p-floatlabel class="w-full" variant="on">
-        <input
-          pInputText
-          type="password"
-          inputId="login-password"
-          pSize="large"
-          fluid
-          [class.p-invalid]="loginForm.password().touched() && loginForm.password().invalid()"
-          [formField]="$any(loginForm.password)"
-        />
-        <label for="login-password">Password</label>
-      </p-floatlabel>
-      <p-button
-        label="Save"
-        class="w-full"
-        styleClass="w-full"
-        type="submit"
-        [loading]="loginForm().submitting()"
-      />
-    </form>
-  </p-card>
+<div class="mb-4 flex h-screen items-center justify-center p-8">
+  <section hlmCard class="w-full max-w-md">
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Login</h3>
+    </div>
+    <div hlmCardContent>
+      <form class="flex flex-col gap-4" [formRoot]="loginForm">
+        <div hlmField>
+          <label hlmFieldLabel for="login-email">Email</label>
+          <input
+            hlmInput
+            id="login-email"
+            type="email"
+            class="w-full"
+            placeholder="you@example.com"
+            [formField]="loginForm.email"
+            [forceInvalid]="loginForm.email().touched() && loginForm.email().invalid()"
+          />
+          @if (loginForm.email().touched() && loginForm.email().invalid()) {
+            <hlm-field-error>{{ loginForm.email().errors()[0]?.message }}</hlm-field-error>
+          }
+        </div>
+        <div hlmField>
+          <label hlmFieldLabel for="login-password">Password</label>
+          <input
+            hlmInput
+            id="login-password"
+            type="password"
+            class="w-full"
+            placeholder="••••••••"
+            [formField]="$any(loginForm.password)"
+            [forceInvalid]="loginForm.password().touched() && loginForm.password().invalid()"
+          />
+          @if (loginForm.password().touched() && loginForm.password().invalid()) {
+            <hlm-field-error>{{ loginForm.password().errors()[0]?.message }}</hlm-field-error>
+          }
+        </div>
+        <button hlmBtn type="submit" class="w-full" [disabled]="loginForm().submitting()">
+          @if (loginForm().submitting()) {
+            Signing in…
+          } @else {
+            Login
+          }
+        </button>
+      </form>
+    </div>
+  </section>
 </div>

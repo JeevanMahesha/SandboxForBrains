@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmInput } from '@spartan-ng/helm/input';
 import { UserCredential } from 'firebase/auth';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../services/auth.service';
 
 interface Login {
@@ -16,7 +16,7 @@ interface Login {
 
 @Component({
   selector: 'app-login',
-  imports: [FloatLabelModule, FormField, FormRoot, ButtonModule, CardModule, InputTextModule],
+  imports: [FormField, FormRoot, HlmButton, HlmInput, ...HlmCardImports, ...HlmFieldImports],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

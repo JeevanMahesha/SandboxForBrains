@@ -1,5 +1,5 @@
 import { TitleCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCopy,
@@ -30,9 +30,15 @@ import { ProfilesService } from '../../../services/profiles.service';
   ],
   templateUrl: './profiles-list-mobile-view.html',
   providers: [
-    provideIcons({ lucideStar, lucideMapPin, lucideCopy, lucideSquarePen, lucideTrash2, lucideEye }),
+    provideIcons({
+      lucideStar,
+      lucideMapPin,
+      lucideCopy,
+      lucideSquarePen,
+      lucideTrash2,
+      lucideEye,
+    }),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListMobileView {
   readonly profileData = input.required<ProfileDetail[]>();
@@ -48,7 +54,10 @@ export class ProfilesListMobileView {
   private profileService = inject(ProfilesService);
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
-    this.profileService.userActionEvent(userActionType, profileId != null ? String(profileId) : null);
+    this.profileService.userActionEvent(
+      userActionType,
+      profileId != null ? String(profileId) : null,
+    );
   }
   copyToClipboard(value: string | null | undefined, label: string): void {
     this.profileService.copyToClipboard(value, label);

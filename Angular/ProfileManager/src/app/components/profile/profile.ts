@@ -1,6 +1,5 @@
 import { DatePipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -62,7 +61,6 @@ import { ProfilesService } from '../../services/profiles.service';
   ],
   templateUrl: './profile.html',
   providers: [provideIcons({ lucideCopy, lucidePlus, lucideTrash2, lucideCheck })],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Profile {
   readonly actionType = input.required<ToolbarAction | undefined>();

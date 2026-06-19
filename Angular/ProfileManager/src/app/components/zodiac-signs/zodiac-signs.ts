@@ -1,6 +1,6 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { FlexibleConnectedPositionStrategyOrigin } from '@angular/cdk/overlay';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, inject, input, output } from '@angular/core';
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmPopoverImports } from '@spartan-ng/helm/popover';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
@@ -11,7 +11,6 @@ import { ViewportService } from '../../services/viewport.service';
   selector: 'app-zodiac-signs',
   imports: [NgTemplateOutlet, HlmBadge, ...HlmPopoverImports, ...HlmSheetImports],
   templateUrl: './zodiac-signs.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZodiacSigns {
   protected readonly viewport = inject(ViewportService);

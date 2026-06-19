@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, Resource } from '@angular/core';
+import { Component, inject, input, Resource } from '@angular/core';
 import { ProfileDetail } from '../../models/profile.model';
 import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
@@ -9,14 +9,8 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
 
 @Component({
   selector: 'app-profiles-list',
-  imports: [
-    Toolbar,
-    ProfilesListDesktopView,
-    Profile,
-    ProfilesListMobileView,
-  ],
+  imports: [Toolbar, ProfilesListDesktopView, Profile, ProfilesListMobileView],
   templateUrl: './profiles-list.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfilesList {
   readonly actionType = input<ToolbarAction>();

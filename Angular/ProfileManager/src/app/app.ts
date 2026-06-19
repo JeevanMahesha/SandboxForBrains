@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BrnAlertDialogContent } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
@@ -10,7 +10,6 @@ import { ThemeService } from './services/theme.service';
   selector: 'app-root',
   imports: [RouterOutlet, HlmToaster, BrnAlertDialogContent, ...HlmAlertDialogImports],
   templateUrl: './app.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   protected readonly profileService = inject(ProfilesService);

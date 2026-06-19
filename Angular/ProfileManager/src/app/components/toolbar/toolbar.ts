@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -13,13 +13,13 @@ import {
   lucideSun,
   lucideUserPlus,
 } from '@ng-icons/lucide';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSwitchImports } from '@spartan-ng/helm/switch';
-import { toast } from '@spartan-ng/brain/sonner';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
@@ -55,7 +55,6 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
       lucideMonitor,
     }),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Toolbar {
   private readonly profileService = inject(ProfilesService);

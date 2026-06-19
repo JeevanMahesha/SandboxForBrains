@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCopy, lucideEye, lucideSquarePen, lucideStar, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmBadge } from '@spartan-ng/helm/badge';
@@ -23,7 +23,6 @@ import { ProfilesService } from '../../../services/profiles.service';
   ],
   templateUrl: './profiles-list-desktop-view.html',
   providers: [provideIcons({ lucideCopy, lucideSquarePen, lucideTrash2, lucideEye, lucideStar })],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilesListDesktopView {
   readonly profileData = input.required<ProfileDetail[]>();
@@ -40,7 +39,10 @@ export class ProfilesListDesktopView {
   private profileService = inject(ProfilesService);
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
-    this.profileService.userActionEvent(userActionType, profileId != null ? String(profileId) : null);
+    this.profileService.userActionEvent(
+      userActionType,
+      profileId != null ? String(profileId) : null,
+    );
   }
 
   copyToClipboard(value: string | null | undefined, label: string): void {

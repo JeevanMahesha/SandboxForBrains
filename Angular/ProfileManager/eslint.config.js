@@ -97,6 +97,10 @@ module.exports = tseslint.config(
       "@angular-eslint/template/i18n": 'off',
       "@angular-eslint/template/no-any": 'warn',
       "@angular-eslint/template/no-call-expression": 'off',
+      // Spartan NG composes UI from directives + @for/@if in templates (e.g. rendering
+      // select options and table rows), so templates are inherently more branch-heavy than
+      // PrimeNG's input-driven components. Raise the default limit (5) accordingly.
+      "@angular-eslint/template/cyclomatic-complexity": ['error', { maxComplexity: 20 }],
     },
   }
 );

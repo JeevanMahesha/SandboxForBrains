@@ -1,4 +1,4 @@
-import { DatePipe, KeyValuePipe } from '@angular/common';
+import { DatePipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -51,6 +51,7 @@ import { ProfilesService } from '../../services/profiles.service';
     FormsModule,
     KeyValuePipe,
     DatePipe,
+    NgTemplateOutlet,
     BrnSheetContent,
     HlmButton,
     HlmInput,
@@ -107,8 +108,8 @@ export class Profile {
     mobileNumber: '+91',
     zodiacSign: '',
     star: '',
-    age: 0,
-    starMatchScore: 0,
+    age: null,
+    starMatchScore: null,
     state: '',
     city: '',
     profileStatusId: '',
@@ -139,6 +140,10 @@ export class Profile {
     {
       submission: {
         action: async (profileForm) => {
+          // Flush a comment the user typed but didn't explicitly add, so it isn't lost on save.
+          if (this.newComment().trim()) {
+            this.addComment();
+          }
           if (this.actionType() === 'edit') {
             return this.updateProfile(profileForm().value());
           } else {
@@ -189,11 +194,15 @@ export class Profile {
   }
 
   addComment(): void {
+    const value = this.newComment().trim();
+    if (!value) {
+      return;
+    }
     const currentComments = this.profileDetailForm.comments().value();
     this.profileDetailForm.comments().value.set([
       ...currentComments,
       {
-        value: this.newComment(),
+        value,
         createDateAndTime: new Date(),
       },
     ]);

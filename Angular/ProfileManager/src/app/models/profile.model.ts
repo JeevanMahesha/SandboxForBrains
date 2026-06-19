@@ -15,10 +15,10 @@ export interface ProfileDetail {
   createdAt?: Date;
   comments: Comment[];
   star: keyof typeof MATCHING_STARS | '';
-  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0;
+  starMatchScore: (typeof MATCHING_STARS)[keyof typeof MATCHING_STARS] | 0 | null;
   mobileNumber: string;
   zodiacSign: keyof typeof ZODIAC_SIGN_LIST | '';
-  age: number;
+  age: number | null;
   state: keyof typeof DISTRICT_LIST | '';
   name: string;
   profileStatusId: keyof typeof PROFILE_STATUS | '';

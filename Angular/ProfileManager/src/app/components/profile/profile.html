@@ -4,12 +4,19 @@
   [state]="(openDrawer() ?? false) ? 'open' : 'closed'"
   (closed)="closeDrawer()"
 >
-  <hlm-sheet-content *brnSheetContent class="flex w-full flex-col gap-0 sm:max-w-md! lg:max-w-120!">
+  <hlm-sheet-content *brnSheetContent class="flex w-full! flex-col gap-0 sm:max-w-md! lg:max-w-120!">
     <hlm-sheet-header>
       <h3 hlmSheetTitle>{{ title() }}</h3>
     </hlm-sheet-header>
 
-    <form class="flex-1 overflow-y-auto px-1 pb-4" [formRoot]="profileDetailForm">
+    <!-- Shared field-error markup, stamped per field via ngTemplateOutlet (let-field = the field node). -->
+    <ng-template #fieldError let-field>
+      @if (field().touched() && field().invalid()) {
+        <hlm-field-error forceShow>{{ field().errors()[0].message }}</hlm-field-error>
+      }
+    </ng-template>
+
+    <form class="flex-1 overflow-y-auto px-4 pb-4" [formRoot]="profileDetailForm">
       <div class="mt-2 flex flex-col gap-4">
         <div hlmField>
           <label hlmFieldLabel for="name">Name</label>
@@ -22,6 +29,10 @@
             [forceInvalid]="
               profileDetailForm.name().touched() && profileDetailForm.name().invalid()
             "
+          />
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.name }"
           />
         </div>
 
@@ -41,6 +52,10 @@
               }
             </hlm-select-content>
           </hlm-select>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.profileStatusId }"
+          />
         </div>
 
         <div hlmField>
@@ -70,6 +85,10 @@
               </button>
             }
           </div>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.mobileNumber }"
+          />
         </div>
 
         <div hlmField>
@@ -99,6 +118,10 @@
               </button>
             }
           </div>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.matrimonyId }"
+          />
         </div>
 
         <div hlmField>
@@ -117,6 +140,10 @@
               }
             </hlm-select-content>
           </hlm-select>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.zodiacSign }"
+          />
         </div>
 
         <div hlmField>
@@ -131,6 +158,10 @@
               }
             </hlm-select-content>
           </hlm-select>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.star }"
+          />
         </div>
 
         <div hlmField>
@@ -143,6 +174,10 @@
             [formField]="profileDetailForm.age"
             [forceInvalid]="profileDetailForm.age().touched() && profileDetailForm.age().invalid()"
           />
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.age }"
+          />
         </div>
 
         <div hlmField>
@@ -151,9 +186,11 @@
             hlmInput
             id="star_match_score"
             type="number"
-            class="w-full"
+            class="bg-muted text-muted-foreground w-full cursor-not-allowed"
+            placeholder="Auto-filled from Star Sign"
             [formField]="profileDetailForm.starMatchScore"
           />
+          <p hlmFieldDescription>Automatically calculated from the selected Star Sign.</p>
         </div>
 
         <div hlmField>
@@ -168,6 +205,10 @@
               }
             </hlm-select-content>
           </hlm-select>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.state }"
+          />
         </div>
 
         <div hlmField>
@@ -182,6 +223,10 @@
               }
             </hlm-select-content>
           </hlm-select>
+          <ng-container
+            [ngTemplateOutlet]="fieldError"
+            [ngTemplateOutletContext]="{ $implicit: profileDetailForm.city }"
+          />
         </div>
 
         @if (actionType() !== 'view') {
@@ -195,6 +240,7 @@
                 placeholder="Add a comment"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="newComment"
+                (keydown.enter)="$event.preventDefault(); addComment()"
               />
               <button
                 type="button"
@@ -247,9 +293,7 @@
           type="button"
           hlmBtn
           class="w-full"
-          [disabled]="
-            profileDetailForm().submitting() || profileDetailForm().invalid() || !!newComment()
-          "
+          [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
           (click)="submitButton.click()"
         >
           <ng-icon hlm name="lucideCheck" size="sm" />

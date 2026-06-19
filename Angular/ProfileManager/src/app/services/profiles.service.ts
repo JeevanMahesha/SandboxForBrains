@@ -21,14 +21,22 @@ import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.co
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfilesService {
+  private authService = inject(AuthService);
+
   profiles = resource<ProfileDetail[], SortOption>({
     defaultValue: [],
-    params: () => this.filterOptions(),
+    // Gate the query on auth: this service is instantiated at app startup (the global
+    // confirm dialog injects it), so without this guard the Firestore query would fire
+    // before login and fail with a permission error, then never re-run. Returning
+    // `undefined` keeps the resource idle until the user is authenticated, at which point
+    // the param flips and the loader runs automatically (covers both fresh login and reload).
+    params: () => (this.authService.isAuthenticated() ? this.filterOptions() : undefined),
     loader: ({ params }) =>
       this.getFilteredProfiles(
         params.viewOrderCheck,

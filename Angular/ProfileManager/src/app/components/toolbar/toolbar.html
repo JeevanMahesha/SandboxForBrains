@@ -12,7 +12,7 @@
       <hlm-select-trigger class="w-44">
         <hlm-select-value />
       </hlm-select-trigger>
-      <hlm-select-content>
+      <hlm-select-content *hlmSelectPortal>
         @for (status of profileStatusOptions; track status.value) {
           <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
         }
@@ -23,7 +23,7 @@
       <hlm-select-trigger class="w-44">
         <hlm-select-value />
       </hlm-select-trigger>
-      <hlm-select-content>
+      <hlm-select-content *hlmSelectPortal>
         @for (score of scoreMatchOptions; track score) {
           <hlm-select-item [value]="score">{{ score }}</hlm-select-item>
         }

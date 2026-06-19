@@ -32,7 +32,7 @@
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content>
+            <hlm-select-content *hlmSelectPortal>
               @for (status of PROFILE_STATUS_DATA | keyvalue; track status.key) {
                 <hlm-select-item [value]="status.key">{{ status.value }}</hlm-select-item>
               }
@@ -104,7 +104,7 @@
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content>
+            <hlm-select-content *hlmSelectPortal>
               @for (zodiac of ZODIAC_SIGN_DATA; track zodiac.key) {
                 <hlm-select-item [value]="zodiac.key">{{ zodiac.value }}</hlm-select-item>
               }
@@ -118,7 +118,7 @@
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content>
+            <hlm-select-content *hlmSelectPortal>
               @for (star of STARS_DATA; track star.key) {
                 <hlm-select-item [value]="star.key">{{ star.value }}</hlm-select-item>
               }
@@ -155,7 +155,7 @@
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content>
+            <hlm-select-content *hlmSelectPortal>
               @for (state of STATE_LIST; track state) {
                 <hlm-select-item [value]="state">{{ state }}</hlm-select-item>
               }
@@ -169,7 +169,7 @@
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content>
+            <hlm-select-content *hlmSelectPortal>
               @for (city of cityList(); track city) {
                 <hlm-select-item [value]="city">{{ city }}</hlm-select-item>
               }

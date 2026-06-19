@@ -10,7 +10,7 @@
 
     <hlm-select placeholder="Select Status" [formField]="$any(filterForm.profileStatus)">
       <hlm-select-trigger class="w-44">
-        <hlm-select-value />
+        <hlm-select-value placeholder="Select Status" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
         @for (status of profileStatusOptions; track status.value) {
@@ -21,7 +21,7 @@
 
     <hlm-select placeholder="Select Star" [formField]="$any(filterForm.starMatchScore)">
       <hlm-select-trigger class="w-44">
-        <hlm-select-value />
+        <hlm-select-value placeholder="Select Star" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
         @for (score of scoreMatchOptions; track score) {
@@ -39,12 +39,24 @@
       size="sm"
       class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
     />
-    <input hlmInput type="text" placeholder="Search" class="w-full pl-8" [formField]="filterForm.searchQuery" />
+    <input
+      hlmInput
+      type="text"
+      placeholder="Search"
+      class="w-full pl-8"
+      [formField]="filterForm.searchQuery"
+    />
   </div>
 
   <!-- End: actions -->
   <div class="flex flex-col gap-2 md:flex-row">
-    <button type="button" hlmBtn variant="outline" [disabled]="!filterHasValue()" (click)="clearForm()">
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      [disabled]="!filterHasValue()"
+      (click)="clearForm()"
+    >
       <ng-icon hlm name="lucideFilterX" size="sm" />
       Clear
     </button>

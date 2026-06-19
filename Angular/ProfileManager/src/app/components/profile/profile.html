@@ -4,10 +4,7 @@
   [state]="(openDrawer() ?? false) ? 'open' : 'closed'"
   (closed)="closeDrawer()"
 >
-  <hlm-sheet-content
-    *brnSheetContent
-    class="flex w-full flex-col gap-0 sm:max-w-md! lg:max-w-120!"
-  >
+  <hlm-sheet-content *brnSheetContent class="flex w-full flex-col gap-0 sm:max-w-md! lg:max-w-120!">
     <hlm-sheet-header>
       <h3 hlmSheetTitle>{{ title() }}</h3>
     </hlm-sheet-header>
@@ -22,15 +19,21 @@
             type="text"
             class="w-full"
             [formField]="profileDetailForm.name"
-            [forceInvalid]="profileDetailForm.name().touched() && profileDetailForm.name().invalid()"
+            [forceInvalid]="
+              profileDetailForm.name().touched() && profileDetailForm.name().invalid()
+            "
           />
         </div>
 
         <div hlmField>
           <label hlmFieldLabel for="profile_status">Profile Status</label>
-          <hlm-select id="profile_status" class="w-full" [formField]="$any(profileDetailForm.profileStatusId)">
+          <hlm-select
+            id="profile_status"
+            class="w-full"
+            [formField]="$any(profileDetailForm.profileStatusId)"
+          >
             <hlm-select-trigger class="w-full">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select Profile Status" />
             </hlm-select-trigger>
             <hlm-select-content *hlmSelectPortal>
               @for (status of PROFILE_STATUS_DATA | keyvalue; track status.key) {
@@ -100,9 +103,13 @@
 
         <div hlmField>
           <label hlmFieldLabel for="zodiac_sign">Zodiac Sign</label>
-          <hlm-select id="zodiac_sign" class="w-full" [formField]="$any(profileDetailForm.zodiacSign)">
+          <hlm-select
+            id="zodiac_sign"
+            class="w-full"
+            [formField]="$any(profileDetailForm.zodiacSign)"
+          >
             <hlm-select-trigger class="w-full">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select Zodiac Sign" />
             </hlm-select-trigger>
             <hlm-select-content *hlmSelectPortal>
               @for (zodiac of ZODIAC_SIGN_DATA; track zodiac.key) {
@@ -116,7 +123,7 @@
           <label hlmFieldLabel for="star_sign">Star Sign</label>
           <hlm-select id="star_sign" class="w-full" [formField]="$any(profileDetailForm.star)">
             <hlm-select-trigger class="w-full">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select Star Sign" />
             </hlm-select-trigger>
             <hlm-select-content *hlmSelectPortal>
               @for (star of STARS_DATA; track star.key) {
@@ -153,7 +160,7 @@
           <label hlmFieldLabel for="state">State</label>
           <hlm-select id="state" class="w-full" [formField]="$any(profileDetailForm.state)">
             <hlm-select-trigger class="w-full">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select State" />
             </hlm-select-trigger>
             <hlm-select-content *hlmSelectPortal>
               @for (state of STATE_LIST; track state) {
@@ -167,7 +174,7 @@
           <label hlmFieldLabel for="city">City</label>
           <hlm-select id="city" class="w-full" [formField]="$any(profileDetailForm.city)">
             <hlm-select-trigger class="w-full">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select City" />
             </hlm-select-trigger>
             <hlm-select-content *hlmSelectPortal>
               @for (city of cityList(); track city) {

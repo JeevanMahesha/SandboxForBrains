@@ -29,7 +29,7 @@ import { AuthService } from './auth.service';
 export class ProfilesService {
   private authService = inject(AuthService);
 
-  profiles = resource<ProfileDetail[], SortOption>({
+  profiles = resource<ProfileDetail[], SortOption | undefined>({
     defaultValue: [],
     // Gate the query on auth: this service is instantiated at app startup (the global
     // confirm dialog injects it), so without this guard the Firestore query would fire

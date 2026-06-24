@@ -6,10 +6,21 @@
     <div class="flex w-36 items-center gap-2 text-sm">
       <hlm-switch aria-label="Sort order" [formField]="filterForm.viewOrderCheck" />
       <span>{{ filterForm.viewOrderCheck().value() ? 'Newest' : 'Oldest' }}</span>
+      <button
+        type="button"
+        hlmBtn
+        variant="outline"
+        size="icon"
+        aria-label="Toggle theme"
+        [attr.title]="`Theme: ${themeService.preference()}`"
+        (click)="themeService.cyclePreference()"
+      >
+        <ng-icon hlm size="sm" [name]="themeIcon()" />
+      </button>
     </div>
 
     <hlm-select placeholder="Select Status" [formField]="filterForm.profileStatus">
-      <hlm-select-trigger class="w-44">
+      <hlm-select-trigger class="w-full md:w-44">
         <hlm-select-value placeholder="Select Status" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
@@ -20,7 +31,7 @@
     </hlm-select>
 
     <hlm-select placeholder="Select Star" [formField]="filterForm.starMatchScore">
-      <hlm-select-trigger class="w-44">
+      <hlm-select-trigger class="w-full md:w-44">
         <hlm-select-value placeholder="Select Star" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
@@ -42,7 +53,7 @@
     <input
       hlmInput
       type="text"
-      placeholder="Search"
+      placeholder="Search by ID or phone"
       class="w-full pl-8"
       [formField]="filterForm.searchQuery"
     />
@@ -51,18 +62,7 @@
   <!-- End: actions -->
   <div class="flex flex-col gap-2 md:flex-row">
     <button
-      type="button"
-      hlmBtn
-      variant="outline"
-      size="icon"
-      aria-label="Toggle theme"
-      [attr.title]="`Theme: ${themeService.preference()}`"
-      (click)="themeService.cyclePreference()"
-    >
-      <ng-icon hlm size="sm" [name]="themeIcon()" />
-    </button>
-
-    <button
+      class="w-full md:w-auto"
       type="button"
       hlmBtn
       variant="outline"
@@ -73,8 +73,8 @@
       Clear
     </button>
 
-    <div class="flex">
-      <button type="button" hlmBtn class="rounded-r-none" (click)="addNewProfileAction()">
+    <div class="flex w-full md:w-auto">
+      <button type="button" hlmBtn class="rounded-r-none flex-1" (click)="addNewProfileAction()">
         <ng-icon hlm name="lucideUserPlus" size="sm" />
         Add Profile
       </button>
@@ -88,18 +88,22 @@
       >
         <ng-icon hlm name="lucideChevronDown" size="sm" />
       </button>
-      <app-star-match
-        [togglePopover]="toggleStarMatch()"
-        [attachTo]="moreActionsBtn"
-        (starMatchHidden)="toggleStarMatch.set(false)"
-      />
-      <app-zodiac-signs
-        [togglePopover]="toggleZodiacSigns()"
-        [attachTo]="moreActionsBtn"
-        (zodiacSignsHidden)="toggleZodiacSigns.set(false)"
-      />
+      @defer (when toggleStarMatch()) {
+        <app-star-match
+          [togglePopover]="toggleStarMatch()"
+          [attachTo]="moreActionsBtn"
+          (starMatchHidden)="toggleStarMatch.set(false)"
+        />
+      }
+      @defer (when toggleZodiacSigns()) {
+        <app-zodiac-signs
+          [togglePopover]="toggleZodiacSigns()"
+          [attachTo]="moreActionsBtn"
+          (zodiacSignsHidden)="toggleZodiacSigns.set(false)"
+        />
+      }
       <ng-template #addMenu>
-        <hlm-dropdown-menu>
+        <hlm-dropdown-menu class="min-w-44">
           <button type="button" hlmDropdownMenuItem (click)="openZodiacSignPopover()">
             <ng-icon hlm name="lucideSparkles" size="sm" />
             Zodiac Signs

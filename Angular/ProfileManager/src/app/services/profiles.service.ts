@@ -4,8 +4,10 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import {
+  DocumentData,
   DocumentSnapshot,
   OrderByDirection,
+  Query,
   QueryDocumentSnapshot,
   Timestamp,
   addDoc,
@@ -110,33 +112,49 @@ export class ProfilesService {
 
   async getFilteredProfiles(
     sortDirection: boolean,
-    matrimonyId: string,
+    searchTerm: string,
     profileStatusFilter: keyof typeof PROFILE_STATUS | null = null,
     starMatchScoreFilter: number | null = null,
     sortField = 'createdAt',
   ): Promise<ProfileDetail[]> {
-    let q = query(this.profilesCollection);
-
-    if (matrimonyId && matrimonyId.trim() !== '') {
-      q = query(this.profilesCollection, where('matrimonyId', '==', matrimonyId.trim()));
-    }
-
-    // Apply filters using where clauses
-    if (profileStatusFilter) {
-      q = query(q, where('profileStatusId', '==', profileStatusFilter));
-    }
-
-    if (starMatchScoreFilter !== null && starMatchScoreFilter !== undefined) {
-      q = query(q, where('starMatchScore', '==', starMatchScoreFilter));
-    }
-
     const sortDirectionStr = sortDirection ? 'asc' : ('desc' as OrderByDirection);
+    const trimmedSearch = (searchTerm ?? '').trim();
 
-    // Apply sorting - must come after where clauses
-    q = query(q, orderBy(sortField, sortDirectionStr));
+    // Shared filters applied to every query (status, star, sort).
+    const withCommonFilters = (base: Query<DocumentData>): Query<DocumentData> => {
+      let q = base;
+      if (profileStatusFilter) {
+        q = query(q, where('profileStatusId', '==', profileStatusFilter));
+      }
+      if (starMatchScoreFilter !== null && starMatchScoreFilter !== undefined) {
+        q = query(q, where('starMatchScore', '==', starMatchScoreFilter));
+      }
+      // Apply sorting - must come after where clauses
+      return query(q, orderBy(sortField, sortDirectionStr));
+    };
 
-    const snapshot = await getDocs(q);
-    const profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
+    let profiles: ProfileDetail[];
+
+    if (trimmedSearch !== '') {
+      // A single search box matches either the matrimony ID or the mobile number.
+      // Firestore can't OR across two fields in one query, so run both and merge.
+      const [byMatrimonyId, byMobileNumber] = await Promise.all([
+        getDocs(withCommonFilters(query(this.profilesCollection, where('matrimonyId', '==', trimmedSearch)))),
+        getDocs(withCommonFilters(query(this.profilesCollection, where('mobileNumber', '==', trimmedSearch)))),
+      ]);
+
+      const byId = new Map<string, ProfileDetail>();
+      for (const snapshot of [byMatrimonyId, byMobileNumber]) {
+        for (const doc of snapshot.docs) {
+          byId.set(doc.id, this.mapDocToProfile(doc));
+        }
+      }
+      profiles = [...byId.values()];
+    } else {
+      const snapshot = await getDocs(withCommonFilters(query(this.profilesCollection)));
+      profiles = snapshot.docs.map((doc) => this.mapDocToProfile(doc));
+    }
+
     return profiles.sort((a, b) => {
       const aIsRejected = a.profileStatusId === 'REJECTED';
       const bIsRejected = b.profileStatusId === 'REJECTED';

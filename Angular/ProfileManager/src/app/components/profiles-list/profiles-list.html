@@ -7,16 +7,19 @@
       <app-toolbar />
       @let profileValue = profiles.value();
       <div class="hidden md:block">
-        @defer (when selectedProfileId()) {
+        @defer (on viewport) {
           <app-profiles-list-desktop-view
             [profileData]="profileValue ?? []"
             [isLoading]="profiles.isLoading()"
           />
         } @placeholder {
-          <ng-container *ngTemplateOutlet="loader" />
+          <div class="flex justify-center m-10">
+            <ng-container *ngTemplateOutlet="loader" />
+          </div>
         }
       </div>
-      @if (openDrawerValue) {
+
+      @defer (when openDrawerValue) {
         <app-profile
           [actionType]="actionTypeValue"
           [openDrawer]="openDrawerValue"
@@ -24,13 +27,15 @@
         />
       }
       <div class="block md:hidden">
-        @defer (when selectedProfileId()) {
+        @defer (on viewport) {
           <app-profiles-list-mobile-view
             [profileData]="profileValue ?? []"
             [isLoading]="profiles.isLoading()"
           />
         } @placeholder {
-          <ng-container *ngTemplateOutlet="loader" />
+          <div class="flex justify-center m-10">
+            <ng-container *ngTemplateOutlet="loader" />
+          </div>
         }
       </div>
     </div>
@@ -38,7 +43,5 @@
 </div>
 
 <ng-template #loader>
-  <div class="flex justify-center m-10">
-    <hlm-spinner class="text-[8rem]" />
-  </div>
+  <hlm-spinner class="text-[8rem]" />
 </ng-template>

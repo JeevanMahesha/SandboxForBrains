@@ -1,4 +1,6 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, input, Resource } from '@angular/core';
+import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { ProfileDetail } from '../../models/profile.model';
 import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
@@ -9,7 +11,14 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
 
 @Component({
   selector: 'app-profiles-list',
-  imports: [Toolbar, ProfilesListDesktopView, Profile, ProfilesListMobileView],
+  imports: [
+    Toolbar,
+    ProfilesListDesktopView,
+    Profile,
+    ProfilesListMobileView,
+    HlmSpinner,
+    NgTemplateOutlet,
+  ],
   templateUrl: './profiles-list.html',
 })
 export default class ProfilesList {

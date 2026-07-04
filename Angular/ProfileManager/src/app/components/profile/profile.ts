@@ -1,5 +1,14 @@
 import { DatePipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, inject, model, signal, untracked } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  model,
+  resource,
+  signal,
+  untracked,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   disabled,
@@ -27,6 +36,7 @@ import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
   DISTRICT_LIST,
@@ -56,6 +66,7 @@ import { ProfilesService } from '../../services/profiles.service';
     ...HlmSelectImports,
     ...HlmIconImports,
     HlmSpinner,
+    HlmSkeleton,
   ],
   templateUrl: './profile.html',
   providers: [
@@ -90,7 +101,7 @@ export class Profile {
     key,
     value: `${key} (${value})`,
   }));
-  STATE_LIST = STATE_LIST as unknown as string[];
+  STATE_LIST = STATE_LIST;
 
   // The select trigger renders the stored *value* (the key) via itemToString — not the
   // projected <hlm-select-item> content. Map each key back to its readable label so the
@@ -129,6 +140,16 @@ export class Profile {
     profileStatusId: null,
     matrimonyId: '',
     comments: [],
+  });
+
+  readonly profileResource = resource({
+    params: () => {
+      const { actionType, selectedProfileId } = this.profileService.drawerState();
+      return actionType === TOOLBAR_ACTIONS.view || actionType === TOOLBAR_ACTIONS.edit
+        ? selectedProfileId
+        : undefined;
+    },
+    loader: ({ params }) => this.profileService.getProfileById(params!),
   });
 
   profileDetailForm = form(
@@ -173,22 +194,20 @@ export class Profile {
 
   constructor() {
     effect(() => {
-      const { actionType, selectedProfileId } = this.profileService.drawerState();
-      if (actionType && ['view', 'edit'].includes(actionType)) {
-        this.profileService
-          .getProfileById(selectedProfileId!)
-          .then((profile) => {
-            if (profile) {
-              this.profileDetail.set(profile);
-            }
-            if (actionType === 'view') {
-              this.profileDetailForm().disabled();
-            }
-          })
-          .catch(() => {
-            toast.error('Failed to fetch profile');
-          });
+      const profileDetail = this.profileResource.value();
+      const profileError = this.profileResource.error();
+      if (profileDetail) {
+        this.profileDetail.set(profileDetail);
       }
+      if (profileError) {
+        toast.error('Failed to fetch profile');
+        this.closeDrawer();
+      }
+      untracked(() => {
+        if (this.userActionType() === TOOLBAR_ACTIONS.view) {
+          this.profileDetailForm().disabled();
+        }
+      });
     });
 
     // Derive starMatchScore from the selected star (replaces PrimeNG's (onChange) handler).

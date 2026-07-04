@@ -1,8 +1,4 @@
-<hlm-sheet
-  side="right"
-  [state]="(openDrawer() ?? false) ? 'open' : 'closed'"
-  (closed)="closeDrawer()"
->
+<hlm-sheet side="right" [state]="isOpened()" (closed)="closeDrawer()">
   <hlm-sheet-content
     *brnSheetContent
     class="flex w-full! flex-col gap-0 sm:max-w-md! lg:max-w-120!"
@@ -75,7 +71,7 @@
                 profileDetailForm.mobileNumber().invalid()
               "
             />
-            @if (actionType() === 'view') {
+            @if (userActionType() === TOOLBAR_ACTIONS_VALUES.view) {
               <button
                 type="button"
                 hlmBtn
@@ -108,7 +104,7 @@
                 profileDetailForm.matrimonyId().invalid()
               "
             />
-            @if (actionType() === 'view') {
+            @if (userActionType() === TOOLBAR_ACTIONS_VALUES.view) {
               <button
                 type="button"
                 hlmBtn
@@ -238,7 +234,7 @@
           />
         </div>
 
-        @if (actionType() !== 'view') {
+        @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.view) {
           <div hlmField>
             <label hlmFieldLabel for="comment">Comments</label>
             <div class="flex gap-2">
@@ -273,7 +269,7 @@
                   <small class="text-muted-foreground">
                     {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm a' }}
                   </small>
-                  @if (actionType() !== 'view') {
+                  @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.view) {
                     <button
                       type="button"
                       hlmBtn
@@ -296,7 +292,7 @@
       <button #submitButton hidden type="submit"></button>
     </form>
 
-    @if (actionType() !== 'view') {
+    @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.view) {
       <hlm-sheet-footer>
         <button
           type="button"

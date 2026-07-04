@@ -1,14 +1,5 @@
 import { DatePipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  model,
-  signal,
-  untracked,
-} from '@angular/core';
+import { Component, computed, effect, inject, model, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   disabled,
@@ -20,7 +11,6 @@ import {
   readonly,
   required,
 } from '@angular/forms/signals';
-import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCheck,
@@ -45,8 +35,8 @@ import {
   STATE_LIST,
   ZODIAC_SIGN_LIST,
 } from '../../constant/common.const';
+import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
-import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 
 @Component({
@@ -73,11 +63,12 @@ import { ProfilesService } from '../../services/profiles.service';
   ],
 })
 export class Profile {
-  readonly actionType = input.required<ToolbarAction | undefined>();
-  readonly openDrawer = model<boolean | undefined>();
-  readonly selectedProfileId = input.required<string | undefined>();
+  protected readonly profileService = inject(ProfilesService);
+  readonly userActionType = computed(() => this.profileService.drawerState().actionType);
+  readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
+  readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
   readonly title = computed(() => {
-    switch (this.actionType()) {
+    switch (this.profileService.drawerState().actionType) {
       case 'view':
         return 'View Profile';
       case 'edit':
@@ -87,7 +78,7 @@ export class Profile {
     }
   });
   readonly buttonLabel = computed(() =>
-    this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes',
+    this.profileService.drawerState().actionType === 'edit' ? 'Update Profile' : 'Save Changes',
   );
 
   PROFILE_STATUS_DATA = PROFILE_STATUS;
@@ -123,8 +114,6 @@ export class Profile {
   readonly cityPlaceholder = computed(() =>
     this.profileDetailForm.state().value() ? 'Select City' : 'Select a state to choose a city',
   );
-  private readonly router = inject(Router);
-  private readonly profileService = inject(ProfilesService);
 
   readonly newComment = model<string>('');
 
@@ -160,7 +149,9 @@ export class Profile {
         message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
       });
       readonly(profileForm.starMatchScore);
-      disabled(profileForm, { when: () => this.actionType() === 'view' });
+      disabled(profileForm, {
+        when: () => this.profileService.drawerState().actionType === 'view',
+      });
       disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
     },
     {
@@ -170,7 +161,7 @@ export class Profile {
           if (this.newComment().trim()) {
             this.addComment();
           }
-          if (this.actionType() === 'edit') {
+          if (this.profileService.drawerState().actionType === 'edit') {
             return this.updateProfile(profileForm().value());
           } else {
             return this.addProfile(profileForm().value());
@@ -182,10 +173,10 @@ export class Profile {
 
   constructor() {
     effect(() => {
-      const actionType = this.actionType();
+      const { actionType, selectedProfileId } = this.profileService.drawerState();
       if (actionType && ['view', 'edit'].includes(actionType)) {
         this.profileService
-          .getProfileById(this.selectedProfileId()!)
+          .getProfileById(selectedProfileId!)
           .then((profile) => {
             if (profile) {
               this.profileDetail.set(profile);
@@ -226,8 +217,7 @@ export class Profile {
   }
 
   closeDrawer(): void {
-    this.openDrawer.set(false);
-    this.router.navigate(['/']);
+    this.profileService.closeDrawer();
   }
 
   addComment(): void {
@@ -274,7 +264,7 @@ export class Profile {
 
   private async updateProfile(profileData: Partial<ProfileDetail>): Promise<void> {
     return await this.profileService
-      .updateProfile(this.selectedProfileId()!, profileData)
+      .updateProfile(this.profileService.drawerState().selectedProfileId!, profileData)
       .then(() => {
         toast.success('Profile updated successfully');
         this.profileService.profiles.reload();

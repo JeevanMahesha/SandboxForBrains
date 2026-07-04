@@ -1,12 +1,7 @@
 import { PROFILE_STATUS } from '../constant/common.const';
+import { TOOLBAR_ACTIONS } from '../constant/toolbar.const';
 
-export type ToolbarAction = 'create' | 'edit' | 'view' | 'delete';
-
-export interface UserActions {
-  actionType: ToolbarAction;
-  selectedProfileId?: string | null;
-  openDrawer: boolean;
-}
+export type ToolbarAction = keyof typeof TOOLBAR_ACTIONS;
 
 export interface SortOption {
   viewOrderCheck: boolean;

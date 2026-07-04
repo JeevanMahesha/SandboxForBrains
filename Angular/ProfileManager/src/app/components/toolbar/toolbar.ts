@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -57,6 +58,7 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
   ],
 })
 export class Toolbar {
+  private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
   private readonly authService = inject(AuthService);
   protected readonly themeService = inject(ThemeService);
@@ -112,7 +114,7 @@ export class Toolbar {
       .logout()
       .then(() => {
         toast.success('Logged out successfully');
-        this.profileService.router.navigate(['/login']);
+        this.router.navigate(['/login']);
       })
       .catch((error) => {
         toast.error('Failed to log out');

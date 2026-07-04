@@ -1,9 +1,6 @@
 <div class="layout-wrapper">
   <div class="layout-main-container">
     <div class="layout-main">
-      @let openDrawerValue = openDrawer();
-      @let actionTypeValue = actionType();
-      @let selectedProfileIdValue = selectedProfileId();
       <app-toolbar />
       @let profileValue = profiles.value();
       <div class="hidden md:block">
@@ -19,12 +16,8 @@
         }
       </div>
 
-      @defer (when openDrawerValue) {
-        <app-profile
-          [actionType]="actionTypeValue"
-          [openDrawer]="openDrawerValue"
-          [selectedProfileId]="selectedProfileIdValue"
-        />
+      @defer (when isOpened() === 'open') {
+        <app-profile />
       }
       <div class="block md:hidden">
         @defer (on viewport) {

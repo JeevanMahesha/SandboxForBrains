@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { debounce, form, FormField } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown,
@@ -113,8 +113,8 @@ export class Toolbar {
     await this.authService
       .logout()
       .then(() => {
-        toast.success('Logged out successfully');
         this.router.navigate(['/login']);
+        toast.success('Logged out successfully');
       })
       .catch((error) => {
         toast.error('Failed to log out');

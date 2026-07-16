@@ -4,8 +4,8 @@ import {
   computed,
   effect,
   inject,
-  input,
   model,
+  resource,
   signal,
   untracked,
 } from '@angular/core';
@@ -20,7 +20,6 @@ import {
   readonly,
   required,
 } from '@angular/forms/signals';
-import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCheck,
@@ -37,6 +36,7 @@ import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
   DISTRICT_LIST,
@@ -45,8 +45,8 @@ import {
   STATE_LIST,
   ZODIAC_SIGN_LIST,
 } from '../../constant/common.const';
+import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
-import { ToolbarAction } from '../../models/toolbar.model';
 import { ProfilesService } from '../../services/profiles.service';
 
 @Component({
@@ -66,6 +66,7 @@ import { ProfilesService } from '../../services/profiles.service';
     ...HlmSelectImports,
     ...HlmIconImports,
     HlmSpinner,
+    HlmSkeleton,
   ],
   templateUrl: './profile.html',
   providers: [
@@ -73,11 +74,12 @@ import { ProfilesService } from '../../services/profiles.service';
   ],
 })
 export class Profile {
-  readonly actionType = input.required<ToolbarAction | undefined>();
-  readonly openDrawer = model<boolean | undefined>();
-  readonly selectedProfileId = input.required<string | undefined>();
+  protected readonly profileService = inject(ProfilesService);
+  readonly userActionType = computed(() => this.profileService.drawerState().actionType);
+  readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
+  readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
   readonly title = computed(() => {
-    switch (this.actionType()) {
+    switch (this.profileService.drawerState().actionType) {
       case 'view':
         return 'View Profile';
       case 'edit':
@@ -87,7 +89,7 @@ export class Profile {
     }
   });
   readonly buttonLabel = computed(() =>
-    this.actionType() === 'edit' ? 'Update Profile' : 'Save Changes',
+    this.profileService.drawerState().actionType === 'edit' ? 'Update Profile' : 'Save Changes',
   );
 
   PROFILE_STATUS_DATA = PROFILE_STATUS;
@@ -99,7 +101,7 @@ export class Profile {
     key,
     value: `${key} (${value})`,
   }));
-  STATE_LIST = STATE_LIST as unknown as string[];
+  STATE_LIST = STATE_LIST;
 
   // The select trigger renders the stored *value* (the key) via itemToString — not the
   // projected <hlm-select-item> content. Map each key back to its readable label so the
@@ -123,8 +125,6 @@ export class Profile {
   readonly cityPlaceholder = computed(() =>
     this.profileDetailForm.state().value() ? 'Select City' : 'Select a state to choose a city',
   );
-  private readonly router = inject(Router);
-  private readonly profileService = inject(ProfilesService);
 
   readonly newComment = model<string>('');
 
@@ -140,6 +140,16 @@ export class Profile {
     profileStatusId: null,
     matrimonyId: '',
     comments: [],
+  });
+
+  readonly profileResource = resource({
+    params: () => {
+      const { actionType, selectedProfileId } = this.profileService.drawerState();
+      return actionType === TOOLBAR_ACTIONS.view || actionType === TOOLBAR_ACTIONS.edit
+        ? selectedProfileId
+        : undefined;
+    },
+    loader: ({ params }) => this.profileService.getProfileById(params!),
   });
 
   profileDetailForm = form(
@@ -160,7 +170,9 @@ export class Profile {
         message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
       });
       readonly(profileForm.starMatchScore);
-      disabled(profileForm, { when: () => this.actionType() === 'view' });
+      disabled(profileForm, {
+        when: () => this.profileService.drawerState().actionType === 'view',
+      });
       disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
     },
     {
@@ -170,7 +182,7 @@ export class Profile {
           if (this.newComment().trim()) {
             this.addComment();
           }
-          if (this.actionType() === 'edit') {
+          if (this.profileService.drawerState().actionType === 'edit') {
             return this.updateProfile(profileForm().value());
           } else {
             return this.addProfile(profileForm().value());
@@ -182,22 +194,20 @@ export class Profile {
 
   constructor() {
     effect(() => {
-      const actionType = this.actionType();
-      if (actionType && ['view', 'edit'].includes(actionType)) {
-        this.profileService
-          .getProfileById(this.selectedProfileId()!)
-          .then((profile) => {
-            if (profile) {
-              this.profileDetail.set(profile);
-            }
-            if (actionType === 'view') {
-              this.profileDetailForm().disabled();
-            }
-          })
-          .catch(() => {
-            toast.error('Failed to fetch profile');
-          });
+      const profileDetail = this.profileResource.value();
+      const profileError = this.profileResource.error();
+      if (profileDetail) {
+        this.profileDetail.set(profileDetail);
       }
+      if (profileError) {
+        toast.error('Failed to fetch profile');
+        this.closeDrawer();
+      }
+      untracked(() => {
+        if (this.userActionType() === TOOLBAR_ACTIONS.view) {
+          this.profileDetailForm().disabled();
+        }
+      });
     });
 
     // Derive starMatchScore from the selected star (replaces PrimeNG's (onChange) handler).
@@ -226,8 +236,7 @@ export class Profile {
   }
 
   closeDrawer(): void {
-    this.openDrawer.set(false);
-    this.router.navigate(['/']);
+    this.profileService.closeDrawer();
   }
 
   addComment(): void {
@@ -274,7 +283,7 @@ export class Profile {
 
   private async updateProfile(profileData: Partial<ProfileDetail>): Promise<void> {
     return await this.profileService
-      .updateProfile(this.selectedProfileId()!, profileData)
+      .updateProfile(this.profileService.drawerState().selectedProfileId!, profileData)
       .then(() => {
         toast.success('Profile updated successfully');
         this.profileService.profiles.reload();

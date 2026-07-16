@@ -1,30 +1,40 @@
 <div class="layout-wrapper">
   <div class="layout-main-container">
     <div class="layout-main">
-      @let openDrawerValue = openDrawer();
-      @let actionTypeValue = actionType();
-      @let selectedProfileIdValue = selectedProfileId();
       <app-toolbar />
       @let profileValue = profiles.value();
       <div class="hidden md:block">
-        <app-profiles-list-desktop-view
-          [profileData]="profileValue ?? []"
-          [isLoading]="profiles.isLoading()"
-        />
+        @defer (on viewport) {
+          <app-profiles-list-desktop-view
+            [profileData]="profileValue ?? []"
+            [isLoading]="profiles.isLoading()"
+          />
+        } @placeholder {
+          <div class="flex justify-center m-10">
+            <ng-container *ngTemplateOutlet="loader" />
+          </div>
+        }
       </div>
-      @if (openDrawerValue) {
-        <app-profile
-          [actionType]="actionTypeValue"
-          [openDrawer]="openDrawerValue"
-          [selectedProfileId]="selectedProfileIdValue"
-        />
+
+      @defer (when isOpened() === 'open') {
+        <app-profile />
       }
       <div class="block md:hidden">
-        <app-profiles-list-mobile-view
-          [profileData]="profileValue ?? []"
-          [isLoading]="profiles.isLoading()"
-        />
+        @defer (on viewport) {
+          <app-profiles-list-mobile-view
+            [profileData]="profileValue ?? []"
+            [isLoading]="profiles.isLoading()"
+          />
+        } @placeholder {
+          <div class="flex justify-center m-10">
+            <ng-container *ngTemplateOutlet="loader" />
+          </div>
+        }
       </div>
     </div>
   </div>
 </div>
+
+<ng-template #loader>
+  <hlm-spinner class="text-[8rem]" />
+</ng-template>

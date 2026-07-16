@@ -1,8 +1,7 @@
 import { Service, WritableSignal, inject, resource, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
-import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import {
   DocumentData,
   DocumentSnapshot,
@@ -21,10 +20,11 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
-import { SortOption, ToolbarAction, UserActions } from '../models/toolbar.model';
+import { SortOption, ToolbarAction } from '../models/toolbar.model';
 import { AuthService } from './auth.service';
 
 @Service()
@@ -58,7 +58,6 @@ export class ProfilesService {
   });
   private firestore = inject(FIRESTORE);
   private profilesCollection = collection(this.firestore, 'profiles');
-  public readonly router = inject(Router);
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
     viewOrderCheck: false,
@@ -66,6 +65,12 @@ export class ProfilesService {
     profileStatus: null,
     starMatchScore: null,
   });
+
+  readonly drawerState = signal<{
+    isOpen: BrnDialogState;
+    actionType: ToolbarAction | null;
+    selectedProfileId: string | null;
+  }>({ isOpen: 'closed', actionType: null, selectedProfileId: null });
 
   private readonly dialogService = inject(HlmDialogService);
 
@@ -139,8 +144,16 @@ export class ProfilesService {
       // A single search box matches either the matrimony ID or the mobile number.
       // Firestore can't OR across two fields in one query, so run both and merge.
       const [byMatrimonyId, byMobileNumber] = await Promise.all([
-        getDocs(withCommonFilters(query(this.profilesCollection, where('matrimonyId', '==', trimmedSearch)))),
-        getDocs(withCommonFilters(query(this.profilesCollection, where('mobileNumber', '==', trimmedSearch)))),
+        getDocs(
+          withCommonFilters(
+            query(this.profilesCollection, where('matrimonyId', '==', trimmedSearch)),
+          ),
+        ),
+        getDocs(
+          withCommonFilters(
+            query(this.profilesCollection, where('mobileNumber', '==', trimmedSearch)),
+          ),
+        ),
       ]);
 
       const byId = new Map<string, ProfileDetail>();
@@ -191,18 +204,19 @@ export class ProfilesService {
   }
 
   userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
-    const userAction: UserActions = {
-      actionType: userActionType,
-      selectedProfileId: profileId,
-      openDrawer: true,
-    };
     if (userActionType === 'delete') {
       this.deleteProfile(profileId!);
       return;
     }
-    this.router.navigate([], {
-      queryParams: { ...userAction },
+    this.drawerState.set({
+      isOpen: 'open',
+      actionType: userActionType,
+      selectedProfileId: profileId,
     });
+  }
+
+  closeDrawer(): void {
+    this.drawerState.set({ isOpen: 'closed', actionType: null, selectedProfileId: null });
   }
 
   copyToClipboard(value: string | null | undefined, label: string): void {

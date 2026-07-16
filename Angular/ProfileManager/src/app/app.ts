@@ -5,6 +5,10 @@ import { HlmToaster } from '@spartan-ng/helm/sonner';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, HlmToaster],
-  template: `<router-outlet /> <hlm-toaster />`,
+  template: `<router-outlet />
+
+    @defer (on idle) {
+      <hlm-toaster />
+    } `,
 })
 export class App {}

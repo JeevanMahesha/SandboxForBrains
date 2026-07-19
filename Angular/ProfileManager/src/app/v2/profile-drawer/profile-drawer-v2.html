@@ -1,0 +1,648 @@
+<hlm-sheet side="right" [state]="isOpen()" (closed)="close()">
+  <hlm-sheet-content *brnSheetContent class="v2-drawer">
+
+    <!-- ── Header ─────────────────────────────────────────────────── -->
+    <div class="v2d-header">
+      <div class="v2d-header-left">
+        @if (isCreate()) { <span class="v2d-mode-chip v2d-mode-chip--create">New</span> }
+        @if (isEdit())   { <span class="v2d-mode-chip v2d-mode-chip--edit">Edit</span> }
+        @if (isView())   { <span class="v2d-mode-chip v2d-mode-chip--view">View</span> }
+        <h2 class="v2d-title">
+          @if (isCreate()) { Add New Profile }
+          @if (isEdit())   { Edit Profile }
+          @if (isView())   { Profile Details }
+        </h2>
+      </div>
+      <button type="button" class="v2d-close-btn" aria-label="Close drawer" (click)="close()">
+        <ng-icon hlm name="lucideX" size="sm" />
+      </button>
+    </div>
+
+    <!-- ── Scrollable body ────────────────────────────────────────── -->
+    <div class="v2d-body">
+
+      @if (profileResource.isLoading()) {
+        <!-- Skeleton -->
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="v2d-skel-row">
+            <div class="v2-skel v2-skel-line" style="width:70px;height:10px;margin-bottom:8px;"></div>
+            <div class="v2-skel" style="width:100%;height:40px;border-radius:8px;"></div>
+          </div>
+        }
+      } @else {
+
+        <!-- ── VIEW MODE: hero card ──────────────────────────────── -->
+        @if (isView() && profileResource.value()) {
+          <div class="v2d-hero">
+            <div class="v2d-hero-avatar" aria-hidden="true">
+              {{ profileResource.value()!.name.slice(0,2).toUpperCase() }}
+            </div>
+            <div>
+              <p class="v2d-hero-name">{{ profileResource.value()!.name }}</p>
+              <app-v2-status-badge [statusId]="profileResource.value()!.profileStatusId" />
+            </div>
+          </div>
+
+          @if (profileResource.value()!.starMatchScore) {
+            <div class="v2d-score-block"
+                 [style.border-color]="profileResource.value()!.starMatchScore === 9 ? 'rgba(251,191,36,.25)' : 'rgba(245,158,11,.2)'"
+                 [style.background]="profileResource.value()!.starMatchScore === 9 ? 'rgba(251,191,36,.07)' : 'rgba(245,158,11,.06)'">
+              <span class="v2d-score-num"
+                    [style.color]="profileResource.value()!.starMatchScore === 9 ? 'var(--v2-star-9)' : 'var(--v2-star-8)'">
+                {{ profileResource.value()!.starMatchScore }}
+              </span>
+              <div>
+                <p class="v2d-score-label"
+                   [style.color]="profileResource.value()!.starMatchScore === 9 ? 'var(--v2-star-9)' : 'var(--v2-star-8)'">
+                  {{ starMeta(profileResource.value()!.starMatchScore)?.label }}
+                </p>
+                <p class="v2d-score-sub">{{ starMeta(profileResource.value()!.starMatchScore)?.sub }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- View fields grid -->
+          <div class="v2d-view-grid">
+            <div class="v2d-view-field">
+              <span class="v2d-view-label">Age</span>
+              <span class="v2d-view-value">{{ profileResource.value()!.age ?? '—' }}</span>
+            </div>
+            <div class="v2d-view-field">
+              <span class="v2d-view-label">Zodiac</span>
+              <span class="v2d-view-value">{{ ZODIAC_LIST[profileResource.value()!.zodiacSign!]?.tanglish ?? '—' }}</span>
+            </div>
+            <div class="v2d-view-field">
+              <span class="v2d-view-label">Star</span>
+              <span class="v2d-view-value">{{ profileResource.value()!.star ?? '—' }}</span>
+            </div>
+            <div class="v2d-view-field">
+              <span class="v2d-view-label">State</span>
+              <span class="v2d-view-value">{{ profileResource.value()!.state ?? '—' }}</span>
+            </div>
+            <div class="v2d-view-field v2d-view-field--full">
+              <span class="v2d-view-label">City</span>
+              <span class="v2d-view-value">{{ profileResource.value()!.city ?? '—' }}</span>
+            </div>
+            <div class="v2d-view-field v2d-view-field--full">
+              <span class="v2d-view-label">Matrimony ID</span>
+              <div class="v2d-copy-row">
+                <span class="v2d-view-value v2d-mono">{{ profileResource.value()!.matrimonyId }}</span>
+                <button type="button" class="v2d-copy-btn" aria-label="Copy ID" (click)="copyToClipboard(profileResource.value()!.matrimonyId, 'Matrimony ID')">
+                  <ng-icon hlm name="lucideCopy" size="xs" />
+                </button>
+              </div>
+            </div>
+            <div class="v2d-view-field v2d-view-field--full">
+              <span class="v2d-view-label">Mobile</span>
+              <div class="v2d-copy-row">
+                <span class="v2d-view-value v2d-mono">{{ profileResource.value()!.mobileNumber }}</span>
+                <button type="button" class="v2d-copy-btn" aria-label="Copy phone" (click)="copyToClipboard(profileResource.value()!.mobileNumber, 'Mobile number')">
+                  <ng-icon hlm name="lucideCopy" size="xs" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments (view) -->
+          @if (profileResource.value()!.comments?.length) {
+            <div class="v2d-section-label">Comments</div>
+            <div class="v2d-comments">
+              @for (c of profileResource.value()!.comments; track c.createDateAndTime) {
+                <div class="v2d-comment">
+                  <span class="v2d-comment-time">{{ c.createDateAndTime | date:'dd/MMM/yy HH:mm' }}</span>
+                  <p class="v2d-comment-text">{{ c.value }}</p>
+                </div>
+              }
+            </div>
+          }
+
+        } @else {
+          <!-- ── CREATE / EDIT FORM ─────────────────────────────── -->
+          <form novalidate [formRoot]="profileForm">
+            <div class="v2d-form-grid">
+
+              <!-- Name -->
+              <div class="v2d-field v2d-field--full" [formField]="profileForm.name">
+                <label class="v2d-label">Name</label>
+                <input type="text" class="v2d-input"
+                       placeholder="Full name"
+                       [value]="profileForm.name().value()"
+                       (input)="profileForm.name().value.set($any($event.target).value)"
+                       (blur)="profileForm.name().markAsTouched()" />
+                @if (profileForm.name().touched() && profileForm.name().errors()?.length) {
+                  <p class="v2d-error">{{ profileForm.name().errors()![0].message }}</p>
+                }
+              </div>
+
+              <!-- Status -->
+              <div class="v2d-field" [formField]="profileForm.profileStatusId">
+                <label class="v2d-label">Status</label>
+                <select class="v2d-select"
+                        [value]="profileForm.profileStatusId().value()"
+                        (change)="profileForm.profileStatusId().value.set($any($event.target).value)"
+                        (blur)="profileForm.profileStatusId().markAsTouched()">
+                  <option value="">Select status</option>
+                  @for (key of statusKeys; track key) {
+                    <option [value]="key">{{ PROFILE_STATUS[key] }}</option>
+                  }
+                </select>
+                @if (profileForm.profileStatusId().touched() && profileForm.profileStatusId().errors()?.length) {
+                  <p class="v2d-error">{{ profileForm.profileStatusId().errors()![0].message }}</p>
+                }
+              </div>
+
+              <!-- Age -->
+              <div class="v2d-field" [formField]="profileForm.age">
+                <label class="v2d-label">Age</label>
+                <input type="number" class="v2d-input" min="18"
+                       placeholder="Age"
+                       [value]="profileForm.age().value() ?? ''"
+                       (input)="profileForm.age().value.set(+$any($event.target).value || null)"
+                       (blur)="profileForm.age().markAsTouched()" />
+                @if (profileForm.age().touched() && profileForm.age().errors()?.length) {
+                  <p class="v2d-error">{{ profileForm.age().errors()![0].message }}</p>
+                }
+              </div>
+
+              <!-- Mobile -->
+              <div class="v2d-field" [formField]="profileForm.mobileNumber">
+                <label class="v2d-label">Mobile Number</label>
+                <input type="tel" class="v2d-input"
+                       placeholder="+91XXXXXXXXXX"
+                       [value]="profileForm.mobileNumber().value()"
+                       (input)="profileForm.mobileNumber().value.set($any($event.target).value)"
+                       (blur)="profileForm.mobileNumber().markAsTouched()" />
+                @if (profileForm.mobileNumber().touched() && profileForm.mobileNumber().errors()?.length) {
+                  <p class="v2d-error">{{ profileForm.mobileNumber().errors()![0].message }}</p>
+                }
+              </div>
+
+              <!-- Matrimony ID -->
+              <div class="v2d-field" [formField]="profileForm.matrimonyId">
+                <label class="v2d-label">Matrimony ID</label>
+                <input type="text" class="v2d-input"
+                       placeholder="MAT-XXXX-XXX"
+                       [value]="profileForm.matrimonyId().value()"
+                       (input)="profileForm.matrimonyId().value.set($any($event.target).value)"
+                       (blur)="profileForm.matrimonyId().markAsTouched()" />
+                @if (profileForm.matrimonyId().touched() && profileForm.matrimonyId().errors()?.length) {
+                  <p class="v2d-error">{{ profileForm.matrimonyId().errors()![0].message }}</p>
+                }
+              </div>
+
+              <!-- Zodiac -->
+              <div class="v2d-field" [formField]="profileForm.zodiacSign">
+                <label class="v2d-label">Zodiac Sign</label>
+                <select class="v2d-select"
+                        [value]="profileForm.zodiacSign().value()"
+                        (change)="profileForm.zodiacSign().value.set($any($event.target).value)"
+                        (blur)="profileForm.zodiacSign().markAsTouched()">
+                  <option value="">Select zodiac</option>
+                  @for (key of zodiacKeys; track key) {
+                    <option [value]="key">{{ ZODIAC_LIST[key].tanglish }} ({{ ZODIAC_LIST[key].english }})</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Star -->
+              <div class="v2d-field" [formField]="profileForm.star">
+                <label class="v2d-label">Star</label>
+                <select class="v2d-select"
+                        [value]="profileForm.star().value()"
+                        (change)="onStarChange($any($event.target).value)"
+                        (blur)="profileForm.star().markAsTouched()">
+                  <option value="">Select star</option>
+                  @for (key of starKeys; track key) {
+                    <option [value]="key">{{ key }} ({{ STAR_LIST[key] }})</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Star match score (read-only, auto-filled) -->
+              <div class="v2d-field">
+                <label class="v2d-label">Star Match Score</label>
+                @if (profileForm.starMatchScore().value()) {
+                  <div class="v2d-score-inline"
+                       [style.color]="profileForm.starMatchScore().value() === 9 ? 'var(--v2-star-9)' : 'var(--v2-star-8)'">
+                    <span class="v2d-score-inline-num">{{ profileForm.starMatchScore().value() }}</span>
+                    <span class="v2d-score-inline-label">{{ starMeta(profileForm.starMatchScore().value())?.label }}</span>
+                  </div>
+                } @else {
+                  <div class="v2d-score-empty">Auto-filled from star selection</div>
+                }
+              </div>
+
+              <!-- State -->
+              <div class="v2d-field" [formField]="profileForm.state">
+                <label class="v2d-label">State</label>
+                <select class="v2d-select"
+                        [value]="profileForm.state().value()"
+                        (change)="onStateChange($any($event.target).value)"
+                        (blur)="profileForm.state().markAsTouched()">
+                  <option value="">Select state</option>
+                  @for (state of STATE_LIST; track state) {
+                    <option [value]="state">{{ state }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- City -->
+              <div class="v2d-field" [formField]="profileForm.city">
+                <label class="v2d-label">City</label>
+                <select class="v2d-select"
+                        [value]="profileForm.city().value()"
+                        [disabled]="!profileForm.state().value()"
+                        (change)="profileForm.city().value.set($any($event.target).value)">
+                  <option value="">Select city</option>
+                  @for (city of cityOptions(); track city) {
+                    <option [value]="city">{{ city }}</option>
+                  }
+                </select>
+              </div>
+
+            </div>
+
+            <!-- ── Comments ─────────────────────────────────────── -->
+            <div class="v2d-section-label">Comments</div>
+
+            <!-- Add comment input -->
+            <div class="v2d-comment-input-row">
+              <input
+                type="text"
+                class="v2d-input v2d-comment-input"
+                placeholder="Add a comment…"
+                [value]="newComment()"
+                (input)="newComment.set($any($event.target).value)"
+                (keydown.enter)="addComment(); $event.preventDefault()"
+              />
+              <button
+                type="button"
+                class="v2d-add-comment-btn"
+                aria-label="Add comment"
+                [disabled]="!newComment().trim()"
+                (click)="addComment()"
+              >
+                <ng-icon hlm name="lucidePlus" size="sm" />
+              </button>
+            </div>
+
+            @if (comments().length) {
+              <div class="v2d-comments v2d-comments--edit">
+                @for (c of comments(); track c.createDateAndTime) {
+                  <div class="v2d-comment">
+                    <div class="v2d-comment-row">
+                      <span class="v2d-comment-time">{{ c.createDateAndTime | date:'dd/MMM/yy HH:mm' }}</span>
+                      <button type="button" class="v2d-delete-comment-btn"
+                              aria-label="Remove comment" (click)="removeComment($index)">
+                        <ng-icon hlm name="lucideTrash2" size="xs" />
+                      </button>
+                    </div>
+                    <p class="v2d-comment-text">{{ c.value }}</p>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- ── Footer ──────────────────────────────────────── -->
+            <div class="v2d-footer">
+              <button
+                type="submit"
+                class="v2d-submit-btn"
+                [disabled]="profileForm().submitting()"
+              >
+                @if (profileForm().submitting()) {
+                  <span class="v2-spinner" aria-hidden="true"></span>
+                  Saving…
+                } @else {
+                  @if (isCreate()) { Save Profile }
+                  @if (isEdit())   { Update Profile }
+                }
+              </button>
+            </div>
+          </form>
+        }
+      }
+    </div>
+  </hlm-sheet-content>
+</hlm-sheet>
+
+<style>
+  /* ── Drawer shell ─────────────────────────────────────────────── */
+  :host ::ng-deep .v2-drawer {
+    background: var(--v2-bg-card) !important;
+    border-left: 1px solid var(--v2-border) !important;
+    width: min(480px, 95vw) !important;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--v2-font-sans);
+    padding: 0 !important;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────── */
+  .v2d-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--v2-border);
+    flex-shrink: 0;
+  }
+  .v2d-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .v2d-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--v2-zinc-50);
+    letter-spacing: -.01em;
+  }
+  .v2d-mode-chip {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+  }
+  .v2d-mode-chip--create { background: var(--v2-s-new-bg);    color: var(--v2-s-new-text);    border: 1px solid var(--v2-s-new-border); }
+  .v2d-mode-chip--edit   { background: var(--v2-s-meeting-bg); color: var(--v2-s-meeting-text); border: 1px solid var(--v2-s-meeting-border); }
+  .v2d-mode-chip--view   { background: var(--v2-s-sharerm-bg); color: var(--v2-s-sharerm-text); border: 1px solid var(--v2-s-sharerm-border); }
+
+  .v2d-close-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--v2-zinc-500);
+    padding: 0;
+  }
+  .v2d-close-btn:hover { background: rgba(255,255,255,.07); color: var(--v2-zinc-300); }
+
+  /* ── Body ─────────────────────────────────────────────────────── */
+  .v2d-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── View mode hero ───────────────────────────────────────────── */
+  .v2d-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .v2d-hero-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--v2-brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .v2d-hero-name {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--v2-zinc-50);
+    letter-spacing: -.01em;
+  }
+
+  /* ── Score block ──────────────────────────────────────────────── */
+  .v2d-score-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1px solid;
+    margin-bottom: 20px;
+  }
+  .v2d-score-num {
+    font-size: 40px;
+    font-weight: 700;
+    font-family: var(--v2-font-mono);
+    line-height: 1;
+    min-width: 32px;
+  }
+  .v2d-score-label {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .v2d-score-sub {
+    margin: 0;
+    font-size: 11px;
+    color: var(--v2-zinc-500);
+  }
+
+  /* ── View grid ────────────────────────────────────────────────── */
+  .v2d-view-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .v2d-view-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .v2d-view-field--full { grid-column: span 2; }
+  .v2d-view-label { font-size: 10px; font-weight: 600; color: var(--v2-zinc-600); letter-spacing: .08em; text-transform: uppercase; }
+  .v2d-view-value { font-size: 13px; color: var(--v2-zinc-300); }
+  .v2d-mono { font-family: var(--v2-font-mono); font-size: 12px; letter-spacing: .02em; }
+
+  /* ── Copy row ─────────────────────────────────────────────────── */
+  .v2d-copy-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .v2d-copy-btn {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--v2-zinc-600);
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .v2d-copy-btn:hover { color: var(--v2-zinc-300); border-color: var(--v2-zinc-700); }
+
+  /* ── Section label ────────────────────────────────────────────── */
+  .v2d-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--v2-zinc-600);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin: 16px 0 10px;
+  }
+
+  /* ── Comments ─────────────────────────────────────────────────── */
+  .v2d-comments {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .v2d-comment {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--v2-border-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .v2d-comment-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .v2d-comment-time { font-size: 10px; color: var(--v2-zinc-600); font-family: var(--v2-font-mono); }
+  .v2d-comment-text { margin: 0; font-size: 13px; color: var(--v2-zinc-300); }
+  .v2d-delete-comment-btn {
+    background: none; border: none; cursor: pointer; padding: 2px;
+    color: var(--v2-zinc-600); display: flex; align-items: center;
+  }
+  .v2d-delete-comment-btn:hover { color: var(--v2-s-rejected-text); }
+
+  /* ── Form ─────────────────────────────────────────────────────── */
+  .v2d-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .v2d-field { display: flex; flex-direction: column; gap: 6px; }
+  .v2d-field--full { grid-column: span 2; }
+  .v2d-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--v2-zinc-500);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .v2d-input, .v2d-select {
+    width: 100%;
+    height: 40px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 13px;
+    color: var(--v2-zinc-300);
+    font-family: var(--v2-font-sans);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .v2d-input:focus, .v2d-select:focus {
+    border-color: var(--v2-brand-500);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+  }
+  .v2d-select { appearance: none; cursor: pointer; }
+  .v2d-select:disabled { opacity: .5; cursor: not-allowed; }
+  .v2d-error { margin: 0; font-size: 10px; color: var(--v2-s-rejected-text); }
+
+  /* Score inline */
+  .v2d-score-inline {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--v2-border-soft);
+    border-radius: 8px;
+    padding: 0 12px;
+  }
+  .v2d-score-inline-num  { font-size: 22px; font-weight: 700; font-family: var(--v2-font-mono); }
+  .v2d-score-inline-label { font-size: 12px; font-weight: 600; }
+  .v2d-score-empty {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    color: var(--v2-zinc-600);
+    background: rgba(255,255,255,.02);
+    border: 1px dashed var(--v2-zinc-800);
+    border-radius: 8px;
+  }
+
+  /* Comment input row */
+  .v2d-comment-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .v2d-comment-input { flex: 1; }
+  .v2d-add-comment-btn {
+    width: 40px; height: 40px; flex-shrink: 0;
+    background: var(--v2-brand-500);
+    border: none; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #fff; padding: 0;
+  }
+  .v2d-add-comment-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── Footer ─────────────────────────────────────────────────────── */
+  .v2d-footer {
+    padding-top: 20px;
+    margin-top: auto;
+  }
+  .v2d-submit-btn {
+    width: 100%;
+    height: 44px;
+    background: var(--v2-brand-500);
+    border: none; border-radius: 8px;
+    color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: var(--v2-font-sans);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(99,102,241,.3);
+    transition: opacity .15s;
+  }
+  .v2d-submit-btn:hover:not(:disabled) { background: var(--v2-brand-600); }
+  .v2d-submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+  /* ── Skeleton ────────────────────────────────────────────────────── */
+  .v2d-skel-row { margin-bottom: 14px; }
+  .v2-skel {
+    background: linear-gradient(90deg, var(--v2-zinc-900) 25%, var(--v2-zinc-800) 50%, var(--v2-zinc-900) 75%);
+    background-size: 400% 100%;
+    animation: v2Shimmer 1.4s ease-in-out infinite;
+    border-radius: 4px;
+    display: block;
+  }
+  .v2-skel-line { display: block; }
+  @keyframes v2Shimmer {
+    0%   { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .v2-spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: v2Spin .8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes v2Spin { to { transform: rotate(360deg); } }
+</style>

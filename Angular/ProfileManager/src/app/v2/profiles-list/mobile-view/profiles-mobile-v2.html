@@ -1,0 +1,285 @@
+<div class="v2m-list" role="list">
+  @if (loading()) {
+    @for (i of [1,2,3]; track i) {
+      <div class="v2m-card v2m-card--skel" role="listitem" aria-hidden="true">
+        <div class="v2m-skel-header">
+          <div class="v2m-avatar v2-skel"></div>
+          <div>
+            <div class="v2-skel v2-skel-line" style="width:120px;height:13px;margin-bottom:6px;"></div>
+            <div class="v2-skel v2-skel-line" style="width:80px;height:11px;"></div>
+          </div>
+        </div>
+        <div class="v2m-skel-body">
+          <div class="v2-skel" style="width:70px;height:22px;border-radius:5px;"></div>
+          <div class="v2-skel v2-skel-line" style="width:100px;height:11px;"></div>
+        </div>
+        <div class="v2m-skel-actions">
+          <div class="v2-skel" style="flex:1;height:32px;border-radius:6px;"></div>
+          <div class="v2-skel" style="flex:1;height:32px;border-radius:6px;"></div>
+        </div>
+      </div>
+    }
+  } @else if (!profiles().length) {
+    <div class="v2m-empty">
+      <p class="v2m-empty-title">No profiles found</p>
+      <p class="v2m-empty-sub">Try adjusting your filters</p>
+    </div>
+  } @else {
+    @for (profile of pagedProfiles(); track profile.id; let i = $index) {
+      <article class="v2m-card" role="listitem">
+        <!-- Header -->
+        <div class="v2m-header">
+          <div class="v2m-header-left">
+            <div class="v2m-avatar" aria-hidden="true">
+              {{ profile.name.slice(0,2).toUpperCase() }}
+            </div>
+            <div>
+              <p class="v2m-name">{{ profile.name }}</p>
+              <p class="v2m-meta">
+                {{ zodiacLabel(profile.zodiacSign) }} · {{ profile.city ?? '—' }}
+              </p>
+            </div>
+          </div>
+          <div class="v2m-header-right">
+            @if (profile.starMatchScore) {
+              <span
+                class="v2m-score"
+                [style.color]="profile.starMatchScore === 9 ? 'var(--v2-star-9)' : 'var(--v2-star-8)'"
+              >★{{ profile.starMatchScore }}</span>
+            }
+            <!-- Context menu toggle -->
+            <div class="v2m-menu-wrap">
+              <button
+                type="button"
+                class="v2m-menu-btn"
+                (click)="toggleMenu(profile.id?.toString() ?? '')"
+                [attr.aria-expanded]="openMenuId() === profile.id?.toString()"
+                aria-label="More actions"
+                aria-haspopup="true"
+              >
+                <ng-icon hlm name="lucideEllipsis" size="sm" />
+              </button>
+              @if (openMenuId() === profile.id?.toString()) {
+                <div class="v2m-menu" role="menu">
+                  <button class="v2m-menu-item" role="menuitem" (click)="view(profile.id?.toString())">
+                    <ng-icon hlm name="lucideEye" size="xs" /> View
+                  </button>
+                  <button class="v2m-menu-item" role="menuitem" (click)="edit(profile.id?.toString())">
+                    <ng-icon hlm name="lucidePencil" size="xs" /> Edit
+                  </button>
+                  <button class="v2m-menu-item v2m-menu-item--danger" role="menuitem" (click)="delete(profile.id?.toString())">
+                    <ng-icon hlm name="lucideTrash2" size="xs" /> Delete
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="v2m-status-row">
+          <app-v2-status-badge [statusId]="profile.profileStatusId" />
+          <span class="v2m-age">{{ profile.age ?? '—' }} yrs</span>
+        </div>
+
+        <!-- Copy actions -->
+        <div class="v2m-copy-row">
+          <button type="button" class="v2m-copy-btn" (click)="copyId(profile.matrimonyId)">
+            <ng-icon hlm name="lucideCopy" size="xs" />
+            <span class="v2m-mono">{{ profile.matrimonyId }}</span>
+          </button>
+          <button type="button" class="v2m-copy-btn" (click)="copyPhone(profile.mobileNumber)">
+            <ng-icon hlm name="lucideCopy" size="xs" />
+            <span class="v2m-mono">{{ profile.mobileNumber }}</span>
+          </button>
+        </div>
+      </article>
+    }
+  }
+</div>
+
+<style>
+  .v2m-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-family: var(--v2-font-sans);
+  }
+
+  /* ── Card ───────────────────────────────────────────────────────── */
+  .v2m-card {
+    background: var(--v2-bg-base);
+    border-bottom: 1px solid var(--v2-border-soft);
+    padding: 14px 16px;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────── */
+  .v2m-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .v2m-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .v2m-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .v2m-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--v2-brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .v2m-name {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--v2-zinc-200);
+  }
+  .v2m-meta {
+    margin: 0;
+    font-size: 11px;
+    color: var(--v2-zinc-600);
+  }
+
+  /* ── Score badge ─────────────────────────────────────────────────── */
+  .v2m-score {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--v2-font-mono);
+  }
+
+  /* ── Context menu ────────────────────────────────────────────────── */
+  .v2m-menu-wrap { position: relative; }
+  .v2m-menu-btn {
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--v2-zinc-500);
+    padding: 0;
+  }
+  .v2m-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--v2-bg-card);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 8px;
+    box-shadow: var(--v2-shadow-popover);
+    min-width: 130px;
+    z-index: 50;
+    overflow: hidden;
+  }
+  .v2m-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 14px;
+    font-size: 13px;
+    color: var(--v2-zinc-300);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--v2-font-sans);
+  }
+  .v2m-menu-item:hover { background: rgba(255,255,255,.05); }
+  .v2m-menu-item--danger { color: var(--v2-s-rejected-text); }
+  .v2m-menu-item--danger:hover { background: rgba(239,68,68,.08); }
+
+  /* ── Status row ──────────────────────────────────────────────────── */
+  .v2m-status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .v2m-age {
+    font-size: 11px;
+    color: var(--v2-zinc-600);
+    margin-left: auto;
+  }
+
+  /* ── Copy row ────────────────────────────────────────────────────── */
+  .v2m-copy-row {
+    display: flex;
+    gap: 8px;
+  }
+  .v2m-copy-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--v2-zinc-500);
+    font-size: 11px;
+    font-family: var(--v2-font-sans);
+    overflow: hidden;
+  }
+  .v2m-copy-btn:hover { background: rgba(255,255,255,.07); color: var(--v2-zinc-300); }
+  .v2m-mono {
+    font-family: var(--v2-font-mono);
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+  }
+
+  /* ── Empty ───────────────────────────────────────────────────────── */
+  .v2m-empty {
+    padding: 60px 20px;
+    text-align: center;
+  }
+  .v2m-empty-title {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--v2-zinc-400);
+  }
+  .v2m-empty-sub {
+    margin: 0;
+    font-size: 12px;
+    color: var(--v2-zinc-600);
+  }
+
+  /* ── Skeleton ────────────────────────────────────────────────────── */
+  .v2m-skel-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .v2m-skel-body   { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .v2m-skel-actions { display:flex; gap:8px; }
+
+  .v2-skel {
+    background: linear-gradient(90deg, var(--v2-zinc-900) 25%, var(--v2-zinc-800) 50%, var(--v2-zinc-900) 75%);
+    background-size: 400% 100%;
+    animation: v2Shimmer 1.4s ease-in-out infinite;
+    border-radius: 4px;
+  }
+  .v2-skel-line { display:block; }
+  @keyframes v2Shimmer {
+    0%   { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>

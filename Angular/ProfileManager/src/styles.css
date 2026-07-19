@@ -85,6 +85,102 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   v2 Design Tokens — ProfileArc redesign
+   Fonts: DM Sans (sans) + DM Mono (mono)
+   Palette: Zinc neutrals + Indigo accent
+   ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Fonts */
+  --v2-font-sans: 'DM Sans', system-ui, sans-serif;
+  --v2-font-mono: 'DM Mono', 'Cascadia Code', monospace;
+
+  /* Brand — Indigo */
+  --v2-brand-100: #e0e7ff;
+  --v2-brand-200: #c7d2fe;
+  --v2-brand-300: #a5b4fc;
+  --v2-brand-400: #818cf8;
+  --v2-brand-500: #6366f1;
+  --v2-brand-600: #4f46e5;
+  --v2-brand-700: #4338ca;
+  --v2-brand-900: #312e81;
+  --v2-brand-950: #1e1b4b;
+
+  /* Neutral — Zinc */
+  --v2-zinc-50:  #fafafa;
+  --v2-zinc-200: #e4e4e7;
+  --v2-zinc-300: #d4d4d8;
+  --v2-zinc-400: #a1a1aa;
+  --v2-zinc-500: #71717a;
+  --v2-zinc-600: #52525b;
+  --v2-zinc-700: #3f3f46;
+  --v2-zinc-800: #27272a;
+  --v2-zinc-900: #18181b;
+  --v2-zinc-950: #09090b;
+
+  /* Dark-theme surface layers */
+  --v2-bg-base:    #09090b;
+  --v2-bg-surface: #0e0e1a;
+  --v2-bg-deep:    #07070f;
+  --v2-bg-card:    #0b0b18;
+  --v2-border:     #1e1e2e;
+  --v2-border-soft:#18181b;
+
+  /* Elevation shadows (dark) */
+  --v2-shadow-card:    0 2px 8px rgba(0,0,0,.4);
+  --v2-shadow-popover: 0 8px 24px rgba(0,0,0,.5);
+  --v2-shadow-modal:   0 24px 64px rgba(0,0,0,.7), 0 4px 16px rgba(0,0,0,.4);
+
+  /* Star match */
+  --v2-star-9: #fbbf24;
+  --v2-star-8: #f59e0b;
+
+  /* Status — NEW (blue) */
+  --v2-s-new-text:   #60a5fa;
+  --v2-s-new-bg:     rgba(59,130,246,.12);
+  --v2-s-new-border: rgba(59,130,246,.25);
+
+  /* Status — CONTACTED (yellow) */
+  --v2-s-contacted-text:   #facc15;
+  --v2-s-contacted-bg:     rgba(234,179,8,.12);
+  --v2-s-contacted-border: rgba(234,179,8,.25);
+
+  /* Status — MEETING_SCHEDULED (violet) */
+  --v2-s-meeting-text:   #a78bfa;
+  --v2-s-meeting-bg:     rgba(139,92,246,.12);
+  --v2-s-meeting-border: rgba(139,92,246,.25);
+
+  /* Status — ACCEPTED (green) */
+  --v2-s-accepted-text:   #4ade80;
+  --v2-s-accepted-bg:     rgba(34,197,94,.12);
+  --v2-s-accepted-border: rgba(34,197,94,.25);
+
+  /* Status — ON_HOLD (orange) */
+  --v2-s-onhold-text:   #fb923c;
+  --v2-s-onhold-bg:     rgba(249,115,22,.12);
+  --v2-s-onhold-border: rgba(249,115,22,.25);
+
+  /* Status — REJECTED (red) */
+  --v2-s-rejected-text:   #f87171;
+  --v2-s-rejected-bg:     rgba(239,68,68,.12);
+  --v2-s-rejected-border: rgba(239,68,68,.25);
+
+  /* Status — PROFILE_SHARED (cyan) */
+  --v2-s-shared-text:   #22d3ee;
+  --v2-s-shared-bg:     rgba(6,182,212,.12);
+  --v2-s-shared-border: rgba(6,182,212,.25);
+
+  /* Status — NEED_TO_CONTACT (pink) */
+  --v2-s-needcontact-text:   #f472b6;
+  --v2-s-needcontact-bg:     rgba(236,72,153,.12);
+  --v2-s-needcontact-border: rgba(236,72,153,.25);
+
+  /* Status — SHARE_BY_RM (indigo) */
+  --v2-s-sharerm-text:   #818cf8;
+  --v2-s-sharerm-bg:     rgba(99,102,241,.12);
+  --v2-s-sharerm-border: rgba(99,102,241,.25);
+}
+
 /* ── App layout (existing) ──────────────────────────────────────────────── */
 .layout-wrapper {
   min-height: 100vh;

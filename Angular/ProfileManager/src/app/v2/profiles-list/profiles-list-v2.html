@@ -1,0 +1,418 @@
+<div class="v2-shell" [class.dark]="themeService.isDark()">
+
+  <!-- ══ TOP NAV ══════════════════════════════════════════════════ -->
+  <nav class="v2-nav" role="navigation" aria-label="Main navigation">
+    <!-- Logo -->
+    <div class="v2-nav-logo">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="11" r="5" fill="var(--v2-brand-500)" />
+        <path d="M8 28C8 22.477 11.582 18 16 18C20.418 18 24 22.477 24 28"
+              stroke="var(--v2-brand-500)" stroke-width="2.5" stroke-linecap="round" />
+        <path d="M4 26C4 14.954 9.373 6 16 6C22.627 6 28 14.954 28 26"
+              stroke="var(--v2-brand-400)" stroke-width="1.5" stroke-linecap="round" opacity=".4" />
+      </svg>
+      <span class="v2-nav-brand">ProfileArc</span>
+    </div>
+
+    <!-- Search -->
+    <div class="v2-nav-search">
+      <div class="v2-search-box">
+        <svg class="v2-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input
+          type="search"
+          class="v2-search-input"
+          placeholder="Search by ID or phone…"
+          [value]="filterOptions().searchQuery"
+          (input)="setSearch($any($event.target).value)"
+          aria-label="Search profiles"
+        />
+      </div>
+    </div>
+
+    <!-- Right -->
+    <div class="v2-nav-right">
+      <!-- Theme toggle -->
+      <button type="button" class="v2-icon-btn" (click)="cycleTheme()"
+              [attr.aria-label]="'Switch to ' + themeLabel() + ' mode'">
+        <ng-icon hlm [name]="themeIcon()" size="sm" />
+      </button>
+
+      <!-- Avatar / logout menu -->
+      <div class="v2-avatar-menu" (mouseleave)="menuOpen.set(false)">
+        <button type="button" class="v2-avatar-btn" (click)="menuOpen.update(v => !v)"
+                [attr.aria-expanded]="menuOpen()" aria-haspopup="true">
+          <div class="v2-avatar-circle" aria-hidden="true">RM</div>
+          <span class="v2-avatar-name">Manager</span>
+          <ng-icon hlm name="lucideChevronDown" size="xs" />
+        </button>
+        @if (menuOpen()) {
+          <div class="v2-avatar-dropdown" role="menu">
+            <button type="button" class="v2-menu-item v2-menu-item--danger" role="menuitem" (click)="logout()">
+              <ng-icon hlm name="lucidePowerOff" size="xs" />
+              Log out
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ FILTER BAR ══════════════════════════════════════════════ -->
+  <div class="v2-filter-bar" role="toolbar" aria-label="Filter and actions">
+    <!-- Title + count -->
+    <div class="v2-filter-title-group">
+      <span class="v2-filter-title">Profiles</span>
+      <span class="v2-count-badge">{{ totalCount() }}</span>
+    </div>
+
+    <div class="v2-filter-spacer"></div>
+
+    <!-- Filters -->
+    <div class="v2-filter-group">
+      <!-- Status filter -->
+      <select class="v2-filter-select"
+              [value]="filterOptions().profileStatus ?? ''"
+              (change)="setStatus($any($event.target).value)"
+              aria-label="Filter by status">
+        <option value="">Status</option>
+        @for (key of statusList; track key) {
+          <option [value]="key">{{ PROFILE_STATUS[key] }}</option>
+        }
+      </select>
+
+      <!-- Score filter -->
+      <select class="v2-filter-select"
+              [value]="filterOptions().starMatchScore ?? ''"
+              (change)="setScore($any($event.target).value)"
+              aria-label="Filter by star match score">
+        <option value="">Score</option>
+        <option value="9">9 — Excellent</option>
+        <option value="8">8 — Good</option>
+      </select>
+
+      <!-- Sort toggle -->
+      <button type="button" class="v2-filter-btn" (click)="toggleSort()"
+              [class.v2-filter-btn--active]="filterOptions().viewOrderCheck"
+              [attr.aria-label]="filterOptions().viewOrderCheck ? 'Sort oldest first' : 'Sort newest first'">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M7 15l5 5 5-5M7 9l5-5 5 5"/>
+        </svg>
+        {{ filterOptions().viewOrderCheck ? 'Oldest' : 'Newest' }}
+      </button>
+
+      <!-- Clear filters -->
+      @if (hasActiveFilter()) {
+        <button type="button" class="v2-filter-btn v2-filter-btn--ghost" (click)="clearFilters()"
+                aria-label="Clear all filters">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          Clear
+        </button>
+      }
+    </div>
+
+    <div class="v2-filter-sep" aria-hidden="true"></div>
+
+    <!-- Reference buttons -->
+    <div class="v2-filter-group">
+      <button type="button" class="v2-filter-btn v2-filter-btn--ghost"
+              (click)="showZodiac.update(v => !v)" aria-label="Zodiac reference">
+        <ng-icon hlm name="lucideSparkles" size="xs" /> Zodiac
+      </button>
+      <button type="button" class="v2-filter-btn v2-filter-btn--ghost"
+              (click)="showStars.update(v => !v)" aria-label="Star match reference">
+        <ng-icon hlm name="lucideStar" size="xs" /> Stars
+      </button>
+    </div>
+
+    <div class="v2-filter-sep" aria-hidden="true"></div>
+
+    <!-- Add profile -->
+    <button type="button" class="v2-add-btn" (click)="openAdd()">
+      <ng-icon hlm name="lucidePlus" size="xs" />
+      Add Profile
+    </button>
+  </div>
+
+  <!-- ══ STATS BAR ═════════════════════════════════════════════════ -->
+  <app-v2-stats-bar [profiles]="profiles.value() ?? []" />
+
+  <!-- ══ LIST AREA ═════════════════════════════════════════════════ -->
+  <main class="v2-content" role="main">
+    <!-- Desktop table (md+) -->
+    <div class="v2-desktop-view">
+      <app-v2-profiles-desktop
+        [profiles]="profiles.value() ?? []"
+        [loading]="profiles.isLoading()"
+      />
+    </div>
+
+    <!-- Mobile cards (below md) -->
+    <div class="v2-mobile-view">
+      <app-v2-profiles-mobile
+        [profiles]="profiles.value() ?? []"
+        [loading]="profiles.isLoading()"
+      />
+    </div>
+  </main>
+
+  <!-- ══ PROFILE DRAWER ════════════════════════════════════════════ -->
+  <app-v2-profile-drawer />
+</div>
+
+<style>
+  /* ── Shell ────────────────────────────────────────────────────── */
+  .v2-shell {
+    min-height: 100vh;
+    background: var(--v2-bg-base);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--v2-font-sans);
+  }
+
+  /* ══ NAV ═══════════════════════════════════════════════════════ */
+  .v2-nav {
+    height: 56px;
+    background: var(--v2-bg-surface);
+    border-bottom: 1px solid var(--v2-border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    flex-shrink: 0;
+  }
+
+  /* Logo */
+  .v2-nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 160px;
+  }
+  .v2-nav-brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--v2-zinc-50);
+    letter-spacing: -.01em;
+  }
+
+  /* Search */
+  .v2-nav-search {
+    flex: 1;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .v2-search-box {
+    height: 36px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .v2-search-box:focus-within {
+    border-color: var(--v2-brand-500);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+  }
+  .v2-search-icon { color: var(--v2-zinc-600); flex-shrink: 0; }
+  .v2-search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    color: var(--v2-zinc-300);
+    font-family: var(--v2-font-sans);
+  }
+  .v2-search-input::placeholder { color: var(--v2-zinc-700); }
+
+  /* Right */
+  .v2-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 160px;
+    justify-content: flex-end;
+  }
+  .v2-icon-btn {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--v2-zinc-500);
+    padding: 0;
+    transition: background .1s, color .1s;
+  }
+  .v2-icon-btn:hover { background: rgba(255,255,255,.07); color: var(--v2-zinc-300); }
+
+  /* Avatar / dropdown */
+  .v2-avatar-menu { position: relative; }
+  .v2-avatar-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    cursor: pointer;
+    font-family: var(--v2-font-sans);
+    color: var(--v2-zinc-400);
+  }
+  .v2-avatar-circle {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--v2-brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .v2-avatar-name { font-size: 12px; }
+  .v2-avatar-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--v2-bg-card);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 8px;
+    box-shadow: var(--v2-shadow-popover);
+    min-width: 130px;
+    z-index: 50;
+    overflow: hidden;
+  }
+  .v2-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--v2-zinc-300);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--v2-font-sans);
+  }
+  .v2-menu-item:hover { background: rgba(255,255,255,.05); }
+  .v2-menu-item--danger { color: var(--v2-s-rejected-text); }
+  .v2-menu-item--danger:hover { background: rgba(239,68,68,.08); }
+
+  /* ══ FILTER BAR ════════════════════════════════════════════════ */
+  .v2-filter-bar {
+    height: 52px;
+    background: var(--v2-bg-surface);
+    border-bottom: 1px solid var(--v2-border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .v2-filter-title-group { display: flex; align-items: center; gap: 8px; }
+  .v2-filter-title { font-size: 14px; font-weight: 600; color: var(--v2-zinc-50); }
+  .v2-count-badge {
+    background: var(--v2-zinc-800);
+    border-radius: 9999px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--v2-zinc-500);
+    font-family: var(--v2-font-mono);
+  }
+  .v2-filter-spacer { flex: 1; }
+  .v2-filter-group { display: flex; align-items: center; gap: 6px; }
+  .v2-filter-sep { width: 1px; height: 20px; background: var(--v2-zinc-800); margin: 0 4px; }
+
+  /* Filter select */
+  .v2-filter-select {
+    height: 32px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 6px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--v2-zinc-400);
+    font-family: var(--v2-font-sans);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+  }
+  .v2-filter-select:focus { border-color: var(--v2-brand-500); }
+
+  /* Filter button */
+  .v2-filter-btn {
+    height: 32px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    border-radius: 6px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--v2-zinc-400);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--v2-font-sans);
+    white-space: nowrap;
+    transition: background .1s, color .1s;
+  }
+  .v2-filter-btn:hover { background: rgba(255,255,255,.07); color: var(--v2-zinc-200); }
+  .v2-filter-btn--active { background: rgba(99,102,241,.15); border-color: rgba(99,102,241,.3); color: var(--v2-brand-400); }
+  .v2-filter-btn--ghost { background: transparent; border-color: transparent; color: var(--v2-zinc-500); }
+  .v2-filter-btn--ghost:hover { background: rgba(255,255,255,.05); border-color: var(--v2-zinc-800); color: var(--v2-zinc-300); }
+
+  /* Add profile button */
+  .v2-add-btn {
+    height: 32px;
+    background: var(--v2-brand-500);
+    border: none;
+    border-radius: 6px;
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--v2-font-sans);
+    box-shadow: 0 2px 8px rgba(99,102,241,.35);
+    transition: background .1s;
+    white-space: nowrap;
+  }
+  .v2-add-btn:hover { background: var(--v2-brand-600); }
+
+  /* ══ CONTENT ═══════════════════════════════════════════════════ */
+  .v2-content { flex: 1; }
+
+  /* Responsive: desktop vs mobile */
+  .v2-desktop-view { display: none; }
+  .v2-mobile-view  { display: block; }
+
+  @media (min-width: 768px) {
+    .v2-desktop-view { display: block; }
+    .v2-mobile-view  { display: none; }
+  }
+</style>

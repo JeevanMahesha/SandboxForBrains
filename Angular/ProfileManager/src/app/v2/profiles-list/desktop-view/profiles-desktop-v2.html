@@ -1,0 +1,414 @@
+<div class="v2-table-wrap">
+  @if (loading()) {
+    <!-- Skeleton rows -->
+    <table class="v2-table" aria-label="Loading profiles">
+      <thead>
+        <tr class="v2-thead-row">
+          <th class="v2-th v2-th-check" scope="col"><div class="v2-checkbox" aria-hidden="true"></div></th>
+          <th class="v2-th" scope="col">Profile</th>
+          <th class="v2-th v2-th-sm" scope="col">Age</th>
+          <th class="v2-th" scope="col">Zodiac / Star</th>
+          <th class="v2-th v2-th-center" scope="col">Score</th>
+          <th class="v2-th" scope="col">Location</th>
+          <th class="v2-th" scope="col">Status</th>
+          <th class="v2-th" scope="col">Mat. ID</th>
+          <th class="v2-th" scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (i of [1,2,3,4,5,6,7,8]; track i) {
+          <tr class="v2-tbody-row">
+            <td class="v2-td v2-td-check"><div class="v2-checkbox v2-skel" aria-hidden="true"></div></td>
+            <td class="v2-td">
+              <div class="v2-profile-cell">
+                <div class="v2-avatar v2-skel"></div>
+                <div>
+                  <div class="v2-skel v2-skel-line" style="width:120px;height:12px;margin-bottom:6px;"></div>
+                  <div class="v2-skel v2-skel-line" style="width:90px;height:10px;"></div>
+                </div>
+              </div>
+            </td>
+            <td class="v2-td"><div class="v2-skel v2-skel-line" style="width:24px;height:12px;"></div></td>
+            <td class="v2-td">
+              <div class="v2-skel v2-skel-line" style="width:70px;height:12px;margin-bottom:6px;"></div>
+              <div class="v2-skel v2-skel-line" style="width:50px;height:10px;"></div>
+            </td>
+            <td class="v2-td v2-td-center"><div class="v2-skel" style="width:32px;height:22px;border-radius:9999px;margin:auto;"></div></td>
+            <td class="v2-td">
+              <div class="v2-skel v2-skel-line" style="width:70px;height:12px;margin-bottom:6px;"></div>
+              <div class="v2-skel v2-skel-line" style="width:55px;height:10px;"></div>
+            </td>
+            <td class="v2-td"><div class="v2-skel" style="width:80px;height:22px;border-radius:5px;"></div></td>
+            <td class="v2-td"><div class="v2-skel v2-skel-line" style="width:90px;height:12px;"></div></td>
+            <td class="v2-td v2-td-actions">
+              <div class="v2-action-group">
+                <div class="v2-skel" style="width:28px;height:28px;border-radius:5px;"></div>
+                <div class="v2-skel" style="width:28px;height:28px;border-radius:5px;"></div>
+                <div class="v2-skel" style="width:28px;height:28px;border-radius:5px;"></div>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else if (!profiles().length) {
+    <!-- Empty state -->
+    <div class="v2-empty">
+      <div class="v2-empty-icon" aria-hidden="true">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+             stroke="var(--v2-zinc-700)" stroke-width="1.5" stroke-linecap="round">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+      </div>
+      <p class="v2-empty-title">No profiles found</p>
+      <p class="v2-empty-sub">Try adjusting your filters or add a new profile</p>
+    </div>
+  } @else {
+    <table class="v2-table" aria-label="Profiles">
+      <thead>
+        <tr class="v2-thead-row">
+          <th class="v2-th v2-th-check" scope="col"><div class="v2-checkbox" aria-hidden="true"></div></th>
+          <th class="v2-th" scope="col">Profile</th>
+          <th class="v2-th v2-th-sm" scope="col">Age</th>
+          <th class="v2-th" scope="col">Zodiac / Star</th>
+          <th class="v2-th v2-th-center" scope="col">Score</th>
+          <th class="v2-th" scope="col">Location</th>
+          <th class="v2-th" scope="col">Status</th>
+          <th class="v2-th" scope="col">Mat. ID</th>
+          <th class="v2-th" scope="col"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (profile of pagedProfiles(); track profile.id; let idx = $index) {
+          <tr class="v2-tbody-row">
+            <!-- Checkbox -->
+            <td class="v2-td v2-td-check">
+              <div class="v2-checkbox" role="checkbox" aria-checked="false" tabindex="0"></div>
+            </td>
+
+            <!-- Profile: avatar + name + phone -->
+            <td class="v2-td">
+              <div class="v2-profile-cell">
+                <div class="v2-avatar" aria-hidden="true">
+                  {{ profile.name.slice(0,2).toUpperCase() }}
+                </div>
+                <div>
+                  <p class="v2-profile-name">{{ profile.name }}</p>
+                  <div class="v2-profile-phone-row">
+                    <span class="v2-mono v2-muted">{{ profile.mobileNumber }}</span>
+                    <button
+                      type="button"
+                      class="v2-icon-micro"
+                      (click)="copyPhone(profile.mobileNumber)"
+                      aria-label="Copy mobile number"
+                    >
+                      <ng-icon hlm name="lucideCopy" size="xs" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Age -->
+            <td class="v2-td v2-td-sm">
+              <span class="v2-muted">{{ profile.age ?? '—' }}</span>
+            </td>
+
+            <!-- Zodiac / Star -->
+            <td class="v2-td">
+              <p class="v2-cell-primary">{{ zodiacLabel(profile.zodiacSign) }}</p>
+              <p class="v2-cell-secondary">{{ profile.star ?? '—' }}</p>
+            </td>
+
+            <!-- Score -->
+            <td class="v2-td v2-td-center">
+              @if (profile.starMatchScore) {
+                <span
+                  class="v2-score-pill"
+                  [style.color]="profile.starMatchScore === 9 ? 'var(--v2-star-9)' : 'var(--v2-star-8)'"
+                  [style.background]="profile.starMatchScore === 9 ? 'rgba(251,191,36,.15)' : 'rgba(245,158,11,.12)'"
+                  [style.border-color]="profile.starMatchScore === 9 ? 'rgba(251,191,36,.3)' : 'rgba(245,158,11,.25)'"
+                >{{ profile.starMatchScore }}</span>
+              } @else {
+                <span class="v2-muted">—</span>
+              }
+            </td>
+
+            <!-- Location -->
+            <td class="v2-td">
+              <p class="v2-cell-primary">{{ profile.city ?? '—' }}</p>
+              <p class="v2-cell-secondary">{{ profile.state ?? '—' }}</p>
+            </td>
+
+            <!-- Status -->
+            <td class="v2-td">
+              <app-v2-status-badge [statusId]="profile.profileStatusId" />
+            </td>
+
+            <!-- Matrimony ID -->
+            <td class="v2-td">
+              <div class="v2-id-row">
+                <span class="v2-mono v2-muted">{{ profile.matrimonyId }}</span>
+                <button
+                  type="button"
+                  class="v2-icon-micro"
+                  (click)="copyId(profile.matrimonyId)"
+                  aria-label="Copy matrimony ID"
+                >
+                  <ng-icon hlm name="lucideCopy" size="xs" />
+                </button>
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td class="v2-td v2-td-actions">
+              <div class="v2-action-group">
+                <button type="button" class="v2-action-btn" (click)="edit(profile.id?.toString())" aria-label="Edit profile">
+                  <ng-icon hlm name="lucidePencil" size="sm" />
+                </button>
+                <button type="button" class="v2-action-btn v2-action-btn--danger" (click)="delete(profile.id?.toString())" aria-label="Delete profile">
+                  <ng-icon hlm name="lucideTrash2" size="sm" />
+                </button>
+                <button type="button" class="v2-action-btn" (click)="view(profile.id?.toString())" aria-label="View profile">
+                  <ng-icon hlm name="lucideEye" size="sm" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="v2-table-footer">
+      <span class="v2-footer-count">{{ profiles().length }} profile{{ profiles().length === 1 ? '' : 's' }} in total</span>
+    </div>
+  }
+</div>
+
+<style>
+  /* ── Wrapper ────────────────────────────────────────────────────── */
+  .v2-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    font-family: var(--v2-font-sans);
+  }
+
+  /* ── Table structure ────────────────────────────────────────────── */
+  .v2-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 900px;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────── */
+  .v2-thead-row {
+    height: 36px;
+    background: var(--v2-bg-surface);
+    border-bottom: 1px solid var(--v2-border);
+  }
+  .v2-th {
+    text-align: left;
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--v2-zinc-600);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .v2-th-check { width: 44px; text-align: center; }
+  .v2-th-sm    { width: 56px; }
+  .v2-th-center { text-align: center; }
+
+  /* ── Body rows ──────────────────────────────────────────────────── */
+  .v2-tbody-row {
+    height: 56px;
+    border-bottom: 1px solid var(--v2-border-soft);
+    transition: background .1s;
+  }
+  .v2-tbody-row:hover { background: rgba(255,255,255,.02); }
+
+  .v2-td {
+    padding: 0 12px;
+    vertical-align: middle;
+  }
+  .v2-td-check  { text-align: center; }
+  .v2-td-sm     { }
+  .v2-td-center { text-align: center; }
+  .v2-td-actions { text-align: right; padding-right: 16px; }
+
+  /* ── Checkbox ───────────────────────────────────────────────────── */
+  .v2-checkbox {
+    width: 16px; height: 16px;
+    border: 1px solid var(--v2-zinc-700);
+    border-radius: 4px;
+    background: rgba(255,255,255,.04);
+    margin: auto;
+    cursor: pointer;
+  }
+
+  /* ── Profile cell ───────────────────────────────────────────────── */
+  .v2-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .v2-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--v2-brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .v2-profile-name {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--v2-zinc-200);
+  }
+  .v2-profile-phone-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 1px;
+  }
+
+  /* ── Copy icon button ───────────────────────────────────────────── */
+  .v2-icon-micro {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--v2-zinc-600);
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .v2-icon-micro:hover { border-color: var(--v2-zinc-700); color: var(--v2-zinc-400); }
+
+  /* ── Cell text ──────────────────────────────────────────────────── */
+  .v2-cell-primary   { margin: 0; font-size: 12px; font-weight: 500; color: var(--v2-zinc-300); }
+  .v2-cell-secondary { margin: 0; font-size: 11px; color: var(--v2-zinc-600); }
+  .v2-muted { font-size: 12px; color: var(--v2-zinc-500); }
+  .v2-mono  { font-family: var(--v2-font-mono); letter-spacing: .02em; }
+
+  /* ── Score pill ─────────────────────────────────────────────────── */
+  .v2-score-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--v2-font-mono);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+  }
+
+  /* ── ID row ─────────────────────────────────────────────────────── */
+  .v2-id-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── Action buttons ─────────────────────────────────────────────── */
+  .v2-action-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .v2-action-btn {
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--v2-zinc-500);
+    padding: 0;
+    transition: background .1s, color .1s, border-color .1s;
+  }
+  .v2-action-btn:hover {
+    background: rgba(255,255,255,.07);
+    border-color: var(--v2-zinc-700);
+    color: var(--v2-zinc-300);
+  }
+  .v2-action-btn--danger:hover {
+    background: rgba(239,68,68,.1);
+    border-color: rgba(239,68,68,.3);
+    color: var(--v2-s-rejected-text);
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────────── */
+  .v2-table-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--v2-border-soft);
+  }
+  .v2-footer-count {
+    font-size: 12px;
+    color: var(--v2-zinc-600);
+  }
+
+  /* ── Empty state ─────────────────────────────────────────────────── */
+  .v2-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+  }
+  .v2-empty-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--v2-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .v2-empty-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--v2-zinc-300);
+  }
+  .v2-empty-sub {
+    margin: 0;
+    font-size: 13px;
+    color: var(--v2-zinc-600);
+  }
+
+  /* ── Skeleton ────────────────────────────────────────────────────── */
+  .v2-skel {
+    background: linear-gradient(90deg, var(--v2-zinc-900) 25%, var(--v2-zinc-800) 50%, var(--v2-zinc-900) 75%);
+    background-size: 400% 100%;
+    animation: v2Shimmer 1.4s ease-in-out infinite;
+    border-radius: 4px;
+  }
+  .v2-skel-line { display: block; }
+  @keyframes v2Shimmer {
+    0%   { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+</style>

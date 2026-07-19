@@ -1,0 +1,316 @@
+<div class="v2-login-root">
+  <!-- Ambient orbs -->
+  <div class="v2-orb v2-orb-1" aria-hidden="true"></div>
+  <div class="v2-orb v2-orb-2" aria-hidden="true"></div>
+  <div class="v2-orb v2-orb-3" aria-hidden="true"></div>
+
+  <!-- Glass card -->
+  <div class="v2-login-card" role="main">
+    <!-- Logo -->
+    <div class="v2-logo-row">
+      <svg width="34" height="34" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="11" r="5" fill="var(--v2-brand-500)" />
+        <path d="M8 28C8 22.477 11.582 18 16 18C20.418 18 24 22.477 24 28"
+              stroke="var(--v2-brand-500)" stroke-width="2.5" stroke-linecap="round" />
+        <path d="M4 26C4 14.954 9.373 6 16 6C22.627 6 28 14.954 28 26"
+              stroke="var(--v2-brand-400)" stroke-width="1.5" stroke-linecap="round" opacity=".45" />
+      </svg>
+      <div>
+        <p class="v2-app-name">ProfileArc</p>
+        <p class="v2-app-tagline">Every profile, perfectly placed</p>
+      </div>
+    </div>
+
+    <h1 class="v2-heading">Welcome back</h1>
+    <p class="v2-subheading">Sign in to your relationship manager dashboard</p>
+
+    <form [formRoot]="loginForm">
+
+      <!-- Email -->
+      <div class="v2-field">
+        <label class="v2-label" for="v2-email">Email address</label>
+        <input
+          id="v2-email"
+          type="email"
+          class="v2-input"
+          placeholder="manager@profilearc.in"
+          autocomplete="email"
+          [formField]="loginForm.email"
+        />
+        @if (loginForm.email().touched() && loginForm.email().invalid()) {
+          <p class="v2-field-error" role="alert">
+            {{ loginForm.email().errors()[0]?.message }}
+          </p>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="v2-field">
+        <div class="v2-label-row">
+          <label class="v2-label" for="v2-password">Password</label>
+        </div>
+        <div class="v2-input-wrapper">
+          <input
+            id="v2-password"
+            class="v2-input v2-input-password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            [formField]="loginForm.password"
+          />
+          <button
+            type="button"
+            class="v2-eye-btn"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            (click)="togglePassword()"
+          >
+            @if (showPassword()) {
+              <!-- Eye-off icon -->
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            } @else {
+              <!-- Eye icon -->
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            }
+          </button>
+        </div>
+        @if (loginForm.password().touched() && loginForm.password().invalid()) {
+          <p class="v2-field-error" role="alert">
+            {{ loginForm.password().errors()[0]?.message }}
+          </p>
+        }
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="v2-submit-btn"
+        [disabled]="loginForm().submitting()"
+        [attr.aria-busy]="loginForm().submitting()"
+      >
+        @if (loginForm().submitting()) {
+          <span class="v2-spinner" aria-hidden="true"></span>
+          Signing in…
+        } @else {
+          Sign in to ProfileArc
+        }
+      </button>
+
+    </form>
+  </div>
+</div>
+
+<style>
+  /* ── Root ─────────────────────────────────────────────────────────── */
+  .v2-login-root {
+    min-height: 100vh;
+    background: var(--v2-bg-deep);
+    background-image: radial-gradient(circle, #0e0e22 1px, transparent 1px);
+    background-size: 24px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--v2-font-sans);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Orbs ─────────────────────────────────────────────────────────── */
+  .v2-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .v2-orb-1 {
+    top: -130px; left: -90px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(99,102,241,.38) 0%, transparent 65%);
+    filter: blur(70px);
+    animation: v2OrbFloat1 11s ease-in-out infinite;
+  }
+  .v2-orb-2 {
+    bottom: -110px; right: -70px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(139,92,246,.26) 0%, transparent 65%);
+    filter: blur(58px);
+    animation: v2OrbFloat2 14s ease-in-out infinite;
+  }
+  .v2-orb-3 {
+    top: 35%; right: 8%;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(59,130,246,.14) 0%, transparent 65%);
+    filter: blur(48px);
+  }
+  @keyframes v2OrbFloat1 {
+    0%, 100% { transform: translate(0, 0); }
+    50%       { transform: translate(22px, -28px); }
+  }
+  @keyframes v2OrbFloat2 {
+    0%, 100% { transform: translate(0, 0); }
+    50%       { transform: translate(-18px, 22px); }
+  }
+
+  /* ── Card ─────────────────────────────────────────────────────────── */
+  .v2-login-card {
+    position: relative;
+    z-index: 2;
+    width: 400px;
+    max-width: calc(100vw - 40px);
+    background: rgba(12, 12, 22, .78);
+    backdrop-filter: blur(40px) saturate(160%);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 32px 80px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+
+  /* ── Logo ─────────────────────────────────────────────────────────── */
+  .v2-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .v2-app-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--v2-zinc-50);
+    letter-spacing: -.01em;
+    line-height: 1.15;
+  }
+  .v2-app-tagline {
+    margin: 0;
+    font-size: 11px;
+    color: var(--v2-zinc-600);
+    letter-spacing: .01em;
+  }
+
+  /* ── Headings ─────────────────────────────────────────────────────── */
+  .v2-heading {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--v2-zinc-50);
+    letter-spacing: -.02em;
+  }
+  .v2-subheading {
+    margin: 0 0 28px;
+    font-size: 13px;
+    color: var(--v2-zinc-500);
+    line-height: 1.5;
+  }
+
+  /* ── Fields ───────────────────────────────────────────────────────── */
+  .v2-field {
+    margin-bottom: 16px;
+  }
+  .v2-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .v2-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--v2-zinc-400);
+    margin-bottom: 8px;
+    letter-spacing: .02em;
+  }
+  .v2-input {
+    width: 100%;
+    height: 44px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--v2-zinc-700);
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 14px;
+    color: var(--v2-zinc-300);
+    font-family: var(--v2-font-sans);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    box-sizing: border-box;
+  }
+  .v2-input::placeholder { color: var(--v2-zinc-600); }
+  .v2-input:focus {
+    border-color: var(--v2-brand-500);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+  }
+  .v2-input-wrapper {
+    position: relative;
+  }
+  .v2-input-password {
+    padding-right: 42px;
+  }
+  .v2-eye-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--v2-zinc-600);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+  }
+  .v2-eye-btn:hover { color: var(--v2-zinc-400); }
+  .v2-field-error {
+    margin: 6px 0 0;
+    font-size: 11px;
+    color: var(--v2-s-rejected-text);
+  }
+
+  /* ── Submit ───────────────────────────────────────────────────────── */
+  .v2-submit-btn {
+    margin-top: 4px;
+    width: 100%;
+    height: 44px;
+    background: var(--v2-brand-500);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--v2-font-sans);
+    letter-spacing: .01em;
+    box-shadow: 0 4px 16px rgba(99,102,241,.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity .15s, box-shadow .15s;
+  }
+  .v2-submit-btn:hover:not(:disabled) {
+    background: var(--v2-brand-600);
+    box-shadow: 0 6px 20px rgba(99,102,241,.45);
+  }
+  .v2-submit-btn:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+  }
+
+  /* ── Spinner ──────────────────────────────────────────────────────── */
+  .v2-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: v2Spin .8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes v2Spin { to { transform: rotate(360deg); } }
+</style>

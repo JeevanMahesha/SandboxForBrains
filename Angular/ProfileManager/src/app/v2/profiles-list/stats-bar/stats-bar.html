@@ -1,0 +1,75 @@
+<div class="v2-stats-bar" role="status" aria-label="Profile status counts">
+  <div class="v2-stats-inner">
+    <div class="v2-stat-item">
+      <span class="v2-stat-label">All</span>
+      <span class="v2-stat-count v2-stat-count--all">{{ profiles().length }}</span>
+    </div>
+    <div class="v2-stat-divider" aria-hidden="true"></div>
+    @for (stat of stats(); track stat.key) {
+      <div class="v2-stat-item">
+        <span class="v2-stat-dot" [style.background]="stat.style.color" aria-hidden="true"></span>
+        <span class="v2-stat-label">{{ stat.shortLabel }}</span>
+        <span class="v2-stat-count" [style.color]="stat.style.color">{{ stat.count }}</span>
+      </div>
+    }
+  </div>
+</div>
+
+<style>
+  .v2-stats-bar {
+    height: 40px;
+    background: var(--v2-bg-deep);
+    border-bottom: 1px solid var(--v2-border-soft);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .v2-stats-bar::-webkit-scrollbar { display: none; }
+
+  .v2-stats-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    white-space: nowrap;
+    font-family: var(--v2-font-sans);
+  }
+
+  .v2-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .v2-stat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .v2-stat-label {
+    color: var(--v2-zinc-600);
+  }
+
+  .v2-stat-count {
+    font-weight: 700;
+    font-family: var(--v2-font-mono);
+    font-size: 11px;
+  }
+
+  .v2-stat-count--all {
+    color: var(--v2-zinc-50);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .v2-stat-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--v2-zinc-800);
+    flex-shrink: 0;
+  }
+</style>

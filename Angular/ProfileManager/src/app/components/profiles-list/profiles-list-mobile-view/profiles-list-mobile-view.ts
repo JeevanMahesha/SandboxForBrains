@@ -1,4 +1,5 @@
-import { NgClass, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
+import { ProfileCardClassPipe } from './profile-card-class.pipe';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -19,23 +20,11 @@ import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { ProfilesService } from '../../../services/profiles.service';
 
-const STATUS_BORDER_MAP: Partial<Record<string, string>> = {
-  NEW: 'border-l-sky-400',
-  REJECTED: 'border-l-rose-400',
-  CONTACTED: 'border-l-indigo-400',
-  MEETING_SCHEDULED: 'border-l-lime-400',
-  ACCEPTED: 'border-l-emerald-400',
-  ON_HOLD: 'border-l-amber-400',
-  PROFILE_SHARED: 'border-l-fuchsia-400',
-  SHARE_BY_RM: 'border-l-orange-400',
-  NEED_TO_CONTACT: 'border-l-slate-400',
-};
-
 @Component({
   selector: 'app-profiles-list-mobile-view',
   imports: [
-    NgClass,
     TitleCasePipe,
+    ProfileCardClassPipe,
     HlmButton,
     HlmBadge,
     HlmSkeleton,
@@ -77,7 +66,4 @@ export class ProfilesListMobileView {
     this.profileService.copyToClipboard(value, label);
   }
 
-  statusBorderClass(profile: ProfileDetail): string {
-    return STATUS_BORDER_MAP[profile.profileStatusId ?? ''] ?? 'border-l-border';
-  }
 }

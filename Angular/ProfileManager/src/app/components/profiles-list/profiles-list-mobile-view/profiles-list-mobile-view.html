@@ -17,12 +17,10 @@
   <div class="mt-2 grid w-full grid-cols-1 gap-0">
     @for (profile of pagedData(); track profile.id) {
       <div
-        class="flex flex-col gap-3 border-l-4 p-4 transition-colors"
-        [class.border-t]="!$first"
-        [ngClass]="statusBorderClass(profile)"
-        (click)="userActionEvent('view', profile.id)"
         role="button"
         tabindex="0"
+        [class]="profile | profileCardClass : $first"
+        (click)="userActionEvent('view', profile.id)"
         (keydown.enter)="userActionEvent('view', profile.id)"
       >
         <!-- Header: name + kebab menu -->
@@ -41,7 +39,11 @@
           </button>
           <ng-template #profileMenu>
             <hlm-dropdown-menu>
-              <button type="button" hlmDropdownMenuItem (click)="userActionEvent('edit', profile.id)">
+              <button
+                type="button"
+                hlmDropdownMenuItem
+                (click)="userActionEvent('edit', profile.id)"
+              >
                 <ng-icon hlm name="lucidePencil" size="sm" />
                 Edit
               </button>

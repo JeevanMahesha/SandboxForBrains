@@ -1,4 +1,3 @@
-import { TitleCasePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { Router } from '@angular/router';
@@ -36,7 +35,6 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 @Component({
   selector: 'app-toolbar',
   imports: [
-    TitleCasePipe,
     FormField,
     BrnSheetContent,
     HlmBadge,

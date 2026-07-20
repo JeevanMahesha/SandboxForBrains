@@ -3,23 +3,32 @@
 >
   <!-- Start: sort + filters -->
   <div class="flex flex-col gap-2 md:flex-row md:items-center">
-    <div class="flex w-36 items-center gap-2 text-sm">
-      <hlm-switch aria-label="Sort order" [formField]="filterForm.viewOrderCheck" />
-      <span>{{ filterForm.viewOrderCheck().value() ? 'Newest' : 'Oldest' }}</span>
-      <button
-        type="button"
-        hlmBtn
-        variant="outline"
-        size="icon"
-        aria-label="Toggle theme"
-        [attr.title]="`Theme: ${themeService.preference()}`"
-        (click)="themeService.cyclePreference()"
-      >
-        <ng-icon hlm size="sm" [name]="themeIcon()" />
-      </button>
-    </div>
+    <!-- Theme toggle (visible on all sizes) -->
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      size="icon"
+      [attr.aria-label]="`Theme: ${themeService.preference()}`"
+      [attr.title]="`Theme: ${themeService.preference()}`"
+      (click)="themeService.cyclePreference()"
+    >
+      <ng-icon hlm size="sm" [name]="themeIcon()" />
+    </button>
 
-    <hlm-select placeholder="Select Status" [formField]="filterForm.profileStatus">
+    <!-- Sort select (visible on all sizes) -->
+    <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
+      <hlm-select-trigger class="w-full md:w-40">
+        <hlm-select-value placeholder="Sort order" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        <hlm-select-item [value]="false">Oldest First</hlm-select-item>
+        <hlm-select-item [value]="true">Newest First</hlm-select-item>
+      </hlm-select-content>
+    </hlm-select>
+
+    <!-- Desktop-only filter controls -->
+    <hlm-select placeholder="Select Status" class="hidden md:block" [formField]="filterForm.profileStatus">
       <hlm-select-trigger class="w-full md:w-44">
         <hlm-select-value placeholder="Select Status" />
       </hlm-select-trigger>
@@ -30,7 +39,7 @@
       </hlm-select-content>
     </hlm-select>
 
-    <hlm-select placeholder="Select Star" [formField]="filterForm.starMatchScore">
+    <hlm-select placeholder="Select Star" class="hidden md:block" [formField]="filterForm.starMatchScore">
       <hlm-select-trigger class="w-full md:w-44">
         <hlm-select-value placeholder="Select Star" />
       </hlm-select-trigger>
@@ -42,8 +51,8 @@
     </hlm-select>
   </div>
 
-  <!-- Center: search -->
-  <div class="relative md:w-64">
+  <!-- Center: search (desktop only) -->
+  <div class="relative hidden md:block md:w-64">
     <ng-icon
       hlm
       name="lucideSearch"
@@ -60,7 +69,25 @@
   </div>
 
   <!-- End: actions -->
-  <div class="flex flex-col gap-2 md:flex-row">
+  <div class="flex flex-col gap-2 md:flex-row md:items-center">
+    <!-- Mobile: Filters button -->
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      class="relative md:hidden"
+      (click)="filterSheetOpen.set('open')"
+    >
+      <ng-icon hlm name="lucideSlidersHorizontal" size="sm" />
+      Filters
+      @if (filterHasValue()) {
+        <span hlmBadge class="absolute -top-2 -right-2 size-5 rounded-full p-0 text-[10px]">!</span>
+      }
+    </button>
+
+    <!-- Separator (desktop only) -->
+    <hlm-separator orientation="vertical" class="hidden md:block h-6" />
+
     <button
       class="w-full md:w-auto"
       type="button"
@@ -121,3 +148,59 @@
     </div>
   </div>
 </div>
+
+<!-- Mobile filter sheet (bottom) -->
+<hlm-sheet side="bottom" [state]="filterSheetOpen()" (closed)="filterSheetOpen.set('closed')">
+  <hlm-sheet-content *brnSheetContent class="flex flex-col gap-4 px-4 pb-6">
+    <hlm-sheet-header>
+      <h3 hlmSheetTitle>Filters</h3>
+    </hlm-sheet-header>
+
+    <div class="flex flex-col gap-4">
+      <div class="relative">
+        <ng-icon
+          hlm
+          name="lucideSearch"
+          size="sm"
+          class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
+        />
+        <input
+          hlmInput
+          type="text"
+          placeholder="Search by ID or phone"
+          class="w-full pl-8"
+          [formField]="filterForm.searchQuery"
+        />
+      </div>
+
+      <hlm-select placeholder="Select Status" [formField]="filterForm.profileStatus">
+        <hlm-select-trigger class="w-full">
+          <hlm-select-value placeholder="Select Status" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (status of profileStatusOptions; track status.value) {
+            <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+
+      <hlm-select placeholder="Select Star" [formField]="filterForm.starMatchScore">
+        <hlm-select-trigger class="w-full">
+          <hlm-select-value placeholder="Select Star" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (score of scoreMatchOptions; track score) {
+            <hlm-select-item [value]="score">{{ score }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <hlm-sheet-footer>
+      <button type="button" hlmBtn variant="outline" class="w-full" [disabled]="!filterHasValue()" (click)="clearForm()">
+        <ng-icon hlm name="lucideFilterX" size="sm" />
+        Clear Filters
+      </button>
+    </hlm-sheet-footer>
+  </hlm-sheet-content>
+</hlm-sheet>

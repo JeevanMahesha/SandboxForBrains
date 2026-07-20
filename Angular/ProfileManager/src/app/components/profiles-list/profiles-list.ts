@@ -1,5 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, Resource } from '@angular/core';
+import { provideIcons } from '@ng-icons/core';
+import { lucidePlus } from '@ng-icons/lucide';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { ProfileDetail } from '../../models/profile.model';
 import { ProfilesService } from '../../services/profiles.service';
@@ -15,10 +19,13 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
     ProfilesListDesktopView,
     Profile,
     ProfilesListMobileView,
+    HlmButton,
     HlmSpinner,
     NgTemplateOutlet,
+    ...HlmIconImports,
   ],
   templateUrl: './profiles-list.html',
+  providers: [provideIcons({ lucidePlus })],
 })
 export default class ProfilesList {
   readonly profileService = inject(ProfilesService);

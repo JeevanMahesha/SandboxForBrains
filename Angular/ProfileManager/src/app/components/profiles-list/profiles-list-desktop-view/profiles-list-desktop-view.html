@@ -2,7 +2,6 @@
   <table hlmTable class="w-full">
     <thead hlmTHead>
       <tr hlmTr>
-        <th hlmTh>Sl No</th>
         <th hlmTh>Name</th>
         <th hlmTh>Zodiac Sign</th>
         <th hlmTh>City</th>
@@ -20,15 +19,14 @@
       @if (isLoading()) {
         @for (row of skeletonRows; track $index) {
           <tr hlmTr>
-            <td hlmTd colspan="9"><div hlmSkeleton class="h-8 w-full"></div></td>
+            <td hlmTd colspan="8"><div hlmSkeleton class="h-8 w-full"></div></td>
           </tr>
         }
       } @else {
         @for (profile of pagedData(); track profile.id) {
-          <tr hlmTr>
-            <td hlmTd>{{ (currentPage() - 1) * pageSize() + $index + 1 }}</td>
+          <tr hlmTr class="hover:bg-muted/50 transition-colors cursor-pointer">
             <td hlmTd>{{ profile.name }}</td>
-            <td hlmTd>{{ profile.zodiacSign }}</td>
+            <td hlmTd>{{ profile.zodiacSign | titlecase }}</td>
             <td hlmTd>{{ profile.city }}</td>
             <td hlmTd>
               <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
@@ -59,12 +57,18 @@
                 <ng-icon hlm name="lucideCopy" size="sm" />
               </button>
             </td>
-            <td hlmTd>{{ profile.starMatchScore }}</td>
+            <td hlmTd>
+              <span class="flex items-center gap-1">
+                <ng-icon hlm name="lucideStar" size="sm" class="text-amber-400" />
+                {{ profile.starMatchScore }}
+              </span>
+            </td>
             <td hlmTd>
               <div class="flex items-center gap-1">
                 <button
                   type="button"
                   hlmBtn
+                  hlmTooltip="Edit profile"
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Edit"
@@ -75,6 +79,7 @@
                 <button
                   type="button"
                   hlmBtn
+                  hlmTooltip="Delete profile"
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Delete"
@@ -86,6 +91,7 @@
                 <button
                   type="button"
                   hlmBtn
+                  hlmTooltip="View profile"
                   variant="ghost"
                   size="icon-sm"
                   aria-label="View"
@@ -101,7 +107,7 @@
     </tbody>
     <tfoot hlmTFoot>
       <tr hlmTr>
-        <td hlmTd colspan="9" class="text-center">
+        <td hlmTd colspan="8" class="text-center">
           In total there are {{ profileData().length }} profiles.
         </td>
       </tr>

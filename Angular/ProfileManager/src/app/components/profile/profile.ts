@@ -30,11 +30,13 @@ import {
 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
@@ -42,6 +44,7 @@ import {
   DISTRICT_LIST,
   MATCHING_STARS,
   PROFILE_STATUS,
+  PROFILE_STATUS_COLORS_MAP,
   STATE_LIST,
   ZODIAC_SIGN_LIST,
 } from '../../constant/common.const';
@@ -59,8 +62,10 @@ import { ProfilesService } from '../../services/profiles.service';
     DatePipe,
     NgTemplateOutlet,
     BrnSheetContent,
+    HlmBadge,
     HlmButton,
     HlmInput,
+    HlmSeparator,
     ...HlmSheetImports,
     ...HlmFieldImports,
     ...HlmSelectImports,
@@ -91,6 +96,16 @@ export class Profile {
   readonly buttonLabel = computed(() =>
     this.profileService.drawerState().actionType === 'edit' ? 'Update Profile' : 'Save Changes',
   );
+
+  readonly profileStatusLabel = computed(() => {
+    const id = this.profileDetailForm.profileStatusId().value() as keyof typeof PROFILE_STATUS | null;
+    return id ? PROFILE_STATUS[id] : null;
+  });
+
+  readonly profileStatusColor = computed(() => {
+    const id = this.profileDetailForm.profileStatusId().value() as keyof typeof PROFILE_STATUS_COLORS_MAP | null;
+    return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
+  });
 
   PROFILE_STATUS_DATA = PROFILE_STATUS;
   ZODIAC_SIGN_DATA = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({

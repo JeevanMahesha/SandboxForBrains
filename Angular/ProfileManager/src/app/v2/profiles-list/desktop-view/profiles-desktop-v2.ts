@@ -1,21 +1,24 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCopy, lucideEye, lucidePencil, lucideTrash2 } from '@ng-icons/lucide';
+import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
+import { HlmTableImports } from '@spartan-ng/helm/table';
+import { ZODIAC_SIGN_LIST } from '../../../constant/common.const';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ProfilesService } from '../../../services/profiles.service';
-import { ZODIAC_SIGN_LIST } from '../../../constant/common.const';
 import V2StatusBadge from '../../shared/status-badge';
 
 @Component({
   selector: 'app-v2-profiles-desktop',
-  imports: [...HlmIconImports, V2StatusBadge],
-  providers: [provideIcons({ lucideCopy, lucideEye, lucidePencil, lucideTrash2 })],
+  imports: [...HlmIconImports, ...HlmTableImports, HlmSkeleton, HlmButton, V2StatusBadge],
   templateUrl: './profiles-desktop-v2.html',
+  providers: [provideIcons({ lucideCopy, lucideEye, lucidePencil, lucideTrash2 })]
 })
 export default class V2ProfilesDesktop {
-  profiles = input<ProfileDetail[]>([]);
-  loading  = input(false);
+  readonly profiles = input<ProfileDetail[]>([]);
+  readonly loading  = input(false);
 
   private svc = inject(ProfilesService);
 

@@ -1,7 +1,10 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCopy, lucideEye, lucidePencil, lucideTrash2, lucideEllipsis } from '@ng-icons/lucide';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ProfilesService } from '../../../services/profiles.service';
 import { ZODIAC_SIGN_LIST } from '../../../constant/common.const';
@@ -9,7 +12,7 @@ import V2StatusBadge from '../../shared/status-badge';
 
 @Component({
   selector: 'app-v2-profiles-mobile',
-  imports: [...HlmIconImports, V2StatusBadge],
+  imports: [...HlmIconImports, ...HlmDropdownMenuImports, HlmSkeleton, HlmButton, V2StatusBadge],
   providers: [provideIcons({ lucideCopy, lucideEye, lucidePencil, lucideTrash2, lucideEllipsis })],
   templateUrl: './profiles-mobile-v2.html',
 })
@@ -18,8 +21,6 @@ export default class V2ProfilesMobile {
   loading  = input(false);
 
   private svc = inject(ProfilesService);
-
-  readonly openMenuId = signal<string | null>(null);
 
   readonly page     = signal(1);
   readonly pageSize = signal(10);
@@ -34,14 +35,9 @@ export default class V2ProfilesMobile {
     return ZODIAC_SIGN_LIST[key as keyof typeof ZODIAC_SIGN_LIST].tanglish;
   }
 
-  toggleMenu(id: string): void {
-    this.openMenuId.update((cur) => (cur === id ? null : id));
-  }
-  closeMenu(): void { this.openMenuId.set(null); }
-
-  view(id: string | undefined):   void { if (id) { this.svc.userActionEvent('view',   id); this.closeMenu(); } }
-  edit(id: string | undefined):   void { if (id) { this.svc.userActionEvent('edit',   id); this.closeMenu(); } }
-  delete(id: string | undefined): void { if (id) { this.svc.userActionEvent('delete', id); this.closeMenu(); } }
+  view(id: string | undefined):   void { if (id) this.svc.userActionEvent('view',   id); }
+  edit(id: string | undefined):   void { if (id) this.svc.userActionEvent('edit',   id); }
+  delete(id: string | undefined): void { if (id) this.svc.userActionEvent('delete', id); }
 
   copyId(id: string | undefined): void {
     this.svc.copyToClipboard(id, 'Matrimony ID');

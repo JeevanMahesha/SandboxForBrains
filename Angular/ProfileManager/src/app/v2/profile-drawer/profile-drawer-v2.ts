@@ -17,8 +17,13 @@ import {
 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmLabel } from '@spartan-ng/helm/label';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
+import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
   DISTRICT_LIST,
   MATCHING_STARS,
@@ -52,6 +57,7 @@ interface ProfileFormModel {
     BrnSheetContent,
     ...HlmSheetImports,
     ...HlmIconImports,
+    HlmInput, HlmButton, HlmLabel, HlmSkeleton, HlmSpinner,
     V2StatusBadge,
   ],
   providers: [

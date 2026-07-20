@@ -2,6 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmLabel } from '@spartan-ng/helm/label';
+import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { UserCredential } from 'firebase/auth';
 import { AuthService } from '../../services/auth.service';
 
@@ -12,7 +16,7 @@ interface LoginModel {
 
 @Component({
   selector: 'app-v2-login',
-  imports: [FormField, FormRoot],
+  imports: [FormField, FormRoot, HlmInput, HlmButton, HlmLabel, HlmSpinner],
   templateUrl: './login-v2.html',
 })
 export default class LoginV2 {
@@ -39,7 +43,7 @@ export default class LoginV2 {
             .then((cred: UserCredential) => {
               this.authService.currentUser.set(cred.user);
               toast.success('Login successful');
-              this.router.navigate(['/v2']);
+              this.router.navigate(['/']);
             })
             .catch(() => toast.error('Login failed — check your credentials'));
         },

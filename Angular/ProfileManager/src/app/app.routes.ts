@@ -9,7 +9,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./components/profiles-list/profiles-list'),
+     loadComponent: () => import('./v2/profiles-list/profiles-list-v2'),
     canActivate: [authGuard],
   },
 ];

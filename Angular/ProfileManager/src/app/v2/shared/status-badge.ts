@@ -1,43 +1,23 @@
 import { Component, computed, input } from '@angular/core';
+import { HlmBadge } from '@spartan-ng/helm/badge';
 import { PROFILE_STATUS } from '../../constant/common.const';
 import { V2_STATUS_STYLES } from '../tokens';
 
 @Component({
   selector: 'app-v2-status-badge',
+  imports: [HlmBadge],
   template: `
     <span
-      class="v2-badge"
+      hlmBadge
+      variant="outline"
       [style.color]="style().color"
       [style.background]="style().background"
       [style.border-color]="style().borderColor"
     >
-      <span class="v2-badge-dot" [style.background]="style().color"></span>
+      <span class="size-1.5 shrink-0 rounded-full" [style.background]="style().color"></span>
       {{ style().label }}
     </span>
   `,
-  styles: [
-    `
-      .v2-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 5px;
-        border: 1px solid transparent;
-        letter-spacing: 0.07em;
-        font-family: var(--v2-font-sans);
-        white-space: nowrap;
-      }
-      .v2-badge-dot {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-    `,
-  ],
 })
 export default class V2StatusBadge {
   statusId = input<keyof typeof PROFILE_STATUS | null>(null);

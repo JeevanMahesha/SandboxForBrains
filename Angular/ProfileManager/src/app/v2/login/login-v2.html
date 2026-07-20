@@ -28,11 +28,11 @@
 
       <!-- Email -->
       <div class="v2-field">
-        <label class="v2-label" for="v2-email">Email address</label>
+        <label hlmLabel for="v2-email">Email address</label>
         <input
+          hlmInput
           id="v2-email"
           type="email"
-          class="v2-input"
           placeholder="manager@profilearc.in"
           autocomplete="email"
           [formField]="loginForm.email"
@@ -46,26 +46,27 @@
 
       <!-- Password -->
       <div class="v2-field">
-        <div class="v2-label-row">
-          <label class="v2-label" for="v2-password">Password</label>
-        </div>
-        <div class="v2-input-wrapper">
+        <label hlmLabel for="v2-password">Password</label>
+        <div class="relative">
           <input
+            hlmInput
             id="v2-password"
-            class="v2-input v2-input-password"
+            class="pr-10"
             placeholder="••••••••"
             autocomplete="current-password"
             [type]="showPassword() ? 'text' : 'password'"
             [formField]="loginForm.password"
           />
           <button
+            hlmBtn
+            variant="ghost"
+            size="icon-xs"
             type="button"
-            class="v2-eye-btn"
+            class="absolute right-2 top-1/2 -translate-y-1/2"
             [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
             (click)="togglePassword()"
           >
             @if (showPassword()) {
-              <!-- Eye-off icon -->
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
@@ -73,7 +74,6 @@
                 <line x1="1" y1="1" x2="23" y2="23"/>
               </svg>
             } @else {
-              <!-- Eye icon -->
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -91,13 +91,14 @@
 
       <!-- Submit -->
       <button
+        hlmBtn
         type="submit"
-        class="v2-submit-btn"
+        class="w-full mt-1"
         [disabled]="loginForm().submitting()"
         [attr.aria-busy]="loginForm().submitting()"
       >
         @if (loginForm().submitting()) {
-          <span class="v2-spinner" aria-hidden="true"></span>
+          <hlm-spinner />
           Signing in…
         } @else {
           Sign in to ProfileArc
@@ -212,105 +213,13 @@
   /* ── Fields ───────────────────────────────────────────────────────── */
   .v2-field {
     margin-bottom: 16px;
-  }
-  .v2-label-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+    flex-direction: column;
+    gap: 6px;
   }
-  .v2-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--v2-zinc-400);
-    margin-bottom: 8px;
-    letter-spacing: .02em;
-  }
-  .v2-input {
-    width: 100%;
-    height: 44px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid var(--v2-zinc-700);
-    border-radius: 8px;
-    padding: 0 14px;
-    font-size: 14px;
-    color: var(--v2-zinc-300);
-    font-family: var(--v2-font-sans);
-    outline: none;
-    transition: border-color .15s, box-shadow .15s;
-    box-sizing: border-box;
-  }
-  .v2-input::placeholder { color: var(--v2-zinc-600); }
-  .v2-input:focus {
-    border-color: var(--v2-brand-500);
-    box-shadow: 0 0 0 3px rgba(99,102,241,.15);
-  }
-  .v2-input-wrapper {
-    position: relative;
-  }
-  .v2-input-password {
-    padding-right: 42px;
-  }
-  .v2-eye-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--v2-zinc-600);
-    padding: 4px;
-    display: flex;
-    align-items: center;
-  }
-  .v2-eye-btn:hover { color: var(--v2-zinc-400); }
   .v2-field-error {
-    margin: 6px 0 0;
     font-size: 11px;
     color: var(--v2-s-rejected-text);
+    margin: 0;
   }
-
-  /* ── Submit ───────────────────────────────────────────────────────── */
-  .v2-submit-btn {
-    margin-top: 4px;
-    width: 100%;
-    height: 44px;
-    background: var(--v2-brand-500);
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: var(--v2-font-sans);
-    letter-spacing: .01em;
-    box-shadow: 0 4px 16px rgba(99,102,241,.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: opacity .15s, box-shadow .15s;
-  }
-  .v2-submit-btn:hover:not(:disabled) {
-    background: var(--v2-brand-600);
-    box-shadow: 0 6px 20px rgba(99,102,241,.45);
-  }
-  .v2-submit-btn:disabled {
-    opacity: .65;
-    cursor: not-allowed;
-  }
-
-  /* ── Spinner ──────────────────────────────────────────────────────── */
-  .v2-spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255,255,255,.35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: v2Spin .8s linear infinite;
-    flex-shrink: 0;
-  }
-  @keyframes v2Spin { to { transform: rotate(360deg); } }
 </style>

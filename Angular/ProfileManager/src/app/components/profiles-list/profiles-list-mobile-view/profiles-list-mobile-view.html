@@ -79,14 +79,14 @@
         </div>
 
         <!-- Copy buttons -->
-        <div class="flex w-full gap-2" (click)="$event.stopPropagation()">
+        <div class="flex w-full gap-2">
           <button
             type="button"
             hlmBtn
             variant="outline"
             size="sm"
             class="w-full flex-1"
-            (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
+            (click)="$event.stopPropagation(); copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
           >
             {{ profile.matrimonyId }}
             <ng-icon hlm name="lucideCopy" size="sm" />
@@ -97,7 +97,7 @@
             variant="outline"
             size="sm"
             class="w-full flex-1"
-            (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+            (click)="$event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')"
           >
             {{ profile.mobileNumber }}
             <ng-icon hlm name="lucideCopy" size="sm" />

@@ -31,15 +31,14 @@ export interface ConfirmDialogContext {
       <button
         type="button"
         hlmBtn
-        [class.bg-destructive]="destructive"
-        [class.hover:bg-destructive/90]="destructive"
-        [class.text-white]="destructive"
+        [class]="destructive ? 'bg-destructive text-white hover:bg-destructive/90 border-destructive' : ''"
         (click)="close(true)"
       >
         {{ confirmLabel }}
       </button>
     </hlm-dialog-footer>
   `,
+  host: { class: 'contents' },
 })
 export default class ConfirmDialog {
   private readonly dialogRef = inject<BrnDialogRef<boolean>>(BrnDialogRef);

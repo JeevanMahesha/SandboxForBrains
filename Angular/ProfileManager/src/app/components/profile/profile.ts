@@ -1,4 +1,4 @@
-import { DatePipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 import {
   disabled,
   form,
-  FormField,
   FormRoot,
   min,
   pattern,
@@ -23,7 +22,6 @@ import {
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCheck,
-  lucideCopy,
   lucideLoaderCircle,
   lucidePlus,
   lucideTrash2,
@@ -35,7 +33,6 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
-import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
@@ -45,22 +42,18 @@ import {
   MATCHING_STARS,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
-  STATE_LIST,
-  ZODIAC_SIGN_LIST,
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
 import { ProfilesService } from '../../services/profiles.service';
+import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-fields';
 
 @Component({
   selector: 'app-profile',
   imports: [
-    FormField,
     FormRoot,
     FormsModule,
-    KeyValuePipe,
     DatePipe,
-    NgTemplateOutlet,
     BrnSheetContent,
     HlmBadge,
     HlmButton,
@@ -68,14 +61,14 @@ import { ProfilesService } from '../../services/profiles.service';
     HlmSeparator,
     ...HlmSheetImports,
     ...HlmFieldImports,
-    ...HlmSelectImports,
     ...HlmIconImports,
     HlmSpinner,
     HlmSkeleton,
+    ProfileFormFieldsComponent,
   ],
   templateUrl: './profile.html',
   providers: [
-    provideIcons({ lucideCopy, lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle }),
+    provideIcons({ lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle }),
   ],
 })
 export class Profile {
@@ -107,38 +100,11 @@ export class Profile {
     return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
   });
 
-  PROFILE_STATUS_DATA = PROFILE_STATUS;
-  ZODIAC_SIGN_DATA = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
-    key,
-    value: `${value.tanglish} (${value.english})`,
-  }));
-  STARS_DATA = Object.entries(MATCHING_STARS).map(([key, value]) => ({
-    key,
-    value: `${key} (${value})`,
-  }));
-  STATE_LIST = STATE_LIST;
-
-  // The select trigger renders the stored *value* (the key) via itemToString — not the
-  // projected <hlm-select-item> content. Map each key back to its readable label so the
-  // trigger shows the same text as the dropdown option. (state/city need none: value === label.)
-  readonly statusToLabel = (key: string): string =>
-    PROFILE_STATUS[key as keyof typeof PROFILE_STATUS] ?? key;
-  readonly zodiacToLabel = (key: string): string => {
-    const zodiac = ZODIAC_SIGN_LIST[key as keyof typeof ZODIAC_SIGN_LIST];
-    return zodiac ? `${zodiac.tanglish} (${zodiac.english})` : key;
-  };
-  readonly starToLabel = (key: string): string => {
-    const score = MATCHING_STARS[key as keyof typeof MATCHING_STARS];
-    return score === undefined ? key : `${key} (${score})`;
-  };
-  readonly cityList = computed(
+  private readonly cityList = computed(
     () =>
       DISTRICT_LIST[
         this.profileDetail().state as keyof typeof DISTRICT_LIST
       ] as unknown as string[],
-  );
-  readonly cityPlaceholder = computed(() =>
-    this.profileDetailForm.state().value() ? 'Select City' : 'Select a state to choose a city',
   );
 
   readonly newComment = model<string>('');

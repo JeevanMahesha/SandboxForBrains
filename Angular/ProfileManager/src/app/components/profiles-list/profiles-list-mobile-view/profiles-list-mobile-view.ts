@@ -41,17 +41,15 @@ import { ProfilesService } from '../../../services/profiles.service';
   ],
 })
 export class ProfilesListMobileView {
+  private profileService = inject(ProfilesService);
   readonly profileData = input.required<ProfileDetail[]>();
   readonly isLoading = input.required<boolean>();
-
   readonly currentPage = signal(1);
   readonly pageSize = signal(10);
   readonly pagedData = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize();
     return this.profileData().slice(start, start + this.pageSize());
   });
-
-  private profileService = inject(ProfilesService);
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(

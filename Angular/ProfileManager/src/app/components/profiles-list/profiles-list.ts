@@ -21,9 +21,9 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
   templateUrl: './profiles-list.html',
 })
 export default class ProfilesList {
+  readonly profileService = inject(ProfilesService);
   readonly profiles: Resource<ProfileDetail[]>;
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
-  readonly profileService = inject(ProfilesService);
 
   constructor() {
     this.profiles = this.profileService.profiles;

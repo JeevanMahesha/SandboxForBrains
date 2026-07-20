@@ -25,6 +25,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   providers: [provideIcons({ lucideCopy, lucideSquarePen, lucideTrash2, lucideEye, lucideStar })],
 })
 export class ProfilesListDesktopView {
+  private profileService = inject(ProfilesService);
   readonly profileData = input.required<ProfileDetail[]>();
   readonly isLoading = input.required<boolean>();
 
@@ -35,8 +36,6 @@ export class ProfilesListDesktopView {
     const start = (this.currentPage() - 1) * this.pageSize();
     return this.profileData().slice(start, start + this.pageSize());
   });
-
-  private profileService = inject(ProfilesService);
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(

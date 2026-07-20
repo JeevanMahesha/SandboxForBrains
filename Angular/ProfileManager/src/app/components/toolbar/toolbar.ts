@@ -9,18 +9,22 @@ import {
   lucideMonitor,
   lucideMoon,
   lucideSearch,
+  lucideSlidersHorizontal,
   lucideSparkles,
   lucideStar,
   lucideSun,
   lucideUserPlus,
 } from '@ng-icons/lucide';
+import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { HlmSwitchImports } from '@spartan-ng/helm/switch';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
@@ -32,12 +36,15 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
   selector: 'app-toolbar',
   imports: [
     FormField,
+    BrnSheetContent,
+    HlmBadge,
     HlmButton,
     HlmInput,
+    HlmSeparator,
     ...HlmSelectImports,
-    ...HlmSwitchImports,
     ...HlmDropdownMenuImports,
     ...HlmIconImports,
+    ...HlmSheetImports,
     StarMatch,
     ZodiacSigns,
   ],
@@ -54,6 +61,7 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
       lucideSun,
       lucideMoon,
       lucideMonitor,
+      lucideSlidersHorizontal,
     }),
   ],
 })
@@ -79,11 +87,13 @@ export class Toolbar {
   }));
 
   readonly scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
+  readonly sortOrderToLabel = (value: boolean): string => (value ? 'Newest First' : 'Oldest First');
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, 800);
   });
   readonly toggleStarMatch = signal<boolean>(false);
   readonly toggleZodiacSigns = signal<boolean>(false);
+  readonly filterSheetOpen = signal<'open' | 'closed'>('closed');
 
   readonly filterHasValue = computed(() => {
     const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } =

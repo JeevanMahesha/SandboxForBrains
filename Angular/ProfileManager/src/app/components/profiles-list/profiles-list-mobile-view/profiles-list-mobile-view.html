@@ -11,24 +11,56 @@
         <div hlmSkeleton class="h-8 w-40"></div>
         <div hlmSkeleton class="h-8 w-40"></div>
       </div>
-      <div class="mt-2 flex items-center justify-center gap-2 border-t pt-4">
-        <div hlmSkeleton class="size-16 rounded-full"></div>
-        <div hlmSkeleton class="size-16 rounded-full"></div>
-        <div hlmSkeleton class="size-16 rounded-full"></div>
-      </div>
     </div>
   </div>
 } @else {
   <div class="mt-2 grid w-full grid-cols-1 gap-0">
     @for (profile of pagedData(); track profile.id) {
-      <div class="flex flex-col gap-4 p-4" [class.border-t]="!$first">
-        <div class="flex items-center justify-between">
-          <div class="text-xl font-bold">{{ profile.name }}</div>
-          <div class="text-muted-foreground text-sm">
-            #{{ (currentPage() - 1) * pageSize() + $index + 1 }}
-          </div>
+      <div
+        role="button"
+        tabindex="0"
+        [class]="profile | profileCardClass : $first"
+        (click)="userActionEvent('view', profile.id)"
+        (keydown.enter)="userActionEvent('view', profile.id)"
+      >
+        <!-- Header: name + kebab menu -->
+        <div class="flex items-start justify-between gap-2">
+          <div class="text-base font-semibold">{{ profile.name }}</div>
+          <button
+            type="button"
+            hlmBtn
+            variant="ghost"
+            size="icon-sm"
+            aria-label="More actions"
+            [hlmDropdownMenuTrigger]="profileMenu"
+            (click)="$event.stopPropagation()"
+          >
+            <ng-icon hlm name="lucideMoreVertical" size="sm" />
+          </button>
+          <ng-template #profileMenu>
+            <hlm-dropdown-menu>
+              <button
+                type="button"
+                hlmDropdownMenuItem
+                (click)="userActionEvent('edit', profile.id)"
+              >
+                <ng-icon hlm name="lucidePencil" size="sm" />
+                Edit
+              </button>
+              <button
+                type="button"
+                hlmDropdownMenuItem
+                class="text-destructive focus:text-destructive"
+                (click)="userActionEvent('delete', profile.id)"
+              >
+                <ng-icon hlm name="lucideTrash2" size="sm" />
+                Delete
+              </button>
+            </hlm-dropdown-menu>
+          </ng-template>
         </div>
 
+        <!-- Metadata: zodiac + city -->
         <div class="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
           <span class="flex items-center gap-1">
             <ng-icon hlm name="lucideStar" size="sm" /> {{ profile.zodiacSign | titlecase }}
@@ -39,20 +71,22 @@
           </span>
         </div>
 
+        <!-- Status badge -->
         <div>
           <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
             {{ profile.profileStatus }}
           </span>
         </div>
 
-        <div class="mt-2 flex w-full gap-2">
+        <!-- Copy buttons -->
+        <div class="flex w-full gap-2">
           <button
             type="button"
             hlmBtn
             variant="outline"
             size="sm"
             class="w-full flex-1"
-            (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
+            (click)="$event.stopPropagation(); copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
           >
             {{ profile.matrimonyId }}
             <ng-icon hlm name="lucideCopy" size="sm" />
@@ -63,53 +97,13 @@
             variant="outline"
             size="sm"
             class="w-full flex-1"
-            (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+            (click)="$event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')"
           >
             {{ profile.mobileNumber }}
             <ng-icon hlm name="lucideCopy" size="sm" />
           </button>
         </div>
-
-        <div class="mt-2 flex items-center justify-center gap-2 border-t pt-4">
-          <button
-            type="button"
-            hlmBtn
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Edit"
-            (click)="userActionEvent('edit', profile.id)"
-          >
-            <ng-icon hlm name="lucideSquarePen" size="sm" />
-          </button>
-          <button
-            type="button"
-            hlmBtn
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Delete"
-            class="text-destructive"
-            (click)="userActionEvent('delete', profile.id)"
-          >
-            <ng-icon hlm name="lucideTrash2" size="sm" />
-          </button>
-          <button
-            type="button"
-            hlmBtn
-            variant="ghost"
-            size="icon-sm"
-            aria-label="View"
-            (click)="userActionEvent('view', profile.id)"
-          >
-            <ng-icon hlm name="lucideEye" size="sm" />
-          </button>
-        </div>
       </div>
     }
   </div>
-  <hlm-numbered-pagination
-    [totalItems]="profileData().length"
-    [pageSizes]="[10, 25, 50]"
-    [(currentPage)]="currentPage"
-    [(itemsPerPage)]="pageSize"
-  />
 }

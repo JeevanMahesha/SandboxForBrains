@@ -2,11 +2,12 @@
   <div class="layout-main-container">
     <div class="layout-main">
       <app-toolbar />
-      @let profileValue = profiles.value();
+      @let totalCount = profiles.value()?.length ?? 0;
       <div class="hidden md:block">
         @defer (on viewport) {
           <app-profiles-list-desktop-view
-            [profileData]="profileValue ?? []"
+            [pagedData]="pagedData()"
+            [totalItems]="totalCount"
             [isLoading]="profiles.isLoading()"
           />
         } @placeholder {
@@ -22,7 +23,7 @@
       <div class="block md:hidden">
         @defer (on viewport) {
           <app-profiles-list-mobile-view
-            [profileData]="profileValue ?? []"
+            [pagedData]="pagedData()"
             [isLoading]="profiles.isLoading()"
           />
         } @placeholder {
@@ -31,9 +32,30 @@
           </div>
         }
       </div>
+
+      @if (!profiles.isLoading()) {
+        <hlm-numbered-pagination
+          [totalItems]="totalCount"
+          [pageSizes]="[10, 25, 50]"
+          [(currentPage)]="currentPage"
+          [(itemsPerPage)]="pageSize"
+        />
+      }
     </div>
   </div>
 </div>
+
+<!-- Mobile FAB: Add Profile -->
+<button
+  type="button"
+  hlmBtn
+  size="icon"
+  class="md:hidden fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg"
+  aria-label="Add profile"
+  (click)="profileService.userActionEvent('create', null)"
+>
+  <ng-icon hlm name="lucidePlus" class="size-6!" />
+</button>
 
 <ng-template #loader>
   <hlm-spinner class="text-[8rem]" />

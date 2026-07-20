@@ -1,0 +1,273 @@
+<!-- Shared field-error markup -->
+<ng-template #fieldError let-field>
+  @if (field().touched() && field().invalid()) {
+    <hlm-field-error forceShow>{{ field().errors()[0].message }}</hlm-field-error>
+  }
+</ng-template>
+
+<!-- Section: Contact -->
+<p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Contact</p>
+
+<div hlmField>
+  <label hlmFieldLabel for="name">Name</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ profileDetailForm().name().value() }}</p>
+  } @else {
+    <input
+      hlmInput
+      id="name"
+      type="text"
+      class="w-full"
+      placeholder="Name"
+      [formField]="profileDetailForm().name"
+      [forceInvalid]="profileDetailForm().name().touched() && profileDetailForm().name().invalid()"
+    />
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().name }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="mobile">Mobile Number</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <div class="flex items-center gap-2 py-2">
+      <p class="text-sm">{{ profileDetailForm().mobileNumber().value() }}</p>
+      <button
+        type="button"
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Copy mobile number"
+        (click)="copyToClipboard(profileDetailForm().mobileNumber().value(), 'Mobile Number')"
+      >
+        <ng-icon hlm name="lucideCopy" size="sm" />
+      </button>
+    </div>
+  } @else {
+    <input
+      hlmInput
+      id="mobile"
+      class="w-full"
+      placeholder="Mobile Number"
+      [formField]="profileDetailForm().mobileNumber"
+      [forceInvalid]="
+        profileDetailForm().mobileNumber().touched() && profileDetailForm().mobileNumber().invalid()
+      "
+    />
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().mobileNumber }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="matrimony">Matrimony ID</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <div class="flex items-center gap-2 py-2">
+      <p class="text-sm">{{ profileDetailForm().matrimonyId().value() }}</p>
+      <button
+        type="button"
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Copy matrimony ID"
+        (click)="copyToClipboard(profileDetailForm().matrimonyId().value(), 'Matrimony ID')"
+      >
+        <ng-icon hlm name="lucideCopy" size="sm" />
+      </button>
+    </div>
+  } @else {
+    <input
+      hlmInput
+      id="matrimony"
+      class="w-full"
+      placeholder="Matrimony ID"
+      [formField]="profileDetailForm().matrimonyId"
+      [forceInvalid]="
+        profileDetailForm().matrimonyId().touched() && profileDetailForm().matrimonyId().invalid()
+      "
+    />
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().matrimonyId }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="profile_status">Profile Status</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <div class="py-2">
+      <span hlmBadge variant="secondary" [class]="profileStatusColor() ?? ''">
+        {{ profileStatusLabel() }}
+      </span>
+    </div>
+  } @else {
+    <hlm-select
+      id="profile_status"
+      class="w-full"
+      [itemToString]="statusToLabel"
+      [formField]="profileDetailForm().profileStatusId"
+    >
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value placeholder="Select Profile Status" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (status of PROFILE_STATUS_DATA | keyvalue; track status.key) {
+          <hlm-select-item [value]="status.key">{{ status.value }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().profileStatusId }"
+    />
+  }
+</div>
+
+<!-- Section: Astrological -->
+<hlm-separator />
+<p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Astrological</p>
+
+<div hlmField>
+  <label hlmFieldLabel for="zodiac_sign">Zodiac Sign</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ zodiacToLabel(profileDetailForm().zodiacSign().value() ?? '') }}</p>
+  } @else {
+    <hlm-select
+      id="zodiac_sign"
+      class="w-full"
+      [itemToString]="zodiacToLabel"
+      [formField]="profileDetailForm().zodiacSign"
+    >
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value placeholder="Select Zodiac Sign" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (zodiac of ZODIAC_SIGN_DATA; track zodiac.key) {
+          <hlm-select-item [value]="zodiac.key">{{ zodiac.value }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().zodiacSign }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="star_sign">Star Sign</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ starToLabel(profileDetailForm().star().value() ?? '') }}</p>
+  } @else {
+    <hlm-select
+      id="star_sign"
+      class="w-full"
+      [itemToString]="starToLabel"
+      [formField]="profileDetailForm().star"
+    >
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value placeholder="Select Star Sign" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (star of STARS_DATA; track star.key) {
+          <hlm-select-item [value]="star.key">{{ star.value }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().star }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="star_match_score">Star Match Score</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ profileDetailForm().starMatchScore().value() }}</p>
+  } @else {
+    <input
+      hlmInput
+      id="star_match_score"
+      type="number"
+      class="bg-muted text-muted-foreground w-full cursor-not-allowed"
+      placeholder="Auto-filled from Star Sign"
+      [formField]="profileDetailForm().starMatchScore"
+    />
+    <p hlmFieldDescription>Automatically calculated from the selected Star Sign.</p>
+  }
+</div>
+
+<!-- Section: Location -->
+<hlm-separator />
+<p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Location</p>
+
+<div hlmField>
+  <label hlmFieldLabel for="age">Age</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ profileDetailForm().age().value() }}</p>
+  } @else {
+    <input
+      hlmInput
+      id="age"
+      type="number"
+      class="w-full"
+      placeholder="Age"
+      [formField]="profileDetailForm().age"
+      [forceInvalid]="profileDetailForm().age().touched() && profileDetailForm().age().invalid()"
+    />
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().age }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="state">State</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ profileDetailForm().state().value() }}</p>
+  } @else {
+    <hlm-select id="state" class="w-full" [formField]="profileDetailForm().state">
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value placeholder="Select State" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (state of STATE_LIST; track state) {
+          <hlm-select-item [value]="state">{{ state }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().state }"
+    />
+  }
+</div>
+
+<div hlmField>
+  <label hlmFieldLabel for="city">City</label>
+  @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
+    <p class="py-2 text-sm">{{ profileDetailForm().city().value() }}</p>
+  } @else {
+    <hlm-select id="city" class="w-full" [formField]="profileDetailForm().city">
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value [placeholder]="cityPlaceholder()" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (city of cityList(); track city) {
+          <hlm-select-item [value]="city">{{ city }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    <ng-container
+      [ngTemplateOutlet]="fieldError"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().city }"
+    />
+  }
+</div>

@@ -30,6 +30,8 @@ import { AuthService } from './auth.service';
 @Service()
 export class ProfilesService {
   private authService = inject(AuthService);
+  private firestore = inject(FIRESTORE);
+  private readonly dialogService = inject(HlmDialogService);
 
   profiles = resource<ProfileDetail[], SortOption | undefined>({
     defaultValue: [],
@@ -56,7 +58,7 @@ export class ProfilesService {
         }));
       }),
   });
-  private firestore = inject(FIRESTORE);
+
   private profilesCollection = collection(this.firestore, 'profiles');
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
@@ -71,8 +73,6 @@ export class ProfilesService {
     actionType: ToolbarAction | null;
     selectedProfileId: string | null;
   }>({ isOpen: 'closed', actionType: null, selectedProfileId: null });
-
-  private readonly dialogService = inject(HlmDialogService);
 
   /** Opens a confirmation dialog and deletes the profile when the user confirms. */
   deleteProfile(id: string): void {

@@ -38,6 +38,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   ],
   templateUrl: './profile-form-fields.html',
   providers: [provideIcons({ lucideCopy })],
+  host: { class: 'flex flex-col gap-4' },
 })
 export class ProfileFormFieldsComponent {
   private readonly profileService = inject(ProfilesService);

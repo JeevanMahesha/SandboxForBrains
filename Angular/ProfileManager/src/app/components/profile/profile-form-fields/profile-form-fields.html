@@ -18,6 +18,7 @@
       id="name"
       type="text"
       class="w-full"
+      placeholder="Name"
       [formField]="profileDetailForm().name"
       [forceInvalid]="profileDetailForm().name().touched() && profileDetailForm().name().invalid()"
     />
@@ -51,7 +52,9 @@
       class="w-full"
       placeholder="Mobile Number"
       [formField]="profileDetailForm().mobileNumber"
-      [forceInvalid]="profileDetailForm().mobileNumber().touched() && profileDetailForm().mobileNumber().invalid()"
+      [forceInvalid]="
+        profileDetailForm().mobileNumber().touched() && profileDetailForm().mobileNumber().invalid()
+      "
     />
     <ng-container
       [ngTemplateOutlet]="fieldError"
@@ -83,7 +86,9 @@
       class="w-full"
       placeholder="Matrimony ID"
       [formField]="profileDetailForm().matrimonyId"
-      [forceInvalid]="profileDetailForm().matrimonyId().touched() && profileDetailForm().matrimonyId().invalid()"
+      [forceInvalid]="
+        profileDetailForm().matrimonyId().touched() && profileDetailForm().matrimonyId().invalid()
+      "
     />
     <ng-container
       [ngTemplateOutlet]="fieldError"
@@ -212,6 +217,7 @@
       id="age"
       type="number"
       class="w-full"
+      placeholder="Age"
       [formField]="profileDetailForm().age"
       [forceInvalid]="profileDetailForm().age().touched() && profileDetailForm().age().invalid()"
     />

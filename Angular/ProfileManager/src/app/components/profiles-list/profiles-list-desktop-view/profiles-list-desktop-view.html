@@ -108,15 +108,9 @@
     <tfoot hlmTFoot>
       <tr hlmTr>
         <td hlmTd colspan="8" class="text-center">
-          In total there are {{ profileData().length }} profiles.
+          In total there are {{ totalItems() }} profiles.
         </td>
       </tr>
     </tfoot>
   </table>
 </div>
-<hlm-numbered-pagination
-  [totalItems]="profileData().length"
-  [pageSizes]="[10, 25, 50]"
-  [(currentPage)]="currentPage"
-  [(itemsPerPage)]="pageSize"
-/>

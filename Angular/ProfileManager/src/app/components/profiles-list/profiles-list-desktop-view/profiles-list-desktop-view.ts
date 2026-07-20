@@ -1,11 +1,10 @@
 import { TitleCasePipe } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCopy, lucideEye, lucideSquarePen, lucideStar, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
-import { HlmNumberedPagination } from '@spartan-ng/helm/pagination';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
@@ -20,7 +19,6 @@ import { ProfilesService } from '../../../services/profiles.service';
     HlmButton,
     HlmBadge,
     HlmSkeleton,
-    HlmNumberedPagination,
     ...HlmTableImports,
     ...HlmIconImports,
     ...HlmTooltipImports,
@@ -30,16 +28,10 @@ import { ProfilesService } from '../../../services/profiles.service';
 })
 export class ProfilesListDesktopView {
   private profileService = inject(ProfilesService);
-  readonly profileData = input.required<ProfileDetail[]>();
+  readonly pagedData = input.required<ProfileDetail[]>();
+  readonly totalItems = input.required<number>();
   readonly isLoading = input.required<boolean>();
-
-  readonly currentPage = signal(1);
-  readonly pageSize = signal(10);
   readonly skeletonRows = Array.from({ length: 8 });
-  readonly pagedData = computed(() => {
-    const start = (this.currentPage() - 1) * this.pageSize();
-    return this.profileData().slice(start, start + this.pageSize());
-  });
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(

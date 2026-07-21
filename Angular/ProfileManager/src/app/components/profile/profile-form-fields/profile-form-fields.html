@@ -44,6 +44,27 @@
       >
         <ng-icon hlm name="lucideCopy" size="sm" />
       </button>
+      <a
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Call"
+        [href]="profileDetailForm().mobileNumber().value() | mobileUrl: 'tel'"
+      >
+        <ng-icon hlm name="lucidePhone" size="sm" />
+      </a>
+      <a
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp"
+        class="text-green-600 dark:text-green-400"
+        [href]="profileDetailForm().mobileNumber().value() | mobileUrl: 'whatsapp'"
+      >
+        <ng-icon hlm name="lucideMessageCircle" size="sm" />
+      </a>
     </div>
   } @else {
     <input

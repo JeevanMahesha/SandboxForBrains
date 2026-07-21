@@ -2,7 +2,7 @@ import { KeyValuePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
-import { lucideCopy } from '@ng-icons/lucide';
+import { lucideCopy, lucideMessageCircle, lucidePhone } from '@ng-icons/lucide';
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
@@ -20,6 +20,7 @@ import {
 import { TOOLBAR_ACTIONS } from '../../../constant/toolbar.const';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
+import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
@@ -28,6 +29,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     FormField,
     NgTemplateOutlet,
     KeyValuePipe,
+    MobileUrlPipe,
     HlmBadge,
     HlmButton,
     HlmInput,
@@ -37,7 +39,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     ...HlmIconImports,
   ],
   templateUrl: './profile-form-fields.html',
-  providers: [provideIcons({ lucideCopy })],
+  providers: [provideIcons({ lucideCopy, lucidePhone, lucideMessageCircle })],
   host: { class: 'flex flex-col gap-4' },
 })
 export class ProfileFormFieldsComponent {

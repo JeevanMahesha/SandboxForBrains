@@ -91,17 +91,44 @@
             {{ profile.matrimonyId }}
             <ng-icon hlm name="lucideCopy" size="sm" />
           </button>
-          <button
-            type="button"
-            hlmBtn
-            variant="outline"
-            size="sm"
-            class="w-full flex-1"
-            (click)="$event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')"
-          >
-            {{ profile.mobileNumber }}
-            <ng-icon hlm name="lucideCopy" size="sm" />
-          </button>
+          <div class="flex flex-1 items-center justify-between rounded-md border px-2 py-1 text-sm">
+            <span class="truncate">{{ profile.mobileNumber }}</span>
+            <div class="flex shrink-0 items-center">
+              <button
+                type="button"
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Copy mobile number"
+                (click)="$event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+              >
+                <ng-icon hlm name="lucideCopy" size="sm" />
+              </button>
+              <a
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Call"
+                [href]="profile.mobileNumber | mobileUrl: 'tel'"
+                (click)="$event.stopPropagation()"
+              >
+                <ng-icon hlm name="lucidePhone" size="sm" />
+              </a>
+              <a
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                class="text-green-600 dark:text-green-400"
+                [href]="profile.mobileNumber | mobileUrl: 'whatsapp'"
+                (click)="$event.stopPropagation()"
+              >
+                <ng-icon hlm name="lucideMessageCircle" size="sm" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     }

@@ -44,6 +44,27 @@
       >
         <ng-icon hlm name="lucideCopy" size="sm" />
       </button>
+      <a
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Call"
+        [href]="profileDetailForm().mobileNumber().value() | mobileUrl: 'tel'"
+      >
+        <ng-icon hlm name="lucidePhone" size="sm" />
+      </a>
+      <a
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp"
+        class="text-green-600 dark:text-green-400"
+        [href]="profileDetailForm().mobileNumber().value() | mobileUrl: 'whatsapp'"
+      >
+        <ng-icon hlm name="lucideMessageCircle" size="sm" />
+      </a>
     </div>
   } @else {
     <input
@@ -171,10 +192,10 @@
       [formField]="profileDetailForm().star"
     >
       <hlm-select-trigger class="w-full">
-        <hlm-select-value placeholder="Select Star Sign" />
+        <hlm-select-value [placeholder]="starPlaceholder()" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
-        @for (star of STARS_DATA; track star.key) {
+        @for (star of starList(); track star.key) {
           <hlm-select-item [value]="star.key">{{ star.value }}</hlm-select-item>
         }
       </hlm-select-content>

@@ -1,7 +1,12 @@
 import { InjectionToken, makeEnvironmentProviders } from '@angular/core';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { Auth, browserSessionPersistence, getAuth, setPersistence } from 'firebase/auth';
-import { Firestore, getFirestore } from 'firebase/firestore';
+import {
+  Firestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentSingleTabManager,
+} from 'firebase/firestore';
 
 export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FirebaseApp');
 export const FIREBASE_AUTH = new InjectionToken<Auth>('FirebaseAuth');
@@ -27,7 +32,13 @@ export function provideFirebase(config: FirebaseOptions) {
     {
       provide: FIRESTORE,
       deps: [FIREBASE_APP],
-      useFactory: (app: FirebaseApp) => getFirestore(app),
+      // persistentSingleTabManager pairs well with browserSessionPersistence:
+      // each tab owns its own session, and IndexedDB cache speeds up repeat reads
+      // within that same tab without leaking data across tabs.
+      useFactory: (app: FirebaseApp) =>
+        initializeFirestore(app, {
+          localCache: persistentLocalCache({ tabManager: persistentSingleTabManager(undefined) }),
+        }),
     },
   ]);
 }

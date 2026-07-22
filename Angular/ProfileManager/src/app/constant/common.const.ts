@@ -1,12 +1,34 @@
-export const MATCHING_STARS = {
-  Aswini: 8,
-  Bharani: 8,
-  Poosam: 8,
-  Swathi: 9,
-  Kettai: 8,
-  Uthirattathi: 8,
-  Revathi: 9,
+export const STAR_SCORES = {
+  Ashwini:     6,
+  Bharani:     8,
+  Krittika:    3,
+  Rohini:      8,
+  Mrigasira:   4,
+  Ardra:       6,
+  Punarpoosam: 3,
+  Poosam:      6.5,
+  Ayilyam:     7,
+  Makam:       4,
+  Pooram:      6,
+  Uthiram:     3,
+  Hastham:     7,
+  Chithirai:   4,
+  Swati:       6,
+  Visakam:     3,
+  Anusham:     6.5,
+  Kettai:      4,
+  Moolam:      3,
+  Pooradam:    8,
+  Uthiradam:   2,
+  Thiruvonam:  7,
+  Avittam:     7,
+  Sadhayam:    6,
+  Poorattadhi: 3,
+  Uthirattadhi: 8.5,
+  Revathi:     7,
 } as const;
+
+export type StarKey = keyof typeof STAR_SCORES;
 
 export const STATE_LIST = ['Tamil Nadu', 'Kerala', 'Karnataka'] as const;
 
@@ -100,24 +122,24 @@ export const DISTRICT_LIST = {
   ],
 } as const;
 
-export const ZODIAC_SIGN_LIST = {
+export const ZODIAC_LIST = {
   aries: {
     english: 'Aries',
     tanglish: 'Mesham',
     order: 1,
-    stars: ['Aswini', 'Bharani', 'Karthikai'],
+    stars: ['Ashwini', 'Bharani', 'Krittika'],
   },
   taurus: {
     english: 'Taurus',
     tanglish: 'Rishabam',
     order: 2,
-    stars: ['Karthigai', 'Rohini', 'Mirugasheerisham'],
+    stars: ['Krittika', 'Rohini', 'Mrigasira'],
   },
   gemini: {
     english: 'Gemini',
     tanglish: 'Mithunam',
     order: 3,
-    stars: ['Mrigaseersham', 'Thiruvathirai', 'Punarvasu'],
+    stars: ['Mrigasira', 'Ardra', 'Punarpoosam'],
   },
   cancer: {
     english: 'Cancer',
@@ -135,19 +157,19 @@ export const ZODIAC_SIGN_LIST = {
     english: 'Virgo',
     tanglish: 'Kanni',
     order: 6,
-    stars: ['Uthiram', 'Astam', 'Chithirai'],
+    stars: ['Uthiram', 'Hastham', 'Chithirai'],
   },
   libra: {
     english: 'Libra',
     tanglish: 'Thulaam',
     order: 7,
-    stars: ['Chithirai', 'Swathi', 'Visagam'],
+    stars: ['Chithirai', 'Swati', 'Visakam'],
   },
   scorpio: {
     english: 'Scorpio',
     tanglish: 'Viruchigam',
     order: 8,
-    stars: ['Visagam', 'Anusham', 'Kettai'],
+    stars: ['Visakam', 'Anusham', 'Kettai'],
   },
   sagittarius: {
     english: 'Sagittarius',
@@ -165,15 +187,17 @@ export const ZODIAC_SIGN_LIST = {
     english: 'Aquarius',
     tanglish: 'Kumbam',
     order: 11,
-    stars: ['Dhanishta', 'Sadayam', 'Poorattathi'],
+    stars: ['Avittam', 'Sadhayam', 'Poorattadhi'],
   },
   pisces: {
     english: 'Pisces',
     tanglish: 'Meenam',
     order: 12,
-    stars: ['Purva Bhadrapada', 'Uthirattathi', 'Revathi'],
+    stars: ['Poorattadhi', 'Uthirattadhi', 'Revathi'],
   },
 } as const;
+
+export type ZodiacKey = keyof typeof ZODIAC_LIST;
 
 export const PROFILE_STATUS = {
   NEW: 'New',

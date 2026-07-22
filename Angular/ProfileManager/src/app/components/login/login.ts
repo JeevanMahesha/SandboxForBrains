@@ -9,7 +9,6 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
-import { UserCredential } from 'firebase/auth';
 import { AuthService } from '../../services/auth.service';
 
 interface Login {
@@ -51,8 +50,7 @@ export default class LoginComponent {
         action: async ({ email, password }) => {
           return await this.authService
             .login(email().value(), password().value())
-            .then((userCredential: UserCredential) => {
-              this.authService.currentUser.set(userCredential.user);
+            .then(() => {
               toast.success('Login successful');
               this.router.navigate(['/']);
             })

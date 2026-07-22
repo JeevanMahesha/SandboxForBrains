@@ -1,7 +1,15 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
-import { lucideCopy, lucideEye, lucideSquarePen, lucideStar, lucideTrash2 } from '@ng-icons/lucide';
+import {
+  lucideCopy,
+  lucideEye,
+  lucideMessageCircle,
+  lucidePhone,
+  lucideSquarePen,
+  lucideStar,
+  lucideTrash2,
+} from '@ng-icons/lucide';
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
@@ -10,12 +18,14 @@ import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
+import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
   selector: 'app-profiles-list-desktop-view',
   imports: [
     TitleCasePipe,
+    MobileUrlPipe,
     HlmButton,
     HlmBadge,
     HlmSkeleton,
@@ -24,7 +34,17 @@ import { ProfilesService } from '../../../services/profiles.service';
     ...HlmTooltipImports,
   ],
   templateUrl: './profiles-list-desktop-view.html',
-  providers: [provideIcons({ lucideCopy, lucideSquarePen, lucideTrash2, lucideEye, lucideStar })],
+  providers: [
+    provideIcons({
+      lucideCopy,
+      lucidePhone,
+      lucideMessageCircle,
+      lucideSquarePen,
+      lucideTrash2,
+      lucideEye,
+      lucideStar,
+    }),
+  ],
 })
 export class ProfilesListDesktopView {
   private profileService = inject(ProfilesService);

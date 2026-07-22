@@ -2,12 +2,11 @@
   <div class="layout-main-container">
     <div class="layout-main">
       <app-toolbar />
-      @let totalCount = profiles.value()?.length ?? 0;
       <div class="hidden md:block">
         @defer (on viewport) {
           <app-profiles-list-desktop-view
-            [pagedData]="pagedData()"
-            [totalItems]="totalCount"
+            [pagedData]="profiles.value() ?? []"
+            [totalItems]="profileService.totalCount()"
             [isLoading]="profiles.isLoading()"
           />
         } @placeholder {
@@ -23,7 +22,7 @@
       <div class="block md:hidden">
         @defer (on viewport) {
           <app-profiles-list-mobile-view
-            [pagedData]="pagedData()"
+            [pagedData]="profiles.value() ?? []"
             [isLoading]="profiles.isLoading()"
           />
         } @placeholder {
@@ -35,10 +34,12 @@
 
       @if (!profiles.isLoading()) {
         <hlm-numbered-pagination
-          [totalItems]="totalCount"
+          [totalItems]="profileService.totalCount()"
           [pageSizes]="[10, 25, 50]"
-          [(currentPage)]="currentPage"
-          [(itemsPerPage)]="pageSize"
+          [currentPage]="profileService.pageState().pageIndex + 1"
+          [itemsPerPage]="profileService.pageState().pageSize"
+          (currentPageChange)="onPageChange($event)"
+          (itemsPerPageChange)="onPageSizeChange($event)"
         />
       }
     </div>

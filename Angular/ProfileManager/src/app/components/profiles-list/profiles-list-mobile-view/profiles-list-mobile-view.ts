@@ -5,8 +5,10 @@ import { provideIcons } from '@ng-icons/core';
 import {
   lucideCopy,
   lucideMapPin,
+  lucideMessageCircle,
   lucideMoreVertical,
   lucidePencil,
+  lucidePhone,
   lucideStar,
   lucideTrash2,
 } from '@ng-icons/lucide';
@@ -17,6 +19,7 @@ import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
+import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
@@ -24,6 +27,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   imports: [
     TitleCasePipe,
     ProfileCardClassPipe,
+    MobileUrlPipe,
     HlmButton,
     HlmBadge,
     HlmSkeleton,
@@ -36,6 +40,8 @@ import { ProfilesService } from '../../../services/profiles.service';
       lucideStar,
       lucideMapPin,
       lucideCopy,
+      lucidePhone,
+      lucideMessageCircle,
       lucidePencil,
       lucideTrash2,
       lucideMoreVertical,

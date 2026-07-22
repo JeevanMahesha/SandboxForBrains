@@ -3,7 +3,6 @@ import {
   PROFILE_STATUS,
   STAR_SCORES,
   StarKey,
-  ZODIAC_LIST,
   ZodiacKey,
 } from '../constant/common.const';
 

@@ -10,22 +10,9 @@ import {
   untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  disabled,
-  form,
-  FormRoot,
-  min,
-  pattern,
-  readonly,
-  required,
-} from '@angular/forms/signals';
+import { disabled, form, FormRoot, min, pattern, readonly, required } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
-import {
-  lucideCheck,
-  lucideLoaderCircle,
-  lucidePlus,
-  lucideTrash2,
-} from '@ng-icons/lucide';
+import { lucideCheck, lucideLoaderCircle, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmBadge } from '@spartan-ng/helm/badge';
@@ -67,9 +54,7 @@ import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-f
     ProfileFormFieldsComponent,
   ],
   templateUrl: './profile.html',
-  providers: [
-    provideIcons({ lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle }),
-  ],
+  providers: [provideIcons({ lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle })],
 })
 export class Profile {
   protected readonly profileService = inject(ProfilesService);
@@ -91,12 +76,14 @@ export class Profile {
   );
 
   readonly profileStatusLabel = computed(() => {
-    const id = this.profileDetailForm.profileStatusId().value() as keyof typeof PROFILE_STATUS | null;
+    const id = this.profileDetailForm.profileStatusId().value() as
+      keyof typeof PROFILE_STATUS | null;
     return id ? PROFILE_STATUS[id] : null;
   });
 
   readonly profileStatusColor = computed(() => {
-    const id = this.profileDetailForm.profileStatusId().value() as keyof typeof PROFILE_STATUS_COLORS_MAP | null;
+    const id = this.profileDetailForm.profileStatusId().value() as
+      keyof typeof PROFILE_STATUS_COLORS_MAP | null;
     return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
   });
 
@@ -109,7 +96,7 @@ export class Profile {
 
   readonly newComment = model<string>('');
 
-  private readonly profileDetail = signal<ProfileDetail>({
+  private static readonly BLANK_PROFILE: ProfileDetail = {
     name: '',
     mobileNumber: '+91',
     zodiacSign: null,
@@ -121,7 +108,9 @@ export class Profile {
     profileStatusId: null,
     matrimonyId: '',
     comments: [],
-  });
+  };
+
+  private readonly profileDetail = signal<ProfileDetail>({ ...Profile.BLANK_PROFILE });
 
   readonly profileResource = resource({
     params: () => {
@@ -179,6 +168,9 @@ export class Profile {
       const profileError = this.profileResource.error();
       if (profileDetail) {
         this.profileDetail.set(profileDetail);
+      } else if (!this.profileResource.isLoading()) {
+        // Resource is idle (create mode) — reset form so stale edit data doesn't carry over.
+        this.profileDetail.set({ ...Profile.BLANK_PROFILE });
       }
       if (profileError) {
         toast.error('Failed to fetch profile');

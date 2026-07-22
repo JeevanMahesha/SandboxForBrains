@@ -26,7 +26,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
-import { MATCHING_STARS, PROFILE_STATUS } from '../../constant/common.const';
+import { PROFILE_STATUS, STAR_SCORES } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
 import { ThemeService } from '../../services/theme.service';
@@ -87,7 +87,7 @@ export class Toolbar {
     value: key,
   }));
 
-  readonly scoreMatchOptions = Array.from(new Set(Object.values(MATCHING_STARS))) as number[];
+  readonly scoreMatchOptions = Array.from(new Set(Object.values(STAR_SCORES))) as number[];
   readonly sortOrderToLabel = (value: boolean): string => (value ? 'Newest First' : 'Oldest First');
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, 800);

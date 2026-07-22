@@ -5,7 +5,7 @@ import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmPopoverImports } from '@spartan-ng/helm/popover';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
-import { ZODIAC_SIGN_LIST } from '../../constant/common.const';
+import { ZODIAC_LIST } from '../../constant/common.const';
 import { ViewportService } from '../../services/viewport.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class ZodiacSigns {
   readonly togglePopover = input.required<BrnDialogState>();
   readonly attachTo = input<FlexibleConnectedPositionStrategyOrigin>();
   readonly zodiacSignsHidden = output<void>();
-  zodiacSignsData = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
+  zodiacSignsData = Object.entries(ZODIAC_LIST).map(([key, value]) => ({
     key,
     ...value,
   }));

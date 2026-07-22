@@ -26,10 +26,12 @@ import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
   DISTRICT_LIST,
-  MATCHING_STARS,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
-  ZODIAC_SIGN_LIST,
+  STAR_SCORES,
+  StarKey,
+  ZODIAC_LIST,
+  ZodiacKey,
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
@@ -90,9 +92,7 @@ export class Profile {
 
   private readonly starList = computed(() => {
     const zodiac = this.profileDetailForm.zodiacSign().value();
-    return zodiac
-      ? (ZODIAC_SIGN_LIST[zodiac as keyof typeof ZODIAC_SIGN_LIST]?.stars as readonly string[] ?? [])
-      : [];
+    return zodiac ? ((ZODIAC_LIST[zodiac as ZodiacKey]?.stars as readonly string[]) ?? []) : [];
   });
 
   private readonly cityList = computed(
@@ -198,10 +198,8 @@ export class Profile {
       const star = this.profileDetailForm.star().value();
       untracked(() => {
         if (this.profileService.drawerState().actionType === 'view') return;
-        if (star && star in MATCHING_STARS) {
-          this.profileDetailForm.starMatchScore().value.set(
-            MATCHING_STARS[star as keyof typeof MATCHING_STARS],
-          );
+        if (star && star in STAR_SCORES) {
+          this.profileDetailForm.starMatchScore().value.set(STAR_SCORES[star as StarKey]);
         } else {
           this.profileDetailForm.starMatchScore().value.set(null);
         }

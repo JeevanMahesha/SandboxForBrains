@@ -12,10 +12,12 @@ import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import {
   DISTRICT_LIST,
-  MATCHING_STARS,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
-  ZODIAC_SIGN_LIST,
+  STAR_SCORES,
+  StarKey,
+  ZODIAC_LIST,
+  ZodiacKey,
 } from '../../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../../constant/toolbar.const';
 import { ProfileDetail } from '../../../models/profile.model';
@@ -50,7 +52,7 @@ export class ProfileFormFieldsComponent {
 
   readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
   readonly PROFILE_STATUS_DATA = PROFILE_STATUS;
-  readonly ZODIAC_SIGN_DATA = Object.entries(ZODIAC_SIGN_LIST).map(([key, value]) => ({
+  readonly ZODIAC_SIGN_DATA = Object.entries(ZODIAC_LIST).map(([key, value]) => ({
     key,
     value: `${value.tanglish} (${value.english})`,
   }));
@@ -58,10 +60,10 @@ export class ProfileFormFieldsComponent {
     const zodiac = this.profileDetailForm().zodiacSign().value();
     if (!zodiac) return [];
     return (
-      ZODIAC_SIGN_LIST[zodiac as keyof typeof ZODIAC_SIGN_LIST]?.stars as readonly string[] ?? []
+      ZODIAC_LIST[zodiac as ZodiacKey]?.stars as readonly string[] ?? []
     ).map((star) => ({
       key: star,
-      value: `${star} (${MATCHING_STARS[star as keyof typeof MATCHING_STARS]})`,
+      value: `${star} (${STAR_SCORES[star as StarKey]})`,
     }));
   });
   readonly starPlaceholder = computed(() =>
@@ -74,11 +76,11 @@ export class ProfileFormFieldsComponent {
   readonly statusToLabel = (key: string): string =>
     PROFILE_STATUS[key as keyof typeof PROFILE_STATUS] ?? key;
   readonly zodiacToLabel = (key: string): string => {
-    const zodiac = ZODIAC_SIGN_LIST[key as keyof typeof ZODIAC_SIGN_LIST];
+    const zodiac = ZODIAC_LIST[key as ZodiacKey];
     return zodiac ? `${zodiac.tanglish} (${zodiac.english})` : key;
   };
   readonly starToLabel = (key: string): string => {
-    const score = MATCHING_STARS[key as keyof typeof MATCHING_STARS];
+    const score = STAR_SCORES[key as StarKey];
     return score === undefined ? key : `${key} (${score})`;
   };
 

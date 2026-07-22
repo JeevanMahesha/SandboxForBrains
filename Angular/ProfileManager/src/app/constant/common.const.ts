@@ -1,4 +1,4 @@
-export const MATCHING_STARS = {
+export const STAR_SCORES = {
   Ashwini:     6,
   Bharani:     8,
   Krittika:    3,
@@ -8,7 +8,7 @@ export const MATCHING_STARS = {
   Punarpoosam: 3,
   Poosam:      6.5,
   Ayilyam:     7,
-  Magam:       4,
+  Makam:       4,
   Pooram:      6,
   Uthiram:     3,
   Hastham:     7,
@@ -27,6 +27,8 @@ export const MATCHING_STARS = {
   Uthirattadhi: 8.5,
   Revathi:     7,
 } as const;
+
+export type StarKey = keyof typeof STAR_SCORES;
 
 export const STATE_LIST = ['Tamil Nadu', 'Kerala', 'Karnataka'] as const;
 
@@ -120,7 +122,7 @@ export const DISTRICT_LIST = {
   ],
 } as const;
 
-export const ZODIAC_SIGN_LIST = {
+export const ZODIAC_LIST = {
   aries: {
     english: 'Aries',
     tanglish: 'Mesham',
@@ -149,7 +151,7 @@ export const ZODIAC_SIGN_LIST = {
     english: 'Leo',
     tanglish: 'Simmam',
     order: 5,
-    stars: ['Magam', 'Pooram', 'Uthiram'],
+    stars: ['Makam', 'Pooram', 'Uthiram'],
   },
   virgo: {
     english: 'Virgo',
@@ -194,6 +196,8 @@ export const ZODIAC_SIGN_LIST = {
     stars: ['Poorattadhi', 'Uthirattadhi', 'Revathi'],
   },
 } as const;
+
+export type ZodiacKey = keyof typeof ZODIAC_LIST;
 
 export const PROFILE_STATUS = {
   NEW: 'New',

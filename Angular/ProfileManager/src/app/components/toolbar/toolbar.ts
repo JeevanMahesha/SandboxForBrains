@@ -15,6 +15,7 @@ import {
   lucideSun,
   lucideUserPlus,
 } from '@ng-icons/lucide';
+import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmBadge } from '@spartan-ng/helm/badge';
@@ -91,9 +92,9 @@ export class Toolbar {
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, 800);
   });
-  readonly toggleStarMatch = signal<boolean>(false);
-  readonly toggleZodiacSigns = signal<boolean>(false);
-  readonly filterSheetOpen = signal<'open' | 'closed'>('closed');
+  readonly toggleStarMatch = signal<BrnDialogState>('closed');
+  readonly toggleZodiacSigns = signal<BrnDialogState>('closed');
+  readonly filterSheetOpen = signal<BrnDialogState>('closed');
 
   readonly filterHasValue = computed(() => {
     const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } =
@@ -108,11 +109,11 @@ export class Toolbar {
   });
 
   openStarMatchPopover() {
-    this.toggleStarMatch.set(true);
+    this.toggleStarMatch.set('open');
   }
 
   openZodiacSignPopover() {
-    this.toggleZodiacSigns.set(true);
+    this.toggleZodiacSigns.set('open');
   }
 
   addNewProfileAction() {

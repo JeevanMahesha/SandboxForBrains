@@ -29,6 +29,7 @@ import {
   MATCHING_STARS,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
+  ZODIAC_SIGN_LIST,
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
@@ -87,6 +88,13 @@ export class Profile {
     return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
   });
 
+  private readonly starList = computed(() => {
+    const zodiac = this.profileDetailForm.zodiacSign().value();
+    return zodiac
+      ? (ZODIAC_SIGN_LIST[zodiac as keyof typeof ZODIAC_SIGN_LIST]?.stars as readonly string[] ?? [])
+      : [];
+  });
+
   private readonly cityList = computed(
     () =>
       DISTRICT_LIST[
@@ -143,6 +151,7 @@ export class Profile {
       disabled(profileForm, {
         when: () => this.profileService.drawerState().actionType === 'view',
       });
+      disabled(profileForm.star, { when: ({ valueOf }) => !valueOf(profileForm.zodiacSign) });
       disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
     },
     {
@@ -183,13 +192,29 @@ export class Profile {
       });
     });
 
-    // Derive starMatchScore from the selected star (replaces PrimeNG's (onChange) handler).
+    // Derive starMatchScore from the selected star; clear it when no star is selected.
     effect(() => {
       const star = this.profileDetailForm.star().value();
-      if (star && star in MATCHING_STARS) {
-        const score = MATCHING_STARS[star as keyof typeof MATCHING_STARS];
-        untracked(() => this.profileDetailForm.starMatchScore().value.set(score));
-      }
+      untracked(() => {
+        if (star && star in MATCHING_STARS) {
+          this.profileDetailForm.starMatchScore().value.set(
+            MATCHING_STARS[star as keyof typeof MATCHING_STARS],
+          );
+        } else {
+          this.profileDetailForm.starMatchScore().value.set(null);
+        }
+      });
+    });
+
+    // Clear a stale star when the zodiac changes to one that no longer lists it.
+    effect(() => {
+      this.profileDetailForm.zodiacSign().value();
+      untracked(() => {
+        const currentStar = this.profileDetailForm.star().value();
+        if (currentStar && !this.starList().includes(currentStar)) {
+          this.profileDetailForm.star().value.set(null);
+        }
+      });
     });
 
     // Clear a stale city when the state changes to one that no longer lists it.

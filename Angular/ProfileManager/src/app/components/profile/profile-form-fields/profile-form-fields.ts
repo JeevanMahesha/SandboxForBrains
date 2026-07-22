@@ -54,10 +54,21 @@ export class ProfileFormFieldsComponent {
     key,
     value: `${value.tanglish} (${value.english})`,
   }));
-  readonly STARS_DATA = Object.entries(MATCHING_STARS).map(([key, value]) => ({
-    key,
-    value: `${key} (${value})`,
-  }));
+  readonly starList = computed(() => {
+    const zodiac = this.profileDetailForm().zodiacSign().value();
+    if (!zodiac) return [];
+    return (
+      ZODIAC_SIGN_LIST[zodiac as keyof typeof ZODIAC_SIGN_LIST]?.stars as readonly string[] ?? []
+    ).map((star) => ({
+      key: star,
+      value: `${star} (${MATCHING_STARS[star as keyof typeof MATCHING_STARS]})`,
+    }));
+  });
+  readonly starPlaceholder = computed(() =>
+    this.profileDetailForm().zodiacSign().value()
+      ? 'Select Star'
+      : 'Select a zodiac to choose a star',
+  );
   readonly STATE_LIST = DISTRICT_LIST ? Object.keys(DISTRICT_LIST) : [];
 
   readonly statusToLabel = (key: string): string =>

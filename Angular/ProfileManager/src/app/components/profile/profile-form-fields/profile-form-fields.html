@@ -192,10 +192,10 @@
       [formField]="profileDetailForm().star"
     >
       <hlm-select-trigger class="w-full">
-        <hlm-select-value placeholder="Select Star Sign" />
+        <hlm-select-value [placeholder]="starPlaceholder()" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
-        @for (star of STARS_DATA; track star.key) {
+        @for (star of starList(); track star.key) {
           <hlm-select-item [value]="star.key">{{ star.value }}</hlm-select-item>
         }
       </hlm-select-content>

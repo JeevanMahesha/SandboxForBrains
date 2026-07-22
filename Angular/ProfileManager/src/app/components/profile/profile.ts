@@ -193,9 +193,11 @@ export class Profile {
     });
 
     // Derive starMatchScore from the selected star; clear it when no star is selected.
+    // Skipped in view mode — saved data is displayed as-is.
     effect(() => {
       const star = this.profileDetailForm.star().value();
       untracked(() => {
+        if (this.profileService.drawerState().actionType === 'view') return;
         if (star && star in MATCHING_STARS) {
           this.profileDetailForm.starMatchScore().value.set(
             MATCHING_STARS[star as keyof typeof MATCHING_STARS],
@@ -207,9 +209,11 @@ export class Profile {
     });
 
     // Clear a stale star when the zodiac changes to one that no longer lists it.
+    // Skipped in view mode — saved data is displayed as-is.
     effect(() => {
       this.profileDetailForm.zodiacSign().value();
       untracked(() => {
+        if (this.profileService.drawerState().actionType === 'view') return;
         const currentStar = this.profileDetailForm.star().value();
         if (currentStar && !this.starList().includes(currentStar)) {
           this.profileDetailForm.star().value.set(null);

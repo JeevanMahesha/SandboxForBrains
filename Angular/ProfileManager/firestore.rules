@@ -1,8 +1,16 @@
-rules_version = '2';
+rules_version = '3';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
     match /profiles/{profileId} {
-      allow read, write: if request.auth != null;
+      allow read, list: if isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasAll(['matrimonyId', 'createdAt']);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
     match /{document=**} {
       allow read, write: if false;

@@ -26,7 +26,12 @@
         @for (profile of pagedData(); track profile.id) {
           <tr hlmTr class="hover:bg-muted/50 transition-colors cursor-pointer">
             <td hlmTd>{{ profile.name }}</td>
-            <td hlmTd>{{ profile.zodiacSign | titlecase }}</td>
+            <td hlmTd>
+              <span class="flex items-center gap-1">
+                <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
+                {{ profile.zodiacSign | titlecase }}
+              </span>
+            </td>
             <td hlmTd>{{ profile.city }}</td>
             <td hlmTd>
               <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">

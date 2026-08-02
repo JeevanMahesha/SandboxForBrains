@@ -19,7 +19,7 @@
       <div
         role="button"
         tabindex="0"
-        [class]="profile | profileCardClass : $first"
+        [class]="profile | profileCardClass: $first"
         (click)="userActionEvent('view', profile.id)"
         (keydown.enter)="userActionEvent('view', profile.id)"
       >
@@ -63,11 +63,15 @@
         <!-- Metadata: zodiac + city -->
         <div class="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
           <span class="flex items-center gap-1">
-            <ng-icon hlm name="lucideStar" size="sm" /> {{ profile.zodiacSign | titlecase }}
+            <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" /> {{ profile.zodiacSign | titlecase }}
           </span>
           <span>|</span>
           <span class="flex items-center gap-1">
             <ng-icon hlm name="lucideMapPin" size="sm" /> {{ profile.city }}
+          </span>
+          <span>|</span>
+          <span class="flex items-center gap-1">
+            <ng-icon hlm name="lucideStar" size="sm" /> {{ profile.starMatchScore }}
           </span>
         </div>
 
@@ -98,7 +102,9 @@
             variant="outline"
             size="sm"
             class="flex-1 justify-between"
-            (click)="$event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+            (click)="
+              $event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')
+            "
           >
             <span class="truncate">{{ profile.mobileNumber }}</span>
             <hlm-separator orientation="vertical" class="mx-1 h-4 self-center!" />

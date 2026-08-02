@@ -28,7 +28,11 @@
     </hlm-select>
 
     <!-- Desktop-only filter controls -->
-    <hlm-select placeholder="Select Status" class="hidden md:block" [formField]="filterForm.profileStatus">
+    <hlm-select
+      placeholder="Select Status"
+      class="hidden md:block"
+      [formField]="filterForm.profileStatus"
+    >
       <hlm-select-trigger class="w-full md:w-44">
         <hlm-select-value placeholder="Select Status" />
       </hlm-select-trigger>
@@ -39,7 +43,11 @@
       </hlm-select-content>
     </hlm-select>
 
-    <hlm-select placeholder="Select Star" class="hidden md:block" [formField]="filterForm.starMatchScore">
+    <hlm-select
+      placeholder="Select Star"
+      class="hidden md:block"
+      [formField]="filterForm.starMatchScore"
+    >
       <hlm-select-trigger class="w-full md:w-44">
         <hlm-select-value placeholder="Select Star" />
       </hlm-select-trigger>
@@ -119,14 +127,14 @@
         <app-star-match
           [togglePopover]="toggleStarMatch()"
           [attachTo]="moreActionsBtn"
-          (starMatchHidden)="toggleStarMatch.set(false)"
+          (starMatchHidden)="toggleStarMatch.set('open')"
         />
       }
       @defer (when toggleZodiacSigns()) {
         <app-zodiac-signs
           [togglePopover]="toggleZodiacSigns()"
           [attachTo]="moreActionsBtn"
-          (zodiacSignsHidden)="toggleZodiacSigns.set(false)"
+          (zodiacSignsHidden)="toggleZodiacSigns.set('open')"
         />
       }
       <ng-template #addMenu>
@@ -197,7 +205,14 @@
     </div>
 
     <hlm-sheet-footer>
-      <button type="button" hlmBtn variant="outline" class="w-full" [disabled]="!filterHasValue()" (click)="clearForm()">
+      <button
+        type="button"
+        hlmBtn
+        variant="outline"
+        class="w-full"
+        [disabled]="!filterHasValue()"
+        (click)="clearForm()"
+      >
         <ng-icon hlm name="lucideFilterX" size="sm" />
         Clear Filters
       </button>

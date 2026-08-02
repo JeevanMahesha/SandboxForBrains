@@ -46,16 +46,43 @@
               </button>
             </td>
             <td hlmTd>
-              <button
-                type="button"
-                hlmBtn
-                variant="secondary"
-                size="sm"
-                (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
-              >
-                {{ profile.mobileNumber }}
-                <ng-icon hlm name="lucideCopy" size="sm" />
-              </button>
+              <div class="flex items-center gap-1">
+                <span class="text-sm">{{ profile.mobileNumber }}</span>
+                <button
+                  type="button"
+                  hlmBtn
+                  hlmTooltip="Copy"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Copy mobile number"
+                  (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+                >
+                  <ng-icon hlm name="lucideCopy" size="sm" />
+                </button>
+                <a
+                  hlmBtn
+                  hlmTooltip="Call"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Call"
+                  [href]="profile.mobileNumber | mobileUrl: 'tel'"
+                >
+                  <ng-icon hlm name="lucidePhone" size="sm" />
+                </a>
+                <a
+                  hlmBtn
+                  hlmTooltip="WhatsApp"
+                  variant="ghost"
+                  size="icon-sm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp"
+                  class="text-green-600 dark:text-green-400"
+                  [href]="profile.mobileNumber | mobileUrl: 'whatsapp'"
+                >
+                  <ng-icon hlm name="lucideMessageCircle" size="sm" />
+                </a>
+              </div>
             </td>
             <td hlmTd>
               <span class="flex items-center gap-1">

@@ -1,10 +1,9 @@
-import { computed, effect, inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  User,
   UserCredential,
 } from 'firebase/auth';
 
@@ -18,30 +17,14 @@ export class AuthService {
   readonly user = toSignal(authState$(this.auth), { initialValue: null });
   readonly idToken = toSignal(idToken$(this.auth), { initialValue: null });
 
-  readonly currentUser = signal<User | null>(null);
-  readonly currentToken = signal<string | null>(null);
   readonly authInitialized = signal<boolean>(false);
 
-  readonly isAuthenticated = computed(() => {
-    const hasUser = !!this.currentUser();
-    const initialized = this.authInitialized();
-    return hasUser && initialized;
-  });
-
-  constructor() {
-    effect(() => {
-      this.currentUser.set(this.user());
-    });
-
-    effect(() => {
-      this.currentToken.set(this.idToken());
-    });
-  }
+  readonly isAuthenticated = computed(() => !!this.user() && this.authInitialized());
 
   /**
-   * Wait for Firebase Auth to initialize
-   * This ensures we don't check auth state before Firebase has restored the session
-   * Uses onAuthStateChanged which properly waits for session restoration
+   * Wait for Firebase Auth to initialize before checking auth state.
+   * onAuthStateChanged fires once immediately with the restored session (or null),
+   * guaranteeing we never act on intermediate state.
    */
   async waitForAuthInit(): Promise<void> {
     if (this.authInitialized()) {
@@ -51,8 +34,7 @@ export class AuthService {
     return new Promise<void>((resolve) => {
       const unsubscribe = onAuthStateChanged(
         this.auth,
-        (user) => {
-          this.currentUser.set(user);
+        () => {
           this.authInitialized.set(true);
           unsubscribe();
           resolve();
@@ -66,40 +48,14 @@ export class AuthService {
     });
   }
 
-  /**
-   * Get the current ID token (access token)
-   * @param forceRefresh - Force refresh the token even if it hasn't expired
-   * @returns Promise with the ID token or null
-   */
-  async getIdToken(forceRefresh = false): Promise<string | null> {
-    const user = this.auth.currentUser;
-    if (!user) {
-      return null;
-    }
-    try {
-      return await user.getIdToken(forceRefresh);
-    } catch {
-      return null;
-    }
-  }
-
-  /**
-   * Check if the current token is valid
-   * @returns Promise<boolean>
-   */
-  async isTokenValid(): Promise<boolean> {
-    const token = await this.getIdToken();
-    return !!token;
-  }
-
   async login(email: string, password: string): Promise<UserCredential> {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 
   async logout(): Promise<void> {
-    this.currentUser.set(null);
-    this.currentToken.set(null);
+    await signOut(this.auth);
+    // onAuthStateChanged fires after signOut — user signal goes null reactively.
+    // Reset authInitialized so waitForAuthInit re-arms for the next login.
     this.authInitialized.set(false);
-    return await signOut(this.auth);
   }
 }

@@ -10,22 +10,9 @@ import {
   untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  disabled,
-  form,
-  FormRoot,
-  min,
-  pattern,
-  readonly,
-  required,
-} from '@angular/forms/signals';
+import { disabled, form, FormRoot, min, pattern, readonly, required } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
-import {
-  lucideCheck,
-  lucideLoaderCircle,
-  lucidePlus,
-  lucideTrash2,
-} from '@ng-icons/lucide';
+import { lucideCheck, lucideLoaderCircle, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmBadge } from '@spartan-ng/helm/badge';
@@ -39,9 +26,12 @@ import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
   DISTRICT_LIST,
-  MATCHING_STARS,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
+  STAR_SCORES,
+  StarKey,
+  ZODIAC_LIST,
+  ZodiacKey,
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
@@ -67,9 +57,7 @@ import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-f
     ProfileFormFieldsComponent,
   ],
   templateUrl: './profile.html',
-  providers: [
-    provideIcons({ lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle }),
-  ],
+  providers: [provideIcons({ lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle })],
 })
 export class Profile {
   protected readonly profileService = inject(ProfilesService);
@@ -91,13 +79,20 @@ export class Profile {
   );
 
   readonly profileStatusLabel = computed(() => {
-    const id = this.profileDetailForm.profileStatusId().value() as keyof typeof PROFILE_STATUS | null;
+    const id = this.profileDetailForm.profileStatusId().value() as
+      keyof typeof PROFILE_STATUS | null;
     return id ? PROFILE_STATUS[id] : null;
   });
 
   readonly profileStatusColor = computed(() => {
-    const id = this.profileDetailForm.profileStatusId().value() as keyof typeof PROFILE_STATUS_COLORS_MAP | null;
+    const id = this.profileDetailForm.profileStatusId().value() as
+      keyof typeof PROFILE_STATUS_COLORS_MAP | null;
     return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
+  });
+
+  private readonly starList = computed(() => {
+    const zodiac = this.profileDetailForm.zodiacSign().value();
+    return zodiac ? ((ZODIAC_LIST[zodiac as ZodiacKey]?.stars as readonly string[]) ?? []) : [];
   });
 
   private readonly cityList = computed(
@@ -109,7 +104,7 @@ export class Profile {
 
   readonly newComment = model<string>('');
 
-  private readonly profileDetail = signal<ProfileDetail>({
+  private static readonly BLANK_PROFILE: ProfileDetail = {
     name: '',
     mobileNumber: '+91',
     zodiacSign: null,
@@ -121,7 +116,9 @@ export class Profile {
     profileStatusId: null,
     matrimonyId: '',
     comments: [],
-  });
+  };
+
+  private readonly profileDetail = signal<ProfileDetail>({ ...Profile.BLANK_PROFILE });
 
   readonly profileResource = resource({
     params: () => {
@@ -154,6 +151,7 @@ export class Profile {
       disabled(profileForm, {
         when: () => this.profileService.drawerState().actionType === 'view',
       });
+      disabled(profileForm.star, { when: ({ valueOf }) => !valueOf(profileForm.zodiacSign) });
       disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
     },
     {
@@ -179,6 +177,9 @@ export class Profile {
       const profileError = this.profileResource.error();
       if (profileDetail) {
         this.profileDetail.set(profileDetail);
+      } else if (!this.profileResource.isLoading()) {
+        // Resource is idle (create mode) — reset form so stale edit data doesn't carry over.
+        this.profileDetail.set({ ...Profile.BLANK_PROFILE });
       }
       if (profileError) {
         toast.error('Failed to fetch profile');
@@ -191,13 +192,31 @@ export class Profile {
       });
     });
 
-    // Derive starMatchScore from the selected star (replaces PrimeNG's (onChange) handler).
+    // Derive starMatchScore from the selected star; clear it when no star is selected.
+    // Skipped in view mode — saved data is displayed as-is.
     effect(() => {
       const star = this.profileDetailForm.star().value();
-      if (star && star in MATCHING_STARS) {
-        const score = MATCHING_STARS[star as keyof typeof MATCHING_STARS];
-        untracked(() => this.profileDetailForm.starMatchScore().value.set(score));
-      }
+      untracked(() => {
+        if (this.profileService.drawerState().actionType === 'view') return;
+        if (star && star in STAR_SCORES) {
+          this.profileDetailForm.starMatchScore().value.set(STAR_SCORES[star as StarKey]);
+        } else {
+          this.profileDetailForm.starMatchScore().value.set(null);
+        }
+      });
+    });
+
+    // Clear a stale star when the zodiac changes to one that no longer lists it.
+    // Skipped in view mode — saved data is displayed as-is.
+    effect(() => {
+      this.profileDetailForm.zodiacSign().value();
+      untracked(() => {
+        if (this.profileService.drawerState().actionType === 'view') return;
+        const currentStar = this.profileDetailForm.star().value();
+        if (currentStar && !this.starList().includes(currentStar)) {
+          this.profileDetailForm.star().value.set(null);
+        }
+      });
     });
 
     // Clear a stale city when the state changes to one that no longer lists it.

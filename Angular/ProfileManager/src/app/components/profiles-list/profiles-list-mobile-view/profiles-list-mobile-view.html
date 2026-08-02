@@ -89,6 +89,7 @@
             (click)="$event.stopPropagation(); copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
           >
             {{ profile.matrimonyId }}
+            <hlm-separator orientation="vertical" class="mx-1 h-4 self-center!" />
             <ng-icon hlm name="lucideCopy" size="sm" />
           </button>
           <button
@@ -100,6 +101,7 @@
             (click)="$event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')"
           >
             <span class="truncate">{{ profile.mobileNumber }}</span>
+            <hlm-separator orientation="vertical" class="mx-1 h-4 self-center!" />
             <ng-icon hlm name="lucideCopy" size="sm" />
           </button>
         </div>

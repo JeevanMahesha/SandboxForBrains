@@ -16,6 +16,7 @@ import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
@@ -30,6 +31,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     MobileUrlPipe,
     HlmButton,
     HlmBadge,
+    HlmSeparator,
     HlmSkeleton,
     ...HlmIconImports,
     ...HlmDropdownMenuImports,

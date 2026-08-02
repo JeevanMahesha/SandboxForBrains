@@ -123,18 +123,18 @@
       >
         <ng-icon hlm name="lucideChevronDown" size="sm" />
       </button>
-      @defer (when toggleStarMatch()) {
+      @defer (when toggleStarMatch() === 'open') {
         <app-star-match
           [togglePopover]="toggleStarMatch()"
           [attachTo]="moreActionsBtn"
-          (starMatchHidden)="toggleStarMatch.set('open')"
+          (starMatchHidden)="toggleStarMatch.set('closed')"
         />
       }
-      @defer (when toggleZodiacSigns()) {
+      @defer (when toggleZodiacSigns() === 'open') {
         <app-zodiac-signs
           [togglePopover]="toggleZodiacSigns()"
           [attachTo]="moreActionsBtn"
-          (zodiacSignsHidden)="toggleZodiacSigns.set('open')"
+          (zodiacSignsHidden)="toggleZodiacSigns.set('closed')"
         />
       }
       <ng-template #addMenu>

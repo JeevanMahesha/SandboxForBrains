@@ -8,10 +8,7 @@
         <th hlmTh>Profile Status</th>
         <th hlmTh>Matrimony ID</th>
         <th hlmTh>Mobile Number</th>
-        <th hlmTh>
-          <ng-icon hlm name="lucideStar" size="sm" />
-          Score
-        </th>
+        <th hlmTh>Score</th>
         <th hlmTh>Actions</th>
       </tr>
     </thead>
@@ -26,7 +23,14 @@
         @for (profile of pagedData(); track profile.id) {
           <tr hlmTr class="hover:bg-muted/50 transition-colors cursor-pointer">
             <td hlmTd>{{ profile.name }}</td>
-            <td hlmTd>{{ profile.zodiacSign | titlecase }}</td>
+            <td hlmTd>
+              <span class="flex items-center gap-1">
+                <span [class]="profile.zodiacSign | zodiacColor">
+                  <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
+                </span>
+                {{ profile.zodiacSign | titlecase }}
+              </span>
+            </td>
             <td hlmTd>{{ profile.city }}</td>
             <td hlmTd>
               <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
@@ -86,7 +90,6 @@
             </td>
             <td hlmTd>
               <span class="flex items-center gap-1">
-                <ng-icon hlm name="lucideStar" size="sm" class="text-amber-400" />
                 {{ profile.starMatchScore }}
               </span>
             </td>

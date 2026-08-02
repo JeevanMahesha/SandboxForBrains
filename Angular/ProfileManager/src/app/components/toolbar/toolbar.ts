@@ -26,12 +26,12 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
-import { PROFILE_STATUS, STAR_SCORES } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
 import { ThemeService } from '../../services/theme.service';
 import { StarMatch } from '../star-match/star-match';
 import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
+import FilterSelects from './filter-selects/filter-selects';
 
 @Component({
   selector: 'app-toolbar',
@@ -46,6 +46,7 @@ import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
     ...HlmDropdownMenuImports,
     ...HlmIconImports,
     ...HlmSheetImports,
+    FilterSelects,
     StarMatch,
     ZodiacSigns,
   ],
@@ -82,12 +83,6 @@ export class Toolbar {
         return 'lucideMonitor';
     }
   });
-  readonly profileStatusOptions = Object.entries(PROFILE_STATUS).map(([key, value]) => ({
-    label: value,
-    value: key,
-  }));
-
-  readonly scoreMatchOptions = Array.from(new Set(Object.values(STAR_SCORES))) as number[];
   readonly sortOrderToLabel = (value: boolean): string => (value ? 'Newest First' : 'Oldest First');
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, 800);

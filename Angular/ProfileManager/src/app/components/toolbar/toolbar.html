@@ -28,35 +28,11 @@
     </hlm-select>
 
     <!-- Desktop-only filter controls -->
-    <hlm-select
-      placeholder="Select Status"
-      class="hidden md:block"
-      [formField]="filterForm.profileStatus"
-    >
-      <hlm-select-trigger class="w-full md:w-44">
-        <hlm-select-value placeholder="Select Status" />
-      </hlm-select-trigger>
-      <hlm-select-content *hlmSelectPortal>
-        @for (status of profileStatusOptions; track status.value) {
-          <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
-        }
-      </hlm-select-content>
-    </hlm-select>
-
-    <hlm-select
-      placeholder="Select Star"
-      class="hidden md:block"
-      [formField]="filterForm.starMatchScore"
-    >
-      <hlm-select-trigger class="w-full md:w-44">
-        <hlm-select-value placeholder="Select Star" />
-      </hlm-select-trigger>
-      <hlm-select-content *hlmSelectPortal>
-        @for (score of scoreMatchOptions; track score) {
-          <hlm-select-item [value]="score">{{ score }}</hlm-select-item>
-        }
-      </hlm-select-content>
-    </hlm-select>
+    <app-filter-selects
+      class="hidden md:contents"
+      [profileStatus]="filterForm.profileStatus"
+      [starMatchScore]="filterForm.starMatchScore"
+    />
   </div>
 
   <!-- Center: search (desktop only) -->
@@ -123,18 +99,18 @@
       >
         <ng-icon hlm name="lucideChevronDown" size="sm" />
       </button>
-      @defer (when toggleStarMatch()) {
+      @defer (when toggleStarMatch() === 'open') {
         <app-star-match
           [togglePopover]="toggleStarMatch()"
           [attachTo]="moreActionsBtn"
-          (starMatchHidden)="toggleStarMatch.set('open')"
+          (starMatchHidden)="toggleStarMatch.set('closed')"
         />
       }
-      @defer (when toggleZodiacSigns()) {
+      @defer (when toggleZodiacSigns() === 'open') {
         <app-zodiac-signs
           [togglePopover]="toggleZodiacSigns()"
           [attachTo]="moreActionsBtn"
-          (zodiacSignsHidden)="toggleZodiacSigns.set('open')"
+          (zodiacSignsHidden)="toggleZodiacSigns.set('closed')"
         />
       }
       <ng-template #addMenu>
@@ -181,27 +157,10 @@
         />
       </div>
 
-      <hlm-select placeholder="Select Status" [formField]="filterForm.profileStatus">
-        <hlm-select-trigger class="w-full">
-          <hlm-select-value placeholder="Select Status" />
-        </hlm-select-trigger>
-        <hlm-select-content *hlmSelectPortal>
-          @for (status of profileStatusOptions; track status.value) {
-            <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
-          }
-        </hlm-select-content>
-      </hlm-select>
-
-      <hlm-select placeholder="Select Star" [formField]="filterForm.starMatchScore">
-        <hlm-select-trigger class="w-full">
-          <hlm-select-value placeholder="Select Star" />
-        </hlm-select-trigger>
-        <hlm-select-content *hlmSelectPortal>
-          @for (score of scoreMatchOptions; track score) {
-            <hlm-select-item [value]="score">{{ score }}</hlm-select-item>
-          }
-        </hlm-select-content>
-      </hlm-select>
+      <app-filter-selects
+        [profileStatus]="filterForm.profileStatus"
+        [starMatchScore]="filterForm.starMatchScore"
+      />
     </div>
 
     <hlm-sheet-footer>

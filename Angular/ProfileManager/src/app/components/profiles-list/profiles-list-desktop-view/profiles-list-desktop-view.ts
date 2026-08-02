@@ -9,6 +9,18 @@ import {
   lucideSquarePen,
   lucideStar,
   lucideTrash2,
+  lucideZodiacAquarius,
+  lucideZodiacAries,
+  lucideZodiacCancer,
+  lucideZodiacCapricorn,
+  lucideZodiacGemini,
+  lucideZodiacLeo,
+  lucideZodiacLibra,
+  lucideZodiacPisces,
+  lucideZodiacSagittarius,
+  lucideZodiacScorpio,
+  lucideZodiacTaurus,
+  lucideZodiacVirgo,
 } from '@ng-icons/lucide';
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
@@ -19,6 +31,8 @@ import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
+import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
+import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
@@ -26,6 +40,8 @@ import { ProfilesService } from '../../../services/profiles.service';
   imports: [
     TitleCasePipe,
     MobileUrlPipe,
+    ZodiacColorPipe,
+    ZodiacIconPipe,
     HlmButton,
     HlmBadge,
     HlmSkeleton,
@@ -43,6 +59,18 @@ import { ProfilesService } from '../../../services/profiles.service';
       lucideTrash2,
       lucideEye,
       lucideStar,
+      lucideZodiacAquarius,
+      lucideZodiacAries,
+      lucideZodiacCancer,
+      lucideZodiacCapricorn,
+      lucideZodiacGemini,
+      lucideZodiacLeo,
+      lucideZodiacLibra,
+      lucideZodiacPisces,
+      lucideZodiacSagittarius,
+      lucideZodiacScorpio,
+      lucideZodiacTaurus,
+      lucideZodiacVirgo,
     }),
   ],
 })

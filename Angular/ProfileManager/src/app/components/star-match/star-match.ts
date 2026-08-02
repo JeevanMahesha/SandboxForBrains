@@ -17,8 +17,10 @@ export class StarMatch {
   readonly togglePopover = input.required<BrnDialogState>();
   readonly attachTo = input<FlexibleConnectedPositionStrategyOrigin>();
   readonly starMatchHidden = output<void>();
-  starMatchData = Object.entries(STAR_SCORES).map(([key, value]) => ({
-    starName: key,
-    score: value as number,
-  }));
+  starMatchData = Object.entries(STAR_SCORES)
+    .map(([key, value]) => ({
+      starName: key,
+      score: value as number,
+    }))
+    .sort((a, b) => b.score - a.score);
 }

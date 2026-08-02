@@ -1,0 +1,23 @@
+<div class="flex flex-col gap-4 md:contents">
+  <hlm-select placeholder="Select Status" [formField]="profileStatus()" [itemToString]="statusToLabel">
+    <hlm-select-trigger class="w-full md:w-44">
+      <hlm-select-value placeholder="Select Status" />
+    </hlm-select-trigger>
+    <hlm-select-content *hlmSelectPortal>
+      @for (status of profileStatusOptions; track status.value) {
+        <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
+      }
+    </hlm-select-content>
+  </hlm-select>
+
+  <hlm-select placeholder="Select Star" [formField]="starMatchScore()">
+    <hlm-select-trigger class="w-full md:w-44">
+      <hlm-select-value placeholder="Select Star" />
+    </hlm-select-trigger>
+    <hlm-select-content *hlmSelectPortal>
+      @for (score of scoreMatchOptions; track score) {
+        <hlm-select-item [value]="score">{{ score }}</hlm-select-item>
+      }
+    </hlm-select-content>
+  </hlm-select>
+</div>

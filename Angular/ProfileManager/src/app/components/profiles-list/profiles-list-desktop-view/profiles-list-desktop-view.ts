@@ -31,6 +31,7 @@ import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
+import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
@@ -39,6 +40,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   imports: [
     TitleCasePipe,
     MobileUrlPipe,
+    ZodiacColorPipe,
     ZodiacIconPipe,
     HlmButton,
     HlmBadge,

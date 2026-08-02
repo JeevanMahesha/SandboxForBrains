@@ -63,7 +63,10 @@
         <!-- Metadata: zodiac + city -->
         <div class="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
           <span class="flex items-center gap-1">
-            <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" /> {{ profile.zodiacSign | titlecase }}
+            <span [class]="profile.zodiacSign | zodiacColor">
+              <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
+            </span>
+            {{ profile.zodiacSign | titlecase }}
           </span>
           <span>|</span>
           <span class="flex items-center gap-1">

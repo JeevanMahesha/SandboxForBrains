@@ -1,0 +1,10 @@
+onlyBuiltDependencies:
+  - '@firebase/util'
+  - '@parcel/watcher'
+  - esbuild
+  - less
+  - lmdb
+  - msgpackr-extract
+  - nx
+  - protobufjs
+  - re2

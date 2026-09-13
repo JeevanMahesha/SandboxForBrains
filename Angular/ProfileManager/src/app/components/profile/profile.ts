@@ -151,8 +151,8 @@ export class Profile {
       disabled(profileForm, {
         when: () => this.profileService.drawerState().actionType === 'view',
       });
-      disabled(profileForm.star, { when: ({ valueOf }) => !valueOf(profileForm.zodiacSign) });
-      disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
+      disabled(profileForm.star, { when: ({ valueOf: readValue }) => !readValue(profileForm.zodiacSign) });
+      disabled(profileForm.city, { when: ({ valueOf: readValue }) => !readValue(profileForm.state) });
     },
     {
       submission: {

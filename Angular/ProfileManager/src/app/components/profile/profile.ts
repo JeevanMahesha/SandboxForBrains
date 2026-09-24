@@ -150,9 +150,12 @@ export class Profile {
       required(profileForm.name, { message: 'Name is required' });
       required(profileForm.mobileNumber, { message: 'Mobile number is required' });
       required(profileForm.zodiacSign, { message: 'Zodiac sign is required' });
-      required(profileForm.star, { message: 'Star is required' });
       required(profileForm.age, { message: 'Age is required' });
-      required(profileForm.starMatchScore, { message: 'Star match score is required' });
+      // Star is optional. The score is derived from it, so it is only required once a star is set.
+      required(profileForm.starMatchScore, {
+        when: ({ valueOf: readValue }) => !!readValue(profileForm.star),
+        message: 'Star match score is required',
+      });
       required(profileForm.state, { message: 'State is required' });
       required(profileForm.city, { message: 'City is required' });
       required(profileForm.profileStatusId, { message: 'Profile status is required' });

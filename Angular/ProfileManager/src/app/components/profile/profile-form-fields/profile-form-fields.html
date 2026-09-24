@@ -183,7 +183,11 @@
 <div hlmField>
   <label hlmFieldLabel for="star_sign">Star Sign</label>
   @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
-    <p class="py-2 text-sm">{{ starToLabel(profileDetailForm().star().value() ?? '') }}</p>
+    @if (profileDetailForm().star().value(); as star) {
+      <p class="py-2 text-sm">{{ starToLabel(star) }}</p>
+    } @else {
+      <p class="py-2 text-sm text-muted-foreground">{{ NOT_SPECIFIED }}</p>
+    }
   } @else {
     <hlm-select
       id="star_sign"
@@ -195,6 +199,9 @@
         <hlm-select-value [placeholder]="starPlaceholder()" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
+        <hlm-select-item class="text-muted-foreground" [value]="null">
+          {{ NOT_SPECIFIED }}
+        </hlm-select-item>
         @for (star of starList(); track star.key) {
           <hlm-select-item [value]="star.key">{{ star.value }}</hlm-select-item>
         }
@@ -210,7 +217,12 @@
 <div hlmField>
   <label hlmFieldLabel for="star_match_score">Star Match Score</label>
   @if (actionType() === TOOLBAR_ACTIONS_VALUES.view) {
-    <p class="py-2 text-sm">{{ profileDetailForm().starMatchScore().value() }}</p>
+    @let score = profileDetailForm().starMatchScore().value();
+    @if (score !== null) {
+      <p class="py-2 text-sm">{{ score }}</p>
+    } @else {
+      <p class="py-2 text-sm text-muted-foreground">{{ NOT_SPECIFIED }}</p>
+    }
   } @else {
     <input
       hlmInput

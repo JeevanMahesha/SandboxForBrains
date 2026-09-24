@@ -28,6 +28,7 @@ import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
+import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
@@ -80,6 +81,7 @@ export class ProfilesListDesktopView {
   readonly totalItems = input.required<number>();
   readonly isLoading = input.required<boolean>();
   readonly skeletonRows = Array.from({ length: 8 });
+  readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(

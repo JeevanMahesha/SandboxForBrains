@@ -89,9 +89,12 @@
               </div>
             </td>
             <td hlmTd>
-              <span class="flex items-center gap-1">
-                {{ profile.starMatchScore }}
-              </span>
+              @let score = profile.starMatchScore ?? null;
+              @if (score !== null) {
+                <span class="flex items-center gap-1">{{ score }}</span>
+              } @else {
+                <span class="text-muted-foreground">{{ NOT_SPECIFIED }}</span>
+              }
             </td>
             <td hlmTd>
               <div class="flex items-center gap-1">

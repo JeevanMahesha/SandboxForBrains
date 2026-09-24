@@ -325,7 +325,7 @@ export class Profile {
       .addProfile(profileData)
       .then(() => {
         toast.success('Profile added successfully');
-        this.profileService.profiles.reload();
+        this.profileService.refreshProfiles();
         this.closeDrawer();
       })
       .catch(() => {
@@ -338,7 +338,7 @@ export class Profile {
       .updateProfile(this.profileService.drawerState().selectedProfileId!, profileData)
       .then(() => {
         toast.success('Profile updated successfully');
-        this.profileService.profiles.reload();
+        this.profileService.refreshProfiles();
         this.closeDrawer();
       })
       .catch(() => {

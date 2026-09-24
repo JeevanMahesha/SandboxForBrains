@@ -276,12 +276,21 @@ export class ProfilesService {
     });
   }
 
+  /**
+   * Re-runs the current query after a mutation. Also forces the total count (and the pagination
+   * cursors) to be recomputed, which the loader otherwise only does when the filters change.
+   */
+  refreshProfiles(): void {
+    this.lastFilterKey = '';
+    this.profiles.reload();
+  }
+
   private removeProfile(id: string): void {
     const docRef = doc(this.firestore, 'profiles', id);
     deleteDoc(docRef)
       .then(() => {
         toast.success('Profile deleted successfully');
-        this.profiles.reload();
+        this.refreshProfiles();
       })
       .catch(() => {
         toast.error('Failed to delete profile');

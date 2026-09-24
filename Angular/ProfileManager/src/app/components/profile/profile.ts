@@ -10,7 +10,16 @@ import {
   untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { disabled, form, FormRoot, min, pattern, readonly, required } from '@angular/forms/signals';
+import {
+  disabled,
+  form,
+  FormRoot,
+  min,
+  patternError,
+  readonly,
+  required,
+  validate,
+} from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCheck, lucideLoaderCircle, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
@@ -36,6 +45,11 @@ import {
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
 import { ProfilesService } from '../../services/profiles.service';
+import {
+  CANONICAL_MOBILE_NUMBER_PATTERN,
+  mobileNumberDigits,
+  toCanonicalMobileNumber,
+} from '../../utils/mobile-number.util';
 import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-fields';
 
 @Component({
@@ -144,15 +158,26 @@ export class Profile {
       required(profileForm.profileStatusId, { message: 'Profile status is required' });
       required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
       min(profileForm.age, 18, { message: 'Age must be greater than 18' });
-      pattern(profileForm.mobileNumber, /^(\+91)?[6-9]\d{9}$/, {
-        message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
+      // Accept any spacing / prefix the user types ("98 76 5 43 21 0", "+91 98765 43210", "0987...").
+      // Empty input is left to the required() rule above.
+      validate(profileForm.mobileNumber, ({ value }) => {
+        const raw = value();
+        return !mobileNumberDigits(raw) || toCanonicalMobileNumber(raw)
+          ? null
+          : patternError(CANONICAL_MOBILE_NUMBER_PATTERN, {
+              message: 'Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)',
+            });
       });
       readonly(profileForm.starMatchScore);
       disabled(profileForm, {
         when: () => this.profileService.drawerState().actionType === 'view',
       });
-      disabled(profileForm.star, { when: ({ valueOf: readValue }) => !readValue(profileForm.zodiacSign) });
-      disabled(profileForm.city, { when: ({ valueOf: readValue }) => !readValue(profileForm.state) });
+      disabled(profileForm.star, {
+        when: ({ valueOf: readValue }) => !readValue(profileForm.zodiacSign),
+      });
+      disabled(profileForm.city, {
+        when: ({ valueOf: readValue }) => !readValue(profileForm.state),
+      });
     },
     {
       submission: {
@@ -161,10 +186,17 @@ export class Profile {
           if (this.newComment().trim()) {
             this.addComment();
           }
+          // Persist the canonical "+91XXXXXXXXXX" form regardless of how the user typed it.
+          // Validation guarantees a canonical form exists here; the fallback only satisfies the type.
+          const rawMobileNumber = profileForm().value().mobileNumber;
+          const profileData: ProfileDetail = {
+            ...profileForm().value(),
+            mobileNumber: toCanonicalMobileNumber(rawMobileNumber) ?? rawMobileNumber,
+          };
           if (this.profileService.drawerState().actionType === 'edit') {
-            return this.updateProfile(profileForm().value());
+            return this.updateProfile(profileData);
           } else {
-            return this.addProfile(profileForm().value());
+            return this.addProfile(profileData);
           }
         },
       },

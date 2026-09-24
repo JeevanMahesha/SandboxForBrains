@@ -1,4 +1,12 @@
-import { Service, WritableSignal, inject, resource, signal, untracked, effect } from '@angular/core';
+import {
+  Service,
+  WritableSignal,
+  inject,
+  resource,
+  signal,
+  untracked,
+  effect,
+} from '@angular/core';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
@@ -29,6 +37,7 @@ import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.co
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction } from '../models/toolbar.model';
+import { toCanonicalMobileNumber } from '../utils/mobile-number.util';
 import { AuthService } from './auth.service';
 
 @Service()
@@ -70,7 +79,10 @@ export class ProfilesService {
     });
   }
 
-  profiles = resource<ProfileDetail[], { filter: SortOption; page: { pageIndex: number; pageSize: number } } | undefined>({
+  profiles = resource<
+    ProfileDetail[],
+    { filter: SortOption; page: { pageIndex: number; pageSize: number } } | undefined
+  >({
     defaultValue: [],
     params: () =>
       this.authService.isAuthenticated()
@@ -86,9 +98,10 @@ export class ProfilesService {
         this.totalCount.set(await this.getProfilesCount(filter));
       }
 
-      const profiles = filter.searchQuery.trim() !== ''
-        ? await this.getFilteredProfilesBySearch(filter)
-        : await this.getProfilePage(filter, page.pageIndex, page.pageSize);
+      const profiles =
+        filter.searchQuery.trim() !== ''
+          ? await this.getFilteredProfilesBySearch(filter)
+          : await this.getProfilePage(filter, page.pageIndex, page.pageSize);
 
       return profiles.map((profile) => ({
         ...profile,
@@ -107,10 +120,7 @@ export class ProfilesService {
   }
 
   /** Base query with all where/orderBy clauses applied — no limit or cursor. */
-  private buildBaseQuery(
-    filter: SortOption,
-    sortField = 'createdAt',
-  ): Query<DocumentData> {
+  private buildBaseQuery(filter: SortOption, sortField = 'createdAt'): Query<DocumentData> {
     const sortDirectionStr: OrderByDirection = filter.viewOrderCheck ? 'asc' : 'desc';
     let q: Query<DocumentData> = query(this.profilesCollection);
     if (filter.profileStatus) {
@@ -211,9 +221,21 @@ export class ProfilesService {
       return query(q, orderBy(sortField, sortDirectionStr));
     };
 
+    // Stored numbers are always canonical ("+91XXXXXXXXXX"), so a phone search is canonicalized
+    // the same way; non-phone text falls through as-is so exact matching is unchanged.
+    const mobileSearch = toCanonicalMobileNumber(trimmedSearch) ?? trimmedSearch;
+
     const [byMatrimonyId, byMobileNumber] = await Promise.all([
-      getDocs(withCommonFilters(query(this.profilesCollection, where('matrimonyId', '==', trimmedSearch)))),
-      getDocs(withCommonFilters(query(this.profilesCollection, where('mobileNumber', '==', trimmedSearch)))),
+      getDocs(
+        withCommonFilters(
+          query(this.profilesCollection, where('matrimonyId', '==', trimmedSearch)),
+        ),
+      ),
+      getDocs(
+        withCommonFilters(
+          query(this.profilesCollection, where('mobileNumber', '==', mobileSearch)),
+        ),
+      ),
     ]);
 
     const byId = new Map<string, ProfileDetail>();

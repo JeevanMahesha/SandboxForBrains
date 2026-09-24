@@ -213,14 +213,25 @@ export class Profile {
   );
 
   constructor() {
+    // Start from a blank form whenever the drawer closes or opens in create mode, so a value
+    // typed and abandoned in "Add Profile" doesn't reappear next time. The profile resource is
+    // idle in create mode (no id), so it cannot drive this reset itself.
+    effect(() => {
+      const { isOpen, actionType } = this.profileService.drawerState();
+      if (isOpen === 'closed' || actionType === TOOLBAR_ACTIONS.create) {
+        untracked(() => {
+          this.newComment.set('');
+          // reset() also clears touched/dirty so no stale validation errors show.
+          this.profileDetailForm().reset({ ...Profile.BLANK_PROFILE, comments: [] });
+        });
+      }
+    });
+
     effect(() => {
       const profileDetail = this.profileResource.value();
       const profileError = this.profileResource.error();
       if (profileDetail) {
         this.profileDetail.set(profileDetail);
-      } else if (!this.profileResource.isLoading()) {
-        // Resource is idle (create mode) — reset form so stale edit data doesn't carry over.
-        this.profileDetail.set({ ...Profile.BLANK_PROFILE });
       }
       if (profileError) {
         toast.error('Failed to fetch profile');

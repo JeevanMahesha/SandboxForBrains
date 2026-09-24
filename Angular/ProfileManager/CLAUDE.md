@@ -14,7 +14,7 @@ pnpm lint               # ng lint (ESLint over src/**/*.{ts,html})
 pnpm lint:fix           # ng lint --fix
 pnpm format             # prettier --write over src
 pnpm format:check       # prettier --check
-pnpm run firebase:deploy   # pnpm lint && firebase deploy --only hosting:profilearc,firestore
+pnpm run firebase:deploy   # pnpm lint && pnpm e2e && firebase deploy --only hosting:profilearc,firestore
 pnpm e2e                # ng e2e — Playwright against Firebase emulators (see Testing)
 pnpm e2e:ui             # ng e2e --ui
 pnpm e2e:rules          # only the Firestore security-rules tests

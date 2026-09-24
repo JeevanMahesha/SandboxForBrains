@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "firebase:deploy": "pnpm lint && firebase deploy --only hosting:profilearc,firestore",
+    "firebase:deploy": "pnpm lint && pnpm e2e && firebase deploy --only hosting:profilearc,firestore",
     "format": "prettier --write \"{src,e2e}/**/*.{ts,html,css,scss,json}\" \"*.{ts,json}\"",
     "format:check": "prettier --check \"{src,e2e}/**/*.{ts,html,css,scss,json}\" \"*.{ts,json}\"",
     "lint": "ng lint",

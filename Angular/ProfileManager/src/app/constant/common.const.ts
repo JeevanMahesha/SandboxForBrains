@@ -1,6 +1,10 @@
 /** Shown wherever an optional value (star, star match score) has not been provided. */
 export const NOT_SPECIFIED_LABEL = 'Not specified';
 
+/** Angular DatePipe formats used for audit dates (created / updated). */
+export const DISPLAY_DATE_FORMAT = 'dd MMM yyyy';
+export const DISPLAY_DATE_TIME_FORMAT = 'dd MMM yyyy, HH:mm';
+
 export const STAR_SCORES = {
   Ashwini: 6,
   Bharani: 8,

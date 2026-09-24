@@ -34,6 +34,8 @@ import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
+  DISPLAY_DATE_FORMAT,
+  DISPLAY_DATE_TIME_FORMAT,
   DISTRICT_LIST,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
@@ -44,6 +46,7 @@ import {
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { ProfilesService } from '../../services/profiles.service';
 import {
   CANONICAL_MOBILE_NUMBER_PATTERN,
@@ -58,6 +61,7 @@ import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-f
     FormRoot,
     FormsModule,
     DatePipe,
+    TimeAgoPipe,
     BrnSheetContent,
     HlmBadge,
     HlmButton,
@@ -78,6 +82,8 @@ export class Profile {
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
   readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
+  readonly DATE_FORMAT = DISPLAY_DATE_FORMAT;
+  readonly DATE_TIME_FORMAT = DISPLAY_DATE_TIME_FORMAT;
   readonly title = computed(() => {
     switch (this.profileService.drawerState().actionType) {
       case 'view':

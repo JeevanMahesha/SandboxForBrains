@@ -12,6 +12,19 @@
             {{ profileStatusLabel() }}
           </span>
         </div>
+        <!-- Audit line: exact timestamps are available on hover. -->
+        @if (profileResource.value(); as profile) {
+          <p hlmSheetDescription class="mt-1 text-xs">
+            Created
+            <span [title]="profile.createdAt | date: DATE_TIME_FORMAT">
+              {{ profile.createdAt | date: DATE_FORMAT }}
+            </span>
+            · Updated
+            <span [title]="profile.updatedAt | date: DATE_TIME_FORMAT">
+              {{ profile.updatedAt | timeAgo: DATE_FORMAT }}
+            </span>
+          </p>
+        }
       }
     </hlm-sheet-header>
 
@@ -24,7 +37,6 @@
     } @else {
       <form class="flex-1 overflow-y-auto px-4 pb-4" [formRoot]="profileDetailForm">
         <div class="mt-2 flex flex-col gap-4">
-
           <app-profile-form-fields
             [profileDetailForm]="profileDetailForm"
             [actionType]="userActionType()"
@@ -90,7 +102,6 @@
           } @else {
             <p class="text-sm text-muted-foreground">No comments yet.</p>
           }
-
         </div>
         <button #submitButton hidden type="submit"></button>
       </form>
@@ -98,20 +109,16 @@
       <!-- Footer -->
       @if (userActionType() === TOOLBAR_ACTIONS_VALUES.view) {
         <hlm-sheet-footer class="flex gap-2">
-          <button
-            type="button"
-            hlmBtn
-            variant="outline"
-            class="flex-1"
-            (click)="closeDrawer()"
-          >
+          <button type="button" hlmBtn variant="outline" class="flex-1" (click)="closeDrawer()">
             Close
           </button>
           <button
             type="button"
             hlmBtn
             class="flex-1"
-            (click)="profileService.userActionEvent('edit', profileService.drawerState().selectedProfileId)"
+            (click)="
+              profileService.userActionEvent('edit', profileService.drawerState().selectedProfileId)
+            "
           >
             Edit
           </button>

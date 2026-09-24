@@ -30,6 +30,7 @@ import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
+import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
@@ -82,6 +83,7 @@ export class ProfilesListMobileView {
   private profileService = inject(ProfilesService);
   readonly pagedData = input.required<ProfileDetail[]>();
   readonly isLoading = input.required<boolean>();
+  readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(
@@ -93,5 +95,4 @@ export class ProfilesListMobileView {
   copyToClipboard(value: string | null | undefined, label: string): void {
     this.profileService.copyToClipboard(value, label);
   }
-
 }

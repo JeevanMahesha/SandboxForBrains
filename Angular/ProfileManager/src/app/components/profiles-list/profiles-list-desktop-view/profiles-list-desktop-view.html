@@ -21,7 +21,11 @@
         }
       } @else {
         @for (profile of pagedData(); track profile.id) {
-          <tr hlmTr class="hover:bg-muted/50 transition-colors cursor-pointer">
+          <tr
+            hlmTr
+            data-testid="profile-row"
+            class="hover:bg-muted/50 transition-colors cursor-pointer"
+          >
             <td hlmTd>{{ profile.name }}</td>
             <td hlmTd>
               <span class="flex items-center gap-1">
@@ -89,9 +93,12 @@
               </div>
             </td>
             <td hlmTd>
-              <span class="flex items-center gap-1">
-                {{ profile.starMatchScore }}
-              </span>
+              @let score = profile.starMatchScore ?? null;
+              @if (score !== null) {
+                <span class="flex items-center gap-1">{{ score }}</span>
+              } @else {
+                <span class="text-muted-foreground">{{ NOT_SPECIFIED }}</span>
+              }
             </td>
             <td hlmTd>
               <div class="flex items-center gap-1">
@@ -137,7 +144,7 @@
     </tbody>
     <tfoot hlmTFoot>
       <tr hlmTr>
-        <td hlmTd colspan="8" class="text-center">
+        <td hlmTd colspan="8" class="text-center" data-testid="profiles-total">
           In total there are {{ totalItems() }} profiles.
         </td>
       </tr>

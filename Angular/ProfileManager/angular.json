@@ -45,6 +45,18 @@
               "extractLicenses": false,
               "namedChunks": true,
               "sourceMap": true
+            },
+            "e2e": {
+              "optimization": false,
+              "extractLicenses": false,
+              "namedChunks": true,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.e2e.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -57,6 +69,11 @@
             },
             "development": {
               "buildTarget": "ProfileManager:build:development"
+            },
+            "e2e": {
+              "buildTarget": "ProfileManager:build:e2e",
+              "host": "127.0.0.1",
+              "port": 4300
             }
           },
           "defaultConfiguration": "development"
@@ -67,10 +84,24 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html",
+              "e2e/**/*.ts",
+              "playwright.config.ts"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "playwright-ng-schematics:playwright",
+          "options": {
+            "devServerTarget": "ProfileManager:serve:e2e"
           }
         }
       }
     }
+  },
+  "cli": {
+    "schematicCollections": ["@schematics/angular", "playwright-ng-schematics"]
   }
 }

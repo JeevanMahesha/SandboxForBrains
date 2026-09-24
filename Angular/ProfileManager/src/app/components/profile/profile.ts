@@ -10,7 +10,16 @@ import {
   untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { disabled, form, FormRoot, min, pattern, readonly, required } from '@angular/forms/signals';
+import {
+  disabled,
+  form,
+  FormRoot,
+  min,
+  patternError,
+  readonly,
+  required,
+  validate,
+} from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
 import { lucideCheck, lucideLoaderCircle, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
@@ -25,6 +34,8 @@ import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import {
+  DISPLAY_DATE_FORMAT,
+  DISPLAY_DATE_TIME_FORMAT,
   DISTRICT_LIST,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
@@ -35,7 +46,13 @@ import {
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { ProfilesService } from '../../services/profiles.service';
+import {
+  CANONICAL_MOBILE_NUMBER_PATTERN,
+  mobileNumberDigits,
+  toCanonicalMobileNumber,
+} from '../../utils/mobile-number.util';
 import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-fields';
 
 @Component({
@@ -44,6 +61,7 @@ import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-f
     FormRoot,
     FormsModule,
     DatePipe,
+    TimeAgoPipe,
     BrnSheetContent,
     HlmBadge,
     HlmButton,
@@ -64,6 +82,8 @@ export class Profile {
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
   readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
+  readonly DATE_FORMAT = DISPLAY_DATE_FORMAT;
+  readonly DATE_TIME_FORMAT = DISPLAY_DATE_TIME_FORMAT;
   readonly title = computed(() => {
     switch (this.profileService.drawerState().actionType) {
       case 'view':
@@ -136,23 +156,37 @@ export class Profile {
       required(profileForm.name, { message: 'Name is required' });
       required(profileForm.mobileNumber, { message: 'Mobile number is required' });
       required(profileForm.zodiacSign, { message: 'Zodiac sign is required' });
-      required(profileForm.star, { message: 'Star is required' });
       required(profileForm.age, { message: 'Age is required' });
-      required(profileForm.starMatchScore, { message: 'Star match score is required' });
+      // Star is optional. The score is derived from it, so it is only required once a star is set.
+      required(profileForm.starMatchScore, {
+        when: ({ valueOf: readValue }) => !!readValue(profileForm.star),
+        message: 'Star match score is required',
+      });
       required(profileForm.state, { message: 'State is required' });
       required(profileForm.city, { message: 'City is required' });
       required(profileForm.profileStatusId, { message: 'Profile status is required' });
       required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
       min(profileForm.age, 18, { message: 'Age must be greater than 18' });
-      pattern(profileForm.mobileNumber, /^(\+91)?[6-9]\d{9}$/, {
-        message: 'Invalid mobile number (e.g., 9876543210 or +919876543210)',
+      // Accept any spacing / prefix the user types ("98 76 5 43 21 0", "+91 98765 43210", "0987...").
+      // Empty input is left to the required() rule above.
+      validate(profileForm.mobileNumber, ({ value }) => {
+        const raw = value();
+        return !mobileNumberDigits(raw) || toCanonicalMobileNumber(raw)
+          ? null
+          : patternError(CANONICAL_MOBILE_NUMBER_PATTERN, {
+              message: 'Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)',
+            });
       });
       readonly(profileForm.starMatchScore);
       disabled(profileForm, {
         when: () => this.profileService.drawerState().actionType === 'view',
       });
-      disabled(profileForm.star, { when: ({ valueOf }) => !valueOf(profileForm.zodiacSign) });
-      disabled(profileForm.city, { when: ({ valueOf }) => !valueOf(profileForm.state) });
+      disabled(profileForm.star, {
+        when: ({ valueOf: readValue }) => !readValue(profileForm.zodiacSign),
+      });
+      disabled(profileForm.city, {
+        when: ({ valueOf: readValue }) => !readValue(profileForm.state),
+      });
     },
     {
       submission: {
@@ -161,10 +195,17 @@ export class Profile {
           if (this.newComment().trim()) {
             this.addComment();
           }
+          // Persist the canonical "+91XXXXXXXXXX" form regardless of how the user typed it.
+          // Validation guarantees a canonical form exists here; the fallback only satisfies the type.
+          const rawMobileNumber = profileForm().value().mobileNumber;
+          const profileData: ProfileDetail = {
+            ...profileForm().value(),
+            mobileNumber: toCanonicalMobileNumber(rawMobileNumber) ?? rawMobileNumber,
+          };
           if (this.profileService.drawerState().actionType === 'edit') {
-            return this.updateProfile(profileForm().value());
+            return this.updateProfile(profileData);
           } else {
-            return this.addProfile(profileForm().value());
+            return this.addProfile(profileData);
           }
         },
       },
@@ -172,14 +213,25 @@ export class Profile {
   );
 
   constructor() {
+    // Start from a blank form whenever the drawer closes or opens in create mode, so a value
+    // typed and abandoned in "Add Profile" doesn't reappear next time. The profile resource is
+    // idle in create mode (no id), so it cannot drive this reset itself.
+    effect(() => {
+      const { isOpen, actionType } = this.profileService.drawerState();
+      if (isOpen === 'closed' || actionType === TOOLBAR_ACTIONS.create) {
+        untracked(() => {
+          this.newComment.set('');
+          // reset() also clears touched/dirty so no stale validation errors show.
+          this.profileDetailForm().reset({ ...Profile.BLANK_PROFILE, comments: [] });
+        });
+      }
+    });
+
     effect(() => {
       const profileDetail = this.profileResource.value();
       const profileError = this.profileResource.error();
       if (profileDetail) {
         this.profileDetail.set(profileDetail);
-      } else if (!this.profileResource.isLoading()) {
-        // Resource is idle (create mode) — reset form so stale edit data doesn't carry over.
-        this.profileDetail.set({ ...Profile.BLANK_PROFILE });
       }
       if (profileError) {
         toast.error('Failed to fetch profile');
@@ -273,7 +325,7 @@ export class Profile {
       .addProfile(profileData)
       .then(() => {
         toast.success('Profile added successfully');
-        this.profileService.profiles.reload();
+        this.profileService.refreshProfiles();
         this.closeDrawer();
       })
       .catch(() => {
@@ -286,7 +338,7 @@ export class Profile {
       .updateProfile(this.profileService.drawerState().selectedProfileId!, profileData)
       .then(() => {
         toast.success('Profile updated successfully');
-        this.profileService.profiles.reload();
+        this.profileService.refreshProfiles();
         this.closeDrawer();
       })
       .catch(() => {

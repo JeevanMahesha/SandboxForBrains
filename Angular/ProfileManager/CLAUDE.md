@@ -14,16 +14,21 @@ pnpm lint               # ng lint (ESLint over src/**/*.{ts,html})
 pnpm lint:fix           # ng lint --fix
 pnpm format             # prettier --write over src
 pnpm format:check       # prettier --check
-pnpm run firebase:deploy   # firebase deploy --only hosting:profilearc
+pnpm run firebase:deploy   # pnpm lint && pnpm e2e && firebase deploy --only hosting:profilearc,firestore
+pnpm e2e                # ng e2e — Playwright against Firebase emulators (see Testing)
+pnpm e2e:ui             # ng e2e --ui
+pnpm e2e:rules          # only the Firestore security-rules tests
+pnpm emulators          # firebase emulators:start --only auth,firestore --project demo-profilemanager
+pnpm start:e2e          # ng serve --configuration e2e (emulator-backed app on http://127.0.0.1:4300)
 ```
 
-There is **no test runner configured** (no `ng test`/Karma/Jest setup despite README mentioning `ng test`). Do not assume tests exist.
+There are **no unit tests by design** (no `ng test` target). Testing is end-to-end only; see the Testing section below.
 
 The Husky pre-commit hook `cd`s into `Angular/ProfileManager` and runs `lint-staged` (eslint --fix + prettier on staged `.ts`/`.html`, prettier on `.css`/`.scss`/`.json`).
 
 ## Required setup before running
 
-`src/environments/environment.ts` is **gitignored** and must be created by copying `src/environments/environment.template.ts` and filling in real Firebase credentials. The app imports `environment.ts` directly and will not build without it.
+`src/environments/environment.ts` is **gitignored** and must be created by copying `src/environments/environment.template.ts` and filling in real Firebase credentials. The app imports `environment.ts` directly and will not build without it. Its shape is the `Environment` interface in `environment.model.ts`; it must include `useEmulators: false`.
 
 ## Architecture
 
@@ -68,6 +73,18 @@ The `providedIn: 'root'` `ProfilesService` is the data hub. Key pattern:
 - The profiles list renders a separate desktop view and mobile view component.
 
 TypeScript is in **strict** mode with `noPropertyAccessFromIndexSignature` — access dynamic Firestore fields with bracket notation (`data?.['field']`).
+
+## Testing
+
+End-to-end only, via **`ng e2e`** (`playwright-ng-schematics` builder → Playwright). Everything runs against the **Firebase emulators**; the real project must never be touched.
+
+- **Emulator safety**: `angular.json` has an `e2e` build/serve configuration whose `fileReplacements` swaps `environment.ts` for the committed, secret-free [environment.e2e.ts](src/environments/environment.e2e.ts) (`useEmulators: true`, projectId `demo-profilemanager`). `provideFirebase(config, { useEmulators })` connects Auth/Firestore to the emulators and **throws** if the project id does not start with `demo-`. The `e2e` architect target's `devServerTarget` must stay on `ProfileManager:serve:e2e`; never add a configuration that serves the real `environment.ts`.
+- **Layout**: [playwright.config.ts](playwright.config.ts) (root) has two projects: `rules` (Node only, `e2e/rules/`, uses `@firebase/rules-unit-testing` against `firestore.rules`) and `chromium` (browser specs in `e2e/*.spec.ts`). Shared helpers live in `e2e/support/`: `emulator.ts` (REST helpers for the emulators using the emulator-only `Bearer owner` token: create admin user with the `admin` claim, clear Auth/Firestore, seed profiles), `fixtures.ts` (`test` with an auto `resetFirestore` fixture, `loginAsAdmin()`, `pickOption()` for Spartan selects, `profileRows()`/`profilesTotal()` locators), `global-setup.ts`.
+- **Servers**: the `ng e2e` builder starts the dev server on `127.0.0.1:4300`; Playwright's `webServer` starts the emulators (`firebase emulators:start --only auth,firestore --project demo-profilemanager`, readiness on Firestore 8080, then `waitForEmulators()` in global setup waits for Auth 9099 too). `gracefulShutdown` sends SIGTERM so the detached Java Firestore emulator is stopped as well.
+- **Prerequisite**: a Java runtime on PATH for the Firestore emulator (`brew install openjdk` + add `/opt/homebrew/opt/openjdk/bin` to PATH). Auth emulator does not need Java.
+- **Browser**: `pnpm exec playwright install chromium` once. If Playwright's Chromium is not installed (its CDN is unreachable on some networks), `playwright.config.ts` automatically falls back to the installed Google Chrome; `PLAYWRIGHT_BROWSER_CHANNEL` forces a channel.
+- **Locators**: prefer ids (`#name`, `#login-email`), ARIA roles (Spartan select trigger = `role="combobox"` **without an accessible name**, so locate it by its host id or `getByRole('combobox').filter({ hasText: placeholder })`; options = `role="option"`; pagination `nav[aria-label="pagination"]`) and visible text. The only `data-testid`s are `profile-row`, `profile-card` and `profiles-total`.
+- Tests run serially (`workers: 1`) because they share one emulator instance. Login happens through the UI in every test because Auth uses `browserSessionPersistence`, which Playwright's `storageState` cannot restore.
 
 ## MCP servers
 

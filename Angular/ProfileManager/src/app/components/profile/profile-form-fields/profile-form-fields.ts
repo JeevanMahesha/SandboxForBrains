@@ -12,6 +12,7 @@ import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import {
   DISTRICT_LIST,
+  NOT_SPECIFIED_LABEL,
   PROFILE_STATUS,
   PROFILE_STATUS_COLORS_MAP,
   STAR_SCORES,
@@ -51,6 +52,7 @@ export class ProfileFormFieldsComponent {
   readonly actionType = input.required<ToolbarAction | null>();
 
   readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
+  readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
   readonly PROFILE_STATUS_DATA = PROFILE_STATUS;
   readonly ZODIAC_SIGN_DATA = Object.entries(ZODIAC_LIST).map(([key, value]) => ({
     key,
@@ -59,9 +61,7 @@ export class ProfileFormFieldsComponent {
   readonly starList = computed(() => {
     const zodiac = this.profileDetailForm().zodiacSign().value();
     if (!zodiac) return [];
-    return (
-      ZODIAC_LIST[zodiac as ZodiacKey]?.stars as readonly string[] ?? []
-    ).map((star) => ({
+    return ((ZODIAC_LIST[zodiac as ZodiacKey]?.stars as readonly string[]) ?? []).map((star) => ({
       key: star,
       value: `${star} (${STAR_SCORES[star as StarKey]})`,
     }));
@@ -79,7 +79,8 @@ export class ProfileFormFieldsComponent {
     const zodiac = ZODIAC_LIST[key as ZodiacKey];
     return zodiac ? `${zodiac.tanglish} (${zodiac.english})` : key;
   };
-  readonly starToLabel = (key: string): string => {
+  readonly starToLabel = (key: string | null): string => {
+    if (!key) return NOT_SPECIFIED_LABEL;
     const score = STAR_SCORES[key as StarKey];
     return score === undefined ? key : `${key} (${score})`;
   };

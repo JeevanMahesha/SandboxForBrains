@@ -1,4 +1,5 @@
-import { defineConfig, devices } from '@playwright/test';
+import { existsSync } from 'node:fs';
+import { chromium, defineConfig, devices } from '@playwright/test';
 
 /**
  * Playwright configuration for `ng e2e`.
@@ -11,6 +12,15 @@ import { defineConfig, devices } from '@playwright/test';
  * Run `pnpm emulators` + `pnpm start:e2e` manually and then `pnpm exec playwright test` to
  * iterate without restarting the servers each time.
  */
+/**
+ * Browser for the `chromium` project. Playwright's bundled Chromium is preferred; when it is not
+ * installed (its CDN is unreachable on some networks) fall back to the installed Google Chrome.
+ * PLAYWRIGHT_BROWSER_CHANNEL overrides the choice either way (e.g. `chrome`, `msedge`).
+ */
+const browserChannel =
+  process.env['PLAYWRIGHT_BROWSER_CHANNEL'] ??
+  (existsSync(chromium.executablePath()) ? undefined : 'chrome');
+
 export default defineConfig({
   testDir: './e2e',
   // All tests share one emulator instance, so they must run one at a time.
@@ -36,11 +46,7 @@ export default defineConfig({
       testIgnore: /rules\//,
       use: {
         ...devices['Desktop Chrome'],
-        // Escape hatch for machines that cannot download Playwright's Chromium:
-        // PLAYWRIGHT_BROWSER_CHANNEL=chrome uses the installed Google Chrome instead.
-        ...(process.env['PLAYWRIGHT_BROWSER_CHANNEL']
-          ? { channel: process.env['PLAYWRIGHT_BROWSER_CHANNEL'] }
-          : {}),
+        ...(browserChannel ? { channel: browserChannel } : {}),
       },
     },
   ],

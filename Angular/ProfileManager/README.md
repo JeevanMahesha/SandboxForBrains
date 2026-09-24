@@ -66,8 +66,10 @@ pnpm e2e:rules      # only the Firestore security-rules tests (no browser)
 To iterate without restarting servers, run `pnpm emulators` and `pnpm start:e2e` in two terminals
 and then `pnpm exec playwright test` as often as you like.
 
-If Playwright cannot download its Chromium build on your network, run the browser tests on the
-installed Google Chrome instead: `PLAYWRIGHT_BROWSER_CHANNEL=chrome pnpm e2e`.
+Playwright normally uses its own Chromium (`pnpm exec playwright install chromium`). If that build
+is not installed, for example because its CDN is unreachable on your network, the config falls back
+to the installed Google Chrome automatically. `PLAYWRIGHT_BROWSER_CHANNEL=chrome` (or `msedge`)
+forces a channel explicitly.
 
 ### How the real database is protected
 

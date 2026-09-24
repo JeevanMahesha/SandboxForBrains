@@ -22,3 +22,7 @@ dist
 .firebase
 firebase-debug.log
 
+
+# Playwright
+playwright-report
+test-results

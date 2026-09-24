@@ -1,8 +1,11 @@
 // Copy this file to environment.ts and fill in your actual Firebase credentials
 // DO NOT commit environment.ts - it's gitignored for security
 
-export const environment = {
+import { Environment } from './environment.model';
+
+export const environment: Environment = {
   production: false,
+  useEmulators: false,
   firebase: {
     apiKey: 'YOUR_API_KEY',
     authDomain: 'YOUR_PROJECT.firebaseapp.com',

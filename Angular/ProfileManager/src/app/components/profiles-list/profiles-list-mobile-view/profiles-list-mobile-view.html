@@ -18,6 +18,7 @@
     @for (profile of pagedData(); track profile.id) {
       <div
         role="button"
+        data-testid="profile-card"
         tabindex="0"
         [class]="profile | profileCardClass: $first"
         (click)="userActionEvent('view', profile.id)"

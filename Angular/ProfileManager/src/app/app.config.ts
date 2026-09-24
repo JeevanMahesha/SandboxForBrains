@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideFirebase(environment.firebase),
+    provideFirebase(environment.firebase, { useEmulators: environment.useEmulators }),
   ],
 };

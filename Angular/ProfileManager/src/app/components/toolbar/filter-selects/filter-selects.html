@@ -1,5 +1,9 @@
 <div class="flex flex-col gap-4 md:contents">
-  <hlm-select placeholder="Select Status" [formField]="profileStatus()" [itemToString]="statusToLabel">
+  <hlm-select
+    placeholder="Select Status"
+    [formField]="profileStatus()"
+    [itemToString]="statusToLabel"
+  >
     <hlm-select-trigger class="w-full md:w-44">
       <hlm-select-value placeholder="Select Status" />
     </hlm-select-trigger>

@@ -1,3 +1,4 @@
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import { makeProfile, seedProfiles } from './support/emulator';
 import { expect, profileRows, profilesTotal, test } from './support/fixtures';
 
@@ -55,12 +56,12 @@ test.describe('filtering and pagination', () => {
 
     // Spartan's trigger has no accessible name; its visible text is the placeholder.
     await page.getByRole('combobox').filter({ hasText: 'Select Status' }).click();
-    await page.getByRole('option', { name: 'Accepted', exact: true }).click();
+    await page.getByRole('option', { name: PROFILE_STATUS.ACCEPTED, exact: true }).click();
 
     await expect(profileRows(page)).toHaveCount(4);
     await expect(profilesTotal(page)).toHaveText(/In total there are 4 profiles\./);
     for (const row of await profileRows(page).all()) {
-      await expect(row).toContainText('Accepted');
+      await expect(row).toContainText(PROFILE_STATUS.ACCEPTED);
     }
   });
 });

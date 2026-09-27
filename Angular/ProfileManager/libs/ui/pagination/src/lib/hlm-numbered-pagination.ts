@@ -56,6 +56,7 @@ import { HlmPaginationPrevious } from './hlm-pagination-previous';
                 <a
                   hlmPaginationLink
                   [isActive]="currentPage() === page"
+                  [attr.aria-label]="'Go to page ' + page"
                   (click)="currentPage.set(page)"
                 >
                   {{ page }}

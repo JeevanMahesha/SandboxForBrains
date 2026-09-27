@@ -65,3 +65,25 @@ test.describe('filtering and pagination', () => {
     }
   });
 });
+
+test.describe('profile list ordering', () => {
+  test('always sorts rejected profiles to the end, regardless of date', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    // Rejected is seeded oldest, so a plain "Oldest First" sort would put it first; the app's
+    // sortWithRejectedLast rule must override that and push it to the end instead.
+    await seedProfiles([
+      makeProfile(0, { name: 'Oldest Rejected', profileStatusId: 'REJECTED' }),
+      makeProfile(1, { name: 'Middle New' }),
+      makeProfile(2, { name: 'Newest Accepted', profileStatusId: 'ACCEPTED' }),
+    ]);
+    await loginAsAdmin();
+
+    const rows = profileRows(page);
+    await expect(rows).toHaveCount(3);
+    await expect(rows.nth(0)).toContainText('Middle New');
+    await expect(rows.nth(1)).toContainText('Newest Accepted');
+    await expect(rows.nth(2)).toContainText('Oldest Rejected');
+  });
+});

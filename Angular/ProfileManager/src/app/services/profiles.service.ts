@@ -120,7 +120,9 @@ export class ProfilesService {
 
   /** Base query with all where/orderBy clauses applied — no limit or cursor. */
   private buildBaseQuery(filter: SortOption, sortField = 'createdAt'): Query<DocumentData> {
-    const sortDirectionStr: OrderByDirection = filter.viewOrderCheck ? 'asc' : 'desc';
+    // viewOrderCheck is true for "Newest First" (descending) and false for "Oldest First"
+    // (ascending) — see sortOrderToLabel in toolbar.ts.
+    const sortDirectionStr: OrderByDirection = filter.viewOrderCheck ? 'desc' : 'asc';
     let q: Query<DocumentData> = query(this.profilesCollection);
     if (filter.profileStatus) {
       q = query(q, where('profileStatusId', '==', filter.profileStatus));
@@ -206,7 +208,9 @@ export class ProfilesService {
   /** Search by matrimonyId OR mobileNumber — Firestore requires two parallel queries for OR across fields. */
   private async getFilteredProfilesBySearch(filter: SortOption): Promise<ProfileDetail[]> {
     const trimmedSearch = filter.searchQuery.trim();
-    const sortDirectionStr: OrderByDirection = filter.viewOrderCheck ? 'asc' : 'desc';
+    // viewOrderCheck is true for "Newest First" (descending) and false for "Oldest First"
+    // (ascending) — see sortOrderToLabel in toolbar.ts.
+    const sortDirectionStr: OrderByDirection = filter.viewOrderCheck ? 'desc' : 'asc';
     const sortField = 'createdAt';
 
     const withCommonFilters = (base: Query<DocumentData>): Query<DocumentData> => {

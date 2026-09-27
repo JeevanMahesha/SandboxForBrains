@@ -25,4 +25,20 @@ test.describe('create profile', () => {
     await expect(profileRows(page).first()).toContainText('+919876543210');
     await expect(profilesTotal(page)).toHaveText(/In total there are 1 profiles\./);
   });
+
+  test('does not carry an abandoned draft into the next Add Profile', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+
+    await page.getByRole('button', { name: 'Add Profile' }).click();
+    await page.locator('#name').fill('Abandoned Draft');
+    // The sheet's built-in close (X) button — there is no separate "Close" footer button in
+    // create mode, only "Save Changes".
+    await page.getByRole('button', { name: 'Close' }).click();
+
+    await page.getByRole('button', { name: 'Add Profile' }).click();
+    await expect(page.locator('#name')).toHaveValue('');
+  });
 });

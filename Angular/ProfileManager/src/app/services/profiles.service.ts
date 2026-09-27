@@ -33,7 +33,7 @@ import {
   where,
 } from 'firebase/firestore';
 import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
-import { PROFILE_STATUS, PROFILE_STATUS_COLORS_MAP } from '../constant/common.const';
+import { PROFILE_STATUS, PROFILE_STATUS_STYLES } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
 import { SortOption, ToolbarAction } from '../models/toolbar.model';
@@ -107,9 +107,8 @@ export class ProfilesService {
         ...profile,
         profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
         profileStatusColor:
-          PROFILE_STATUS_COLORS_MAP[
-            profile.profileStatusId as keyof typeof PROFILE_STATUS_COLORS_MAP
-          ],
+          PROFILE_STATUS_STYLES[profile.profileStatusId as keyof typeof PROFILE_STATUS_STYLES]
+            ?.badge,
       }));
     },
   });

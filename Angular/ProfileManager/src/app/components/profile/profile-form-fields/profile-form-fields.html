@@ -138,7 +138,12 @@
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
         @for (status of PROFILE_STATUS_DATA | keyvalue; track status.key) {
-          <hlm-select-item [value]="status.key">{{ status.value }}</hlm-select-item>
+          <hlm-select-item [value]="status.key">
+            <span class="flex items-center gap-2">
+              <span [class]="`size-2 shrink-0 rounded-full ${statusDotColor(status.key)}`"></span>
+              {{ status.value }}
+            </span>
+          </hlm-select-item>
         }
       </hlm-select-content>
     </hlm-select>

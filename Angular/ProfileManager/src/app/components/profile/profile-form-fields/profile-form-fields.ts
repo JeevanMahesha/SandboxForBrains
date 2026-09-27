@@ -14,7 +14,7 @@ import {
   DISTRICT_LIST,
   NOT_SPECIFIED_LABEL,
   PROFILE_STATUS,
-  PROFILE_STATUS_COLORS_MAP,
+  PROFILE_STATUS_STYLES,
   STAR_SCORES,
   StarKey,
   ZODIAC_LIST,
@@ -75,6 +75,8 @@ export class ProfileFormFieldsComponent {
 
   readonly statusToLabel = (key: string): string =>
     PROFILE_STATUS[key as keyof typeof PROFILE_STATUS] ?? key;
+  readonly statusDotColor = (key: string): string =>
+    PROFILE_STATUS_STYLES[key as keyof typeof PROFILE_STATUS_STYLES]?.dot ?? '';
   readonly zodiacToLabel = (key: string): string => {
     const zodiac = ZODIAC_LIST[key as ZodiacKey];
     return zodiac ? `${zodiac.tanglish} (${zodiac.english})` : key;
@@ -92,8 +94,8 @@ export class ProfileFormFieldsComponent {
   });
   readonly profileStatusColor = computed(() => {
     const id = this.profileDetailForm().profileStatusId().value() as
-      keyof typeof PROFILE_STATUS_COLORS_MAP | null;
-    return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
+      keyof typeof PROFILE_STATUS_STYLES | null;
+    return id ? PROFILE_STATUS_STYLES[id].badge : null;
   });
 
   readonly cityList = computed(

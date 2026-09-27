@@ -4,6 +4,7 @@ import { provideIcons } from '@ng-icons/core';
 import {
   lucideCopy,
   lucideEye,
+  lucideInfo,
   lucideMessageCircle,
   lucidePhone,
   lucideSquarePen,
@@ -61,6 +62,7 @@ import { ProfilesService } from '../../../services/profiles.service';
       lucideSquarePen,
       lucideTrash2,
       lucideEye,
+      lucideInfo,
       lucideStar,
       lucideZodiacAquarius,
       lucideZodiacAries,

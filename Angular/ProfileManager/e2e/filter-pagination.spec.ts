@@ -24,6 +24,31 @@ test.describe('filtering and pagination', () => {
     await expect(pagination.locator('[aria-current="page"]')).toHaveText('2');
   });
 
+  test('pages through the list using only the keyboard', async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(10);
+
+    const pagination = page.getByRole('navigation', { name: 'pagination' });
+
+    // Focus directly rather than tabbing through the whole toolbar first: that would make this
+    // test break on any unrelated toolbar change. What matters here is that the control itself
+    // is reachable by keyboard and responds to Enter/Space, not the page's full tab order.
+    const pageTwoLink = pagination.getByRole('button', { name: 'Go to page 2' });
+    await pageTwoLink.focus();
+    await expect(pageTwoLink).toBeFocused();
+    await page.keyboard.press('Enter');
+
+    await expect(profileRows(page)).toHaveCount(2);
+    await expect(pagination.locator('[aria-current="page"]')).toHaveText('2');
+
+    const previousLink = pagination.getByRole('button', { name: 'Go to previous page' });
+    await previousLink.focus();
+    await page.keyboard.press('Space');
+
+    await expect(profileRows(page)).toHaveCount(10);
+    await expect(pagination.locator('[aria-current="page"]')).toHaveText('1');
+  });
+
   test('filters by profile status', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(10);

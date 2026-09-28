@@ -33,19 +33,19 @@ difficulty or priority order (see "Suggested order" at the bottom).
 - [x] **Comments** (add + delete). `profile.ts`'s `addComment`/`deleteComment` — a whole feature,
       untested.
 - [x] **View-only drawer.** Only create/edit are tested; "View" mode is never opened.
-- [ ] **Preferred Star / Zodiac Signs popovers** (`star-match`, `zodiac-signs` components).
-- [ ] **Theme toggle** (`ThemeService`).
-- [ ] **Search by ID/phone** (toolbar search box, uses the same mobile-number canonicalization
+- [x] **Preferred Star / Zodiac Signs popovers** (`star-match`, `zodiac-signs` components).
+- [x] **Theme toggle** (`ThemeService`).
+- [x] **Search by ID/phone** (toolbar search box, uses the same mobile-number canonicalization
       as create/edit).
 - [x] **Rejected-profiles-sorted-last.** A deliberate, non-obvious business rule
       (`profiles.service.ts: sortWithRejectedLast`) with no test.
 - [x] **Mobile number formats.** `mobile-number.util.ts` documents 4 accepted input shapes
       (bare 10 digits, leading 0, `91` prefix, `+91` prefix) — only 1 is tested. No test that an
       invalid number is rejected with a validation error.
-- [ ] **Star Match Score auto-calc + "Not specified" flow** when no Star Sign is selected.
-- [ ] **Form validation errors** (required fields, invalid mobile number) — the signal-forms
+- [x] **Star Match Score auto-calc + "Not specified" flow** when no Star Sign is selected.
+- [x] **Form validation errors** (required fields, invalid mobile number) — the signal-forms
       validation in `profile-form-fields.ts` has no e2e coverage.
-- [ ] **Sort order toggle, page-size change, Clear filters, and combinations of filters** — only
+- [x] **Sort order toggle, page-size change, Clear filters, and combinations of filters** — only
       "page 2" and "filter by status" alone are tested today.
 
 ---
@@ -85,6 +85,17 @@ difficulty or priority order (see "Suggested order" at the bottom).
       — it failed on one run out of two before the fix. Now scoped to `page.getByRole('dialog')`
       with `.first()`, matching the pattern the new view-profile test uses. Verified stable across
       3 consecutive full-suite runs after the fix.
+- [x] **Unreliable: `getByRole(role, { name })` on `hlm-field-error` alerts.** Writing the
+      form-validation test (7e), `dialog.getByRole('alert', { name: 'Name is required' })`
+      intermittently failed to find an element that both `getByRole('alert')` (no name filter)
+      and a raw DOM query found immediately — reproduced consistently outside the test runner too,
+      so not a fluke of `ng e2e`'s environment. Root cause not fully nailed down (Chromium/Playwright
+      accessible-name computation timing, not an app bug — `ariaSnapshot()` reported the correct
+      name throughout). Fixed by giving each field's error a stable `id` (via a `fieldId` passed
+      into the shared `#fieldError` template in `profile-form-fields.html`, since
+      `hlm-field-error`'s auto-generated id is otherwise a shared, globally-incrementing static
+      counter) and locating by that id instead of role+name. Worth keeping in mind for any other
+      `role="alert"`/live-region locator in this suite.
 
 ---
 
@@ -102,9 +113,12 @@ difficulty or priority order (see "Suggested order" at the bottom).
          inverted-sort-direction bug along the way)
    - [x] 7b. Mobile number formats (remaining 3 accepted shapes + invalid-number rejection)
    - [x] 7c. Desktop view-only drawer
-   - [ ] 7d. Search by ID/phone
-   - [ ] 7e. Form validation errors (required fields, invalid mobile number)
-   - [ ] 7f. Star Match Score auto-calc + "Not specified" flow
-   - [ ] 7g. Sort order / page-size / Clear-filters combinations
-   - [ ] 7h. Theme toggle
-   - [ ] 7i. Preferred Star / Zodiac Signs popovers
+   - [x] 7d. Search by ID/phone
+   - [x] 7e. Form validation errors (required fields, invalid mobile number) — also fixed a
+         locator reliability issue this surfaced (see the field-error id note below)
+   - [x] 7f. Star Match Score auto-calc + "Not specified" flow
+   - [x] 7g. Sort order / page-size / Clear-filters combinations
+   - [x] 7h. Theme toggle
+   - [x] 7i. Preferred Star / Zodiac Signs popovers
+
+All items in this review are now covered.

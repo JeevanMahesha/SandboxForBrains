@@ -8,7 +8,15 @@
         <th hlmTh>Profile Status</th>
         <th hlmTh>Matrimony ID</th>
         <th hlmTh>Mobile Number</th>
-        <th hlmTh>Score</th>
+        <th hlmTh>
+          <span
+            class="inline-flex items-center gap-1"
+            hlmTooltip="Compatibility score between the couple's star signs. Higher is better."
+          >
+            Star Match Score
+            <ng-icon hlm name="lucideInfo" size="sm" class="text-muted-foreground" />
+          </span>
+        </th>
         <th hlmTh>Actions</th>
       </tr>
     </thead>
@@ -105,6 +113,17 @@
                 <button
                   type="button"
                   hlmBtn
+                  hlmTooltip="View profile"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="View"
+                  (click)="userActionEvent('view', profile.id)"
+                >
+                  <ng-icon hlm name="lucideEye" size="sm" />
+                </button>
+                <button
+                  type="button"
+                  hlmBtn
                   hlmTooltip="Edit profile"
                   variant="ghost"
                   size="icon-sm"
@@ -113,6 +132,7 @@
                 >
                   <ng-icon hlm name="lucideSquarePen" size="sm" />
                 </button>
+                <hlm-separator orientation="vertical" class="mx-1 h-5 self-center!" />
                 <button
                   type="button"
                   hlmBtn
@@ -120,21 +140,10 @@
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Delete"
-                  class="text-destructive"
+                  class="text-destructive hover:text-destructive"
                   (click)="userActionEvent('delete', profile.id)"
                 >
                   <ng-icon hlm name="lucideTrash2" size="sm" />
-                </button>
-                <button
-                  type="button"
-                  hlmBtn
-                  hlmTooltip="View profile"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="View"
-                  (click)="userActionEvent('view', profile.id)"
-                >
-                  <ng-icon hlm name="lucideEye" size="sm" />
                 </button>
               </div>
             </td>

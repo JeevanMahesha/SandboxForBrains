@@ -4,6 +4,7 @@ import { provideIcons } from '@ng-icons/core';
 import {
   lucideCopy,
   lucideEye,
+  lucideInfo,
   lucideMessageCircle,
   lucidePhone,
   lucideSquarePen,
@@ -25,6 +26,7 @@ import {
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
@@ -45,6 +47,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     ZodiacIconPipe,
     HlmButton,
     HlmBadge,
+    HlmSeparator,
     HlmSkeleton,
     ...HlmTableImports,
     ...HlmIconImports,
@@ -59,6 +62,7 @@ import { ProfilesService } from '../../../services/profiles.service';
       lucideSquarePen,
       lucideTrash2,
       lucideEye,
+      lucideInfo,
       lucideStar,
       lucideZodiacAquarius,
       lucideZodiacAries,

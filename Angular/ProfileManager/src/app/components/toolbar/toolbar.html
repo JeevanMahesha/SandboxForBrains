@@ -123,13 +123,33 @@
             <ng-icon hlm name="lucideStar" size="sm" />
             Preferred Star
           </button>
-          <button type="button" hlmDropdownMenuItem (click)="logout()">
-            <ng-icon hlm name="lucideLogOut" size="sm" />
-            Log Out
-          </button>
         </hlm-dropdown-menu>
       </ng-template>
     </div>
+
+    <!-- Account menu -->
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      size="icon"
+      aria-label="Account menu"
+      [hlmDropdownMenuTrigger]="accountMenu"
+    >
+      <ng-icon hlm name="lucideUser" size="sm" />
+    </button>
+    <ng-template #accountMenu>
+      <hlm-dropdown-menu class="min-w-56">
+        @if (authService.user()?.email; as email) {
+          <div hlmDropdownMenuLabel class="truncate">{{ email }}</div>
+          <hlm-dropdown-menu-separator />
+        }
+        <button type="button" hlmDropdownMenuItem (click)="logout()">
+          <ng-icon hlm name="lucideLogOut" size="sm" />
+          Log Out
+        </button>
+      </hlm-dropdown-menu>
+    </ng-template>
   </div>
 </div>
 

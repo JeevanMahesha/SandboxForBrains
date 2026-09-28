@@ -6,6 +6,8 @@
  * start with `demo-`: the Firebase SDK and CLI treat such ids as emulator-only.
  */
 
+import type { ProfileDetail } from '../../src/app/models/profile.model';
+
 export const PROJECT_ID = 'demo-profilemanager';
 export const AUTH_EMULATOR_URL = 'http://127.0.0.1:9099';
 export const FIRESTORE_EMULATOR_URL = 'http://127.0.0.1:8080';
@@ -61,21 +63,25 @@ export async function clearFirestore(): Promise<void> {
   );
 }
 
-export interface SeedProfile {
-  name: string;
-  mobileNumber: string;
-  matrimonyId: string;
-  profileStatusId: string;
-  zodiacSign: string;
-  star: string | null;
-  starMatchScore: number | null;
-  age: number;
-  state: string;
-  city: string;
+/**
+ * The Firestore document shape for a seeded profile, derived from the app's own `ProfileDetail`
+ * model rather than duplicated by hand — a field added or renamed there now surfaces here as a
+ * type error instead of a silent mismatch discovered only when a test fails at run time.
+ *
+ * `id`/`sNo`/`profileStatus`/`profileStatusColor` are excluded: they're derived client-side
+ * (`ProfilesService.mapDocToProfile`), never stored. `createdAt`/`updatedAt` are made required,
+ * since every seeded document needs a concrete date. `comments` stays `never[]`: the REST
+ * seeding helper below (`toFirestoreValue`) only supports primitive field values, not nested
+ * comment objects — comments are exercised through the UI instead, in profile-comments.spec.ts.
+ */
+export type SeedProfile = Omit<
+  ProfileDetail,
+  'id' | 'sNo' | 'profileStatus' | 'profileStatusColor' | 'createdAt' | 'updatedAt' | 'comments'
+> & {
   comments: never[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 const SEED_EPOCH = Date.parse('2026-01-01T00:00:00Z');
 

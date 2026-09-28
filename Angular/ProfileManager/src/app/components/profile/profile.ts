@@ -38,7 +38,7 @@ import {
   DISPLAY_DATE_TIME_FORMAT,
   DISTRICT_LIST,
   PROFILE_STATUS,
-  PROFILE_STATUS_COLORS_MAP,
+  PROFILE_STATUS_STYLES,
   STAR_SCORES,
   StarKey,
   ZODIAC_LIST,
@@ -106,8 +106,8 @@ export class Profile {
 
   readonly profileStatusColor = computed(() => {
     const id = this.profileDetailForm.profileStatusId().value() as
-      keyof typeof PROFILE_STATUS_COLORS_MAP | null;
-    return id ? PROFILE_STATUS_COLORS_MAP[id] : null;
+      keyof typeof PROFILE_STATUS_STYLES | null;
+    return id ? PROFILE_STATUS_STYLES[id].badge : null;
   });
 
   private readonly starList = computed(() => {

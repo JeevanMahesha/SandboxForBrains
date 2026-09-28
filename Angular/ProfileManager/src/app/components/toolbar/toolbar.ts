@@ -13,6 +13,7 @@ import {
   lucideSparkles,
   lucideStar,
   lucideSun,
+  lucideUser,
   lucideUserPlus,
 } from '@ng-icons/lucide';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
@@ -64,13 +65,14 @@ import FilterSelects from './filter-selects/filter-selects';
       lucideMoon,
       lucideMonitor,
       lucideSlidersHorizontal,
+      lucideUser,
     }),
   ],
 })
 export class Toolbar {
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfilesService);
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   protected readonly themeService = inject(ThemeService);
 
   readonly themeIcon = computed(() => {

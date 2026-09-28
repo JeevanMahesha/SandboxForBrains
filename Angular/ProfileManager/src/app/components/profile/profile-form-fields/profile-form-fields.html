@@ -1,7 +1,7 @@
 <!-- Shared field-error markup -->
-<ng-template #fieldError let-field>
+<ng-template #fieldError let-field let-fieldId="fieldId">
   @if (field().touched() && field().invalid()) {
-    <hlm-field-error forceShow>{{ field().errors()[0].message }}</hlm-field-error>
+    <hlm-field-error forceShow [id]="fieldId">{{ field().errors()[0].message }}</hlm-field-error>
   }
 </ng-template>
 
@@ -24,7 +24,7 @@
     />
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().name }"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().name, fieldId: 'name-error' }"
     />
   }
 </div>
@@ -79,7 +79,10 @@
     />
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().mobileNumber }"
+      [ngTemplateOutletContext]="{
+        $implicit: profileDetailForm().mobileNumber,
+        fieldId: 'mobile-error',
+      }"
     />
   }
 </div>
@@ -113,7 +116,10 @@
     />
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().matrimonyId }"
+      [ngTemplateOutletContext]="{
+        $implicit: profileDetailForm().matrimonyId,
+        fieldId: 'matrimony-error',
+      }"
     />
   }
 </div>
@@ -149,7 +155,10 @@
     </hlm-select>
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().profileStatusId }"
+      [ngTemplateOutletContext]="{
+        $implicit: profileDetailForm().profileStatusId,
+        fieldId: 'profile_status-error',
+      }"
     />
   }
 </div>
@@ -180,7 +189,10 @@
     </hlm-select>
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().zodiacSign }"
+      [ngTemplateOutletContext]="{
+        $implicit: profileDetailForm().zodiacSign,
+        fieldId: 'zodiac_sign-error',
+      }"
     />
   }
 </div>
@@ -214,7 +226,10 @@
     </hlm-select>
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().star }"
+      [ngTemplateOutletContext]="{
+        $implicit: profileDetailForm().star,
+        fieldId: 'star_sign-error',
+      }"
     />
   }
 </div>
@@ -261,7 +276,7 @@
     />
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().age }"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().age, fieldId: 'age-error' }"
     />
   }
 </div>
@@ -283,7 +298,7 @@
     </hlm-select>
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().state }"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().state, fieldId: 'state-error' }"
     />
   }
 </div>
@@ -305,7 +320,7 @@
     </hlm-select>
     <ng-container
       [ngTemplateOutlet]="fieldError"
-      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().city }"
+      [ngTemplateOutletContext]="{ $implicit: profileDetailForm().city, fieldId: 'city-error' }"
     />
   }
 </div>

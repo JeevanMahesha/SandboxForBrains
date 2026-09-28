@@ -23,12 +23,15 @@ test.describe('mobile view', () => {
 
     // Tapping the card itself opens the read-only drawer.
     await card.click();
-    await expect(page.getByRole('heading', { name: 'View Profile' })).toBeVisible();
-    await page.getByRole('button', { name: 'Close' }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
+    // The sheet has both a footer "Close" button and an icon-only close control sharing the
+    // same accessible name — scope to the footer one to avoid a strict-mode violation.
+    await dialog.getByRole('button', { name: 'Close' }).first().click();
 
     // The card's own kebab menu opens Edit without also triggering the card's click handler.
     await card.getByRole('button', { name: 'More actions' }).click();
     await page.getByRole('menuitem', { name: 'Edit' }).click();
-    await expect(page.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
+    await expect(dialog.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
   });
 });

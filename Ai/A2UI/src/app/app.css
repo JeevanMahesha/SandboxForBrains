@@ -358,3 +358,12 @@ header {
   color: var(--text-main);
   text-decoration: underline;
 }
+
+.copilot-chat-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  z-index: 1000;
+}

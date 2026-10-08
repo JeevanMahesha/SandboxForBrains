@@ -1,6 +1,8 @@
 import { Component, computed, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CopilotChat, registerFrontendTool, connectAgentContext } from '@copilotkit/angular';
+import { z } from 'zod';
 
 export interface Todo {
   id: string;
@@ -13,7 +15,7 @@ export type FilterType = 'all' | 'active' | 'completed';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CopilotChat],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -49,7 +51,6 @@ export class App {
   });
 
   constructor() {
-    // Optionally load from local storage
     const saved = localStorage.getItem('todos');
     if (saved) {
       try {
@@ -57,9 +58,53 @@ export class App {
       } catch (e) {}
     }
 
-    // Save to local storage on change
     effect(() => {
       localStorage.setItem('todos', JSON.stringify(this.todos()));
+    });
+
+    connectAgentContext(() => ({
+      description: 'Current todo list',
+      value: JSON.stringify(this.todos()),
+    }));
+
+    registerFrontendTool<{ title: string }>({
+      name: 'addTodo',
+      description: 'Add a new todo item to the list',
+      parameters: z.object({ title: z.string().describe('The title of the todo item') }),
+      handler: async ({ title }) => {
+        this.todos.update(todos => [...todos, { id: crypto.randomUUID(), title, completed: false }]);
+        return `Added todo: "${title}"`;
+      },
+    });
+
+    registerFrontendTool<{ id: string }>({
+      name: 'removeTodo',
+      description: 'Remove a todo item by its id',
+      parameters: z.object({ id: z.string().describe('The id of the todo to remove') }),
+      handler: async ({ id }) => {
+        this.todos.update(todos => todos.filter(t => t.id !== id));
+        return `Removed todo ${id}`;
+      },
+    });
+
+    registerFrontendTool<{ id: string }>({
+      name: 'toggleTodo',
+      description: 'Toggle the completed state of a todo item by its id',
+      parameters: z.object({ id: z.string().describe('The id of the todo to toggle') }),
+      handler: async ({ id }) => {
+        this.todos.update(todos => todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+        return `Toggled todo ${id}`;
+      },
+    });
+
+    registerFrontendTool<Record<string, never>>({
+      name: 'clearCompleted',
+      description: 'Remove all completed todo items',
+      parameters: z.object({}),
+      handler: async () => {
+        this.todos.update(todos => todos.filter(t => !t.completed));
+        return 'Cleared completed todos';
+      },
     });
   }
 

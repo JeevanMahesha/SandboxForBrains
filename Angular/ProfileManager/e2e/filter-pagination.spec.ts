@@ -71,19 +71,19 @@ test.describe('profile list ordering', () => {
     page,
     loginAsAdmin,
   }) => {
-    // Rejected is seeded oldest, so a plain "Oldest First" sort would put it first; the app's
+    // Rejected is seeded newest, so the default "Newest First" sort would put it first; the app's
     // sortWithRejectedLast rule must override that and push it to the end instead.
     await seedProfiles([
-      makeProfile(0, { name: 'Oldest Rejected', profileStatusId: 'REJECTED' }),
+      makeProfile(0, { name: 'Oldest Accepted', profileStatusId: 'ACCEPTED' }),
       makeProfile(1, { name: 'Middle New' }),
-      makeProfile(2, { name: 'Newest Accepted', profileStatusId: 'ACCEPTED' }),
+      makeProfile(2, { name: 'Newest Rejected', profileStatusId: 'REJECTED' }),
     ]);
     await loginAsAdmin();
 
     const rows = profileRows(page);
     await expect(rows).toHaveCount(3);
     await expect(rows.nth(0)).toContainText('Middle New');
-    await expect(rows.nth(1)).toContainText('Newest Accepted');
-    await expect(rows.nth(2)).toContainText('Oldest Rejected');
+    await expect(rows.nth(1)).toContainText('Oldest Accepted');
+    await expect(rows.nth(2)).toContainText('Newest Rejected');
   });
 });

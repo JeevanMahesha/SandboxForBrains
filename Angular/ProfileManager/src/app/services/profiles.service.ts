@@ -49,7 +49,7 @@ export class ProfilesService {
   private profilesCollection = collection(this.firestore, 'profiles');
 
   public readonly filterOptions: WritableSignal<SortOption> = signal({
-    viewOrderCheck: false,
+    viewOrderCheck: true,
     searchQuery: '',
     profileStatus: null,
     starMatchScore: null,

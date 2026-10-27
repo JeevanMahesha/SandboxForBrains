@@ -12,18 +12,18 @@ test.describe('sort order, page size and clear filters', () => {
     await loginAsAdmin();
 
     const rows = profileRows(page);
-    // Default order is "Oldest First" (ascending by createdAt).
+    // Default order is "Newest First" (descending by createdAt).
     await expect(rows).toHaveCount(3);
-    await expect(rows.nth(0)).toContainText('Alice Oldest');
-    await expect(rows.nth(1)).toContainText('Bob Middle');
-    await expect(rows.nth(2)).toContainText('Carol Newest');
-
-    await page.getByRole('combobox').filter({ hasText: 'Oldest First' }).click();
-    await page.getByRole('option', { name: 'Newest First', exact: true }).click();
-
     await expect(rows.nth(0)).toContainText('Carol Newest');
     await expect(rows.nth(1)).toContainText('Bob Middle');
     await expect(rows.nth(2)).toContainText('Alice Oldest');
+
+    await page.getByRole('combobox').filter({ hasText: 'Newest First' }).click();
+    await page.getByRole('option', { name: 'Oldest First', exact: true }).click();
+
+    await expect(rows.nth(0)).toContainText('Alice Oldest');
+    await expect(rows.nth(1)).toContainText('Bob Middle');
+    await expect(rows.nth(2)).toContainText('Carol Newest');
   });
 
   test('changing the page size shows more rows on one page', async ({ page, loginAsAdmin }) => {

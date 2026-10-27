@@ -120,7 +120,7 @@ test.describe('toolbar search', () => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(1);
 
-    // Changing the sort order changes the filter key, so the loader recounts through the
+    // Changing the sort order (default is Newest First) changes the filter key, so the loader recounts through the
     // aggregation endpoint. Failing that one call (the shape Firestore uses for a missing
     // composite index) puts the resource into its error state. The emulator never enforces
     // indexes, so this is the only way to reach that state in e2e.
@@ -138,8 +138,8 @@ test.describe('toolbar search', () => {
       });
     await page.route(AGGREGATION_URL, failAggregation);
 
-    await page.getByRole('combobox').filter({ hasText: 'Oldest First' }).click();
-    await page.getByRole('option', { name: 'Newest First', exact: true }).click();
+    await page.getByRole('combobox').filter({ hasText: 'Newest First' }).click();
+    await page.getByRole('option', { name: 'Oldest First', exact: true }).click();
 
     const alert = page.getByRole('alert');
     await expect(alert).toContainText('Something went wrong while loading profiles.');

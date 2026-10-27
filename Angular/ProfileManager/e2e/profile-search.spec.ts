@@ -1,7 +1,7 @@
-import type { Page } from '@playwright/test';
+import type { Page, Route } from '@playwright/test';
 import { toCanonicalMobileNumber } from '../src/app/utils/mobile-number.util';
 import { makeProfile, seedProfiles } from './support/emulator';
-import { expect, profileRows, test } from './support/fixtures';
+import { expect, profileRows, profilesTotal, test } from './support/fixtures';
 
 // The toolbar search box (`filterForm.searchQuery` in toolbar.ts) debounces input by 800ms
 // before it reaches `ProfilesService.filterOptions`, so every assertion below relies on
@@ -9,6 +9,9 @@ import { expect, profileRows, test } from './support/fixtures';
 function searchBox(page: Page) {
   return page.getByPlaceholder('Search by ID or phone');
 }
+
+// Firestore's REST count endpoint: `.../documents:runAggregationQuery?key=...`.
+const AGGREGATION_URL = /:runAggregationQuery/;
 
 test.describe('toolbar search', () => {
   test('narrows the list by exact matrimonyId, and clearing it restores the full list', async ({
@@ -60,5 +63,94 @@ test.describe('toolbar search', () => {
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Phone Target');
     await expect(profileRows(page).first()).toContainText(target.mobileNumber);
+  });
+
+  test('finds a profile by phone typed with spaces, a +91 prefix or no country code', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    const target = makeProfile(0, { name: 'Format Target' });
+    await seedProfiles([target, makeProfile(1, { name: 'Format Other' })]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(2);
+
+    const national = target.mobileNumber.replace('+91', '');
+    const formats = [
+      `+91 ${national.slice(0, 3)} ${national.slice(3, 6)} ${national.slice(6)}`,
+      `+91-${national.slice(0, 5)}-${national.slice(5)}`,
+      `91 ${national}`,
+      `${national.slice(0, 5)} ${national.slice(5)}`,
+      national,
+    ];
+
+    for (const input of formats) {
+      expect(toCanonicalMobileNumber(input), input).toBe(target.mobileNumber);
+      await searchBox(page).fill(input);
+      await expect(profileRows(page), input).toHaveCount(1);
+      await expect(profileRows(page).first()).toContainText('Format Target');
+    }
+  });
+
+  test('shows a "No profiles found." state when nothing matches, and recovers when cleared', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Present Profile' })]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(1);
+    await expect(page.getByText('No profiles found.')).toHaveCount(0);
+
+    // A well-formed phone number that no seeded profile has.
+    await searchBox(page).fill('+91 99999 99999');
+    await expect(page.getByText('No profiles found.')).toBeVisible();
+    await expect(profileRows(page)).toHaveCount(0);
+    await expect(profilesTotal(page)).toHaveText(/In total there are 0 profiles\./);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+
+    await searchBox(page).fill('');
+    await expect(profileRows(page)).toHaveCount(1);
+    await expect(page.getByText('No profiles found.')).toHaveCount(0);
+  });
+
+  test('shows the error message with Retry when the query fails, and Retry recovers', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Retry Profile' })]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(1);
+
+    // Changing the sort order changes the filter key, so the loader recounts through the
+    // aggregation endpoint. Failing that one call (the shape Firestore uses for a missing
+    // composite index) puts the resource into its error state. The emulator never enforces
+    // indexes, so this is the only way to reach that state in e2e.
+    const failAggregation = (route: Route) =>
+      route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error: {
+            code: 400,
+            status: 'FAILED_PRECONDITION',
+            message: 'The query requires an index.',
+          },
+        }),
+      });
+    await page.route(AGGREGATION_URL, failAggregation);
+
+    await page.getByRole('combobox').filter({ hasText: 'Oldest First' }).click();
+    await page.getByRole('option', { name: 'Newest First', exact: true }).click();
+
+    const alert = page.getByRole('alert');
+    await expect(alert).toContainText('Something went wrong while loading profiles.');
+    await expect(alert).toContainText('The query requires an index.');
+    await expect(page.locator('nav[aria-label="pagination"]')).toHaveCount(0);
+
+    await page.unroute(AGGREGATION_URL, failAggregation);
+    await alert.getByRole('button', { name: 'Retry' }).click();
+
+    await expect(alert).toHaveCount(0);
+    await expect(profileRows(page)).toHaveCount(1);
+    await expect(profileRows(page).first()).toContainText('Retry Profile');
   });
 });

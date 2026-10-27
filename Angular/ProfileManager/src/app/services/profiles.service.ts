@@ -94,8 +94,10 @@ export class ProfilesService {
 
       if (filterKey !== this.lastFilterKey) {
         this.cursorCache.clear();
-        this.lastFilterKey = filterKey;
         this.totalCount.set(await this.getProfilesCount(filter));
+        // Recorded only once the count succeeded, so a failed count is retried by the next load
+        // (and surfaces as an error) instead of being skipped with a stale total.
+        this.lastFilterKey = filterKey;
       }
 
       const profiles =

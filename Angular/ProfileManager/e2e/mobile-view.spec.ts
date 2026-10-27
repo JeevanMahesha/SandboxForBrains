@@ -34,4 +34,21 @@ test.describe('mobile view', () => {
     await page.getByRole('menuitem', { name: 'Edit' }).click();
     await expect(dialog.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
   });
+
+  test('shows "No profiles found." when a search matches nothing', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Mobile Present' })]);
+    await loginAsAdmin();
+    await expect(page.getByTestId('profile-card')).toHaveCount(1);
+
+    // On mobile the search box lives inside the "Filters" bottom sheet.
+    await page.getByRole('button', { name: 'Filters' }).click();
+    const sheetSearch = page.getByRole('dialog', { name: 'Filters' }).getByRole('textbox');
+    await sheetSearch.click();
+    await sheetSearch.pressSequentially('+91 99999 99999');
+    await expect(page.getByText('No profiles found.')).toBeVisible();
+    await expect(page.getByTestId('profile-card')).toHaveCount(0);
+  });
 });

@@ -15,9 +15,14 @@
             <p class="truncate text-lg leading-tight font-semibold">
               {{ profileDetailForm.name().value() }}
             </p>
-            <span hlmBadge variant="secondary" [class]="`mt-1 ${profileStatusColor() ?? ''}`">
-              {{ profileStatusLabel() }}
-            </span>
+            @if (selectedProfileId(); as profileId) {
+              <app-status-menu
+                class="mt-1"
+                [profileId]="profileId"
+                [statusId]="profileDetailForm.profileStatusId().value()"
+                (statusChange)="onStatusChange($event)"
+              />
+            }
           </div>
         </div>
       } @else if (profileStatusLabel()) {

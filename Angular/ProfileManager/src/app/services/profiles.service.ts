@@ -132,15 +132,19 @@ export class ProfilesService {
           ? await this.getFilteredProfilesBySearch(filter)
           : await this.getProfilePage(filter, page.pageIndex, page.pageSize);
 
-      return profiles.map((profile) => ({
-        ...profile,
-        profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
-        profileStatusColor:
-          PROFILE_STATUS_STYLES[profile.profileStatusId as keyof typeof PROFILE_STATUS_STYLES]
-            ?.badge,
-      }));
+      return profiles.map((profile) => this.withStatusDisplay(profile));
     },
   });
+
+  /** Adds the derived status label and badge colour used by the list views. */
+  private withStatusDisplay(profile: ProfileDetail): ProfileDetail {
+    return {
+      ...profile,
+      profileStatus: PROFILE_STATUS[profile.profileStatusId as keyof typeof PROFILE_STATUS],
+      profileStatusColor:
+        PROFILE_STATUS_STYLES[profile.profileStatusId as keyof typeof PROFILE_STATUS_STYLES]?.badge,
+    };
+  }
 
   /** Stable string key representing only the filter fields (not pagination). */
   private buildFilterKey(filter: SortOption): string {
@@ -335,6 +339,35 @@ export class ProfilesService {
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
     const docRef = doc(this.firestore, 'profiles', id);
     await updateDoc(docRef, { ...profileData, updatedAt: serverTimestamp() });
+  }
+
+  /**
+   * Changes only the status of a profile, optimistically: the matching row of the loaded list is
+   * updated at once and restored if the write fails (the error is re-thrown for the caller).
+   * The list is deliberately NOT reloaded, so the card keeps its place and any status filter
+   * keeps showing it until the next reload or filter change. Undo is just another call with the
+   * previous id (it bumps `updatedAt` again, as the app keeps no history).
+   */
+  async updateProfileStatus(id: string, statusId: keyof typeof PROFILE_STATUS): Promise<void> {
+    const previous = this.profiles.hasValue()
+      ? (this.profiles.value().find((p) => String(p.id) === id)?.profileStatusId ?? null)
+      : null;
+    this.setRowStatus(id, statusId);
+    try {
+      await this.updateProfile(id, { profileStatusId: statusId });
+    } catch (error) {
+      if (previous) this.setRowStatus(id, previous);
+      throw error;
+    }
+  }
+
+  private setRowStatus(id: string, statusId: keyof typeof PROFILE_STATUS): void {
+    if (!this.profiles.hasValue()) return;
+    this.profiles.value.update((rows) =>
+      rows.map((row) =>
+        String(row.id) === id ? this.withStatusDisplay({ ...row, profileStatusId: statusId }) : row,
+      ),
+    );
   }
 
   async addProfile(profileData: Partial<ProfileDetail>) {

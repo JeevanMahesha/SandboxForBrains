@@ -23,7 +23,6 @@ import {
   lucideZodiacTaurus,
   lucideZodiacVirgo,
 } from '@ng-icons/lucide';
-import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
@@ -35,6 +34,7 @@ import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
 import { ProfilesEmptyState } from '../../shared/profiles-empty-state/profiles-empty-state';
 import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
+import { StatusMenu } from '../../shared/status-menu/status-menu';
 import { ScoreRing } from '../../shared/score-ring/score-ring';
 import { ProfileStatusEdgePipe } from '../profile-status-edge.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
@@ -51,7 +51,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     ProfilesEmptyState,
     ScoreRing,
     HlmButton,
-    HlmBadge,
+    StatusMenu,
     HlmSkeleton,
     ...HlmIconImports,
     ...HlmTooltipImports,

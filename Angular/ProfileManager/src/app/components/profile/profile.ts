@@ -37,6 +37,7 @@ import { ProfilesService } from '../../services/profiles.service';
 import { ViewportService } from '../../services/viewport.service';
 import { ProfileAvatar } from '../shared/profile-avatar/profile-avatar';
 import { ScoreRing } from '../shared/score-ring/score-ring';
+import { StatusMenu } from '../shared/status-menu/status-menu';
 import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-fields';
 import { createProfileForm } from './profile-form';
 
@@ -61,6 +62,7 @@ import { createProfileForm } from './profile-form';
     HlmSpinner,
     HlmSkeleton,
     ProfileFormFieldsComponent,
+    StatusMenu,
   ],
   templateUrl: './profile.html',
   providers: [
@@ -98,11 +100,17 @@ export class Profile {
   });
   readonly profileDetailForm = this.shared.profileDetailForm;
   readonly newComment = this.shared.newComment;
+  readonly selectedProfileId = computed(() => this.profileService.drawerState().selectedProfileId);
   readonly profileStatusLabel = this.shared.profileStatusLabel;
   readonly profileStatusColor = this.shared.profileStatusColor;
   readonly zodiacLabel = this.shared.zodiacLabel;
   readonly starLabel = this.shared.starLabel;
   readonly locationLabel = this.shared.locationLabel;
+
+  /** Mirrors a status change made from the header menu into the (read-only) view form. */
+  onStatusChange(statusId: NonNullable<ProfileDetail['profileStatusId']>): void {
+    this.shared.profileDetail.update((detail) => ({ ...detail, profileStatusId: statusId }));
+  }
 
   readonly profileResource = resource({
     params: () => {

@@ -53,9 +53,7 @@
 
         <!-- Status, zodiac, city -->
         <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
-          <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
-            {{ profile.profileStatus }}
-          </span>
+          <app-status-menu [profileId]="`${profile.id}`" [statusId]="profile.profileStatusId" />
           <span class="text-muted-foreground flex items-center gap-1">
             <span [class]="profile.zodiacSign | zodiacColor">
               <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />

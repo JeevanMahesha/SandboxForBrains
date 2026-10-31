@@ -1,0 +1,83 @@
+<ng-template #pill>
+  @if (pending()) {
+    <ng-icon hlm name="lucideLoaderCircle" size="xs" class="animate-spin" />
+  }
+  {{ label() }}
+  <ng-icon hlm name="lucideChevronDown" size="xs" />
+</ng-template>
+
+@if (mobile()) {
+  <button
+    type="button"
+    hlmBadge
+    variant="secondary"
+    data-testid="status-trigger"
+    aria-haspopup="dialog"
+    [class]="`relative cursor-pointer overflow-visible! after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] disabled:opacity-70 ${badgeClass()}`"
+    [disabled]="pending()"
+    [attr.aria-label]="`Change status, currently ${label()}`"
+    (click)="stop($event); sheetState.set('open')"
+    (keydown.enter)="stop($event)"
+    (keydown.space)="stop($event)"
+  >
+    <ng-container *ngTemplateOutlet="pill" />
+  </button>
+  <hlm-sheet side="bottom" [state]="sheetState()" (closed)="sheetState.set('closed')">
+    <hlm-sheet-content *brnSheetContent class="gap-0 px-2 pb-6">
+      <hlm-sheet-header>
+        <h3 hlmSheetTitle>Change status</h3>
+      </hlm-sheet-header>
+      <div role="group" aria-label="Status" class="flex max-h-[60vh] flex-col overflow-y-auto">
+        @for (option of options; track option.id) {
+          <button
+            type="button"
+            class="hover:bg-accent focus-visible:bg-accent flex min-h-12 w-full items-center gap-3 rounded-md px-3 text-left text-base outline-none"
+            [attr.aria-current]="option.id === statusId() ? 'true' : null"
+            (click)="choose(option.id)"
+          >
+            <span aria-hidden="true" [class]="`size-3 shrink-0 rounded-full ${option.dot}`"></span>
+            <span class="flex-1">{{ option.label }}</span>
+            @if (option.id === statusId()) {
+              <ng-icon hlm name="lucideCheck" size="sm" />
+            }
+          </button>
+        }
+      </div>
+    </hlm-sheet-content>
+  </hlm-sheet>
+} @else {
+  <button
+    type="button"
+    hlmBadge
+    variant="secondary"
+    data-testid="status-trigger"
+    aria-haspopup="menu"
+    [class]="`cursor-pointer disabled:opacity-70 ${badgeClass()}`"
+    [disabled]="pending()"
+    [hlmDropdownMenuTrigger]="menu"
+    [attr.aria-label]="`Change status, currently ${label()}`"
+    (click)="stop($event)"
+    (keydown.enter)="stop($event)"
+    (keydown.space)="stop($event)"
+  >
+    <ng-container *ngTemplateOutlet="pill" />
+  </button>
+  <ng-template #menu>
+    <hlm-dropdown-menu class="w-52">
+      @for (option of options; track option.id) {
+        <button
+          type="button"
+          hlmDropdownMenuItem
+          [attr.aria-current]="option.id === statusId() ? 'true' : null"
+          (click)="choose(option.id)"
+        >
+          <span aria-hidden="true" [class]="`size-2.5 shrink-0 rounded-full ${option.dot}`"></span>
+          <span class="flex-1">{{ option.label }}</span>
+          @if (option.id === statusId()) {
+            <ng-icon hlm name="lucideCheck" size="sm" />
+          }
+        </button>
+      }
+    </hlm-dropdown-menu>
+  </ng-template>
+}

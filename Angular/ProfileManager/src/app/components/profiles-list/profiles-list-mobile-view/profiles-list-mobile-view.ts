@@ -3,6 +3,7 @@ import { Component, inject, input } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCopy,
+  lucideEye,
   lucideMapPin,
   lucideMessageCircle,
   lucideMoreVertical,
@@ -22,7 +23,6 @@ import {
   lucideZodiacTaurus,
   lucideZodiacVirgo,
 } from '@ng-icons/lucide';
-import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
@@ -34,6 +34,7 @@ import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
 import { ProfilesEmptyState } from '../../shared/profiles-empty-state/profiles-empty-state';
 import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
+import { StatusMenu } from '../../shared/status-menu/status-menu';
 import { ScoreRing } from '../../shared/score-ring/score-ring';
 import { ProfileStatusEdgePipe } from '../profile-status-edge.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
@@ -50,7 +51,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     ZodiacColorPipe,
     ZodiacIconPipe,
     HlmButton,
-    HlmBadge,
+    StatusMenu,
     HlmSkeleton,
     ...HlmIconImports,
     ...HlmDropdownMenuImports,
@@ -59,6 +60,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   providers: [
     provideIcons({
       lucideMapPin,
+      lucideEye,
       lucideCopy,
       lucidePhone,
       lucideMessageCircle,

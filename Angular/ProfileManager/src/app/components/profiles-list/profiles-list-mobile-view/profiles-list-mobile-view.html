@@ -51,17 +51,31 @@
             </button>
           </div>
           <app-score-ring [score]="profile.starMatchScore ?? null" [size]="40" />
-          <button
-            type="button"
-            hlmBtn
-            variant="ghost"
-            size="icon-sm"
-            aria-label="More actions"
-            [hlmDropdownMenuTrigger]="profileMenu"
-            (click)="$event.stopPropagation()"
-          >
-            <ng-icon hlm name="lucideMoreVertical" size="sm" />
-          </button>
+          <div class="-my-2 -mr-2 flex shrink-0 items-center">
+            <button
+              type="button"
+              hlmBtn
+              variant="ghost"
+              class="size-11"
+              aria-label="View"
+              (click)="$event.stopPropagation(); userActionEvent('view', profile.id)"
+              (keydown.enter)="$event.stopPropagation()"
+            >
+              <ng-icon hlm name="lucideEye" size="sm" />
+            </button>
+            <button
+              type="button"
+              hlmBtn
+              variant="ghost"
+              class="size-11"
+              aria-label="More actions"
+              [hlmDropdownMenuTrigger]="profileMenu"
+              (click)="$event.stopPropagation()"
+              (keydown.enter)="$event.stopPropagation()"
+            >
+              <ng-icon hlm name="lucideMoreVertical" size="sm" />
+            </button>
+          </div>
           <ng-template #profileMenu>
             <hlm-dropdown-menu>
               <button
@@ -87,9 +101,7 @@
 
         <!-- Status, zodiac, city -->
         <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
-          <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
-            {{ profile.profileStatus }}
-          </span>
+          <app-status-menu [profileId]="`${profile.id}`" [statusId]="profile.profileStatusId" />
           <span class="text-muted-foreground flex items-center gap-1">
             <span [class]="profile.zodiacSign | zodiacColor">
               <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />

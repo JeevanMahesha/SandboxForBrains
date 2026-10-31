@@ -58,13 +58,15 @@
             [profileId]="`${profile.id}`"
             [statusId]="profile.profileStatusId"
           />
-          <span class="text-muted-foreground flex shrink-0 items-center gap-2">
+          <span class="text-muted-foreground flex min-w-0 items-center gap-2">
             <span class="grid size-4 shrink-0 place-items-center">
               <span [class]="profile.zodiacSign | zodiacColor">
                 <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
               </span>
             </span>
-            {{ profile.zodiacSign | titlecase }}
+            <span class="truncate" [attr.title]="profile.zodiacSign | zodiacLabel">{{
+              profile.zodiacSign | zodiacLabel
+            }}</span>
           </span>
           <span class="text-muted-foreground flex min-w-0 items-center gap-2">
             <span class="grid size-4 shrink-0 place-items-center">

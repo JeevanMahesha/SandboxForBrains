@@ -1,4 +1,3 @@
-import { TitleCasePipe } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -32,6 +31,7 @@ import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
+import { ZodiacLabelPipe } from '../../../pipes/zodiac-label.pipe';
 import { ProfilesEmptyState } from '../../shared/profiles-empty-state/profiles-empty-state';
 import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
 import { StatusMenu } from '../../shared/status-menu/status-menu';
@@ -42,10 +42,10 @@ import { ProfilesService } from '../../../services/profiles.service';
 @Component({
   selector: 'app-profiles-list-desktop-view',
   imports: [
-    TitleCasePipe,
     MobileUrlPipe,
     ZodiacColorPipe,
     ZodiacIconPipe,
+    ZodiacLabelPipe,
     ProfileStatusEdgePipe,
     ProfileAvatar,
     ProfilesEmptyState,

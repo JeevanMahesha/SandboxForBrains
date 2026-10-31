@@ -47,10 +47,10 @@
               "sourceMap": true
             },
             "e2e": {
-              "optimization": false,
+              "optimization": true,
               "extractLicenses": false,
               "namedChunks": true,
-              "sourceMap": true,
+              "sourceMap": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

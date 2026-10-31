@@ -85,7 +85,7 @@ export class ProfilesService {
 
   readonly pageState = signal<{ pageIndex: number; pageSize: number }>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 12,
   });
 
   readonly totalCount = signal<number>(0);

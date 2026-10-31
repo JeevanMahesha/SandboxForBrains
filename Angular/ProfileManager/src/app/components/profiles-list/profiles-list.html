@@ -5,7 +5,7 @@
       @if (profiles.error()) {
         <div
           role="alert"
-          class="glass border-destructive/40 text-destructive mt-4 flex flex-col items-center gap-3 rounded-2xl p-6 text-center"
+          class="glass border-destructive/40 text-destructive mt-5 flex flex-col items-center gap-3 rounded-2xl p-6 text-center"
         >
           <p class="font-medium">Something went wrong while loading profiles.</p>
           <p class="text-muted-foreground max-w-xl text-xs break-words">{{ errorMessage() }}</p>
@@ -17,7 +17,7 @@
           <app-profiles-list-desktop-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
         } @placeholder {
           <div
-            class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
             aria-hidden="true"
           >
             @for (card of [0, 1, 2, 3, 4, 5]; track card) {
@@ -34,7 +34,7 @@
         @defer (on viewport) {
           <app-profiles-list-mobile-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
         } @placeholder {
-          <div class="mt-4 flex flex-col gap-3" aria-hidden="true">
+          <div class="mt-5 flex flex-col gap-5" aria-hidden="true">
             @for (card of [0, 1, 2, 3]; track card) {
               <ng-container *ngTemplateOutlet="skeletonCard" />
             }
@@ -44,9 +44,9 @@
 
       @if (!profiles.isLoading() && !profiles.error()) {
         <hlm-numbered-pagination
-          class="glass mt-4 block rounded-2xl p-2"
+          class="glass mt-5 block rounded-2xl p-2"
           [totalItems]="profileService.totalCount()"
-          [pageSizes]="[10, 25, 50]"
+          [pageSizes]="[12, 24, 48]"
           [currentPage]="profileService.pageState().pageIndex + 1"
           [itemsPerPage]="profileService.pageState().pageSize"
           (currentPageChange)="onPageChange($event)"

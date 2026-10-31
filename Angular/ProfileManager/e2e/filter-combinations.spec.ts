@@ -38,10 +38,10 @@ test.describe('sort order, page size and clear filters', () => {
     await seedProfiles(Array.from({ length: 15 }, (_, index) => makeProfile(index)));
     await loginAsAdmin();
 
-    await expect(profileRows(page)).toHaveCount(10);
+    await expect(profileRows(page)).toHaveCount(12);
     await expect(profilesTotal(page)).toHaveText(/^15 profiles$/);
 
-    await pickOption(page, 'hlm-numbered-pagination', '25');
+    await pickOption(page, 'hlm-numbered-pagination', '24');
 
     await expect(profileRows(page)).toHaveCount(15);
     await expect(profilesTotal(page)).toHaveText(/^15 profiles$/);
@@ -51,28 +51,28 @@ test.describe('sort order, page size and clear filters', () => {
     page,
     loginAsAdmin,
   }) => {
-    // 12 profiles: 8 NEW and 4 ACCEPTED.
+    // 14 profiles: 8 NEW and 6 ACCEPTED (page size is 12).
     await seedProfiles(
-      Array.from({ length: 12 }, (_, index) =>
+      Array.from({ length: 14 }, (_, index) =>
         makeProfile(index, { profileStatusId: index < 8 ? 'NEW' : 'ACCEPTED' }),
       ),
     );
     await loginAsAdmin();
 
     const clearButton = page.getByRole('button', { name: 'Clear', exact: true });
-    await expect(profileRows(page)).toHaveCount(10);
+    await expect(profileRows(page)).toHaveCount(12);
     await expect(clearButton).toBeDisabled();
 
     await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
     await expect(statusFilter(page)).toHaveText(PROFILE_STATUS.ACCEPTED);
 
-    await expect(profileRows(page)).toHaveCount(4);
+    await expect(profileRows(page)).toHaveCount(6);
     await expect(clearButton).toBeEnabled();
 
     await clearButton.click();
 
-    await expect(profileRows(page)).toHaveCount(10);
-    await expect(profilesTotal(page)).toHaveText(/^12 profiles$/);
+    await expect(profileRows(page)).toHaveCount(12);
+    await expect(profilesTotal(page)).toHaveText(/^14 profiles$/);
     await expect(clearButton).toBeDisabled();
     await expect(statusFilter(page)).toHaveText('All statuses');
   });

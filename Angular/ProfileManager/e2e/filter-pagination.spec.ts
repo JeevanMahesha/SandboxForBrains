@@ -4,9 +4,9 @@ import { expect, profileRows, profilesTotal, selectStatusFilter, test } from './
 
 test.describe('filtering and pagination', () => {
   test.beforeEach(async () => {
-    // 12 profiles: 8 NEW and 4 ACCEPTED. Page size is 10.
+    // 14 profiles: 8 NEW and 6 ACCEPTED. Page size is 12, so page 2 holds the last 2.
     await seedProfiles(
-      Array.from({ length: 12 }, (_, index) =>
+      Array.from({ length: 14 }, (_, index) =>
         makeProfile(index, { profileStatusId: index < 8 ? 'NEW' : 'ACCEPTED' }),
       ),
     );
@@ -15,8 +15,8 @@ test.describe('filtering and pagination', () => {
   test('pages through the list', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
 
-    await expect(profileRows(page)).toHaveCount(10);
-    await expect(profilesTotal(page)).toHaveText(/^12 profiles$/);
+    await expect(profileRows(page)).toHaveCount(12);
+    await expect(profilesTotal(page)).toHaveText(/^14 profiles$/);
 
     const pagination = page.getByRole('navigation', { name: 'pagination' });
     await pagination.getByText('2', { exact: true }).click();
@@ -27,7 +27,7 @@ test.describe('filtering and pagination', () => {
 
   test('pages through the list using only the keyboard', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
-    await expect(profileRows(page)).toHaveCount(10);
+    await expect(profileRows(page)).toHaveCount(12);
 
     const pagination = page.getByRole('navigation', { name: 'pagination' });
 
@@ -46,18 +46,18 @@ test.describe('filtering and pagination', () => {
     await previousLink.focus();
     await page.keyboard.press('Space');
 
-    await expect(profileRows(page)).toHaveCount(10);
+    await expect(profileRows(page)).toHaveCount(12);
     await expect(pagination.locator('[aria-current="page"]')).toHaveText('1');
   });
 
   test('filters by profile status', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
-    await expect(profileRows(page)).toHaveCount(10);
+    await expect(profileRows(page)).toHaveCount(12);
 
     await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
 
-    await expect(profileRows(page)).toHaveCount(4);
-    await expect(profilesTotal(page)).toHaveText(/^4 profiles$/);
+    await expect(profileRows(page)).toHaveCount(6);
+    await expect(profilesTotal(page)).toHaveText(/^6 profiles$/);
     for (const row of await profileRows(page).all()) {
       await expect(row).toContainText(PROFILE_STATUS.ACCEPTED);
     }

@@ -1,7 +1,7 @@
 @if (isLoading() && pagedData().length === 0) {
-  <div class="mt-4 flex flex-col gap-3">
+  <div class="mt-5 flex flex-col gap-5">
     @for (card of skeletonRows; track $index) {
-      <div class="glass flex flex-col gap-3 rounded-2xl p-3">
+      <div class="glass flex flex-col gap-3 rounded-2xl p-4">
         <div class="flex items-center gap-3">
           <div hlmSkeleton class="size-10 rounded-xl"></div>
           <div class="flex flex-1 flex-col gap-2">
@@ -16,7 +16,7 @@
   </div>
 } @else {
   <div
-    class="mt-4 flex w-full flex-col gap-3 transition-opacity motion-reduce:transition-none"
+    class="mt-5 flex w-full flex-col gap-5 transition-opacity motion-reduce:transition-none"
     [class.opacity-60]="isLoading()"
     [attr.aria-busy]="isLoading()"
   >
@@ -25,14 +25,14 @@
         role="button"
         data-testid="profile-card"
         tabindex="0"
-        class="glass focus-visible:ring-ring/50 relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-2xl p-3 outline-none focus-visible:ring-[3px]"
+        class="glass focus-visible:ring-ring/50 relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-2xl p-4 outline-none focus-visible:ring-[3px]"
         (click)="userActionEvent('view', profile.id)"
         (keydown.enter)="userActionEvent('view', profile.id)"
       >
         <span aria-hidden="true" [class]="profile | profileStatusEdge"></span>
 
         <!-- Header: avatar, name + ID, score ring, kebab -->
-        <div class="flex items-center gap-3">
+        <div class="flex min-h-11 items-center gap-3">
           <app-profile-avatar [name]="profile.name" [size]="40" />
           <div class="flex min-w-0 flex-1 flex-col items-start gap-0.5">
             <div class="w-full truncate text-base leading-tight font-semibold">
@@ -40,7 +40,7 @@
             </div>
             <button
               type="button"
-              class="text-muted-foreground inline-flex items-center gap-1 text-xs"
+              class="text-muted-foreground inline-flex max-w-full items-center gap-1 text-xs leading-4"
               aria-label="Copy matrimony ID"
               (click)="
                 $event.stopPropagation(); copyToClipboard(profile.matrimonyId, 'Matrimony ID')
@@ -50,7 +50,7 @@
               <ng-icon hlm name="lucideCopy" size="xs" />
             </button>
           </div>
-          <app-score-ring [score]="profile.starMatchScore ?? null" [size]="40" />
+          <app-score-ring showEmpty [score]="profile.starMatchScore ?? null" [size]="40" />
           <div class="-my-2 -mr-2 flex shrink-0 items-center">
             <button
               type="button"
@@ -100,24 +100,32 @@
         </div>
 
         <!-- Status, zodiac, city -->
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
-          <app-status-menu [profileId]="`${profile.id}`" [statusId]="profile.profileStatusId" />
-          <span class="text-muted-foreground flex items-center gap-1">
-            <span [class]="profile.zodiacSign | zodiacColor">
-              <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
+        <div class="flex h-6 items-center gap-3 text-sm">
+          <app-status-menu
+            class="inline-flex h-6 shrink-0 items-center"
+            [profileId]="`${profile.id}`"
+            [statusId]="profile.profileStatusId"
+          />
+          <span class="text-muted-foreground flex shrink-0 items-center gap-2">
+            <span class="grid size-4 shrink-0 place-items-center">
+              <span [class]="profile.zodiacSign | zodiacColor">
+                <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
+              </span>
             </span>
             {{ profile.zodiacSign | titlecase }}
           </span>
-          <span class="text-muted-foreground flex items-center gap-1">
-            <ng-icon hlm name="lucideMapPin" size="sm" />
-            {{ profile.city }}
+          <span class="text-muted-foreground flex min-w-0 items-center gap-2">
+            <span class="grid size-4 shrink-0 place-items-center">
+              <ng-icon hlm name="lucideMapPin" size="sm" />
+            </span>
+            <span class="truncate" [attr.title]="profile.city">{{ profile.city }}</span>
           </span>
         </div>
 
         <!-- Mobile number + contact actions -->
-        <div class="bg-muted/40 flex items-center justify-between gap-1 rounded-lg py-1 pr-1 pl-3">
-          <span class="truncate text-sm">{{ profile.mobileNumber }}</span>
-          <div class="flex shrink-0 items-center">
+        <div class="bg-muted/40 flex h-10 items-center justify-between gap-2 rounded-lg px-3">
+          <span class="min-w-0 truncate text-sm">{{ profile.mobileNumber }}</span>
+          <div class="-mr-2 flex shrink-0 items-center">
             <button
               type="button"
               hlmBtn

@@ -186,13 +186,24 @@ body::before {
   flex-direction: column;
   min-height: 100vh;
   justify-content: space-between;
-  padding: 3rem 2rem 0 2rem;
+  padding: 1.5rem 1rem;
   transition: margin-left var(--layout-section-transition-duration);
+}
+
+@media (min-width: 640px) {
+  .layout-main-container {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout-main-container {
+    padding-inline: 2rem;
+  }
 }
 
 .layout-main {
   flex: 1 1 auto;
-  padding-bottom: 2rem;
 }
 
 /* Below lg: lift toasts above the wizard's fixed Back/Continue bar so they never cover it. */

@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { booleanAttribute, Component, computed, input } from '@angular/core';
 import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 
 /** Circular star-match score; scores run 0–10 so the ring fill is `score * 10`%. */
@@ -13,7 +13,19 @@ import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
         </span>
       </span>
     } @else {
-      <span class="text-muted-foreground text-xs">{{ notSpecified }}</span>
+      @if (showEmpty()) {
+        <span
+          role="img"
+          aria-label="Star match score not specified"
+          class="border-muted-foreground/40 text-muted-foreground grid place-items-center rounded-full border border-dashed text-sm"
+          [style.width.px]="size()"
+          [style.height.px]="size()"
+        >
+          <span aria-hidden="true">-</span>
+        </span>
+      } @else {
+        <span class="text-muted-foreground text-xs">{{ notSpecified }}</span>
+      }
     }
   `,
   host: { class: 'inline-flex shrink-0 items-center' },
@@ -21,6 +33,8 @@ import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 export class ScoreRing {
   readonly score = input<number | null>(null);
   readonly size = input(40);
+  /** Card views: render an empty dashed ring instead of "Not specified" text when unscored. */
+  readonly showEmpty = input(false, { transform: booleanAttribute });
 
   protected readonly notSpecified = NOT_SPECIFIED_LABEL;
 

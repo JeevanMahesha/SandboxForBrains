@@ -101,3 +101,29 @@ export async function fillWizardProfile(page: Page, profile: WizardProfile): Pro
   await pickOption(page, 'hlm-select#state', profile.state);
   await pickOption(page, 'hlm-select#city', profile.city);
 }
+
+/**
+ * Asserts every visible button/combobox/textbox inside `app-toolbar` lies fully inside the
+ * viewport horizontally (i.e. nothing is clipped at the page edge), except those inside the
+ * horizontally scrolling status chip group, which scrolls by design.
+ */
+export async function expectToolbarControlsUnclipped(page: Page): Promise<void> {
+  const clipped = await page.evaluate(() => {
+    const width = document.documentElement.clientWidth;
+    const out: string[] = [];
+    document
+      .querySelectorAll('app-toolbar button, app-toolbar [role="combobox"], app-toolbar input')
+      .forEach((el) => {
+        if (el.closest('[aria-label="Profile status"]')) return;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) return;
+        if (r.left < -0.5 || r.right > width + 0.5) {
+          out.push(
+            `${el.textContent?.trim() || el.getAttribute('aria-label')}@${r.left}-${r.right}`,
+          );
+        }
+      });
+    return out;
+  });
+  expect(clipped, 'toolbar controls clipped by the viewport').toEqual([]);
+}

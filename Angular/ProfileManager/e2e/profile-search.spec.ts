@@ -3,7 +3,7 @@ import { toCanonicalMobileNumber } from '../src/app/utils/mobile-number.util';
 import { makeProfile, seedProfiles } from './support/emulator';
 import { expect, profileRows, profilesTotal, test } from './support/fixtures';
 
-// The toolbar search box (`filterForm.searchQuery` in toolbar.ts) debounces input by 800ms
+// The toolbar search box (`filterForm.searchQuery` in toolbar.ts) debounces input by 350ms
 // before it reaches `ProfilesService.filterOptions`, so every assertion below relies on
 // Playwright's auto-retrying `expect` rather than a fixed wait.
 function searchBox(page: Page) {
@@ -152,5 +152,61 @@ test.describe('toolbar search', () => {
     await expect(alert).toHaveCount(0);
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Retry Profile');
+  });
+
+  test('Enter searches immediately, without waiting for the debounce', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([
+      makeProfile(0, { name: 'Enter Target', matrimonyId: 'ENTER-001' }),
+      makeProfile(1, { name: 'Enter Other', matrimonyId: 'ENTER-002' }),
+    ]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(2);
+
+    await searchBox(page).fill('ENTER-001');
+    // Still inside the 350ms debounce window: nothing has been searched yet.
+    await page.waitForTimeout(80);
+    await expect(profileRows(page)).toHaveCount(2, { timeout: 100 });
+    await searchBox(page).press('Enter');
+    await expect(profileRows(page)).toHaveCount(1, { timeout: 250 });
+    await expect(profileRows(page).first()).toContainText('Enter Target');
+  });
+
+  test('clearing the box restores the list immediately', async ({ page, loginAsAdmin }) => {
+    await seedProfiles([
+      makeProfile(0, { matrimonyId: 'CLEAR-001' }),
+      makeProfile(1, { matrimonyId: 'CLEAR-002' }),
+    ]);
+    await loginAsAdmin();
+    await searchBox(page).fill('CLEAR-001');
+    await searchBox(page).press('Enter');
+    await expect(profileRows(page)).toHaveCount(1);
+    await searchBox(page).fill('');
+    await expect(profileRows(page)).toHaveCount(2, { timeout: 250 });
+  });
+
+  test('shows a spinner inside the search box while the search query is loading', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { matrimonyId: 'SPIN-001' })]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(1);
+
+    const slow = async (route: Route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      await route.continue();
+    };
+    await page.route(/runQuery/, slow);
+    const spinner = page.getByRole('status', { name: 'Searching' });
+    await expect(spinner).toHaveCount(0);
+    await searchBox(page).fill('SPIN-001');
+    await searchBox(page).press('Enter');
+    await expect(spinner).toBeVisible();
+    await expect(spinner).toHaveCount(0, { timeout: 5000 });
+    await page.unroute(/runQuery/, slow);
+    await expect(profileRows(page)).toHaveCount(1);
   });
 });

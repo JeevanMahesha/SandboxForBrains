@@ -194,3 +194,10 @@ body::before {
   flex: 1 1 auto;
   padding-bottom: 2rem;
 }
+
+/* Phones: lift toasts above the floating Add Profile button (56px + 16px gutter + gap). */
+@media (max-width: 767px) {
+  body:has([data-add-fab]) [data-sonner-toaster][data-y-position='bottom'] {
+    bottom: calc(max(var(--offset), env(safe-area-inset-bottom)) + 4.75rem);
+  }
+}

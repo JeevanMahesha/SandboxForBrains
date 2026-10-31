@@ -6,7 +6,7 @@
       hlmBtn
       variant="outline"
       size="icon"
-      class="shrink-0"
+      class="shrink-0 max-md:size-11"
       [attr.aria-label]="`Theme: ${themeService.preference()}`"
       [attr.title]="`Theme: ${themeService.preference()}`"
       (click)="themeService.cyclePreference()"
@@ -26,9 +26,16 @@
         hlmInput
         type="text"
         placeholder="Search by ID or phone"
-        class="w-full pl-8"
+        class="w-full pr-8 pl-8"
         [formField]="filterForm.searchQuery"
+        (keydown.enter)="flushSearch()"
       />
+      @if (searchLoading()) {
+        <hlm-spinner
+          aria-label="Searching"
+          class="text-muted-foreground absolute top-1/2 right-2.5 -translate-y-1/2 text-base"
+        />
+      }
     </div>
 
     <span class="hidden flex-1 md:block"></span>
@@ -38,7 +45,7 @@
       type="button"
       hlmBtn
       variant="outline"
-      class="relative flex-1 md:hidden"
+      class="relative flex-1 max-md:h-11 md:hidden"
       (click)="filterSheetOpen.set('open')"
     >
       <ng-icon hlm name="lucideSlidersHorizontal" size="sm" />
@@ -48,11 +55,11 @@
       }
     </button>
 
-    <div class="order-last flex w-full md:order-none md:w-auto">
+    <div class="flex md:order-none md:w-auto">
       <button
         type="button"
         hlmBtn
-        class="flex-1 rounded-r-none md:flex-none"
+        class="hidden rounded-r-none md:inline-flex"
         (click)="addNewProfileAction()"
       >
         <ng-icon hlm name="lucideUserPlus" size="sm" />
@@ -62,7 +69,7 @@
         #moreActionsBtn
         type="button"
         hlmBtn
-        class="rounded-l-none border-l border-l-primary-foreground/20 px-2"
+        class="border-l-primary-foreground/20 px-2 max-md:size-11 md:rounded-l-none md:border-l"
         aria-label="More actions"
         [hlmDropdownMenuTrigger]="addMenu"
       >
@@ -102,7 +109,7 @@
       hlmBtn
       variant="outline"
       size="icon"
-      class="shrink-0"
+      class="shrink-0 max-md:size-11"
       aria-label="Account menu"
       [hlmDropdownMenuTrigger]="accountMenu"
     >
@@ -123,11 +130,13 @@
   </div>
 
   <!-- Desktop filters: status chips + sort, star match, clear -->
-  <div class="hidden flex-wrap items-center justify-between gap-3 md:flex">
-    <app-status-chips [profileStatus]="filterForm.profileStatus" />
-    <div class="flex items-center gap-2">
+  <div class="hidden items-center justify-between gap-3 md:flex lg:flex-wrap">
+    <div class="min-w-0 flex-1 lg:flex-none">
+      <app-status-chips [profileStatus]="filterForm.profileStatus" [scrollable]="true" />
+    </div>
+    <div class="flex shrink-0 items-center gap-2">
       <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
-        <hlm-select-trigger class="w-40">
+        <hlm-select-trigger class="w-36 lg:w-40">
           <hlm-select-value placeholder="Sort order" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
@@ -149,6 +158,18 @@
     </div>
   </div>
 </div>
+
+<!-- Phones: floating Add Profile button (outside .glass: backdrop-filter would trap fixed) -->
+<button
+  type="button"
+  hlmBtn
+  data-add-fab
+  class="fixed right-4 bottom-4 z-40 size-14 rounded-full shadow-lg md:hidden"
+  aria-label="Add Profile"
+  (click)="addNewProfileAction()"
+>
+  <ng-icon hlm name="lucideUserPlus" size="lg" />
+</button>
 
 <!-- Mobile filter sheet (bottom) -->
 <hlm-sheet side="bottom" [state]="filterSheetOpen()" (closed)="filterSheetOpen.set('closed')">
@@ -172,9 +193,16 @@
           hlmInput
           type="text"
           placeholder="Search by ID or phone"
-          class="w-full pl-8"
+          class="w-full pr-8 pl-8"
           [formField]="filterForm.searchQuery"
+          (keydown.enter)="flushSearch()"
         />
+        @if (searchLoading()) {
+          <hlm-spinner
+            aria-label="Searching"
+            class="text-muted-foreground absolute top-1/2 right-2.5 -translate-y-1/2 text-base"
+          />
+        }
       </div>
 
       <div class="flex flex-col gap-2">

@@ -21,7 +21,16 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
-import { lucideCheck, lucideLoaderCircle, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
+import {
+  lucideCheck,
+  lucideCopy,
+  lucideLoaderCircle,
+  lucideMessageCircle,
+  lucidePencil,
+  lucidePhone,
+  lucidePlus,
+  lucideTrash2,
+} from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmBadge } from '@spartan-ng/helm/badge';
@@ -37,6 +46,7 @@ import {
   DISPLAY_DATE_FORMAT,
   DISPLAY_DATE_TIME_FORMAT,
   DISTRICT_LIST,
+  NOT_SPECIFIED_LABEL,
   PROFILE_STATUS,
   PROFILE_STATUS_STYLES,
   STAR_SCORES,
@@ -46,13 +56,17 @@ import {
 } from '../../constant/common.const';
 import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
+import { MobileUrlPipe } from '../../pipes/mobile-url.pipe';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { ProfilesService } from '../../services/profiles.service';
+import { ViewportService } from '../../services/viewport.service';
 import {
   CANONICAL_MOBILE_NUMBER_PATTERN,
   mobileNumberDigits,
   toCanonicalMobileNumber,
 } from '../../utils/mobile-number.util';
+import { ProfileAvatar } from '../shared/profile-avatar/profile-avatar';
+import { ScoreRing } from '../shared/score-ring/score-ring';
 import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-fields';
 
 @Component({
@@ -62,6 +76,9 @@ import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-f
     FormsModule,
     DatePipe,
     TimeAgoPipe,
+    MobileUrlPipe,
+    ProfileAvatar,
+    ScoreRing,
     BrnSheetContent,
     HlmBadge,
     HlmButton,
@@ -75,12 +92,32 @@ import { ProfileFormFieldsComponent } from './profile-form-fields/profile-form-f
     ProfileFormFieldsComponent,
   ],
   templateUrl: './profile.html',
-  providers: [provideIcons({ lucidePlus, lucideTrash2, lucideCheck, lucideLoaderCircle })],
+  providers: [
+    provideIcons({
+      lucidePlus,
+      lucideTrash2,
+      lucideCheck,
+      lucideLoaderCircle,
+      lucideCopy,
+      lucidePhone,
+      lucideMessageCircle,
+      lucidePencil,
+    }),
+  ],
 })
 export class Profile {
   protected readonly profileService = inject(ProfilesService);
+  private readonly viewport = inject(ViewportService);
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
+  readonly isView = computed(() => this.userActionType() === TOOLBAR_ACTIONS.view);
+  /** Phones get a bottom sheet for view/edit; create (and desktop) keep the right-hand drawer. */
+  readonly sheetSide = computed<'right' | 'bottom'>(() =>
+    this.viewport.isMobile() && this.userActionType() !== TOOLBAR_ACTIONS.create
+      ? 'bottom'
+      : 'right',
+  );
+  readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
   readonly TOOLBAR_ACTIONS_VALUES = TOOLBAR_ACTIONS;
   readonly DATE_FORMAT = DISPLAY_DATE_FORMAT;
   readonly DATE_TIME_FORMAT = DISPLAY_DATE_TIME_FORMAT;
@@ -109,6 +146,24 @@ export class Profile {
       keyof typeof PROFILE_STATUS_STYLES | null;
     return id ? PROFILE_STATUS_STYLES[id].badge : null;
   });
+
+  readonly zodiacLabel = computed(() => {
+    const zodiac = ZODIAC_LIST[this.profileDetailForm.zodiacSign().value() as ZodiacKey];
+    return zodiac ? `${zodiac.tanglish} (${zodiac.english})` : null;
+  });
+
+  readonly starLabel = computed(() => {
+    const star = this.profileDetailForm.star().value();
+    if (!star) return null;
+    const score = STAR_SCORES[star as StarKey];
+    return score === undefined ? star : `${star} (${score})`;
+  });
+
+  readonly locationLabel = computed(() =>
+    [this.profileDetailForm.city().value(), this.profileDetailForm.state().value()]
+      .filter(Boolean)
+      .join(', '),
+  );
 
   private readonly starList = computed(() => {
     const zodiac = this.profileDetailForm.zodiacSign().value();

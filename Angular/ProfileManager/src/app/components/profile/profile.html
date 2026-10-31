@@ -1,18 +1,35 @@
-<hlm-sheet side="right" [state]="isOpened()" (closed)="closeDrawer()">
+<hlm-sheet [side]="sheetSide()" [state]="isOpened()" (closed)="closeDrawer()">
   <hlm-sheet-content
     *brnSheetContent
-    class="flex w-full! flex-col gap-0 sm:max-w-md! lg:max-w-120!"
+    class="flex w-full! flex-col gap-0 data-[side=bottom]:h-[88vh] data-[side=bottom]:rounded-t-3xl data-[side=right]:rounded-l-3xl data-[side=right]:sm:max-w-md! data-[side=right]:lg:max-w-120!"
   >
+    @if (sheetSide() === 'bottom') {
+      <div class="bg-muted-foreground/30 mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full"></div>
+    }
     <hlm-sheet-header class="pb-2">
       <h3 hlmSheetTitle>{{ title() }}</h3>
-      @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.create && profileStatusLabel()) {
+      @if (isView() && profileStatusLabel()) {
+        <div class="mt-2 flex items-center gap-3">
+          <app-profile-avatar [name]="profileDetailForm.name().value()" [size]="52" />
+          <div class="min-w-0">
+            <p class="truncate text-lg leading-tight font-semibold">
+              {{ profileDetailForm.name().value() }}
+            </p>
+            <span hlmBadge variant="secondary" [class]="`mt-1 ${profileStatusColor() ?? ''}`">
+              {{ profileStatusLabel() }}
+            </span>
+          </div>
+        </div>
+      } @else if (userActionType() !== TOOLBAR_ACTIONS_VALUES.create && profileStatusLabel()) {
         <div class="mt-1 flex items-center gap-2">
           <span class="text-sm text-muted-foreground">{{ profileDetailForm.name().value() }}</span>
           <span hlmBadge variant="secondary" [class]="profileStatusColor() ?? ''">
             {{ profileStatusLabel() }}
           </span>
         </div>
-        <!-- Audit line: exact timestamps are available on hover. -->
+      }
+      <!-- Audit line: exact timestamps are available on hover. -->
+      @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.create && profileStatusLabel()) {
         @if (profileResource.value(); as profile) {
           <p hlmSheetDescription class="mt-1 text-xs">
             Created
@@ -34,44 +51,186 @@
           <hlm-skeleton class="h-8 w-full my-5" />
         }
       </div>
+    } @else if (isView()) {
+      <div class="flex flex-1 flex-col gap-5 overflow-y-auto px-4 pb-4">
+        <!-- Quick actions -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <a
+            hlmBtn
+            variant="outline"
+            [href]="profileDetailForm.mobileNumber().value() | mobileUrl: 'tel'"
+          >
+            <ng-icon hlm name="lucidePhone" size="sm" />
+            Call
+          </a>
+          <a
+            hlmBtn
+            variant="outline"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-green-600 dark:text-green-400"
+            [href]="profileDetailForm.mobileNumber().value() | mobileUrl: 'whatsapp'"
+          >
+            <ng-icon hlm name="lucideMessageCircle" size="sm" />
+            WhatsApp
+          </a>
+        </div>
+
+        <!-- Contact -->
+        <section class="glass flex flex-col gap-3 rounded-2xl p-4">
+          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Contact</h4>
+          <dl class="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
+            <div class="min-w-0">
+              <dt class="text-xs text-muted-foreground">Mobile Number</dt>
+              <dd class="flex items-center gap-1 font-medium">
+                {{ profileDetailForm.mobileNumber().value() }}
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Copy mobile number"
+                  (click)="
+                    copyToClipboard(profileDetailForm.mobileNumber().value(), 'Mobile Number')
+                  "
+                >
+                  <ng-icon hlm name="lucideCopy" size="sm" />
+                </button>
+              </dd>
+            </div>
+            <div class="min-w-0">
+              <dt class="text-xs text-muted-foreground">Matrimony ID</dt>
+              <dd class="flex items-center gap-1 font-medium">
+                {{ profileDetailForm.matrimonyId().value() }}
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Copy matrimony ID"
+                  (click)="copyToClipboard(profileDetailForm.matrimonyId().value(), 'Matrimony ID')"
+                >
+                  <ng-icon hlm name="lucideCopy" size="sm" />
+                </button>
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- Horoscope -->
+        <section class="glass flex flex-col gap-3 rounded-2xl p-4">
+          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            Horoscope
+          </h4>
+          <div class="flex items-center gap-4">
+            <app-score-ring [score]="profileDetailForm.starMatchScore().value()" [size]="56" />
+            <p class="text-sm font-medium">Star Match Score</p>
+          </div>
+          <dl class="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
+            <div>
+              <dt class="text-xs text-muted-foreground">Zodiac Sign</dt>
+              <dd class="font-medium">{{ zodiacLabel() }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted-foreground">Star Sign</dt>
+              @if (starLabel(); as star) {
+                <dd class="font-medium">{{ star }}</dd>
+              } @else {
+                <dd class="text-muted-foreground">{{ NOT_SPECIFIED }}</dd>
+              }
+            </div>
+          </dl>
+        </section>
+
+        <!-- Location -->
+        <section class="glass flex flex-col gap-3 rounded-2xl p-4">
+          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            Location
+          </h4>
+          <dl class="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
+            <div>
+              <dt class="text-xs text-muted-foreground">Age</dt>
+              <dd class="font-medium">{{ profileDetailForm.age().value() }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted-foreground">State and City</dt>
+              <dd class="font-medium">{{ locationLabel() }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- Notes timeline -->
+        <section class="flex flex-col gap-3">
+          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Notes</h4>
+          @if (profileDetailForm.comments().value().length) {
+            <ol class="ms-1.5 flex flex-col gap-4 border-s border-border ps-4">
+              @for (comment of profileDetailForm.comments().value(); track $index) {
+                <li class="relative text-sm">
+                  <span
+                    class="bg-gradient-brand absolute top-1 -start-5.25 size-2.5 rounded-full ring-4 ring-background"
+                  ></span>
+                  <time class="block text-xs text-muted-foreground">
+                    {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm' }}
+                  </time>
+                  <p>{{ comment.value }}</p>
+                </li>
+              }
+            </ol>
+          } @else {
+            <p class="text-sm text-muted-foreground">No comments yet.</p>
+          }
+        </section>
+      </div>
+
+      <hlm-sheet-footer class="flex gap-2">
+        <button type="button" hlmBtn variant="outline" class="flex-1" (click)="closeDrawer()">
+          Close
+        </button>
+        <button
+          type="button"
+          hlmBtn
+          class="flex-1"
+          (click)="
+            profileService.userActionEvent('edit', profileService.drawerState().selectedProfileId)
+          "
+        >
+          <ng-icon hlm name="lucidePencil" size="sm" />
+          Edit
+        </button>
+      </hlm-sheet-footer>
     } @else {
       <form class="flex-1 overflow-y-auto px-4 pb-4" [formRoot]="profileDetailForm">
         <div class="mt-2 flex flex-col gap-4">
-          <app-profile-form-fields
-            [profileDetailForm]="profileDetailForm"
-            [actionType]="userActionType()"
-          />
+          <app-profile-form-fields [profileDetailForm]="profileDetailForm" />
 
           <!-- Section: Notes -->
           <hlm-separator />
           <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Notes</p>
 
-          @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.view) {
-            <div hlmField>
-              <label hlmFieldLabel for="comment">Add Comment</label>
-              <div class="flex gap-2">
-                <input
-                  hlmInput
-                  id="comment"
-                  class="w-full"
-                  placeholder="Add a comment"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="newComment"
-                  (keydown.enter)="$event.preventDefault(); addComment()"
-                />
-                <button
-                  type="button"
-                  hlmBtn
-                  size="icon"
-                  aria-label="Add comment"
-                  [disabled]="!newComment()"
-                  (click)="addComment()"
-                >
-                  <ng-icon hlm name="lucidePlus" size="sm" />
-                </button>
-              </div>
+          <div hlmField>
+            <label hlmFieldLabel for="comment">Add Comment</label>
+            <div class="flex gap-2">
+              <input
+                hlmInput
+                id="comment"
+                class="w-full"
+                placeholder="Add a comment"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="newComment"
+                (keydown.enter)="$event.preventDefault(); addComment()"
+              />
+              <button
+                type="button"
+                hlmBtn
+                size="icon"
+                aria-label="Add comment"
+                [disabled]="!newComment()"
+                (click)="addComment()"
+              >
+                <ng-icon hlm name="lucidePlus" size="sm" />
+              </button>
             </div>
-          }
+          </div>
 
           @if (profileDetailForm.comments().value().length) {
             <div class="flex flex-col gap-2">
@@ -81,19 +240,17 @@
                     <p class="text-xs text-muted-foreground">
                       {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm' }}
                     </p>
-                    @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.view) {
-                      <button
-                        type="button"
-                        hlmBtn
-                        variant="ghost"
-                        size="icon-sm"
-                        class="text-destructive"
-                        aria-label="Delete comment"
-                        (click)="deleteComment(comment)"
-                      >
-                        <ng-icon hlm name="lucideTrash2" size="sm" />
-                      </button>
-                    }
+                    <button
+                      type="button"
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      class="text-destructive"
+                      aria-label="Delete comment"
+                      (click)="deleteComment(comment)"
+                    >
+                      <ng-icon hlm name="lucideTrash2" size="sm" />
+                    </button>
                   </div>
                   <p>{{ comment.value }}</p>
                 </div>
@@ -106,42 +263,23 @@
         <button #submitButton hidden type="submit"></button>
       </form>
 
-      <!-- Footer -->
-      @if (userActionType() === TOOLBAR_ACTIONS_VALUES.view) {
-        <hlm-sheet-footer class="flex gap-2">
-          <button type="button" hlmBtn variant="outline" class="flex-1" (click)="closeDrawer()">
-            Close
-          </button>
-          <button
-            type="button"
-            hlmBtn
-            class="flex-1"
-            (click)="
-              profileService.userActionEvent('edit', profileService.drawerState().selectedProfileId)
-            "
-          >
-            Edit
-          </button>
-        </hlm-sheet-footer>
-      } @else {
-        <hlm-sheet-footer>
-          <button
-            type="button"
-            hlmBtn
-            class="w-full"
-            [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
-            (click)="submitButton.click()"
-          >
-            @if (profileDetailForm().submitting()) {
-              <hlm-spinner data-icon="inline-start" />
-              Saving…
-            } @else {
-              <ng-icon hlm name="lucideCheck" size="sm" />
-              {{ buttonLabel() }}
-            }
-          </button>
-        </hlm-sheet-footer>
-      }
+      <hlm-sheet-footer>
+        <button
+          type="button"
+          hlmBtn
+          class="w-full"
+          [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
+          (click)="submitButton.click()"
+        >
+          @if (profileDetailForm().submitting()) {
+            <hlm-spinner data-icon="inline-start" />
+            Saving…
+          } @else {
+            <ng-icon hlm name="lucideCheck" size="sm" />
+            {{ buttonLabel() }}
+          }
+        </button>
+      </hlm-sheet-footer>
     }
   </hlm-sheet-content>
 </hlm-sheet>

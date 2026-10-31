@@ -26,6 +26,7 @@ export const discardChangesGuard: CanDeactivateFn<HasUnsavedInput> = async (comp
       destructive: true,
     } satisfies ConfirmDialogContext,
     contentClass: 'sm:max-w-md',
+    showCloseButton: false,
   });
   const confirmed = await firstValueFrom(dialogRef.closed$, { defaultValue: false });
   return confirmed === true;

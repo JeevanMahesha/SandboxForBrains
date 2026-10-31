@@ -14,6 +14,8 @@ test.describe('delete profile', () => {
       dialog.getByRole('heading', { name: 'Delete Seed Profile 01 (M1000)?' }),
     ).toBeVisible();
     await expect(dialog.getByText("This can't be undone.")).toBeVisible();
+    // No corner X: it collided with long titles, and Cancel / Esc already dismiss the dialog.
+    await expect(page.getByRole('dialog').getByRole('button', { name: /close/i })).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Delete' }).click();
 
     await expect(page.getByText('Profile deleted successfully')).toBeVisible();
@@ -28,6 +30,22 @@ test.describe('delete profile', () => {
     await profileRows(page).first().getByRole('button', { name: 'Delete' }).click();
     const dialog = page.locator('app-confirm-dialog');
     await dialog.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(dialog).toHaveCount(0);
+    await expect(profileRows(page)).toHaveCount(1);
+  });
+
+  test('keeps the profile when the dialog is dismissed with Escape', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0)]);
+    await loginAsAdmin();
+
+    await profileRows(page).first().getByRole('button', { name: 'Delete' }).click();
+    const dialog = page.locator('app-confirm-dialog');
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press('Escape');
 
     await expect(dialog).toHaveCount(0);
     await expect(profileRows(page)).toHaveCount(1);

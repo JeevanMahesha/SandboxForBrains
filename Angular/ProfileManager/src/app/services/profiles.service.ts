@@ -307,6 +307,8 @@ export class ProfilesService {
         destructive: true,
       } satisfies ConfirmDialogContext,
       contentClass: 'sm:max-w-md',
+      // Cancel is right there (and Esc works); the corner X only collides with a long title.
+      showCloseButton: false,
     });
 
     dialogRef.closed$.subscribe((confirmed) => {

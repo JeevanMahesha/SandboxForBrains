@@ -195,6 +195,13 @@ body::before {
   padding-bottom: 2rem;
 }
 
+/* Below lg: lift toasts above the wizard's fixed Back/Continue bar so they never cover it. */
+@media (max-width: 1023px) {
+  body:has([data-wizard-bar]) [data-sonner-toaster][data-y-position='bottom'] {
+    bottom: calc(max(var(--offset), env(safe-area-inset-bottom)) + 5rem);
+  }
+}
+
 /* Phones: lift toasts above the floating Add Profile button (56px + 16px gutter + gap). */
 @media (max-width: 767px) {
   body:has([data-add-fab]) [data-sonner-toaster][data-y-position='bottom'] {

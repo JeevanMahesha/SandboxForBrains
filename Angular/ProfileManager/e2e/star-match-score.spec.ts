@@ -39,21 +39,23 @@ test.describe('star match score auto-calc', () => {
     const scoreInput = page.locator('#star_match_score');
     const starTrigger = page.locator('hlm-select#star_sign [role="combobox"]');
 
-    // The score field is always readonly (auto-filled from the Star Sign, never hand-typed)
-    // and starts empty, since no star is selected yet.
-    await expect(scoreInput).toHaveAttribute('readonly', '');
-    await expect(scoreInput).toHaveAttribute('placeholder', 'Auto-filled from Star Sign');
-    await expect(scoreInput).toHaveValue('');
+    // The score is a read-only ring (derived from the Star Sign, never hand-typed), exposed as
+    // an image whose accessible name carries the value; it starts empty (no star selected yet).
+    const noScore = 'Star match score not calculated';
+    const scoreOf = (star: keyof typeof STAR_SCORES) => `Star match score ${STAR_SCORES[star]}`;
+    await expect(page.getByText('Calculated from the selected star')).toBeVisible();
+    await expect(scoreInput).toHaveAttribute('role', 'img');
+    await expect(scoreInput).toHaveAttribute('aria-label', noScore);
 
     await pickOption(page, 'hlm-select#zodiac_sign', ARIES_LABEL);
 
     // Selecting a star auto-populates the score from STAR_SCORES.
     await pickOption(page, 'hlm-select#star_sign', firstStarLabel);
-    await expect(scoreInput).toHaveValue(String(STAR_SCORES[firstStar]));
+    await expect(scoreInput).toHaveAttribute('aria-label', scoreOf(firstStar));
 
     // Picking a different star (same zodiac) recalculates the score.
     await pickOption(page, 'hlm-select#star_sign', secondStarLabel);
-    await expect(scoreInput).toHaveValue(String(STAR_SCORES[secondStar]));
+    await expect(scoreInput).toHaveAttribute('aria-label', scoreOf(secondStar));
 
     // Explicitly clearing the star via the "Not specified" option clears the score back to
     // empty. The select's trigger itself reverts to its plain "Select Star" placeholder rather
@@ -62,7 +64,7 @@ test.describe('star match score auto-calc', () => {
     // "Not specified" text never appears on the trigger — only as the option itself, and later
     // as the read-only view rendering (checked below).
     await pickOption(page, 'hlm-select#star_sign', NOT_SPECIFIED_LABEL);
-    await expect(scoreInput).toHaveValue('');
+    await expect(scoreInput).toHaveAttribute('aria-label', noScore);
     await expect(starTrigger).toHaveText('Select Star');
 
     // Save the profile with no star chosen at all.

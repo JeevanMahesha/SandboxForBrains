@@ -103,10 +103,10 @@
 }
 
 @if (shows('astro')) {
-  <!-- Section: Astrological -->
+  <!-- Section: Horoscope -->
   @if (!bare()) {
     <hlm-separator />
-    <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Astrological</p>
+    <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Horoscope</p>
   }
 
   <div hlmField>
@@ -165,23 +165,18 @@
   </div>
 
   <div hlmField>
-    <label hlmFieldLabel for="star_match_score">Star Match Score</label>
-    <input
-      hlmInput
-      id="star_match_score"
-      type="number"
-      class="bg-muted text-muted-foreground w-full cursor-not-allowed"
-      placeholder="Auto-filled from Star Sign"
-      [formField]="profileDetailForm().starMatchScore"
-    />
-    <p hlmFieldDescription>Automatically calculated from the selected Star Sign.</p>
+    <span hlmFieldLabel id="star_match_score_label">Star Match Score</span>
+    <div class="flex items-center gap-3">
+      <app-score-ring
+        id="star_match_score"
+        role="img"
+        [attr.aria-label]="scoreAriaLabel()"
+        [score]="profileDetailForm().starMatchScore().value()"
+        [size]="48"
+      />
+      <p hlmFieldDescription>Calculated from the selected star</p>
+    </div>
   </div>
-}
-
-<!-- Section: Location -->
-@if (!bare()) {
-  <hlm-separator />
-  <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Location</p>
 }
 
 @if (shows('age')) {
@@ -201,6 +196,12 @@
       [ngTemplateOutletContext]="{ $implicit: profileDetailForm().age, fieldId: 'age-error' }"
     />
   </div>
+}
+
+<!-- Section: Location -->
+@if (!bare()) {
+  <hlm-separator />
+  <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Location</p>
 }
 
 @if (shows('place')) {

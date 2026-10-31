@@ -18,6 +18,7 @@ import {
   Query,
   QueryDocumentSnapshot,
   addDoc,
+  arrayUnion,
   collection,
   count,
   deleteDoc,
@@ -368,6 +369,17 @@ export class ProfilesService {
         String(row.id) === id ? this.withStatusDisplay({ ...row, profileStatusId: statusId }) : row,
       ),
     );
+  }
+
+  /**
+   * Appends one note with `arrayUnion` instead of rewriting the whole `comments` array, so notes
+   * added elsewhere (or legacy ones) between load and save are never overwritten.
+   */
+  async addNote(id: string, value: string): Promise<Comment> {
+    const note: Comment = { value, createDateAndTime: new Date() };
+    const docRef = doc(this.firestore, 'profiles', id);
+    await updateDoc(docRef, { comments: arrayUnion(note), updatedAt: serverTimestamp() });
+    return note;
   }
 
   async addProfile(profileData: Partial<ProfileDetail>) {

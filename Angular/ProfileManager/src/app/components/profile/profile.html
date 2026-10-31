@@ -144,6 +144,10 @@
                 <dd class="text-muted-foreground">{{ NOT_SPECIFIED }}</dd>
               }
             </div>
+            <div>
+              <dt class="text-xs text-muted-foreground">Age</dt>
+              <dd class="font-medium">{{ profileDetailForm.age().value() }}</dd>
+            </div>
           </dl>
         </section>
 
@@ -153,11 +157,7 @@
             Location
           </h4>
           <dl class="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
-            <div>
-              <dt class="text-xs text-muted-foreground">Age</dt>
-              <dd class="font-medium">{{ profileDetailForm.age().value() }}</dd>
-            </div>
-            <div>
+            <div class="col-span-2">
               <dt class="text-xs text-muted-foreground">State and City</dt>
               <dd class="font-medium">{{ locationLabel() }}</dd>
             </div>
@@ -165,8 +165,48 @@
         </section>
 
         <!-- Notes timeline -->
-        <section class="flex flex-col gap-3">
-          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Notes</h4>
+        <section class="flex flex-col gap-3" aria-labelledby="notes-heading">
+          <h4
+            id="notes-heading"
+            class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
+          >
+            Notes · {{ noteCount() }}
+          </h4>
+
+          <!-- Quick note: saved immediately, without entering edit mode. -->
+          <div hlmField>
+            <label hlmFieldLabel for="quick-note" class="sr-only">Add a note</label>
+            <div class="flex gap-2">
+              <input
+                #quickNoteInput
+                hlmInput
+                id="quick-note"
+                class="w-full"
+                placeholder="Add a note"
+                aria-describedby="quick-note-help"
+                autocomplete="off"
+                [value]="quickNote()"
+                [disabled]="noteSaving()"
+                (input)="onQuickNoteInput($event)"
+                (keydown.enter)="$event.preventDefault(); addQuickNote()"
+              />
+              <button
+                type="button"
+                hlmBtn
+                [disabled]="noteSaving() || !quickNote().trim()"
+                (click)="addQuickNote()"
+              >
+                @if (noteSaving()) {
+                  <hlm-spinner data-icon="inline-start" />
+                } @else {
+                  <ng-icon hlm name="lucidePlus" size="sm" />
+                }
+                Add note
+              </button>
+            </div>
+            <p id="quick-note-help" hlmFieldDescription>Press Enter to add</p>
+          </div>
+
           @if (profileDetailForm.comments().value().length) {
             <ol class="ms-1.5 flex flex-col gap-4 border-s border-border ps-4">
               @for (comment of profileDetailForm.comments().value(); track $index) {
@@ -204,67 +244,83 @@
         </button>
       </hlm-sheet-footer>
     } @else {
-      <form class="flex-1 overflow-y-auto px-4 pb-4" [formRoot]="profileDetailForm">
-        <div class="mt-2 flex flex-col gap-4">
-          <app-profile-form-fields [profileDetailForm]="profileDetailForm" />
+      <form
+        class="flex min-h-0 flex-1 flex-col px-4"
+        [formRoot]="profileDetailForm"
+        (submit)="onSubmitAttempt()"
+      >
+        <hlm-tabs class="min-h-0 flex-1" [tab]="editTab()" (tabActivated)="onTabActivated($event)">
+          <hlm-tabs-list class="w-full shrink-0" aria-label="Profile sections">
+            <button hlmTabsTrigger="details" type="button">
+              Details
+              @if (detailsHasError()) {
+                <span class="size-2 rounded-full bg-destructive" aria-hidden="true"></span>
+                <span class="sr-only">(has errors)</span>
+              }
+            </button>
+            <button hlmTabsTrigger="notes" type="button">
+              Notes
+              <span class="text-xs text-muted-foreground">{{ noteCount() }}</span>
+            </button>
+          </hlm-tabs-list>
 
-          <!-- Section: Notes -->
-          <hlm-separator />
-          <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Notes</p>
-
-          <div hlmField>
-            <label hlmFieldLabel for="comment">Add Comment</label>
-            <div class="flex gap-2">
-              <input
-                hlmInput
-                id="comment"
-                class="w-full"
-                placeholder="Add a comment"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="newComment"
-                (keydown.enter)="$event.preventDefault(); addComment()"
-              />
-              <button
-                type="button"
-                hlmBtn
-                size="icon"
-                aria-label="Add comment"
-                [disabled]="!newComment()"
-                (click)="addComment()"
-              >
-                <ng-icon hlm name="lucidePlus" size="sm" />
-              </button>
+          <div hlmTabsContent="details" class="overflow-y-auto pb-4">
+            <div class="mt-2 flex flex-col gap-4">
+              <app-profile-form-fields [profileDetailForm]="profileDetailForm" />
             </div>
           </div>
 
-          @if (profileDetailForm.comments().value().length) {
-            <div class="flex flex-col gap-2">
-              @for (comment of profileDetailForm.comments().value(); track $index) {
-                <div class="rounded-md border bg-muted/40 p-3 text-sm space-y-1">
-                  <div class="flex items-center justify-between gap-2">
-                    <p class="text-xs text-muted-foreground">
-                      {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm' }}
-                    </p>
-                    <button
-                      type="button"
-                      hlmBtn
-                      variant="ghost"
-                      size="icon-sm"
-                      class="text-destructive"
-                      aria-label="Delete comment"
-                      (click)="deleteComment(comment)"
-                    >
-                      <ng-icon hlm name="lucideTrash2" size="sm" />
-                    </button>
-                  </div>
-                  <p>{{ comment.value }}</p>
+          <div hlmTabsContent="notes" class="overflow-y-auto pb-4">
+            <div class="mt-2 flex flex-col gap-4">
+              <div hlmField>
+                <label hlmFieldLabel for="comment">Add a note</label>
+                <div class="flex gap-2">
+                  <input
+                    hlmInput
+                    id="comment"
+                    class="w-full"
+                    placeholder="Add a note"
+                    [ngModelOptions]="{ standalone: true }"
+                    [(ngModel)]="newComment"
+                    (keydown.enter)="$event.preventDefault(); addComment()"
+                  />
+                  <button type="button" hlmBtn [disabled]="!newComment()" (click)="addComment()">
+                    <ng-icon hlm name="lucidePlus" size="sm" />
+                    Add note
+                  </button>
                 </div>
+              </div>
+
+              @if (profileDetailForm.comments().value().length) {
+                <div class="flex flex-col gap-2">
+                  @for (comment of profileDetailForm.comments().value(); track $index) {
+                    <div class="rounded-md border bg-muted/40 p-3 text-sm space-y-1">
+                      <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs text-muted-foreground">
+                          {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm' }}
+                        </p>
+                        <button
+                          type="button"
+                          hlmBtn
+                          variant="ghost"
+                          size="icon-sm"
+                          class="text-destructive"
+                          aria-label="Delete comment"
+                          (click)="deleteComment(comment)"
+                        >
+                          <ng-icon hlm name="lucideTrash2" size="sm" />
+                        </button>
+                      </div>
+                      <p>{{ comment.value }}</p>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-sm text-muted-foreground">No comments yet.</p>
               }
             </div>
-          } @else {
-            <p class="text-sm text-muted-foreground">No comments yet.</p>
-          }
-        </div>
+          </div>
+        </hlm-tabs>
         <button #submitButton hidden type="submit"></button>
       </form>
 

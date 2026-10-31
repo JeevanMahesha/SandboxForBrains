@@ -1,5 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, resource, untracked } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  resource,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormRoot } from '@angular/forms/signals';
 import { provideIcons } from '@ng-icons/core';
@@ -20,10 +32,10 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
+import { HlmTabsImports } from '@spartan-ng/helm/tabs';
 import {
   DISPLAY_DATE_FORMAT,
   DISPLAY_DATE_TIME_FORMAT,
@@ -55,10 +67,10 @@ import { createProfileForm } from './profile-form';
     HlmBadge,
     HlmButton,
     HlmInput,
-    HlmSeparator,
     ...HlmSheetImports,
     ...HlmFieldImports,
     ...HlmIconImports,
+    ...HlmTabsImports,
     HlmSpinner,
     HlmSkeleton,
     ProfileFormFieldsComponent,
@@ -81,6 +93,7 @@ import { createProfileForm } from './profile-form';
 export class Profile {
   protected readonly profileService = inject(ProfilesService);
   private readonly viewport = inject(ViewportService);
+  private readonly injector = inject(Injector);
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
   readonly isView = computed(() => this.userActionType() === TOOLBAR_ACTIONS.view);
@@ -112,6 +125,30 @@ export class Profile {
     this.shared.profileDetail.update((detail) => ({ ...detail, profileStatusId: statusId }));
   }
 
+  /** Edit mode splits the form into two tabs; the form state is shared, so nothing is lost. */
+  readonly editTab = signal<'details' | 'notes'>('details');
+  readonly noteCount = computed(() => this.profileDetailForm.comments().value().length);
+  /** True when a Details field is invalid and its error is visible (touched). */
+  readonly detailsHasError = computed(() => {
+    const f = this.profileDetailForm;
+    return [
+      f.name,
+      f.mobileNumber,
+      f.matrimonyId,
+      f.profileStatusId,
+      f.zodiacSign,
+      f.star,
+      f.age,
+      f.state,
+      f.city,
+    ].some((field) => field().touched() && field().invalid());
+  });
+
+  /** View-mode quick note (saved straight away, without entering edit mode). */
+  readonly quickNote = signal('');
+  readonly noteSaving = signal(false);
+  private readonly quickNoteInput = viewChild<ElementRef<HTMLInputElement>>('quickNoteInput');
+
   readonly profileResource = resource({
     params: () => {
       const { actionType, selectedProfileId } = this.profileService.drawerState();
@@ -127,7 +164,11 @@ export class Profile {
     // reappears next time it opens.
     effect(() => {
       if (this.profileService.drawerState().isOpen === 'closed') {
-        untracked(() => this.shared.resetForm());
+        untracked(() => {
+          this.shared.resetForm();
+          this.quickNote.set('');
+          this.editTab.set('details');
+        });
       }
     });
 
@@ -163,6 +204,59 @@ export class Profile {
 
   deleteComment(comment: Comment): void {
     this.shared.deleteComment(comment);
+  }
+
+  /**
+   * Plain value binding (not ngModel): NgModel applies `disabled` asynchronously, which would
+   * make the refocus after saving race with the re-enable.
+   */
+  onQuickNoteInput(event: Event): void {
+    this.quickNote.set((event.target as HTMLInputElement).value);
+  }
+
+  onTabActivated(tab: string): void {
+    this.editTab.set(tab === 'notes' ? 'notes' : 'details');
+  }
+
+  /** Appends a note from view mode via `ProfilesService.addNote` (arrayUnion). */
+  async addQuickNote(): Promise<void> {
+    const value = this.quickNote().trim();
+    const id = this.profileService.drawerState().selectedProfileId;
+    if (!value || !id || this.noteSaving()) {
+      return;
+    }
+    this.noteSaving.set(true);
+    try {
+      const note = await this.profileService.addNote(id, value);
+      this.shared.profileDetail.update((profile) => ({
+        ...profile,
+        comments: [...profile.comments, note],
+      }));
+      this.quickNote.set('');
+      toast.success('Note added');
+      this.profileService.refreshProfiles();
+    } catch {
+      toast.error('Failed to add note');
+    } finally {
+      this.noteSaving.set(false);
+      // The input is disabled while saving, which drops focus; give it back once enabled.
+      afterNextRender(() => this.quickNoteInput()?.nativeElement.focus(), {
+        injector: this.injector,
+      });
+    }
+  }
+
+  /**
+   * Runs on every form submit attempt. If validation fails, show the Details tab (errors may
+   * belong to a tab that is not visible) and focus the first invalid field.
+   */
+  onSubmitAttempt(): void {
+    const first = this.profileDetailForm().errorSummary()[0];
+    if (!first) {
+      return;
+    }
+    this.editTab.set('details');
+    afterNextRender(() => first.fieldTree().focusBoundControl(), { injector: this.injector });
   }
 
   private async updateProfile(profileData: Partial<ProfileDetail>): Promise<void> {

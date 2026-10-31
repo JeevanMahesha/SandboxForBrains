@@ -135,3 +135,10 @@ export async function leaveWizardAndDiscard(page: Page): Promise<void> {
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Discard' }).click();
 }
+
+/** Switches the edit drawer to its "Notes" tab (the tab resets to "Details" on every open). */
+export async function openNotesTab(page: Page): Promise<void> {
+  const tab = page.getByRole('tab', { name: /^Notes/ });
+  await tab.click();
+  await expect(tab).toHaveAttribute('aria-selected', 'true');
+}

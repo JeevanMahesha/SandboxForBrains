@@ -15,6 +15,7 @@ import {
   ZODIAC_LIST,
   ZodiacKey,
 } from '../../../constant/common.const';
+import { ScoreRing } from '../../shared/score-ring/score-ring';
 import { ProfileDetail } from '../../../models/profile.model';
 
 export type FieldGroup = 'contact' | 'astro' | 'age' | 'place';
@@ -27,6 +28,7 @@ export type FieldGroup = 'contact' | 'astro' | 'age' | 'place';
     KeyValuePipe,
     HlmInput,
     HlmSeparator,
+    ScoreRing,
     ...HlmFieldImports,
     ...HlmSelectImports,
   ],
@@ -60,6 +62,10 @@ export class ProfileFormFieldsComponent {
       ? 'Select Star'
       : 'Select a zodiac to choose a star',
   );
+  readonly scoreAriaLabel = computed(() => {
+    const score = this.profileDetailForm().starMatchScore().value();
+    return score === null ? 'Star match score not calculated' : `Star match score ${score}`;
+  });
   readonly STATE_LIST = DISTRICT_LIST ? Object.keys(DISTRICT_LIST) : [];
 
   readonly statusToLabel = (key: string): string =>

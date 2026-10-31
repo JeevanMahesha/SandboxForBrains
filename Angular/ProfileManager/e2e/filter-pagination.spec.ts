@@ -1,6 +1,6 @@
 import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import { makeProfile, seedProfiles } from './support/emulator';
-import { expect, profileRows, profilesTotal, statusChip, test } from './support/fixtures';
+import { expect, profileRows, profilesTotal, selectStatusFilter, test } from './support/fixtures';
 
 test.describe('filtering and pagination', () => {
   test.beforeEach(async () => {
@@ -54,7 +54,7 @@ test.describe('filtering and pagination', () => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(10);
 
-    await statusChip(page, PROFILE_STATUS.ACCEPTED).click();
+    await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
 
     await expect(profileRows(page)).toHaveCount(4);
     await expect(profilesTotal(page)).toHaveText(/^4 profiles$/);

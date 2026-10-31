@@ -3,7 +3,8 @@ import {
   expect,
   expectToolbarControlsUnclipped,
   openNewProfileWizard,
-  statusChip,
+  sheetStatusButton,
+  statusFilter,
   test,
 } from './support/fixtures';
 
@@ -96,58 +97,40 @@ test.describe('mobile view', () => {
   });
 });
 
-for (const width of [768, 820, 1024]) {
+for (const width of [768, 820, 1024, 1280]) {
   test.describe(`toolbar at ${width}px`, () => {
     test.use({ viewport: { width, height: 900 } });
 
-    test('status chips are one scrolling row and no control is clipped', async ({
-      page,
-      loginAsAdmin,
-    }) => {
+    test('no control is clipped and the status select is named', async ({ page, loginAsAdmin }) => {
       await seedProfiles([makeProfile(0)]);
       await loginAsAdmin();
       await expect(page.getByTestId('profile-card')).toHaveCount(1);
 
-      const group = page.getByRole('group', { name: 'Profile status' });
-      const chips = group.getByRole('button');
-      const tops = await chips.evaluateAll((els) =>
-        els.map((el) => Math.round(el.getBoundingClientRect().top)),
-      );
-      expect(new Set(tops).size, 'all chips on one line').toBe(1);
-      if (width < 1024) {
-        // Below lg the row scrolls instead of wrapping; lg and up keeps the desktop wrap.
-        expect(await group.evaluate((el) => getComputedStyle(el).flexWrap)).toBe('nowrap');
-      }
+      await expect(statusFilter(page)).toHaveText('All statuses');
       await expectToolbarControlsUnclipped(page);
-
-      if (width < 1024) {
-        // Sort, star and Clear share one line with the chip row.
-        const clear = page.locator('app-toolbar').getByRole('button', { name: 'Clear' });
-        const clearBox = (await clear.boundingBox())!;
-        const groupBox = (await group.boundingBox())!;
-        expect(Math.abs(clearBox.y - groupBox.y)).toBeLessThan(groupBox.height);
-      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        ),
+        'no horizontal page scroll',
+      ).toBe(true);
     });
   });
 }
 
-test.describe('scrolling chip row at 768px', () => {
-  test.use({ viewport: { width: 768, height: 900 } });
-
-  test('keeps the selected chip in view', async ({ page, loginAsAdmin }) => {
-    await seedProfiles([makeProfile(0)]);
+test.describe('phone Filters sheet status buttons', () => {
+  test('keep wrapped aria-pressed buttons and filter the list', async ({ page, loginAsAdmin }) => {
+    await seedProfiles([
+      makeProfile(0, { name: 'Acc One', profileStatusId: 'ACCEPTED' }),
+      makeProfile(1, { name: 'New One', profileStatusId: 'NEW' }),
+    ]);
     await loginAsAdmin();
-    const group = page.getByRole('group', { name: 'Profile status' });
-    const last = group.getByRole('button').last();
-    await last.scrollIntoViewIfNeeded();
-    await last.click();
-    await expect(last).toHaveAttribute('aria-pressed', 'true');
-    const inView = await group.evaluate((el) => {
-      const chip = el.querySelector('[aria-pressed="true"]')!.getBoundingClientRect();
-      const box = el.getBoundingClientRect();
-      return chip.left >= box.left - 1 && chip.right <= box.right + 1;
-    });
-    expect(inView).toBe(true);
-    await expect(statusChip(page, 'All')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.getByTestId('profile-card')).toHaveCount(2);
+
+    await page.getByRole('button', { name: 'Filters' }).click();
+    await sheetStatusButton(page, 'Accepted').click();
+    await expect(sheetStatusButton(page, 'Accepted')).toHaveAttribute('aria-pressed', 'true');
+    await expect(sheetStatusButton(page, 'All')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.getByTestId('profile-card')).toHaveCount(1);
   });
 });

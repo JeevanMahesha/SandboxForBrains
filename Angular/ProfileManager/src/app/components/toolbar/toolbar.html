@@ -15,7 +15,7 @@
     </button>
 
     <!-- Search (desktop only; on mobile it lives in the Filters sheet) -->
-    <div class="relative hidden md:block md:w-72">
+    <div class="relative hidden md:block md:w-56 lg:w-60">
       <ng-icon
         hlm
         name="lucideSearch"
@@ -38,7 +38,55 @@
       }
     </div>
 
-    <span class="hidden flex-1 md:block"></span>
+    <!-- Desktop/tablet filters share the main row (contents: each control wraps on its own) -->
+    <div class="hidden md:contents">
+      <div class="relative">
+        <label for="profile_status_filter" class="sr-only">Profile status</label>
+        <hlm-select [formField]="filterForm.profileStatus" [itemToString]="statusToLabel">
+          <hlm-select-trigger buttonId="profile_status_filter" [class]="statusTriggerClass()">
+            @if (filterForm.profileStatus().value(); as key) {
+              <span
+                aria-hidden="true"
+                [class]="`size-2.5 shrink-0 rounded-full ${statusDot[key]}`"
+              ></span>
+            }
+            <hlm-select-value placeholder="All statuses" />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            <hlm-select-item [value]="null">All statuses</hlm-select-item>
+            @for (option of statusOptions; track option.key) {
+              <hlm-select-item [value]="option.key">
+                <span
+                  aria-hidden="true"
+                  [class]="`size-2.5 shrink-0 rounded-full ${option.dot}`"
+                ></span>
+                {{ option.label }}
+              </hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+      </div>
+      <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
+        <hlm-select-trigger class="w-36">
+          <hlm-select-value placeholder="Sort order" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-item [value]="true">Newest First</hlm-select-item>
+          <hlm-select-item [value]="false">Oldest First</hlm-select-item>
+        </hlm-select-content>
+      </hlm-select>
+      <app-filter-selects [starMatchScore]="filterForm.starMatchScore" />
+      <button
+        type="button"
+        hlmBtn
+        variant="outline"
+        [disabled]="!filterHasValue()"
+        (click)="clearForm()"
+      >
+        <ng-icon hlm name="lucideFilterX" size="sm" />
+        Clear
+      </button>
+    </div>
 
     <!-- Mobile: Filters button -->
     <button
@@ -55,7 +103,7 @@
       }
     </button>
 
-    <div class="flex md:order-none md:w-auto">
+    <div class="flex md:ml-auto">
       <button
         type="button"
         hlmBtn
@@ -127,35 +175,6 @@
         </button>
       </hlm-dropdown-menu>
     </ng-template>
-  </div>
-
-  <!-- Desktop filters: status chips + sort, star match, clear -->
-  <div class="hidden items-center justify-between gap-3 md:flex lg:flex-wrap">
-    <div class="min-w-0 flex-1 lg:flex-none">
-      <app-status-chips [profileStatus]="filterForm.profileStatus" [scrollable]="true" />
-    </div>
-    <div class="flex shrink-0 items-center gap-2">
-      <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
-        <hlm-select-trigger class="w-36 lg:w-40">
-          <hlm-select-value placeholder="Sort order" />
-        </hlm-select-trigger>
-        <hlm-select-content *hlmSelectPortal>
-          <hlm-select-item [value]="true">Newest First</hlm-select-item>
-          <hlm-select-item [value]="false">Oldest First</hlm-select-item>
-        </hlm-select-content>
-      </hlm-select>
-      <app-filter-selects [starMatchScore]="filterForm.starMatchScore" />
-      <button
-        type="button"
-        hlmBtn
-        variant="outline"
-        [disabled]="!filterHasValue()"
-        (click)="clearForm()"
-      >
-        <ng-icon hlm name="lucideFilterX" size="sm" />
-        Clear
-      </button>
-    </div>
   </div>
 </div>
 

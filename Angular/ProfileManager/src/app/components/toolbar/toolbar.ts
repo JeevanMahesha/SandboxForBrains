@@ -27,6 +27,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
+import { PROFILE_STATUS, PROFILE_STATUS_STYLES } from '../../constant/common.const';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
 import { ThemeService } from '../../services/theme.service';
@@ -34,6 +35,8 @@ import { StarMatch } from '../star-match/star-match';
 import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 import FilterSelects from './filter-selects/filter-selects';
 import StatusChips from './status-chips/status-chips';
+
+type StatusKey = keyof typeof PROFILE_STATUS;
 
 const SEARCH_DEBOUNCE_MS = 350;
 
@@ -99,6 +102,21 @@ export class Toolbar {
     }
   });
   readonly sortOrderToLabel = (value: boolean): string => (value ? 'Newest First' : 'Oldest First');
+  readonly statusToLabel = (value: StatusKey): string => PROFILE_STATUS[value];
+  protected readonly statusOptions = (Object.keys(PROFILE_STATUS) as StatusKey[]).map((key) => ({
+    key,
+    label: PROFILE_STATUS[key],
+    dot: PROFILE_STATUS_STYLES[key].dot,
+  }));
+  protected readonly statusDot = Object.fromEntries(
+    this.statusOptions.map((option) => [option.key, option.dot]),
+  ) as Record<StatusKey, string>;
+  /** Fixed width keeps the toolbar from jumping; a primary tint shows an active status filter. */
+  protected readonly statusTriggerClass = computed(() =>
+    this.filterForm.profileStatus().value() === null
+      ? 'w-52'
+      : 'border-primary bg-primary/10 ring-primary/30 ring-2 w-52',
+  );
   readonly filterForm = form(this.profileService.filterOptions, (formControl) => {
     debounce(formControl.searchQuery, searchDebouncer);
   });

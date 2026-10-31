@@ -50,9 +50,23 @@ export function profilesTotal(page: Page) {
   return page.getByTestId('profiles-total');
 }
 
-/** A status filter chip in the toolbar (single-select, `aria-pressed` reflects the active one). */
-export function statusChip(page: Page, label: string) {
-  return page.getByRole('button', { name: label, exact: true });
+/** The desktop/tablet toolbar's status filter select trigger (named "Profile status"). */
+export function statusFilter(page: Page) {
+  return page.getByRole('combobox', { name: 'Profile status' });
+}
+
+/** Picks a status ("All statuses" clears it) in the desktop/tablet toolbar's status select. */
+export async function selectStatusFilter(page: Page, label: string): Promise<void> {
+  await statusFilter(page).click();
+  await page.getByRole('option', { name: label, exact: true }).click();
+}
+
+/** A status button in the phone Filters sheet (single-select, `aria-pressed` marks the active one). */
+export function sheetStatusButton(page: Page, label: string) {
+  return page
+    .getByRole('dialog', { name: 'Filters' })
+    .getByRole('group', { name: 'Profile status' })
+    .getByRole('button', { name: label, exact: true });
 }
 
 /** Opens the create wizard from the list toolbar (step 1 of 3). */
@@ -114,7 +128,6 @@ export async function expectToolbarControlsUnclipped(page: Page): Promise<void> 
     document
       .querySelectorAll('app-toolbar button, app-toolbar [role="combobox"], app-toolbar input')
       .forEach((el) => {
-        if (el.closest('[aria-label="Profile status"]')) return;
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) return;
         if (r.left < -0.5 || r.right > width + 0.5) {

@@ -5,7 +5,8 @@ import {
   pickOption,
   profileRows,
   profilesTotal,
-  statusChip,
+  selectStatusFilter,
+  statusFilter,
   test,
 } from './support/fixtures';
 
@@ -62,8 +63,8 @@ test.describe('sort order, page size and clear filters', () => {
     await expect(profileRows(page)).toHaveCount(10);
     await expect(clearButton).toBeDisabled();
 
-    await statusChip(page, PROFILE_STATUS.ACCEPTED).click();
-    await expect(statusChip(page, PROFILE_STATUS.ACCEPTED)).toHaveAttribute('aria-pressed', 'true');
+    await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
+    await expect(statusFilter(page)).toHaveText(PROFILE_STATUS.ACCEPTED);
 
     await expect(profileRows(page)).toHaveCount(4);
     await expect(clearButton).toBeEnabled();
@@ -73,11 +74,7 @@ test.describe('sort order, page size and clear filters', () => {
     await expect(profileRows(page)).toHaveCount(10);
     await expect(profilesTotal(page)).toHaveText(/^12 profiles$/);
     await expect(clearButton).toBeDisabled();
-    await expect(statusChip(page, 'All')).toHaveAttribute('aria-pressed', 'true');
-    await expect(statusChip(page, PROFILE_STATUS.ACCEPTED)).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    );
+    await expect(statusFilter(page)).toHaveText('All statuses');
   });
 });
 
@@ -95,7 +92,7 @@ test.describe('combined filters', () => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(4);
 
-    await statusChip(page, PROFILE_STATUS.ACCEPTED).click();
+    await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
     await expect(profileRows(page)).toHaveCount(2);
 
     await page.getByRole('combobox').filter({ hasText: 'Select Star' }).click();

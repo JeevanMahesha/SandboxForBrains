@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { FIRESTORE_EMULATOR_URL, PROJECT_ID, makeProfile, seedProfiles } from './support/emulator';
-import { expect, profileRows, statusChip, test } from './support/fixtures';
+import { expect, profileRows, selectStatusFilter, test } from './support/fixtures';
 
 const DOCS_URL = `${FIRESTORE_EMULATOR_URL}/v1/projects/${PROJECT_ID}/databases/(default)/documents/profiles`;
 const OWNER = { Authorization: 'Bearer owner' };
@@ -136,7 +136,7 @@ test.describe('inline status change (desktop)', () => {
     ]);
     await loginAsAdmin();
 
-    await statusChip(page, 'Accepted').click();
+    await selectStatusFilter(page, 'Accepted');
     await expect(profileRows(page)).toHaveCount(1);
 
     await trigger(profileRows(page).first(), 'Accepted').click();

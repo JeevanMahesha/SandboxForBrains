@@ -32,7 +32,9 @@ export interface ConfirmDialogContext {
         type="button"
         hlmBtn
         [class]="
-          destructive ? 'bg-destructive text-white hover:bg-destructive/90 border-destructive' : ''
+          destructive
+            ? 'bg-destructive text-white dark:text-black hover:bg-destructive/90 border-destructive'
+            : ''
         "
         (click)="close(true)"
       >

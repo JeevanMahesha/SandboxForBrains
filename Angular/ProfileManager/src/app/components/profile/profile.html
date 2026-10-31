@@ -68,7 +68,7 @@
             variant="outline"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-green-600 dark:text-green-400"
+            class="text-green-700 dark:text-green-400"
             [href]="profileDetailForm.mobileNumber().value() | mobileUrl: 'whatsapp'"
           >
             <ng-icon hlm name="lucideMessageCircle" size="sm" />
@@ -182,7 +182,7 @@
         </section>
       </div>
 
-      <hlm-sheet-footer class="flex gap-2">
+      <hlm-sheet-footer class="flex shrink-0 flex-row gap-2">
         <button type="button" hlmBtn variant="outline" class="flex-1" (click)="closeDrawer()">
           Close
         </button>
@@ -263,7 +263,7 @@
         <button #submitButton hidden type="submit"></button>
       </form>
 
-      <hlm-sheet-footer>
+      <hlm-sheet-footer class="shrink-0">
         <button
           type="button"
           hlmBtn

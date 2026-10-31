@@ -40,12 +40,17 @@ export async function pickOption(
   await page.getByRole('option', { name: optionText, exact: true }).click();
 }
 
-/** Rows of the desktop profiles table (skeleton rows are excluded). */
+/** Profile cards (desktop grid and mobile list share the same test id; skeletons are excluded). */
 export function profileRows(page: Page) {
-  return page.getByTestId('profile-row');
+  return page.getByTestId('profile-card');
 }
 
 /** The "In total there are N profiles." footer cell. */
 export function profilesTotal(page: Page) {
   return page.getByTestId('profiles-total');
+}
+
+/** A status filter chip in the toolbar (single-select, `aria-pressed` reflects the active one). */
+export function statusChip(page: Page, label: string) {
+  return page.getByRole('button', { name: label, exact: true });
 }

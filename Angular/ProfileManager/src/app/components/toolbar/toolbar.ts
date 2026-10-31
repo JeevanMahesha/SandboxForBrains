@@ -25,7 +25,6 @@ import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { AuthService } from '../../services/auth.service';
 import { ProfilesService } from '../../services/profiles.service';
@@ -33,6 +32,7 @@ import { ThemeService } from '../../services/theme.service';
 import { StarMatch } from '../star-match/star-match';
 import { ZodiacSigns } from '../zodiac-signs/zodiac-signs';
 import FilterSelects from './filter-selects/filter-selects';
+import StatusChips from './status-chips/status-chips';
 
 @Component({
   selector: 'app-toolbar',
@@ -42,12 +42,12 @@ import FilterSelects from './filter-selects/filter-selects';
     HlmBadge,
     HlmButton,
     HlmInput,
-    HlmSeparator,
     ...HlmSelectImports,
     ...HlmDropdownMenuImports,
     ...HlmIconImports,
     ...HlmSheetImports,
     FilterSelects,
+    StatusChips,
     StarMatch,
     ZodiacSigns,
   ],

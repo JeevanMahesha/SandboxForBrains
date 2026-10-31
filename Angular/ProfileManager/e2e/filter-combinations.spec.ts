@@ -1,6 +1,13 @@
 import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import { makeProfile, seedProfiles } from './support/emulator';
-import { expect, pickOption, profileRows, profilesTotal, test } from './support/fixtures';
+import {
+  expect,
+  pickOption,
+  profileRows,
+  profilesTotal,
+  statusChip,
+  test,
+} from './support/fixtures';
 
 test.describe('sort order, page size and clear filters', () => {
   test('toggles sort order and re-sorts the list', async ({ page, loginAsAdmin }) => {
@@ -55,8 +62,8 @@ test.describe('sort order, page size and clear filters', () => {
     await expect(profileRows(page)).toHaveCount(10);
     await expect(clearButton).toBeDisabled();
 
-    await page.getByRole('combobox').filter({ hasText: 'Select Status' }).click();
-    await page.getByRole('option', { name: PROFILE_STATUS.ACCEPTED, exact: true }).click();
+    await statusChip(page, PROFILE_STATUS.ACCEPTED).click();
+    await expect(statusChip(page, PROFILE_STATUS.ACCEPTED)).toHaveAttribute('aria-pressed', 'true');
 
     await expect(profileRows(page)).toHaveCount(4);
     await expect(clearButton).toBeEnabled();
@@ -66,7 +73,11 @@ test.describe('sort order, page size and clear filters', () => {
     await expect(profileRows(page)).toHaveCount(10);
     await expect(profilesTotal(page)).toHaveText(/In total there are 12 profiles\./);
     await expect(clearButton).toBeDisabled();
-    await expect(page.getByRole('combobox').filter({ hasText: 'Select Status' })).toBeVisible();
+    await expect(statusChip(page, 'All')).toHaveAttribute('aria-pressed', 'true');
+    await expect(statusChip(page, PROFILE_STATUS.ACCEPTED)).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
   });
 });
 
@@ -84,8 +95,7 @@ test.describe('combined filters', () => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(4);
 
-    await page.getByRole('combobox').filter({ hasText: 'Select Status' }).click();
-    await page.getByRole('option', { name: PROFILE_STATUS.ACCEPTED, exact: true }).click();
+    await statusChip(page, PROFILE_STATUS.ACCEPTED).click();
     await expect(profileRows(page)).toHaveCount(2);
 
     await page.getByRole('combobox').filter({ hasText: 'Select Star' }).click();

@@ -8,7 +8,7 @@ import { expect, test } from './support/fixtures';
 test.use({ viewport: { width: 390, height: 844 } });
 
 test.describe('mobile view', () => {
-  test('renders cards instead of the desktop table, and both open the profile drawer', async ({
+  test('renders the mobile cards instead of the desktop grid, and both open the profile drawer', async ({
     page,
     loginAsAdmin,
   }) => {
@@ -18,8 +18,9 @@ test.describe('mobile view', () => {
     const card = page.getByTestId('profile-card').first();
     await expect(card).toBeVisible();
     await expect(card).toContainText('Mobile Card Profile');
-    // The desktop table must not also be in the DOM at this width.
-    await expect(page.getByTestId('profile-row')).toHaveCount(0);
+    // The desktop card grid must not also be in the DOM at this width (cards share one test id).
+    await expect(page.getByTestId('profile-card')).toHaveCount(1);
+    await expect(page.locator('app-profiles-list-desktop-view')).toHaveCount(0);
 
     // Tapping the card itself opens the read-only drawer.
     await card.click();

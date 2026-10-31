@@ -1,168 +1,153 @@
-<div hlmTableContainer class="mt-2">
-  <table hlmTable class="w-full">
-    <thead hlmTHead>
-      <tr hlmTr>
-        <th hlmTh>Name</th>
-        <th hlmTh>Zodiac Sign</th>
-        <th hlmTh>City</th>
-        <th hlmTh>Profile Status</th>
-        <th hlmTh>Matrimony ID</th>
-        <th hlmTh>Mobile Number</th>
-        <th hlmTh>
+<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+  @if (isLoading()) {
+    @for (card of skeletonRows; track $index) {
+      <div class="glass flex flex-col gap-4 rounded-2xl p-4">
+        <div class="flex items-center gap-3">
+          <div hlmSkeleton class="size-11 rounded-xl"></div>
+          <div class="flex flex-1 flex-col gap-2">
+            <div hlmSkeleton class="h-4 w-3/4"></div>
+            <div hlmSkeleton class="h-3 w-1/2"></div>
+          </div>
+          <div hlmSkeleton class="size-11 rounded-full"></div>
+        </div>
+        <div hlmSkeleton class="h-5 w-2/3"></div>
+        <div hlmSkeleton class="h-8 w-full"></div>
+      </div>
+    }
+  } @else {
+    @for (profile of pagedData(); track profile.id) {
+      <article
+        data-testid="profile-card"
+        class="glass focus-within:border-ring relative flex flex-col gap-3 overflow-hidden rounded-2xl p-4 transition-all motion-safe:hover:-translate-y-1 hover:border-primary/50"
+      >
+        <span aria-hidden="true" [class]="profile | profileStatusEdge"></span>
+
+        <!-- Header: avatar, name + ID, score ring -->
+        <div class="flex items-center gap-3">
+          <app-profile-avatar [name]="profile.name" [size]="44" />
+          <div class="flex min-w-0 flex-1 flex-col items-start gap-0.5">
+            <h3 class="w-full truncate text-base leading-tight font-semibold">
+              {{ profile.name }}
+            </h3>
+            <button
+              type="button"
+              class="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex items-center gap-1 rounded text-xs outline-none focus-visible:ring-[3px]"
+              aria-label="Copy matrimony ID"
+              (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
+            >
+              {{ profile.matrimonyId }}
+              <ng-icon hlm name="lucideCopy" size="xs" />
+            </button>
+          </div>
           <span
-            class="inline-flex items-center gap-1"
+            class="flex flex-col items-center gap-0.5"
             hlmTooltip="Compatibility score between the couple's star signs. Higher is better."
           >
-            Star Match Score
-            <ng-icon hlm name="lucideInfo" size="sm" class="text-muted-foreground" />
+            <app-score-ring [score]="profile.starMatchScore ?? null" [size]="44" />
           </span>
-        </th>
-        <th hlmTh>Actions</th>
-      </tr>
-    </thead>
-    <tbody hlmTBody>
-      @if (isLoading()) {
-        @for (row of skeletonRows; track $index) {
-          <tr hlmTr>
-            <td hlmTd colspan="8"><div hlmSkeleton class="h-8 w-full"></div></td>
-          </tr>
-        }
-      } @else {
-        @for (profile of pagedData(); track profile.id) {
-          <tr
-            hlmTr
-            data-testid="profile-row"
-            class="hover:bg-muted/50 transition-colors cursor-pointer"
+        </div>
+
+        <!-- Status, zodiac, city -->
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+          <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
+            {{ profile.profileStatus }}
+          </span>
+          <span class="text-muted-foreground flex items-center gap-1">
+            <span [class]="profile.zodiacSign | zodiacColor">
+              <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
+            </span>
+            {{ profile.zodiacSign | titlecase }}
+          </span>
+          <span class="text-muted-foreground flex items-center gap-1">
+            <ng-icon hlm name="lucideMapPin" size="sm" />
+            {{ profile.city }}
+          </span>
+        </div>
+
+        <!-- Mobile number + contact actions -->
+        <div class="bg-muted/40 flex items-center justify-between gap-1 rounded-lg py-1 pr-1 pl-3">
+          <span class="truncate text-sm">{{ profile.mobileNumber }}</span>
+          <div class="flex shrink-0 items-center">
+            <button
+              type="button"
+              hlmBtn
+              hlmTooltip="Copy"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Copy mobile number"
+              (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
+            >
+              <ng-icon hlm name="lucideCopy" size="sm" />
+            </button>
+            <a
+              hlmBtn
+              hlmTooltip="Call"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Call"
+              [href]="profile.mobileNumber | mobileUrl: 'tel'"
+            >
+              <ng-icon hlm name="lucidePhone" size="sm" />
+            </a>
+            <a
+              hlmBtn
+              hlmTooltip="WhatsApp"
+              variant="ghost"
+              size="icon-sm"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              class="text-green-600 dark:text-green-400"
+              [href]="profile.mobileNumber | mobileUrl: 'whatsapp'"
+            >
+              <ng-icon hlm name="lucideMessageCircle" size="sm" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="border-border flex items-center gap-2 border-t pt-3">
+          <button
+            type="button"
+            hlmBtn
+            variant="outline"
+            size="sm"
+            aria-label="View"
+            (click)="userActionEvent('view', profile.id)"
           >
-            <td hlmTd>{{ profile.name }}</td>
-            <td hlmTd>
-              <span class="flex items-center gap-1">
-                <span [class]="profile.zodiacSign | zodiacColor">
-                  <ng-icon hlm size="sm" [name]="profile.zodiacSign | zodiacIcon" />
-                </span>
-                {{ profile.zodiacSign | titlecase }}
-              </span>
-            </td>
-            <td hlmTd>{{ profile.city }}</td>
-            <td hlmTd>
-              <span hlmBadge variant="secondary" [class]="profile.profileStatusColor ?? ''">
-                {{ profile.profileStatus }}
-              </span>
-            </td>
-            <td hlmTd>
-              <button
-                type="button"
-                hlmBtn
-                variant="secondary"
-                size="sm"
-                (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
-              >
-                {{ profile.matrimonyId }}
-                <ng-icon hlm name="lucideCopy" size="sm" />
-              </button>
-            </td>
-            <td hlmTd>
-              <div class="flex items-center gap-1">
-                <span class="text-sm">{{ profile.mobileNumber }}</span>
-                <button
-                  type="button"
-                  hlmBtn
-                  hlmTooltip="Copy"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Copy mobile number"
-                  (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
-                >
-                  <ng-icon hlm name="lucideCopy" size="sm" />
-                </button>
-                <a
-                  hlmBtn
-                  hlmTooltip="Call"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Call"
-                  [href]="profile.mobileNumber | mobileUrl: 'tel'"
-                >
-                  <ng-icon hlm name="lucidePhone" size="sm" />
-                </a>
-                <a
-                  hlmBtn
-                  hlmTooltip="WhatsApp"
-                  variant="ghost"
-                  size="icon-sm"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="WhatsApp"
-                  class="text-green-600 dark:text-green-400"
-                  [href]="profile.mobileNumber | mobileUrl: 'whatsapp'"
-                >
-                  <ng-icon hlm name="lucideMessageCircle" size="sm" />
-                </a>
-              </div>
-            </td>
-            <td hlmTd>
-              @let score = profile.starMatchScore ?? null;
-              @if (score !== null) {
-                <span class="flex items-center gap-1">{{ score }}</span>
-              } @else {
-                <span class="text-muted-foreground">{{ NOT_SPECIFIED }}</span>
-              }
-            </td>
-            <td hlmTd>
-              <div class="flex items-center gap-1">
-                <button
-                  type="button"
-                  hlmBtn
-                  hlmTooltip="View profile"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="View"
-                  (click)="userActionEvent('view', profile.id)"
-                >
-                  <ng-icon hlm name="lucideEye" size="sm" />
-                </button>
-                <button
-                  type="button"
-                  hlmBtn
-                  hlmTooltip="Edit profile"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Edit"
-                  (click)="userActionEvent('edit', profile.id)"
-                >
-                  <ng-icon hlm name="lucideSquarePen" size="sm" />
-                </button>
-                <hlm-separator orientation="vertical" class="mx-1 h-5 self-center!" />
-                <button
-                  type="button"
-                  hlmBtn
-                  hlmTooltip="Delete profile"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Delete"
-                  class="text-destructive hover:text-destructive"
-                  (click)="userActionEvent('delete', profile.id)"
-                >
-                  <ng-icon hlm name="lucideTrash2" size="sm" />
-                </button>
-              </div>
-            </td>
-          </tr>
-        } @empty {
-          <tr hlmTr>
-            <td hlmTd colspan="8" class="text-muted-foreground py-10 text-center">
-              No profiles found.
-            </td>
-          </tr>
-        }
-      }
-    </tbody>
-    <tfoot hlmTFoot>
-      <tr hlmTr>
-        <td hlmTd colspan="8" class="text-center" data-testid="profiles-total">
-          In total there are {{ totalItems() }} profiles.
-        </td>
-      </tr>
-    </tfoot>
-  </table>
+            <ng-icon hlm name="lucideEye" size="sm" />
+            View
+          </button>
+          <button
+            type="button"
+            hlmBtn
+            variant="outline"
+            size="sm"
+            aria-label="Edit"
+            (click)="userActionEvent('edit', profile.id)"
+          >
+            <ng-icon hlm name="lucideSquarePen" size="sm" />
+            Edit
+          </button>
+          <button
+            type="button"
+            hlmBtn
+            hlmTooltip="Delete profile"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Delete"
+            class="text-destructive hover:text-destructive ml-auto"
+            (click)="userActionEvent('delete', profile.id)"
+          >
+            <ng-icon hlm name="lucideTrash2" size="sm" />
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <div class="text-muted-foreground col-span-full py-10 text-center">No profiles found.</div>
+    }
+  }
 </div>
+<p class="text-muted-foreground mt-4 text-center text-sm" data-testid="profiles-total">
+  In total there are {{ totalItems() }} profiles.
+</p>

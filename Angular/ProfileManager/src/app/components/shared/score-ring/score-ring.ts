@@ -7,7 +7,7 @@ import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
   template: `
     @if (score() !== null) {
       <span class="relative grid place-items-center rounded-full" [style]="ringStyle()">
-        <span class="bg-card absolute inset-[3px] rounded-full backdrop-blur-sm"></span>
+        <span class="bg-background absolute inset-[3px] rounded-full"></span>
         <span class="relative text-xs font-semibold" [style.font-size.px]="size() * 0.3">
           {{ score() }}
         </span>

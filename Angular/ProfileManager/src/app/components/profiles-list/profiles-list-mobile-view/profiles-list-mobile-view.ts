@@ -1,5 +1,4 @@
 import { TitleCasePipe } from '@angular/common';
-import { ProfileCardClassPipe } from './profile-card-class.pipe';
 import { Component, inject, input } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -9,7 +8,6 @@ import {
   lucideMoreVertical,
   lucidePencil,
   lucidePhone,
-  lucideStar,
   lucideTrash2,
   lucideZodiacAquarius,
   lucideZodiacAries,
@@ -28,27 +26,29 @@ import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
-import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
+import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
+import { ScoreRing } from '../../shared/score-ring/score-ring';
+import { ProfileStatusEdgePipe } from '../profile-status-edge.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
   selector: 'app-profiles-list-mobile-view',
   imports: [
     TitleCasePipe,
-    ProfileCardClassPipe,
+    ProfileStatusEdgePipe,
+    ProfileAvatar,
+    ScoreRing,
     MobileUrlPipe,
     ZodiacColorPipe,
     ZodiacIconPipe,
     HlmButton,
     HlmBadge,
-    HlmSeparator,
     HlmSkeleton,
     ...HlmIconImports,
     ...HlmDropdownMenuImports,
@@ -56,7 +56,6 @@ import { ProfilesService } from '../../../services/profiles.service';
   templateUrl: './profiles-list-mobile-view.html',
   providers: [
     provideIcons({
-      lucideStar,
       lucideMapPin,
       lucideCopy,
       lucidePhone,
@@ -83,7 +82,7 @@ export class ProfilesListMobileView {
   private profileService = inject(ProfilesService);
   readonly pagedData = input.required<ProfileDetail[]>();
   readonly isLoading = input.required<boolean>();
-  readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
+  readonly skeletonRows = Array.from({ length: 4 });
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(

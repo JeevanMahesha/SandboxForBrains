@@ -1,14 +1,12 @@
-<div
-  class="bg-card text-card-foreground flex flex-col gap-3 rounded-md border p-3 lg:flex-row lg:items-center lg:justify-between"
->
-  <!-- Start: sort + filters -->
-  <div class="flex flex-col gap-2 md:flex-row md:items-center">
+<div class="glass flex flex-col gap-3 rounded-2xl p-3">
+  <div class="flex flex-wrap items-center gap-2">
     <!-- Theme toggle (visible on all sizes) -->
     <button
       type="button"
       hlmBtn
       variant="outline"
       size="icon"
+      class="shrink-0"
       [attr.aria-label]="`Theme: ${themeService.preference()}`"
       [attr.title]="`Theme: ${themeService.preference()}`"
       (click)="themeService.cyclePreference()"
@@ -16,50 +14,31 @@
       <ng-icon hlm size="sm" [name]="themeIcon()" />
     </button>
 
-    <!-- Sort select (visible on all sizes) -->
-    <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
-      <hlm-select-trigger class="w-full md:w-40">
-        <hlm-select-value placeholder="Sort order" />
-      </hlm-select-trigger>
-      <hlm-select-content *hlmSelectPortal>
-        <hlm-select-item [value]="true">Newest First</hlm-select-item>
-        <hlm-select-item [value]="false">Oldest First</hlm-select-item>
-      </hlm-select-content>
-    </hlm-select>
+    <!-- Search (desktop only; on mobile it lives in the Filters sheet) -->
+    <div class="relative hidden md:block md:w-72">
+      <ng-icon
+        hlm
+        name="lucideSearch"
+        size="sm"
+        class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
+      />
+      <input
+        hlmInput
+        type="text"
+        placeholder="Search by ID or phone"
+        class="w-full pl-8"
+        [formField]="filterForm.searchQuery"
+      />
+    </div>
 
-    <!-- Desktop-only filter controls -->
-    <app-filter-selects
-      class="hidden md:contents"
-      [profileStatus]="filterForm.profileStatus"
-      [starMatchScore]="filterForm.starMatchScore"
-    />
-  </div>
+    <span class="hidden flex-1 md:block"></span>
 
-  <!-- Center: search (desktop only) -->
-  <div class="relative hidden md:block md:w-64">
-    <ng-icon
-      hlm
-      name="lucideSearch"
-      size="sm"
-      class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
-    />
-    <input
-      hlmInput
-      type="text"
-      placeholder="Search by ID or phone"
-      class="w-full pl-8"
-      [formField]="filterForm.searchQuery"
-    />
-  </div>
-
-  <!-- End: actions -->
-  <div class="flex flex-col gap-2 md:flex-row md:items-center">
     <!-- Mobile: Filters button -->
     <button
       type="button"
       hlmBtn
       variant="outline"
-      class="relative md:hidden"
+      class="relative flex-1 md:hidden"
       (click)="filterSheetOpen.set('open')"
     >
       <ng-icon hlm name="lucideSlidersHorizontal" size="sm" />
@@ -69,23 +48,13 @@
       }
     </button>
 
-    <!-- Separator (desktop only) -->
-    <hlm-separator orientation="vertical" class="hidden md:block h-6" />
-
-    <button
-      class="w-full md:w-auto"
-      type="button"
-      hlmBtn
-      variant="outline"
-      [disabled]="!filterHasValue()"
-      (click)="clearForm()"
-    >
-      <ng-icon hlm name="lucideFilterX" size="sm" />
-      Clear
-    </button>
-
-    <div class="flex w-full md:w-auto">
-      <button type="button" hlmBtn class="rounded-r-none flex-1" (click)="addNewProfileAction()">
+    <div class="order-last flex w-full md:order-none md:w-auto">
+      <button
+        type="button"
+        hlmBtn
+        class="flex-1 rounded-r-none md:flex-none"
+        (click)="addNewProfileAction()"
+      >
         <ng-icon hlm name="lucideUserPlus" size="sm" />
         Add Profile
       </button>
@@ -133,6 +102,7 @@
       hlmBtn
       variant="outline"
       size="icon"
+      class="shrink-0"
       aria-label="Account menu"
       [hlmDropdownMenuTrigger]="accountMenu"
     >
@@ -151,11 +121,41 @@
       </hlm-dropdown-menu>
     </ng-template>
   </div>
+
+  <!-- Desktop filters: status chips + sort, star match, clear -->
+  <div class="hidden flex-wrap items-center justify-between gap-3 md:flex">
+    <app-status-chips [profileStatus]="filterForm.profileStatus" />
+    <div class="flex items-center gap-2">
+      <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
+        <hlm-select-trigger class="w-40">
+          <hlm-select-value placeholder="Sort order" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-item [value]="true">Newest First</hlm-select-item>
+          <hlm-select-item [value]="false">Oldest First</hlm-select-item>
+        </hlm-select-content>
+      </hlm-select>
+      <app-filter-selects [starMatchScore]="filterForm.starMatchScore" />
+      <button
+        type="button"
+        hlmBtn
+        variant="outline"
+        [disabled]="!filterHasValue()"
+        (click)="clearForm()"
+      >
+        <ng-icon hlm name="lucideFilterX" size="sm" />
+        Clear
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- Mobile filter sheet (bottom) -->
 <hlm-sheet side="bottom" [state]="filterSheetOpen()" (closed)="filterSheetOpen.set('closed')">
-  <hlm-sheet-content *brnSheetContent class="flex flex-col gap-4 px-4 pb-6">
+  <hlm-sheet-content
+    *brnSheetContent
+    class="flex max-h-[85vh] flex-col gap-4 overflow-y-auto px-4 pb-6"
+  >
     <hlm-sheet-header>
       <h3 hlmSheetTitle>Filters</h3>
     </hlm-sheet-header>
@@ -177,10 +177,28 @@
         />
       </div>
 
-      <app-filter-selects
-        [profileStatus]="filterForm.profileStatus"
-        [starMatchScore]="filterForm.starMatchScore"
-      />
+      <div class="flex flex-col gap-2">
+        <span class="text-muted-foreground text-xs font-semibold uppercase">Sort</span>
+        <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value placeholder="Sort order" />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            <hlm-select-item [value]="true">Newest First</hlm-select-item>
+            <hlm-select-item [value]="false">Oldest First</hlm-select-item>
+          </hlm-select-content>
+        </hlm-select>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <span class="text-muted-foreground text-xs font-semibold uppercase">Profile Status</span>
+        <app-status-chips [profileStatus]="filterForm.profileStatus" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <span class="text-muted-foreground text-xs font-semibold uppercase">Star Match Score</span>
+        <app-filter-selects [starMatchScore]="filterForm.starMatchScore" />
+      </div>
     </div>
 
     <hlm-sheet-footer>
@@ -193,7 +211,7 @@
         (click)="clearForm()"
       >
         <ng-icon hlm name="lucideFilterX" size="sm" />
-        Clear Filters
+        Clear
       </button>
     </hlm-sheet-footer>
   </hlm-sheet-content>

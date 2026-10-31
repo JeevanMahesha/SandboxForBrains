@@ -4,7 +4,7 @@ import { provideIcons } from '@ng-icons/core';
 import {
   lucideCopy,
   lucideEye,
-  lucideInfo,
+  lucideMapPin,
   lucideMessageCircle,
   lucidePhone,
   lucideSquarePen,
@@ -26,16 +26,16 @@ import {
 import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
-import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
-import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 import { ProfileDetail } from '../../../models/profile.model';
 import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
+import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
+import { ScoreRing } from '../../shared/score-ring/score-ring';
+import { ProfileStatusEdgePipe } from '../profile-status-edge.pipe';
 import { ProfilesService } from '../../../services/profiles.service';
 
 @Component({
@@ -45,11 +45,12 @@ import { ProfilesService } from '../../../services/profiles.service';
     MobileUrlPipe,
     ZodiacColorPipe,
     ZodiacIconPipe,
+    ProfileStatusEdgePipe,
+    ProfileAvatar,
+    ScoreRing,
     HlmButton,
     HlmBadge,
-    HlmSeparator,
     HlmSkeleton,
-    ...HlmTableImports,
     ...HlmIconImports,
     ...HlmTooltipImports,
   ],
@@ -62,7 +63,7 @@ import { ProfilesService } from '../../../services/profiles.service';
       lucideSquarePen,
       lucideTrash2,
       lucideEye,
-      lucideInfo,
+      lucideMapPin,
       lucideStar,
       lucideZodiacAquarius,
       lucideZodiacAries,
@@ -84,8 +85,7 @@ export class ProfilesListDesktopView {
   readonly pagedData = input.required<ProfileDetail[]>();
   readonly totalItems = input.required<number>();
   readonly isLoading = input.required<boolean>();
-  readonly skeletonRows = Array.from({ length: 8 });
-  readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
+  readonly skeletonRows = Array.from({ length: 6 });
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
     this.profileService.userActionEvent(

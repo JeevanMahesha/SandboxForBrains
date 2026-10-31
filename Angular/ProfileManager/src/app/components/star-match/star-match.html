@@ -3,8 +3,9 @@
     <hlm-sheet-content *hlmSheetPortal class="max-h-[85vh] overflow-y-auto">
       <hlm-sheet-header>
         <h3 hlmSheetTitle>Preferred Star</h3>
+        <p hlmSheetDescription>Stars grouped by match score, highest first</p>
       </hlm-sheet-header>
-      <ul class="divide-border divide-y px-4 pb-4">
+      <ul class="flex flex-col gap-1 px-4 pb-4">
         <ng-container [ngTemplateOutlet]="starBody" />
       </ul>
     </hlm-sheet-content>
@@ -19,12 +20,13 @@
   >
     <hlm-popover-content
       *hlmPopoverPortal="let ctx"
-      class="max-h-[80vh] w-72 max-w-[calc(100vw-2rem)] overflow-y-auto"
+      class="max-h-[80vh] w-[26rem] max-w-[calc(100vw-2rem)] overflow-y-auto"
     >
       <hlm-popover-header>
         <h3 hlmPopoverTitle>Preferred Star</h3>
+        <p hlmPopoverDescription>Stars grouped by match score, highest first</p>
       </hlm-popover-header>
-      <ul class="divide-border divide-y">
+      <ul class="flex flex-col gap-1">
         <ng-container [ngTemplateOutlet]="starBody" />
       </ul>
     </hlm-popover-content>
@@ -32,10 +34,23 @@
 }
 
 <ng-template #starBody>
-  @for (star of starMatchData; track $index) {
-    <li class="flex items-center justify-between py-3">
-      <p class="truncate text-sm font-medium">{{ $index + 1 }}. {{ star.starName }}</p>
-      <span class="text-base font-semibold">{{ star.score }}</span>
+  @for (group of starGroups; track group.score) {
+    <li class="hover:bg-muted/50 flex items-start gap-4 rounded-xl p-2.5">
+      <div class="min-w-14 shrink-0">
+        <p
+          class="bg-gradient-brand bg-clip-text text-2xl leading-tight font-extrabold tracking-tight text-transparent tabular-nums"
+        >
+          {{ group.score }}
+        </p>
+        <p class="text-muted-foreground text-[11px] font-semibold tracking-wide uppercase">
+          {{ group.stars.length }} {{ group.stars.length === 1 ? 'star' : 'stars' }}
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-1.5 pt-1">
+        @for (star of group.stars; track star) {
+          <span hlmBadge variant="secondary" class="border-border">{{ star }}</span>
+        }
+      </div>
     </li>
   }
 </ng-template>

@@ -149,11 +149,16 @@ export class Toolbar {
     this.filterForm.searchQuery().markAsTouched();
   }
 
-  openStarMatchPopover() {
+  /** Element the reference popovers anchor to: whichever trigger opened them. */
+  readonly popoverAnchor = signal<HTMLElement | undefined>(undefined);
+
+  openStarMatchPopover(anchor?: HTMLElement) {
+    this.popoverAnchor.set(anchor);
     this.toggleStarMatch.set('open');
   }
 
-  openZodiacSignPopover() {
+  openZodiacSignPopover(anchor?: HTMLElement) {
+    this.popoverAnchor.set(anchor);
     this.toggleZodiacSigns.set('open');
   }
 

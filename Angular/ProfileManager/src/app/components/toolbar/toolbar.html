@@ -103,47 +103,73 @@
       }
     </button>
 
-    <div class="flex md:ml-auto">
-      <button
-        type="button"
-        hlmBtn
-        class="hidden rounded-r-none md:inline-flex"
-        (click)="addNewProfileAction()"
+    <div class="flex items-center gap-2 md:ml-auto">
+      <!-- Desktop/tablet: the reference sheets are one click away; phones use the menu below. -->
+      <div
+        class="border-border hidden items-center gap-1 rounded-xl border p-1 md:flex"
+        role="group"
+        aria-label="Reference"
       >
-        <ng-icon hlm name="lucideUserPlus" size="sm" />
-        Add Profile
-      </button>
-      <button
-        #moreActionsBtn
-        type="button"
-        hlmBtn
-        class="border-l-primary-foreground/20 px-2 max-md:size-11 md:rounded-l-none md:border-l"
-        aria-label="More actions"
-        [hlmDropdownMenuTrigger]="addMenu"
-      >
-        <ng-icon hlm name="lucideChevronDown" size="sm" />
-      </button>
+        <button
+          #zodiacBtn
+          type="button"
+          hlmBtn
+          variant="ghost"
+          size="sm"
+          (click)="openZodiacSignPopover(zodiacBtn)"
+        >
+          <ng-icon hlm name="lucideSparkles" size="sm" />
+          Zodiac signs
+        </button>
+        <button
+          #starBtn
+          type="button"
+          hlmBtn
+          variant="ghost"
+          size="sm"
+          (click)="openStarMatchPopover(starBtn)"
+        >
+          <ng-icon hlm name="lucideStar" size="sm" />
+          Preferred star
+        </button>
+      </div>
+      <div class="flex">
+        <button type="button" hlmBtn class="hidden md:inline-flex" (click)="addNewProfileAction()">
+          <ng-icon hlm name="lucideUserPlus" size="sm" />
+          Add Profile
+        </button>
+        <button
+          #moreActionsBtn
+          type="button"
+          hlmBtn
+          class="px-2 max-md:size-11 md:hidden"
+          aria-label="More actions"
+          [hlmDropdownMenuTrigger]="addMenu"
+        >
+          <ng-icon hlm name="lucideChevronDown" size="sm" />
+        </button>
+      </div>
       @defer (when toggleStarMatch() === 'open') {
         <app-star-match
           [togglePopover]="toggleStarMatch()"
-          [attachTo]="moreActionsBtn"
+          [attachTo]="popoverAnchor() ?? moreActionsBtn"
           (starMatchHidden)="toggleStarMatch.set('closed')"
         />
       }
       @defer (when toggleZodiacSigns() === 'open') {
         <app-zodiac-signs
           [togglePopover]="toggleZodiacSigns()"
-          [attachTo]="moreActionsBtn"
+          [attachTo]="popoverAnchor() ?? moreActionsBtn"
           (zodiacSignsHidden)="toggleZodiacSigns.set('closed')"
         />
       }
       <ng-template #addMenu>
         <hlm-dropdown-menu class="min-w-44">
-          <button type="button" hlmDropdownMenuItem (click)="openZodiacSignPopover()">
+          <button type="button" hlmDropdownMenuItem (click)="openZodiacSignPopover(moreActionsBtn)">
             <ng-icon hlm name="lucideSparkles" size="sm" />
             Zodiac Signs
           </button>
-          <button type="button" hlmDropdownMenuItem (click)="openStarMatchPopover()">
+          <button type="button" hlmDropdownMenuItem (click)="openStarMatchPopover(moreActionsBtn)">
             <ng-icon hlm name="lucideStar" size="sm" />
             Preferred Star
           </button>

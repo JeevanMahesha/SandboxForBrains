@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, Resource } from '@angular/core';
+import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmNumberedPagination } from '@spartan-ng/helm/pagination';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { ProfileDetail } from '../../models/profile.model';
@@ -17,6 +18,7 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
     Profile,
     ProfilesListMobileView,
     HlmNumberedPagination,
+    HlmButton,
     HlmSpinner,
     NgTemplateOutlet,
   ],
@@ -27,8 +29,20 @@ export default class ProfilesList {
   readonly profiles: Resource<ProfileDetail[]>;
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
 
+  /** value() throws while the resource is in the error state, so guard it. */
+  readonly rows = computed(() => (this.profiles.hasValue() ? this.profiles.value() : []));
+
+  readonly errorMessage = computed(() => {
+    const error = this.profiles.error();
+    return error instanceof Error ? error.message : '';
+  });
+
   constructor() {
     this.profiles = this.profileService.profiles;
+  }
+
+  retry(): void {
+    this.profileService.refreshProfiles();
   }
 
   onPageChange(page: number): void {

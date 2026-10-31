@@ -2,10 +2,20 @@
   <div class="layout-main-container">
     <div class="layout-main">
       <app-toolbar />
+      @if (profiles.error()) {
+        <div
+          role="alert"
+          class="border-destructive/40 text-destructive mt-4 flex flex-col items-center gap-3 rounded-md border p-6 text-center"
+        >
+          <p class="font-medium">Something went wrong while loading profiles.</p>
+          <p class="text-muted-foreground max-w-xl text-xs break-words">{{ errorMessage() }}</p>
+          <button type="button" hlmBtn variant="outline" size="sm" (click)="retry()">Retry</button>
+        </div>
+      }
       <div class="hidden md:block">
         @defer (on viewport) {
           <app-profiles-list-desktop-view
-            [pagedData]="profiles.value() ?? []"
+            [pagedData]="rows()"
             [totalItems]="profileService.totalCount()"
             [isLoading]="profiles.isLoading()"
           />
@@ -21,10 +31,7 @@
       }
       <div class="block md:hidden">
         @defer (on viewport) {
-          <app-profiles-list-mobile-view
-            [pagedData]="profiles.value() ?? []"
-            [isLoading]="profiles.isLoading()"
-          />
+          <app-profiles-list-mobile-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
         } @placeholder {
           <div class="flex justify-center m-10">
             <ng-container *ngTemplateOutlet="loader" />
@@ -32,7 +39,7 @@
         }
       </div>
 
-      @if (!profiles.isLoading()) {
+      @if (!profiles.isLoading() && !profiles.error()) {
         <hlm-numbered-pagination
           [totalItems]="profileService.totalCount()"
           [pageSizes]="[10, 25, 50]"

@@ -98,7 +98,7 @@ export class Toolbar {
       this.profileService.filterOptions();
     const searchTrimmed = (searchQuery ?? '').trim();
     return (
-      viewOrderCheck !== false ||
+      viewOrderCheck !== true ||
       searchTrimmed !== '' ||
       profileStatus != null ||
       starMatchScore != null
@@ -132,7 +132,7 @@ export class Toolbar {
 
   clearForm() {
     this.filterForm().reset({
-      viewOrderCheck: false,
+      viewOrderCheck: true,
       searchQuery: '',
       profileStatus: null,
       starMatchScore: null,

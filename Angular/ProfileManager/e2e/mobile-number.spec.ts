@@ -4,6 +4,7 @@ import { toCanonicalMobileNumber } from '../src/app/utils/mobile-number.util';
 import {
   expect,
   fillWizardProfile,
+  leaveWizardAndDiscard,
   openNewProfileWizard,
   profileRows,
   test,
@@ -75,7 +76,7 @@ test.describe('mobile number formats', () => {
     await expect(page.locator('#mobile')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Create profile' })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible();
-    await page.getByRole('link', { name: 'Back to profiles' }).click();
+    await leaveWizardAndDiscard(page);
     await expect(profileRows(page)).toHaveCount(0);
   });
 });

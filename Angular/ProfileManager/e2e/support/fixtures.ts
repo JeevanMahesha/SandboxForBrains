@@ -127,3 +127,11 @@ export async function expectToolbarControlsUnclipped(page: Page): Promise<void> 
   });
   expect(clipped, 'toolbar controls clipped by the viewport').toEqual([]);
 }
+
+/** Leaves a dirty create wizard via the header link and confirms the discard prompt. */
+export async function leaveWizardAndDiscard(page: Page): Promise<void> {
+  await page.getByRole('link', { name: 'Back to profiles' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Discard this new profile?' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Discard' }).click();
+}

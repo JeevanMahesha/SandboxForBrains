@@ -1,7 +1,8 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   signal,
@@ -45,6 +46,17 @@ interface WizardStep {
   readonly groups: readonly FieldGroup[];
 }
 
+/**
+ * Every field that must be filled to create a profile gets a red asterisk after its label. The
+ * ids match the shared fields component; the star is optional so it is deliberately absent.
+ */
+const REQUIRED_MARKS =
+  "[&_:is(label[for=name],label[for=mobile],label[for=matrimony],label[for^=profile],label[for^=zodiac],label[for=age],label[for=state],label[for=city])]:after:content-['_*'] [&_:is(label[for=name],label[for=mobile],label[for=matrimony],label[for^=profile],label[for^=zodiac],label[for=age],label[for=state],label[for=city])]:after:text-destructive";
+
+/** The star select stays disabled until a zodiac sign is chosen; say so right under it. */
+const STAR_HELPER =
+  "[&_[data-slot=field]:has(hlm-select[id^=star]_[role=combobox]:disabled)]:after:content-['Choose_a_zodiac_sign_first'] [&_[data-slot=field]:has(hlm-select[id^=star]_[role=combobox]:disabled)]:after:text-sm [&_[data-slot=field]:has(hlm-select[id^=star]_[role=combobox]:disabled)]:after:text-muted-foreground";
+
 const STEPS: readonly WizardStep[] = [
   { title: 'Contact', hint: 'Name, phone, ID', groups: ['contact'] },
   { title: 'Horoscope', hint: 'Zodiac, star, age', groups: ['astro', 'age'] },
@@ -57,6 +69,7 @@ const STEPS: readonly WizardStep[] = [
     FormRoot,
     FormsModule,
     DatePipe,
+    NgTemplateOutlet,
     RouterLink,
     ProfileAvatar,
     ScoreRing,
@@ -72,13 +85,16 @@ const STEPS: readonly WizardStep[] = [
   providers: [
     provideIcons({ lucideArrowLeft, lucideArrowRight, lucideCheck, lucidePlus, lucideTrash2 }),
   ],
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
 export default class ProfileWizard {
   private readonly profileService = inject(ProfilesService);
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly steps = STEPS;
+  readonly formClass = `glass-strong flex min-w-0 flex-col gap-5 rounded-3xl p-5 md:p-7 ${REQUIRED_MARKS} ${STAR_HELPER}`;
   readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
   readonly stepIndex = signal(0);
   readonly step = computed(() => STEPS[this.stepIndex()]);
@@ -103,6 +119,80 @@ export default class ProfileWizard {
     // Show a complete number the way the list does (+91XXXXXXXXXX); partial input stays as typed.
     return toCanonicalMobileNumber(value) ?? value;
   });
+
+  /** Set once the profile is saved so the post-save navigation is never treated as discarding. */
+  private saved = false;
+
+  /** True when something was typed or chosen (the untouched "+91" prefix does not count). */
+  private readonly isDirty = computed(() => {
+    const f = this.profileDetailForm;
+    const mobile = f.mobileNumber().value().trim();
+    return !!(
+      f.name().value() ||
+      f.matrimonyId().value() ||
+      (mobile && mobile !== '+91') ||
+      f.profileStatusId().value() ||
+      f.zodiacSign().value() ||
+      f.star().value() ||
+      f.age().value() !== null ||
+      f.state().value() ||
+      f.city().value() ||
+      f.comments().value().length ||
+      this.newComment().trim()
+    );
+  });
+
+  /** Used by the discard guard and the beforeunload prompt. */
+  hasUnsavedInput(): boolean {
+    return !this.saved && this.isDirty();
+  }
+
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedInput()) event.preventDefault();
+  }
+
+  /** Gap between the layout viewport bottom and the on-screen keyboard, so the bar rides above it. */
+  private readonly actionBar = viewChild<ElementRef<HTMLElement>>('actionBar');
+
+  constructor() {
+    afterNextRender(() => {
+      const viewport = window.visualViewport;
+      if (!viewport) return;
+      const update = () => {
+        const inset =
+          viewport.scale > 1.01
+            ? 0
+            : Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+        const bar = this.actionBar()?.nativeElement;
+        if (bar) bar.style.bottom = `${Math.round(inset)}px`;
+      };
+      viewport.addEventListener('resize', update);
+      viewport.addEventListener('scroll', update);
+      this.destroyRef.onDestroy(() => {
+        viewport.removeEventListener('resize', update);
+        viewport.removeEventListener('scroll', update);
+      });
+    });
+  }
+
+  /**
+   * Per-step "n of m required fields done", derived from the same field states the validators
+   * use. The star match score is derived from the star (never typed), so it is not counted.
+   */
+  readonly stepProgress = computed(() =>
+    STEPS.map((_, index) => {
+      const f = this.profileDetailForm;
+      const required = this.stepFields(index).filter(
+        (field) => field !== f.starMatchScore && field().required(),
+      );
+      const done = required.filter((field) => {
+        const value: unknown = field().value();
+        if (field === f.mobileNumber) return toCanonicalMobileNumber(String(value)) !== null;
+        return field().valid() && value !== null && value !== undefined && value !== '';
+      }).length;
+      return { done, total: required.length, complete: done === required.length };
+    }),
+  );
 
   /** Fields whose validity gates leaving each step. */
   private stepFields(index: number) {
@@ -173,6 +263,7 @@ export default class ProfileWizard {
     return await this.profileService
       .addProfile(profileData)
       .then(() => {
+        this.saved = true;
         toast.success('Profile added successfully');
         this.profileService.refreshProfiles();
         void this.router.navigate(['/']);

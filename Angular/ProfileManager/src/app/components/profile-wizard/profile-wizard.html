@@ -1,15 +1,15 @@
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 md:px-8 md:py-10">
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pt-5 pb-28 md:px-8 md:pt-10 lg:pb-10">
   <!-- Header: back to list + page heading -->
   <header class="flex items-center gap-3">
     <a
       hlmBtn
       variant="outline"
-      size="icon"
       routerLink="/"
       aria-label="Back to profiles"
       title="Back to profiles"
     >
       <ng-icon hlm name="lucideArrowLeft" size="sm" />
+      Profiles
     </a>
     <div class="min-w-0">
       <h1 class="text-xl leading-tight font-bold tracking-tight md:text-2xl">Add New Profile</h1>
@@ -77,12 +77,12 @@
                 [class]="`grid size-8 shrink-0 place-items-center rounded-full border text-sm font-bold ${
                   $index === stepIndex()
                     ? 'bg-gradient-brand text-primary-foreground border-transparent'
-                    : $index < stepIndex()
+                    : stepProgress()[$index].complete
                       ? 'border-transparent bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
                       : 'glass'
                 }`"
               >
-                @if ($index < stepIndex()) {
+                @if (stepProgress()[$index].complete) {
                   <ng-icon name="lucideCheck" size="14" />
                 } @else {
                   {{ $index + 1 }}
@@ -91,6 +91,10 @@
               <span class="min-w-0">
                 <span class="block text-sm font-semibold">{{ s.title }}</span>
                 <span class="text-muted-foreground block text-xs">{{ s.hint }}</span>
+                <span class="text-muted-foreground block text-xs">
+                  {{ stepProgress()[$index].done }} of {{ stepProgress()[$index].total }} required
+                  fields done
+                </span>
               </span>
             </button>
           </li>
@@ -109,11 +113,7 @@
     </nav>
 
     <!-- Step panel -->
-    <form
-      class="glass-strong flex min-w-0 flex-col gap-5 rounded-3xl p-5 md:p-7"
-      [formRoot]="profileDetailForm"
-      (keydown.enter)="onEnter($event)"
-    >
+    <form [class]="formClass" [formRoot]="profileDetailForm" (keydown.enter)="onEnter($event)">
       <h2
         #stepHeading
         tabindex="-1"
@@ -121,6 +121,13 @@
       >
         {{ step().title }}
       </h2>
+      <p class="text-muted-foreground -mt-3 text-xs">
+        <span class="text-destructive" aria-hidden="true">*</span> required
+        <span class="lg:hidden">
+          · {{ stepProgress()[stepIndex()].done }} of {{ stepProgress()[stepIndex()].total }}
+          required fields done
+        </span>
+      </p>
 
       <app-profile-form-fields
         [profileDetailForm]="profileDetailForm"
@@ -187,36 +194,8 @@
 
       <button #submitButton hidden type="submit"></button>
 
-      <div class="mt-auto flex items-center justify-between gap-2 pt-2">
-        @if (stepIndex() > 0) {
-          <button type="button" hlmBtn variant="outline" (click)="back()">
-            <ng-icon hlm name="lucideArrowLeft" size="sm" />
-            Back
-          </button>
-        } @else {
-          <span></span>
-        }
-        @if (isLastStep()) {
-          <button
-            type="button"
-            hlmBtn
-            [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
-            (click)="submitButton.click()"
-          >
-            @if (profileDetailForm().submitting()) {
-              <hlm-spinner data-icon="inline-start" />
-              Saving…
-            } @else {
-              <ng-icon hlm name="lucideCheck" size="sm" />
-              Create profile
-            }
-          </button>
-        } @else {
-          <button type="button" hlmBtn (click)="next()">
-            Continue
-            <ng-icon hlm name="lucideArrowRight" size="sm" />
-          </button>
-        }
+      <div class="hidden items-center justify-between gap-2 pt-2 lg:flex">
+        <ng-container [ngTemplateOutlet]="actions" />
       </div>
     </form>
 
@@ -273,4 +252,43 @@
       </dl>
     </aside>
   </div>
+</div>
+
+<!-- Back / Continue / Create: inline on desktop, a sticky bottom bar on phones and tablets -->
+<ng-template #actions>
+  @if (stepIndex() > 0) {
+    <button type="button" hlmBtn variant="outline" (click)="back()">
+      <ng-icon hlm name="lucideArrowLeft" size="sm" />
+      Back
+    </button>
+  } @else {
+    <span></span>
+  }
+  @if (isLastStep()) {
+    <button
+      type="button"
+      hlmBtn
+      [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
+      (click)="submitButton.click()"
+    >
+      @if (profileDetailForm().submitting()) {
+        <hlm-spinner data-icon="inline-start" />
+        Saving…
+      } @else {
+        <ng-icon hlm name="lucideCheck" size="sm" />
+        Create profile
+      }
+    </button>
+  } @else {
+    <button type="button" hlmBtn (click)="next()">
+      Continue
+      <ng-icon hlm name="lucideArrowRight" size="sm" />
+    </button>
+  }
+</ng-template>
+<div
+  #actionBar
+  class="glass-strong fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-2 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+>
+  <ng-container [ngTemplateOutlet]="actions" />
 </div>

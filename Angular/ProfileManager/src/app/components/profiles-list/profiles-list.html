@@ -14,14 +14,15 @@
       }
       <div class="hidden md:block">
         @defer (on viewport) {
-          <app-profiles-list-desktop-view
-            [pagedData]="rows()"
-            [totalItems]="profileService.totalCount()"
-            [isLoading]="profiles.isLoading()"
-          />
+          <app-profiles-list-desktop-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
         } @placeholder {
-          <div class="flex justify-center m-10">
-            <ng-container *ngTemplateOutlet="loader" />
+          <div
+            class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            aria-hidden="true"
+          >
+            @for (card of [0, 1, 2, 3, 4, 5]; track card) {
+              <ng-container *ngTemplateOutlet="skeletonCard" />
+            }
           </div>
         }
       </div>
@@ -33,8 +34,10 @@
         @defer (on viewport) {
           <app-profiles-list-mobile-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
         } @placeholder {
-          <div class="flex justify-center m-10">
-            <ng-container *ngTemplateOutlet="loader" />
+          <div class="mt-4 flex flex-col gap-3" aria-hidden="true">
+            @for (card of [0, 1, 2, 3]; track card) {
+              <ng-container *ngTemplateOutlet="skeletonCard" />
+            }
           </div>
         }
       </div>
@@ -48,12 +51,28 @@
           [itemsPerPage]="profileService.pageState().pageSize"
           (currentPageChange)="onPageChange($event)"
           (itemsPerPageChange)="onPageSizeChange($event)"
-        />
+        >
+          <span class="text-muted-foreground text-sm" data-testid="profiles-total">
+            <b class="text-foreground">{{ profileService.totalCount() }}</b>
+            {{ profileService.totalCount() === 1 ? 'profile' : 'profiles' }}</span
+          >
+        </hlm-numbered-pagination>
       }
     </div>
   </div>
 </div>
 
-<ng-template #loader>
-  <hlm-spinner class="text-[8rem]" />
+<ng-template #skeletonCard>
+  <div class="glass flex flex-col gap-4 rounded-2xl p-4">
+    <div class="flex items-center gap-3">
+      <div hlmSkeleton class="size-11 rounded-xl"></div>
+      <div class="flex flex-1 flex-col gap-2">
+        <div hlmSkeleton class="h-4 w-3/4"></div>
+        <div hlmSkeleton class="h-3 w-1/2"></div>
+      </div>
+      <div hlmSkeleton class="size-11 rounded-full"></div>
+    </div>
+    <div hlmSkeleton class="h-5 w-2/3"></div>
+    <div hlmSkeleton class="h-8 w-full"></div>
+  </div>
 </ng-template>

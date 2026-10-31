@@ -208,7 +208,7 @@
               Saving…
             } @else {
               <ng-icon hlm name="lucideCheck" size="sm" />
-              Save Changes
+              Create profile
             }
           </button>
         } @else {
@@ -229,7 +229,7 @@
       <div class="flex items-center gap-3">
         <app-profile-avatar [name]="name()" [size]="52" />
         <div class="min-w-0">
-          <p class="truncate text-base leading-tight font-semibold">
+          <p class="line-clamp-2 text-base leading-tight font-semibold break-words">
             {{ name() || 'Unnamed profile' }}
           </p>
           @if (profileStatusLabel(); as status) {
@@ -260,15 +260,17 @@
           <dt class="text-muted-foreground">Age</dt>
           <dd class="font-medium">{{ profileDetailForm.age().value() ?? '—' }}</dd>
         </div>
-        <div class="flex justify-between gap-3 py-2">
+        <div class="flex justify-between gap-3 border-b border-dashed py-2">
           <dt class="text-muted-foreground">Location</dt>
           <dd class="truncate font-medium">{{ locationLabel() || '—' }}</dd>
         </div>
+        <div class="flex items-center justify-between gap-3 py-2">
+          <dt class="text-muted-foreground">Star Match Score</dt>
+          <dd>
+            <app-score-ring [score]="profileDetailForm.starMatchScore().value()" [size]="40" />
+          </dd>
+        </div>
       </dl>
-      <div class="flex items-center gap-3">
-        <app-score-ring [score]="profileDetailForm.starMatchScore().value()" [size]="56" />
-        <p class="text-sm font-medium">Star Match Score</p>
-      </div>
     </aside>
   </div>
 </div>

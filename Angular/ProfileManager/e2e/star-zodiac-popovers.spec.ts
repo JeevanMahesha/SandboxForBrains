@@ -36,7 +36,9 @@ test.describe('star match / zodiac signs popovers', () => {
     // the toolbar is unaffected.
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Add Profile' })).toBeVisible();
+    await expect(
+      page.locator('app-toolbar').getByRole('button', { name: 'Add Profile' }),
+    ).toBeVisible();
   });
 
   test('Preferred Star popover ranks every star by score, highest first, and closes on outside click', async ({
@@ -72,6 +74,8 @@ test.describe('star match / zodiac signs popovers', () => {
     // other dismissal path, and confirm the toolbar underneath is still interactive.
     await page.mouse.click(5, 5);
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Add Profile' })).toBeVisible();
+    await expect(
+      page.locator('app-toolbar').getByRole('button', { name: 'Add Profile' }),
+    ).toBeVisible();
   });
 });

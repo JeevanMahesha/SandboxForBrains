@@ -93,17 +93,7 @@ export class Toolbar {
   readonly toggleZodiacSigns = signal<BrnDialogState>('closed');
   readonly filterSheetOpen = signal<BrnDialogState>('closed');
 
-  readonly filterHasValue = computed(() => {
-    const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } =
-      this.profileService.filterOptions();
-    const searchTrimmed = (searchQuery ?? '').trim();
-    return (
-      viewOrderCheck !== true ||
-      searchTrimmed !== '' ||
-      profileStatus != null ||
-      starMatchScore != null
-    );
-  });
+  readonly filterHasValue = this.profileService.filterHasValue;
 
   openStarMatchPopover() {
     this.toggleStarMatch.set('open');
@@ -131,11 +121,6 @@ export class Toolbar {
   }
 
   clearForm() {
-    this.filterForm().reset({
-      viewOrderCheck: true,
-      searchQuery: '',
-      profileStatus: null,
-      starMatchScore: null,
-    });
+    this.filterForm().reset({ ...ProfilesService.DEFAULT_FILTER_OPTIONS });
   }
 }

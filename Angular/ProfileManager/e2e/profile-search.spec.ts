@@ -104,7 +104,7 @@ test.describe('toolbar search', () => {
     await searchBox(page).fill('+91 99999 99999');
     await expect(page.getByText('No profiles found.')).toBeVisible();
     await expect(profileRows(page)).toHaveCount(0);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 0 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^0 profiles$/);
     await expect(page.getByRole('alert')).toHaveCount(0);
 
     await searchBox(page).fill('');

@@ -30,6 +30,7 @@ import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { NOT_SPECIFIED_LABEL } from '../../constant/common.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
 import { ProfilesService } from '../../services/profiles.service';
+import { toCanonicalMobileNumber } from '../../utils/mobile-number.util';
 import { createProfileForm } from '../profile/profile-form';
 import {
   FieldGroup,
@@ -98,7 +99,9 @@ export default class ProfileWizard {
   readonly mobileNumber = computed(() => {
     const value = this.profileDetailForm.mobileNumber().value().trim();
     // The "+91" prefix alone is the untouched default, not a typed number.
-    return value === '+91' ? '' : value;
+    if (value === '+91') return '';
+    // Show a complete number the way the list does (+91XXXXXXXXXX); partial input stays as typed.
+    return toCanonicalMobileNumber(value) ?? value;
   });
 
   /** Fields whose validity gates leaving each step. */

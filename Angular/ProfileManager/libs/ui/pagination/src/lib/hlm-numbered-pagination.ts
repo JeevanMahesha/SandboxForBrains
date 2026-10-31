@@ -33,11 +33,8 @@ import { HlmPaginationPrevious } from './hlm-pagination-previous';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 md:flex-nowrap">
-      <div class="flex items-center gap-1 text-sm text-nowrap text-gray-600">
-        <b>{{ totalItems() }}</b>
-        total items |
-        <b>{{ _lastPageNumber() }}</b>
-        pages
+      <div class="flex items-center gap-1 text-sm text-nowrap">
+        <ng-content />
       </div>
 
       <nav hlmPagination>

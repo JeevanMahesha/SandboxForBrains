@@ -72,6 +72,7 @@
             hlmInput
             id="login-email"
             type="email"
+            autocomplete="username"
             class="w-full"
             placeholder="you@example.com"
             [formField]="loginForm.email"
@@ -83,15 +84,30 @@
         </div>
         <div hlmField>
           <label hlmFieldLabel for="login-password">Password</label>
-          <input
-            hlmInput
-            id="login-password"
-            type="password"
-            class="w-full"
-            placeholder="••••••••"
-            [formField]="loginForm.password"
-            [forceInvalid]="loginForm.password().touched() && loginForm.password().invalid()"
-          />
+          <div class="relative">
+            <input
+              hlmInput
+              id="login-password"
+              class="w-full pr-10"
+              autocomplete="current-password"
+              placeholder="Password"
+              [type]="showPassword() ? 'text' : 'password'"
+              [formField]="loginForm.password"
+              [forceInvalid]="loginForm.password().touched() && loginForm.password().invalid()"
+            />
+            <button
+              type="button"
+              hlmBtn
+              variant="ghost"
+              size="icon-sm"
+              class="absolute top-1/2 right-1 -translate-y-1/2"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              [attr.aria-pressed]="showPassword()"
+              (click)="showPassword.set(!showPassword())"
+            >
+              <ng-icon size="16" [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'" />
+            </button>
+          </div>
           @if (loginForm.password().touched() && loginForm.password().invalid()) {
             <hlm-field-error>{{ loginForm.password().errors()[0]?.message }}</hlm-field-error>
           }

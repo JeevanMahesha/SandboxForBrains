@@ -12,7 +12,7 @@ test.describe('authentication', () => {
     await loginAsAdmin();
 
     await expect(page.getByText('Login successful')).toBeVisible();
-    await expect(profilesTotal(page)).toHaveText(/In total there are 0 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^0 profiles$/);
   });
 
   test('logs the admin out and clears the session', async ({ page, loginAsAdmin }) => {

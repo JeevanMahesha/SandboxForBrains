@@ -1,5 +1,6 @@
 import {
   Service,
+  computed,
   WritableSignal,
   inject,
   resource,
@@ -48,12 +49,38 @@ export class ProfilesService {
 
   private profilesCollection = collection(this.firestore, 'profiles');
 
-  public readonly filterOptions: WritableSignal<SortOption> = signal({
+  /** The filter state with nothing narrowed: newest first, no search, status or star match. */
+  static readonly DEFAULT_FILTER_OPTIONS: SortOption = {
     viewOrderCheck: true,
     searchQuery: '',
     profileStatus: null,
     starMatchScore: null,
+  };
+
+  public readonly filterOptions: WritableSignal<SortOption> = signal({
+    ...ProfilesService.DEFAULT_FILTER_OPTIONS,
   });
+
+  /** True when the sort order, search text, status or star match differ from the defaults. */
+  readonly filterHasValue = computed(() => {
+    const { viewOrderCheck, searchQuery, profileStatus, starMatchScore } = this.filterOptions();
+    return (
+      viewOrderCheck !== true ||
+      (searchQuery ?? '').trim() !== '' ||
+      profileStatus != null ||
+      starMatchScore != null
+    );
+  });
+
+  /** True when search text, status or star match narrow the list (sort order does not). */
+  readonly isNarrowed = computed(() => {
+    const { searchQuery, profileStatus, starMatchScore } = this.filterOptions();
+    return (searchQuery ?? '').trim() !== '' || profileStatus != null || starMatchScore != null;
+  });
+
+  clearFilters(): void {
+    this.filterOptions.set({ ...ProfilesService.DEFAULT_FILTER_OPTIONS });
+  }
 
   readonly pageState = signal<{ pageIndex: number; pageSize: number }>({
     pageIndex: 0,
@@ -264,10 +291,13 @@ export class ProfilesService {
 
   /** Opens a confirmation dialog and deletes the profile when the user confirms. */
   deleteProfile(id: string): void {
+    const target = this.profiles.hasValue()
+      ? this.profiles.value().find((profile) => String(profile.id) === id)
+      : undefined;
     const dialogRef = this.dialogService.open(ConfirmDialog, {
       context: {
-        title: 'Confirm Delete',
-        description: 'Do you want to delete this record?',
+        title: target ? `Delete ${target.name} (${target.matrimonyId})?` : 'Confirm Delete',
+        description: target ? "This can't be undone." : 'Do you want to delete this record?',
         confirmLabel: 'Delete',
         destructive: true,
       } satisfies ConfirmDialogContext,

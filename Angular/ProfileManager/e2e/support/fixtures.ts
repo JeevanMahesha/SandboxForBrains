@@ -45,7 +45,7 @@ export function profileRows(page: Page) {
   return page.getByTestId('profile-card');
 }
 
-/** The "In total there are N profiles." footer cell. */
+/** The "N profile(s) count next to the pager." footer cell. */
 export function profilesTotal(page: Page) {
   return page.getByTestId('profiles-total');
 }
@@ -57,7 +57,7 @@ export function statusChip(page: Page, label: string) {
 
 /** Opens the create wizard from the list toolbar (step 1 of 3). */
 export async function openNewProfileWizard(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Add Profile' }).click();
+  await page.locator('app-toolbar').getByRole('button', { name: 'Add Profile' }).click();
   await expect(page).toHaveURL(/\/profiles\/new$/);
   await expect(page.getByRole('heading', { name: 'Add New Profile' })).toBeVisible();
 }

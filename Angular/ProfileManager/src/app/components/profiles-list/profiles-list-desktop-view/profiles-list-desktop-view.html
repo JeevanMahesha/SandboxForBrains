@@ -1,5 +1,9 @@
-<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-  @if (isLoading()) {
+<div
+  class="mt-4 grid grid-cols-1 gap-4 transition-opacity motion-reduce:transition-none sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+  [class.opacity-60]="isLoading() && pagedData().length > 0"
+  [attr.aria-busy]="isLoading()"
+>
+  @if (isLoading() && pagedData().length === 0) {
     @for (card of skeletonRows; track $index) {
       <div class="glass flex flex-col gap-4 rounded-2xl p-4">
         <div class="flex items-center gap-3">
@@ -144,10 +148,7 @@
         </div>
       </article>
     } @empty {
-      <div class="text-muted-foreground col-span-full py-10 text-center">No profiles found.</div>
+      <app-profiles-empty-state />
     }
   }
 </div>
-<p class="text-muted-foreground mt-4 text-center text-sm" data-testid="profiles-total">
-  In total there are {{ totalItems() }} profiles.
-</p>

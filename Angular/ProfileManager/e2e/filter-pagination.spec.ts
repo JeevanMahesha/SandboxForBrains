@@ -16,7 +16,7 @@ test.describe('filtering and pagination', () => {
     await loginAsAdmin();
 
     await expect(profileRows(page)).toHaveCount(10);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 12 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^12 profiles$/);
 
     const pagination = page.getByRole('navigation', { name: 'pagination' });
     await pagination.getByText('2', { exact: true }).click();
@@ -57,7 +57,7 @@ test.describe('filtering and pagination', () => {
     await statusChip(page, PROFILE_STATUS.ACCEPTED).click();
 
     await expect(profileRows(page)).toHaveCount(4);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 4 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^4 profiles$/);
     for (const row of await profileRows(page).all()) {
       await expect(row).toContainText(PROFILE_STATUS.ACCEPTED);
     }

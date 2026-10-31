@@ -70,7 +70,7 @@ test.describe('star match score auto-calc', () => {
     await wizardContinue(page);
     await pickOption(page, 'hlm-select#state', 'Tamil Nadu');
     await pickOption(page, 'hlm-select#city', 'Chennai');
-    await page.getByRole('button', { name: 'Save Changes' }).click();
+    await page.getByRole('button', { name: 'Create profile' }).click();
     await expect(page.getByText('Profile added successfully')).toBeVisible();
 
     // Reopen it read-only: per profile-form-fields.html, this is the only place the literal

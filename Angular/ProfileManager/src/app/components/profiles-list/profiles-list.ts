@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, Resource } from '@angular/core';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmNumberedPagination } from '@spartan-ng/helm/pagination';
-import { HlmSpinner } from '@spartan-ng/helm/spinner';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { ProfileDetail } from '../../models/profile.model';
 import { ProfilesService } from '../../services/profiles.service';
 import { Profile } from '../profile/profile';
@@ -19,7 +19,7 @@ import { ProfilesListMobileView } from './profiles-list-mobile-view/profiles-lis
     ProfilesListMobileView,
     HlmNumberedPagination,
     HlmButton,
-    HlmSpinner,
+    HlmSkeleton,
     NgTemplateOutlet,
   ],
   templateUrl: './profiles-list.html',

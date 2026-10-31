@@ -10,12 +10,15 @@ test.describe('delete profile', () => {
     await profileRows(page).first().getByRole('button', { name: 'Delete' }).click();
 
     const dialog = page.locator('app-confirm-dialog');
-    await expect(dialog.getByRole('heading', { name: 'Confirm Delete' })).toBeVisible();
+    await expect(
+      dialog.getByRole('heading', { name: 'Delete Seed Profile 01 (M1000)?' }),
+    ).toBeVisible();
+    await expect(dialog.getByText("This can't be undone.")).toBeVisible();
     await dialog.getByRole('button', { name: 'Delete' }).click();
 
     await expect(page.getByText('Profile deleted successfully')).toBeVisible();
     await expect(profileRows(page)).toHaveCount(0);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 0 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^0 profiles$/);
   });
 
   test('keeps the profile when the dialog is cancelled', async ({ page, loginAsAdmin }) => {

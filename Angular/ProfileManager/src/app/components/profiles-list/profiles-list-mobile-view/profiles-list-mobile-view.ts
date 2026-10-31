@@ -32,6 +32,7 @@ import { ToolbarAction } from '../../../models/toolbar.model';
 import { MobileUrlPipe } from '../../../pipes/mobile-url.pipe';
 import { ZodiacColorPipe } from '../../../pipes/zodiac-color.pipe';
 import { ZodiacIconPipe } from '../../../pipes/zodiac-icon.pipe';
+import { ProfilesEmptyState } from '../../shared/profiles-empty-state/profiles-empty-state';
 import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
 import { ScoreRing } from '../../shared/score-ring/score-ring';
 import { ProfileStatusEdgePipe } from '../profile-status-edge.pipe';
@@ -43,6 +44,7 @@ import { ProfilesService } from '../../../services/profiles.service';
     TitleCasePipe,
     ProfileStatusEdgePipe,
     ProfileAvatar,
+    ProfilesEmptyState,
     ScoreRing,
     MobileUrlPipe,
     ZodiacColorPipe,

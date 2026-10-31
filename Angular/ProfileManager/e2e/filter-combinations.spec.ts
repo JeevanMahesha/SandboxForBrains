@@ -38,12 +38,12 @@ test.describe('sort order, page size and clear filters', () => {
     await loginAsAdmin();
 
     await expect(profileRows(page)).toHaveCount(10);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 15 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^15 profiles$/);
 
     await pickOption(page, 'hlm-numbered-pagination', '25');
 
     await expect(profileRows(page)).toHaveCount(15);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 15 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^15 profiles$/);
   });
 
   test('"Clear" resets an active filter back to showing everything', async ({
@@ -71,7 +71,7 @@ test.describe('sort order, page size and clear filters', () => {
     await clearButton.click();
 
     await expect(profileRows(page)).toHaveCount(10);
-    await expect(profilesTotal(page)).toHaveText(/In total there are 12 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^12 profiles$/);
     await expect(clearButton).toBeDisabled();
     await expect(statusChip(page, 'All')).toHaveAttribute('aria-pressed', 'true');
     await expect(statusChip(page, PROFILE_STATUS.ACCEPTED)).toHaveAttribute(
@@ -103,6 +103,6 @@ test.describe('combined filters', () => {
 
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Accepted Six');
-    await expect(profilesTotal(page)).toHaveText(/In total there are 1 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
   });
 });

@@ -1,4 +1,4 @@
-@if (isLoading()) {
+@if (isLoading() && pagedData().length === 0) {
   <div class="mt-4 flex flex-col gap-3">
     @for (card of skeletonRows; track $index) {
       <div class="glass flex flex-col gap-3 rounded-2xl p-3">
@@ -15,7 +15,11 @@
     }
   </div>
 } @else {
-  <div class="mt-4 flex w-full flex-col gap-3">
+  <div
+    class="mt-4 flex w-full flex-col gap-3 transition-opacity motion-reduce:transition-none"
+    [class.opacity-60]="isLoading()"
+    [attr.aria-busy]="isLoading()"
+  >
     @for (profile of pagedData(); track profile.id) {
       <div
         role="button"
@@ -141,7 +145,7 @@
         </div>
       </div>
     } @empty {
-      <div class="text-muted-foreground py-10 text-center">No profiles found.</div>
+      <app-profiles-empty-state />
     }
   </div>
 }

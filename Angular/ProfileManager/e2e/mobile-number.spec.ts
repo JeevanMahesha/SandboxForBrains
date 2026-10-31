@@ -48,7 +48,7 @@ test.describe('mobile number formats', () => {
 
       await loginAsAdmin();
       await fillMinimalProfile(page, `Format Test ${label}`, input);
-      await page.getByRole('button', { name: 'Save Changes' }).click();
+      await page.getByRole('button', { name: 'Create profile' }).click();
 
       await expect(page.getByText('Profile added successfully')).toBeVisible();
       await expect(profileRows(page).first()).toContainText(expectedCanonical!);
@@ -73,7 +73,7 @@ test.describe('mobile number formats', () => {
     // never reach the final Save step (which is disabled while the form is invalid).
     await wizardContinue(page);
     await expect(page.locator('#mobile')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Save Changes' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Create profile' })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible();
     await page.getByRole('link', { name: 'Back to profiles' }).click();
     await expect(profileRows(page)).toHaveCount(0);

@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideHeart, lucideLoaderCircle } from '@ng-icons/lucide';
+import { lucideEye, lucideEyeOff, lucideHeart, lucideLoaderCircle } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
@@ -31,11 +31,12 @@ interface Login {
     HlmSpinnerImports,
   ],
   templateUrl: './login.html',
-  providers: [provideIcons({ lucideHeart, lucideLoaderCircle })],
+  providers: [provideIcons({ lucideEye, lucideEyeOff, lucideHeart, lucideLoaderCircle })],
 })
 export default class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  readonly showPassword = signal(false);
   readonly loginModel = signal<Login>({
     email: '',
     password: '',

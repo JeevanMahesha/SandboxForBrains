@@ -29,14 +29,14 @@ test.describe('create profile', () => {
       city: 'Chennai',
     });
 
-    await page.getByRole('button', { name: 'Save Changes' }).click();
+    await page.getByRole('button', { name: 'Create profile' }).click();
 
     await expect(page.getByText('Profile added successfully')).toBeVisible();
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Anjali Kumar');
     // The loosely typed number is persisted in the canonical +91 form.
     await expect(profileRows(page).first()).toContainText('+919876543210');
-    await expect(profilesTotal(page)).toHaveText(/In total there are 1 profiles\./);
+    await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
   });
 
   test('does not carry an abandoned draft into the next Add Profile', async ({

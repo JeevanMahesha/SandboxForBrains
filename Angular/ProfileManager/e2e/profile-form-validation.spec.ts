@@ -20,7 +20,7 @@ test.describe('profile form validation', () => {
     await loginAsAdmin();
     await openNewProfileWizard(page);
 
-    const saveButton = page.getByRole('button', { name: 'Save Changes' });
+    const saveButton = page.getByRole('button', { name: 'Create profile' });
     const heading = (name: string) => page.getByRole('heading', { name });
 
     // The form is invalid from the moment it opens (required fields are blank), but nothing has
@@ -129,7 +129,7 @@ test.describe('profile form validation', () => {
     await wizardContinue(page);
     await pickOption(page, 'hlm-select#state', 'Tamil Nadu');
     await pickOption(page, 'hlm-select#city', 'Chennai');
-    const saveButton = page.getByRole('button', { name: 'Save Changes' });
+    const saveButton = page.getByRole('button', { name: 'Create profile' });
     await expect(saveButton).toBeEnabled();
 
     await saveButton.click();
@@ -190,7 +190,7 @@ async function fillRemainingAndSave(page: import('@playwright/test').Page): Prom
   await wizardContinue(page);
   await pickOption(page, 'hlm-select#state', 'Tamil Nadu');
   await pickOption(page, 'hlm-select#city', 'Chennai');
-  await page.getByRole('button', { name: 'Save Changes' }).click();
+  await page.getByRole('button', { name: 'Create profile' }).click();
   await expect(page.getByText('Profile added successfully')).toBeVisible();
   await expect(page).toHaveURL(/\/$/);
   await expect(profileRows(page)).toHaveCount(1);

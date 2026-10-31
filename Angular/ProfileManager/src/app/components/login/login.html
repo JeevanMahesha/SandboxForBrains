@@ -1,10 +1,71 @@
-<div class="mb-4 flex h-screen items-center justify-center p-8">
-  <section hlmCard class="w-full max-w-md">
-    <div hlmCardHeader>
-      <h3 hlmCardTitle>Login</h3>
+<div class="flex min-h-screen flex-col md:grid md:grid-cols-[1.1fr_1fr]">
+  <section class="relative flex flex-1 flex-col justify-between gap-8 px-6 pt-6 pb-8 md:p-12">
+    <div class="flex items-center gap-2.5 text-lg font-extrabold tracking-tight">
+      <span
+        class="bg-gradient-brand text-primary-foreground grid size-9 place-items-center rounded-xl shadow-lg"
+        aria-hidden="true"
+      >
+        <ng-icon name="lucideHeart" size="18" />
+      </span>
+      ProfileArc
     </div>
-    <div hlmCardContent>
-      <form class="flex flex-col gap-4" [formRoot]="loginForm">
+
+    <div>
+      <p class="mb-3 max-w-md text-4xl leading-[1.05] font-extrabold tracking-tight md:text-5xl">
+        Every match,
+        <span class="bg-gradient-brand bg-clip-text text-transparent">beautifully organised.</span>
+      </p>
+      <p class="text-muted-foreground max-w-md">
+        Track profiles, star compatibility and follow-ups in one calm workspace.
+      </p>
+    </div>
+
+    <div class="relative hidden h-52 md:block" aria-hidden="true">
+      <div
+        class="glass absolute top-2 left-0 flex -rotate-3 items-center gap-2.5 rounded-2xl px-3.5 py-3 text-sm shadow-lg"
+      >
+        <app-profile-avatar name="Priya R" [size]="34" />
+        <div>
+          <p class="font-semibold">Priya R.</p>
+          <p class="text-muted-foreground text-xs">Virgo · Chennai</p>
+        </div>
+      </div>
+      <div
+        class="glass absolute top-20 left-40 flex rotate-2 items-center gap-2.5 rounded-2xl px-3.5 py-3 text-sm shadow-lg"
+      >
+        <app-score-ring [score]="8.5" [size]="38" />
+        <div>
+          <p class="font-semibold">Star match</p>
+          <p class="text-muted-foreground text-xs">Uthirattadhi</p>
+        </div>
+      </div>
+      <div class="glass absolute top-36 left-5 -rotate-1 rounded-2xl px-3.5 py-3 shadow-lg">
+        <span class="bg-primary/15 text-foreground rounded-full px-2.5 py-1 text-xs font-medium">
+          Meeting Scheduled
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="glass flex w-fit -rotate-2 items-center gap-2.5 rounded-2xl px-3.5 py-3 text-sm shadow-lg md:hidden"
+      aria-hidden="true"
+    >
+      <app-profile-avatar name="Priya R" [size]="34" />
+      <div>
+        <p class="font-semibold">Priya R.</p>
+        <p class="text-muted-foreground text-xs">Virgo · Chennai</p>
+      </div>
+      <app-score-ring [score]="8.5" [size]="34" />
+    </div>
+  </section>
+
+  <section
+    class="glass-strong grid place-items-center rounded-t-3xl border-x-0 border-b-0 px-6 pt-8 pb-10 md:rounded-none md:border-t-0 md:border-r-0 md:border-l md:p-10"
+  >
+    <div class="w-full max-w-sm">
+      <h1 class="text-2xl font-bold tracking-tight">Login</h1>
+      <p class="text-muted-foreground mt-1 text-sm">Use your admin account.</p>
+      <form class="mt-6 flex flex-col gap-4" [formRoot]="loginForm">
         <div hlmField>
           <label hlmFieldLabel for="login-email">Email</label>
           <input

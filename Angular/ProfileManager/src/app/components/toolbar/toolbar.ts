@@ -114,7 +114,7 @@ export class Toolbar {
   }
 
   addNewProfileAction() {
-    this.profileService.userActionEvent('create', null);
+    void this.router.navigate(['/profiles/new']);
   }
 
   async logout() {

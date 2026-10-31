@@ -20,7 +20,7 @@
             </span>
           </div>
         </div>
-      } @else if (userActionType() !== TOOLBAR_ACTIONS_VALUES.create && profileStatusLabel()) {
+      } @else if (profileStatusLabel()) {
         <div class="mt-1 flex items-center gap-2">
           <span class="text-sm text-muted-foreground">{{ profileDetailForm.name().value() }}</span>
           <span hlmBadge variant="secondary" [class]="profileStatusColor() ?? ''">
@@ -29,7 +29,7 @@
         </div>
       }
       <!-- Audit line: exact timestamps are available on hover. -->
-      @if (userActionType() !== TOOLBAR_ACTIONS_VALUES.create && profileStatusLabel()) {
+      @if (profileStatusLabel()) {
         @if (profileResource.value(); as profile) {
           <p hlmSheetDescription class="mt-1 text-xs">
             Created
@@ -276,7 +276,7 @@
             Saving…
           } @else {
             <ng-icon hlm name="lucideCheck" size="sm" />
-            {{ buttonLabel() }}
+            {{ buttonLabel }}
           }
         </button>
       </hlm-sheet-footer>

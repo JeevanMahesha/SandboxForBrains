@@ -4,7 +4,14 @@ import {
   STAR_SCORES,
   ZODIAC_LIST,
 } from '../src/app/constant/common.const';
-import { expect, pickOption, profileRows, test } from './support/fixtures';
+import {
+  expect,
+  openNewProfileWizard,
+  pickOption,
+  profileRows,
+  test,
+  wizardContinue,
+} from './support/fixtures';
 
 // The select lists Zodiac/Star options as "<tanglish> (<english>)" / "<star> (<score>)" (see
 // profile-form-fields.ts); derive expected labels/scores from the same source data rather than
@@ -21,12 +28,16 @@ test.describe('star match score auto-calc', () => {
   }) => {
     await loginAsAdmin();
 
-    await page.getByRole('button', { name: 'Add Profile' }).click();
-    const dialog = page.getByRole('dialog');
-    await expect(dialog.getByRole('heading', { name: 'Add New Profile' })).toBeVisible();
+    await openNewProfileWizard(page);
+    // Contact is step 1; the horoscope fields (zodiac, star, score) are step 2.
+    await page.locator('#name').fill('No Star Test');
+    await page.locator('#mobile').fill('98765 43210');
+    await page.locator('#matrimony').fill('M-NOSTAR');
+    await pickOption(page, 'hlm-select#profile_status', PROFILE_STATUS.NEW);
+    await wizardContinue(page);
 
-    const scoreInput = dialog.locator('#star_match_score');
-    const starTrigger = dialog.locator('hlm-select#star_sign [role="combobox"]');
+    const scoreInput = page.locator('#star_match_score');
+    const starTrigger = page.locator('hlm-select#star_sign [role="combobox"]');
 
     // The score field is always readonly (auto-filled from the Star Sign, never hand-typed)
     // and starts empty, since no star is selected yet.
@@ -55,20 +66,18 @@ test.describe('star match score auto-calc', () => {
     await expect(starTrigger).toHaveText('Select Star');
 
     // Save the profile with no star chosen at all.
-    await dialog.locator('#name').fill('No Star Test');
-    await dialog.locator('#mobile').fill('98765 43210');
-    await dialog.locator('#matrimony').fill('M-NOSTAR');
-    await pickOption(page, 'hlm-select#profile_status', PROFILE_STATUS.NEW);
-    await dialog.locator('#age').fill('25');
+    await page.locator('#age').fill('25');
+    await wizardContinue(page);
     await pickOption(page, 'hlm-select#state', 'Tamil Nadu');
     await pickOption(page, 'hlm-select#city', 'Chennai');
-    await dialog.getByRole('button', { name: 'Save Changes' }).click();
+    await page.getByRole('button', { name: 'Save Changes' }).click();
     await expect(page.getByText('Profile added successfully')).toBeVisible();
 
     // Reopen it read-only: per profile-form-fields.html, this is the only place the literal
     // "Not specified" text is actually rendered — once for the Star Sign field, once for the
     // Star Match Score field (both fall back to NOT_SPECIFIED_LABEL when null).
     await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
     await expect(dialog.getByText(NOT_SPECIFIED_LABEL, { exact: true })).toHaveCount(2);
   });

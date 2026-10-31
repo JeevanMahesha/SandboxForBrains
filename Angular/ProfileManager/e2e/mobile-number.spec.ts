@@ -1,24 +1,33 @@
 import type { Page } from '@playwright/test';
 import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
 import { toCanonicalMobileNumber } from '../src/app/utils/mobile-number.util';
-import { expect, pickOption, profileRows, test } from './support/fixtures';
+import {
+  expect,
+  fillWizardProfile,
+  openNewProfileWizard,
+  profileRows,
+  test,
+  wizardContinue,
+} from './support/fixtures';
 
 // The select lists options as "<tanglish> (<english>)" (see zodiacToLabel in
 // profile-form-fields.ts) — same derivation as profile-create.spec.ts.
 const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 
 /** Fills every required field with a fixed valid value except mobile number, which is the one
- *  under test here. */
+ *  under test here. Ends on the last wizard step. */
 async function fillMinimalProfile(page: Page, name: string, mobileNumber: string): Promise<void> {
-  await page.getByRole('button', { name: 'Add Profile' }).click();
-  await page.locator('#name').fill(name);
-  await page.locator('#mobile').fill(mobileNumber);
-  await page.locator('#matrimony').fill(`M-${name}`);
-  await pickOption(page, 'hlm-select#profile_status', PROFILE_STATUS.NEW);
-  await pickOption(page, 'hlm-select#zodiac_sign', ARIES_LABEL);
-  await page.locator('#age').fill('27');
-  await pickOption(page, 'hlm-select#state', 'Tamil Nadu');
-  await pickOption(page, 'hlm-select#city', 'Chennai');
+  await openNewProfileWizard(page);
+  await fillWizardProfile(page, {
+    name,
+    mobile: mobileNumber,
+    matrimonyId: `M-${name}`,
+    status: PROFILE_STATUS.NEW,
+    zodiac: ARIES_LABEL,
+    age: '27',
+    state: 'Tamil Nadu',
+    city: 'Chennai',
+  });
 }
 
 test.describe('mobile number formats', () => {
@@ -51,15 +60,22 @@ test.describe('mobile number formats', () => {
     loginAsAdmin,
   }) => {
     await loginAsAdmin();
+    await openNewProfileWizard(page);
     // Too short and doesn't start with 6-9 — fails on both counts.
-    await fillMinimalProfile(page, 'Invalid Number Test', '12345');
+    await page.locator('#name').fill('Invalid Number Test');
+    await page.locator('#mobile').fill('12345');
     await page.keyboard.press('Tab'); // blur the field so its error is allowed to show
 
     await expect(
       page.getByText('Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)'),
     ).toBeVisible();
-    // The form disables Save entirely while invalid, rather than allowing a failed submit.
-    await expect(page.getByRole('button', { name: 'Save Changes' })).toBeDisabled();
+    // The wizard refuses to leave the step while the number is invalid, so the profile can
+    // never reach the final Save step (which is disabled while the form is invalid).
+    await wizardContinue(page);
+    await expect(page.locator('#mobile')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Save Changes' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible();
+    await page.getByRole('link', { name: 'Back to profiles' }).click();
     await expect(profileRows(page)).toHaveCount(0);
   });
 });

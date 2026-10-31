@@ -1,0 +1,274 @@
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 md:px-8 md:py-10">
+  <!-- Header: back to list + page heading -->
+  <header class="flex items-center gap-3">
+    <a
+      hlmBtn
+      variant="outline"
+      size="icon"
+      routerLink="/"
+      aria-label="Back to profiles"
+      title="Back to profiles"
+    >
+      <ng-icon hlm name="lucideArrowLeft" size="sm" />
+    </a>
+    <div class="min-w-0">
+      <h1 class="text-xl leading-tight font-bold tracking-tight md:text-2xl">Add New Profile</h1>
+      <p class="text-muted-foreground text-xs lg:hidden" aria-live="polite">
+        Step {{ stepIndex() + 1 }} of {{ steps.length }} · {{ step().title }}
+      </p>
+    </div>
+  </header>
+
+  <!-- Mobile / tablet: progress dots + mini preview -->
+  <div class="flex flex-col gap-3 lg:hidden">
+    <div
+      class="flex gap-1.5"
+      role="progressbar"
+      aria-label="Progress"
+      aria-valuemin="1"
+      [attr.aria-valuemax]="steps.length"
+      [attr.aria-valuenow]="stepIndex() + 1"
+      [attr.aria-valuetext]="`Step ${stepIndex() + 1} of ${steps.length}`"
+    >
+      @for (s of steps; track s.title) {
+        <span
+          [class]="`h-1.5 flex-1 rounded-full ${$index <= stepIndex() ? 'bg-gradient-brand' : 'bg-border'}`"
+        ></span>
+      }
+    </div>
+
+    <div class="glass flex items-center gap-3 rounded-2xl px-3 py-2.5" aria-label="Live preview">
+      <app-profile-avatar [name]="name()" [size]="36" />
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm leading-tight font-semibold">
+          {{ name() || 'Unnamed profile' }}
+        </p>
+        <p class="text-muted-foreground truncate text-xs">
+          {{ profileDetailForm.matrimonyId().value() || '—' }} · {{ mobileNumber() || '—' }}
+        </p>
+      </div>
+      @if (profileStatusLabel(); as status) {
+        <span hlmBadge variant="secondary" [class]="profileStatusColor() ?? ''">{{ status }}</span>
+      }
+      @if (profileDetailForm.starMatchScore().value() !== null) {
+        <app-score-ring [score]="profileDetailForm.starMatchScore().value()" [size]="34" />
+      }
+    </div>
+  </div>
+
+  <div class="grid gap-5 lg:grid-cols-[14rem_minmax(0,1fr)_20rem] lg:gap-6">
+    <!-- Desktop: steps rail -->
+    <nav class="hidden lg:block" aria-label="Profile creation steps">
+      <ol class="flex flex-col gap-1.5">
+        @for (s of steps; track s.title) {
+          <li>
+            <button
+              type="button"
+              [class]="`focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-2xl border p-3 text-start outline-none focus-visible:ring-[3px] ${
+                $index === stepIndex()
+                  ? 'glass border-border text-foreground'
+                  : 'text-muted-foreground hover:text-foreground border-transparent'
+              }`"
+              [attr.aria-current]="$index === stepIndex() ? 'step' : null"
+              (click)="goTo($index)"
+            >
+              <span
+                aria-hidden="true"
+                [class]="`grid size-8 shrink-0 place-items-center rounded-full border text-sm font-bold ${
+                  $index === stepIndex()
+                    ? 'bg-gradient-brand text-primary-foreground border-transparent'
+                    : $index < stepIndex()
+                      ? 'border-transparent bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                      : 'glass'
+                }`"
+              >
+                @if ($index < stepIndex()) {
+                  <ng-icon name="lucideCheck" size="14" />
+                } @else {
+                  {{ $index + 1 }}
+                }
+              </span>
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold">{{ s.title }}</span>
+                <span class="text-muted-foreground block text-xs">{{ s.hint }}</span>
+              </span>
+            </button>
+          </li>
+        }
+      </ol>
+      <div class="mt-4 px-3">
+        <div class="bg-border h-1.5 overflow-hidden rounded-full" aria-hidden="true">
+          <div
+            [class]="`bg-gradient-brand h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${progressWidth()}`"
+          ></div>
+        </div>
+        <p class="text-muted-foreground mt-1.5 text-xs">
+          Step {{ stepIndex() + 1 }} of {{ steps.length }}
+        </p>
+      </div>
+    </nav>
+
+    <!-- Step panel -->
+    <form
+      class="glass-strong flex min-w-0 flex-col gap-5 rounded-3xl p-5 md:p-7"
+      [formRoot]="profileDetailForm"
+      (keydown.enter)="onEnter($event)"
+    >
+      <h2
+        #stepHeading
+        tabindex="-1"
+        class="text-xl font-bold tracking-tight outline-none md:text-2xl"
+      >
+        {{ step().title }}
+      </h2>
+
+      <app-profile-form-fields
+        [profileDetailForm]="profileDetailForm"
+        [groups]="step().groups"
+        [bare]="true"
+      />
+
+      @if (isLastStep()) {
+        <div class="flex flex-col gap-4">
+          <div hlmField>
+            <label hlmFieldLabel for="comment">Add Comment</label>
+            <div class="flex gap-2">
+              <input
+                hlmInput
+                id="comment"
+                class="w-full"
+                placeholder="Add a comment"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="newComment"
+                (keydown.enter)="$event.preventDefault(); addComment()"
+              />
+              <button
+                type="button"
+                hlmBtn
+                size="icon"
+                aria-label="Add comment"
+                [disabled]="!newComment()"
+                (click)="addComment()"
+              >
+                <ng-icon hlm name="lucidePlus" size="sm" />
+              </button>
+            </div>
+          </div>
+
+          @if (profileDetailForm.comments().value().length) {
+            <div class="flex flex-col gap-2">
+              @for (comment of profileDetailForm.comments().value(); track $index) {
+                <div class="bg-muted/40 space-y-1 rounded-md border p-3 text-sm">
+                  <div class="flex items-center justify-between gap-2">
+                    <p class="text-muted-foreground text-xs">
+                      {{ comment.createDateAndTime | date: 'dd/MMM/yy HH:mm' }}
+                    </p>
+                    <button
+                      type="button"
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      class="text-destructive"
+                      aria-label="Delete comment"
+                      (click)="deleteComment(comment)"
+                    >
+                      <ng-icon hlm name="lucideTrash2" size="sm" />
+                    </button>
+                  </div>
+                  <p>{{ comment.value }}</p>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-muted-foreground text-sm">No comments yet.</p>
+          }
+        </div>
+      }
+
+      <button #submitButton hidden type="submit"></button>
+
+      <div class="mt-auto flex items-center justify-between gap-2 pt-2">
+        @if (stepIndex() > 0) {
+          <button type="button" hlmBtn variant="outline" (click)="back()">
+            <ng-icon hlm name="lucideArrowLeft" size="sm" />
+            Back
+          </button>
+        } @else {
+          <span></span>
+        }
+        @if (isLastStep()) {
+          <button
+            type="button"
+            hlmBtn
+            [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
+            (click)="submitButton.click()"
+          >
+            @if (profileDetailForm().submitting()) {
+              <hlm-spinner data-icon="inline-start" />
+              Saving…
+            } @else {
+              <ng-icon hlm name="lucideCheck" size="sm" />
+              Save Changes
+            }
+          </button>
+        } @else {
+          <button type="button" hlmBtn (click)="next()">
+            Continue
+            <ng-icon hlm name="lucideArrowRight" size="sm" />
+          </button>
+        }
+      </div>
+    </form>
+
+    <!-- Desktop: live preview -->
+    <aside
+      class="glass sticky top-6 hidden flex-col gap-4 self-start rounded-3xl p-5 lg:flex"
+      aria-label="Live preview"
+    >
+      <p class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Live preview</p>
+      <div class="flex items-center gap-3">
+        <app-profile-avatar [name]="name()" [size]="52" />
+        <div class="min-w-0">
+          <p class="truncate text-base leading-tight font-semibold">
+            {{ name() || 'Unnamed profile' }}
+          </p>
+          @if (profileStatusLabel(); as status) {
+            <span hlmBadge variant="secondary" [class]="`mt-1 ${profileStatusColor() ?? ''}`">
+              {{ status }}
+            </span>
+          }
+        </div>
+      </div>
+      <dl class="text-sm">
+        <div class="flex justify-between gap-3 border-b border-dashed py-2">
+          <dt class="text-muted-foreground">Mobile</dt>
+          <dd class="truncate font-medium">{{ mobileNumber() || '—' }}</dd>
+        </div>
+        <div class="flex justify-between gap-3 border-b border-dashed py-2">
+          <dt class="text-muted-foreground">Matrimony ID</dt>
+          <dd class="truncate font-medium">{{ profileDetailForm.matrimonyId().value() || '—' }}</dd>
+        </div>
+        <div class="flex justify-between gap-3 border-b border-dashed py-2">
+          <dt class="text-muted-foreground">Zodiac</dt>
+          <dd class="truncate font-medium">{{ zodiacLabel() || '—' }}</dd>
+        </div>
+        <div class="flex justify-between gap-3 border-b border-dashed py-2">
+          <dt class="text-muted-foreground">Star</dt>
+          <dd class="truncate font-medium">{{ starLabel() || '—' }}</dd>
+        </div>
+        <div class="flex justify-between gap-3 border-b border-dashed py-2">
+          <dt class="text-muted-foreground">Age</dt>
+          <dd class="font-medium">{{ profileDetailForm.age().value() ?? '—' }}</dd>
+        </div>
+        <div class="flex justify-between gap-3 py-2">
+          <dt class="text-muted-foreground">Location</dt>
+          <dd class="truncate font-medium">{{ locationLabel() || '—' }}</dd>
+        </div>
+      </dl>
+      <div class="flex items-center gap-3">
+        <app-score-ring [score]="profileDetailForm.starMatchScore().value()" [size]="56" />
+        <p class="text-sm font-medium">Star Match Score</p>
+      </div>
+    </aside>
+  </div>
+</div>

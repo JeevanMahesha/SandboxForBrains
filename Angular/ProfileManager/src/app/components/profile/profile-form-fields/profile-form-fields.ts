@@ -17,6 +17,8 @@ import {
 } from '../../../constant/common.const';
 import { ProfileDetail } from '../../../models/profile.model';
 
+export type FieldGroup = 'contact' | 'astro' | 'age' | 'place';
+
 @Component({
   selector: 'app-profile-form-fields',
   imports: [
@@ -33,6 +35,11 @@ import { ProfileDetail } from '../../../models/profile.model';
 })
 export class ProfileFormFieldsComponent {
   readonly profileDetailForm = input.required<FieldTree<ProfileDetail>>();
+  /** Limits which field groups render (default: all, as in the edit drawer). */
+  readonly groups = input<readonly FieldGroup[] | null>(null);
+  /** Hides the section headings and separators (the wizard supplies its own step headings). */
+  readonly bare = input(false);
+  readonly shows = (group: FieldGroup): boolean => this.groups()?.includes(group) ?? true;
 
   readonly NOT_SPECIFIED = NOT_SPECIFIED_LABEL;
   readonly PROFILE_STATUS_DATA = PROFILE_STATUS;

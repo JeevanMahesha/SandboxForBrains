@@ -13,25 +13,25 @@
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --radius: 0.875rem;
+  --background: oklch(0.97 0.012 285);
+  --foreground: oklch(0.2 0.04 285);
+  --card: oklch(1 0 0 / 62%);
+  --card-foreground: oklch(0.2 0.04 285);
+  --popover: oklch(1 0 0 / 94%);
+  --popover-foreground: oklch(0.2 0.04 285);
+  --primary: oklch(0.55 0.24 292);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(1 0 0 / 55%);
+  --secondary-foreground: oklch(0.25 0.05 285);
+  --muted: oklch(0.93 0.02 285 / 70%);
+  --muted-foreground: oklch(0.46 0.03 285);
+  --accent: oklch(0.94 0.035 290);
+  --accent-foreground: oklch(0.25 0.08 290);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.25 0.05 280 / 13%);
+  --input: oklch(0.25 0.05 280 / 16%);
+  --ring: oklch(0.55 0.24 292 / 60%);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -40,6 +40,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Glass design tokens */
+  --gradient-primary: linear-gradient(135deg, oklch(0.55 0.24 292), oklch(0.52 0.22 270));
+  --aurora-1: oklch(0.8 0.12 295 / 55%);
+  --aurora-2: oklch(0.86 0.1 210 / 50%);
+  --aurora-3: oklch(0.88 0.09 350 / 45%);
+  --glass-blur: 20px;
+  --score-track: oklch(0.25 0.05 280 / 14%);
+  --score-fill: oklch(0.62 0.15 215);
 }
 
 /* ── Spartan theme tokens (dark) ────────────────────────────────────────────
@@ -48,24 +57,24 @@
 :root.dark {
   color-scheme: dark;
 
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.13 0.02 285);
+  --foreground: oklch(0.97 0.01 285);
+  --card: oklch(1 0 0 / 6%);
+  --card-foreground: oklch(0.97 0.01 285);
+  --popover: oklch(0.2 0.03 285 / 94%);
+  --popover-foreground: oklch(0.97 0.01 285);
+  --primary: oklch(0.58 0.23 292);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(1 0 0 / 8%);
+  --secondary-foreground: oklch(0.97 0.01 285);
+  --muted: oklch(1 0 0 / 8%);
+  --muted-foreground: oklch(0.74 0.03 285);
+  --accent: oklch(1 0 0 / 10%);
+  --accent-foreground: oklch(0.97 0.01 285);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.68 0.2 292 / 60%);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.985 0 0);
@@ -74,6 +83,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --gradient-primary: linear-gradient(135deg, oklch(0.58 0.23 292), oklch(0.54 0.21 270));
+  --aurora-1: oklch(0.42 0.2 295 / 55%);
+  --aurora-2: oklch(0.45 0.12 215 / 45%);
+  --aurora-3: oklch(0.42 0.17 350 / 40%);
+  --score-track: oklch(1 0 0 / 14%);
+  --score-fill: oklch(0.8 0.13 210);
 }
 
 @layer base {
@@ -82,6 +98,66 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ── Glass look ─────────────────────────────────────────────────────────── */
+/* Aurora backdrop: gradients only (no blur filter) so it stays cheap on phones. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40rem 40rem at 0% 0%, var(--aurora-1), transparent 70%),
+    radial-gradient(36rem 36rem at 100% 100%, var(--aurora-2), transparent 70%),
+    radial-gradient(28rem 28rem at 55% 45%, var(--aurora-3), transparent 70%);
+}
+
+@utility glass {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+}
+
+@utility glass-strong {
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.5)) saturate(1.5);
+}
+
+@utility bg-gradient-brand {
+  background-image: var(--gradient-primary);
+}
+
+@layer components {
+  [data-slot='card'],
+  [data-slot='sheet-content'],
+  [data-slot='popover-content'] {
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  }
+
+  /* Default (primary) buttons get the brand gradient. */
+  [data-slot='button'].bg-primary {
+    background-image: var(--gradient-primary);
+    box-shadow: 0 8px 20px -10px var(--primary);
+  }
+  [data-slot='button'].bg-primary:hover {
+    filter: brightness(1.1);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --glass-blur: 10px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --card: var(--popover);
+    --glass-blur: 0px;
   }
 }
 

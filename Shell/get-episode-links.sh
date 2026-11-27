@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # get-episode-links.sh
-# Save every episode link of a season page into one Markdown file.
+# Save every episode link of a season page into one HTML file.
 #
 # Usage:
 #   ./get-episode-links.sh [SEASON_URL] [OUTPUT_DIR]
@@ -11,7 +11,8 @@
 #               Default: the folder you run the script from.
 #
 # Result:
-#   <OUTPUT_DIR>/<season-name-from-url>/links.md
+#   <OUTPUT_DIR>/<season-name-from-url>/links.html
+#   (open it in any browser; every episode is a clickable link)
 #
 # Needs: bash, curl, sed, grep, awk (already on macOS and Linux;
 #        on Windows use WSL or Git Bash).
@@ -59,14 +60,16 @@ html="$(curl -fsSL -m 30 -A "Mozilla/5.0" "$url")" || {
 }
 
 # ---- 4. Pull out the links, one per line -------------------------------------
+# Only real web links (http/https) count as links.
+count_links() { printf '%s\n' "$1" | grep -cE '^https?://' || true; }
+
 # Preferred: the page's own `downloadLinks = [ ... ]` list. Episode number is the
 # position in that list, so a blank entry still counts as an episode.
 links="$(printf '%s\n' "$html" \
   | sed -n '/downloadLinks[[:space:]]*=[[:space:]]*\[/,/[]]/p' \
   | grep -oE '"[^"]*"' | sed -e 's/^"//' -e 's/"$//' || true)"
 numbered_by="position in the page's episode list"
-
-found="$(printf '%s\n' "$links" | grep -c . || true)"
+found="$(count_links "$links")"
 
 # Fallback: any Google Drive / Mega link in the page source, in page order.
 if [ "$found" -eq 0 ]; then
@@ -74,7 +77,7 @@ if [ "$found" -eq 0 ]; then
     | grep -oE 'https?://(drive\.google\.com|mega\.nz)/[^"\\ <>]+' \
     | awk '!seen[$0]++' || true)"
   numbered_by="order found on the page"
-  found="$(printf '%s\n' "$links" | grep -c . || true)"
+  found="$(count_links "$links")"
 fi
 
 if [ "$found" -eq 0 ]; then
@@ -85,26 +88,83 @@ fi
 
 total="$(printf '%s\n' "$links" | wc -l | tr -d ' ')"
 
-# ---- 5. Write <OUTPUT_DIR>/<season>/links.md ---------------------------------
+# ---- 5. Write <OUTPUT_DIR>/<season>/links.html -------------------------------
+# Everything that came from the web is escaped before it goes into the HTML.
+esc() {
+  printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
+    -e 's/"/\&quot;/g' -e "s/'/\&#39;/g"
+}
+
 dir="$out_base/$slug"
 mkdir -p "$dir"
-file="$dir/links.md"
+file="$dir/links.html"
 
 {
-  printf '# %s\n\n' "$title"
-  printf -- '- Source: %s\n' "$url"
-  printf -- '- Saved: %s\n' "$(date '+%Y-%m-%d %H:%M')"
-  printf -- '- Episodes: %s (numbered by %s)\n\n' "$total" "$numbered_by"
+  printf '<!doctype html>\n<html lang="en">\n<head>\n'
+  printf '<meta charset="utf-8">\n'
+  printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+  printf '<title>%s</title>\n' "$(esc "$title")"
+  cat <<'CSS'
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --fg: #1b1f24; --muted: #59636e;
+    --line: #d8dee4; --card: #f6f8fa; --accent: #0969da;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1;
+      --line: #30363d; --card: #161b22; --accent: #58a6ff;
+    }
+  }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 1.6rem; line-height: 1.25; margin: 0 0 8px; }
+  .meta { color: var(--muted); font-size: 0.9rem; margin: 0 0 24px; }
+  .meta a { color: inherit; }
+  ol {
+    list-style: none; margin: 0; padding: 0;
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  }
+  li {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    padding: 12px 16px; background: var(--card); border-top: 1px solid var(--line);
+  }
+  li:first-child { border-top: 0; }
+  .ep { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .ep:hover { text-decoration: underline; }
+  .url {
+    color: var(--muted); font-size: 0.8rem; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;
+  }
+  .missing { color: var(--muted); }
+</style>
+CSS
+  printf '</head>\n<body>\n<main>\n'
+  printf '<h1>%s</h1>\n' "$(esc "$title")"
+  printf '<p class="meta">%s episodes &middot; saved %s &middot; <a href="%s">source page</a><br>Numbered by %s.</p>\n' \
+    "$total" "$(date '+%Y-%m-%d %H:%M')" "$(esc "$url")" "$(esc "$numbered_by")"
+  printf '<ol>\n'
 
   n=0
   while IFS= read -r link; do
     n=$((n + 1))
-    if [ -n "$link" ]; then
-      printf '%s. [Episode %s](%s)\n' "$n" "$n" "$link"
-    else
-      printf '%s. Episode %s: _no link on the page_\n' "$n" "$n"
-    fi
+    case "$link" in
+      http://*|https://*)
+        e="$(esc "$link")"
+        printf '  <li><a class="ep" href="%s" target="_blank" rel="noopener noreferrer">Episode %s</a><span class="url">%s</span></li>\n' \
+          "$e" "$n" "$e"
+        ;;
+      *)
+        printf '  <li class="missing">Episode %s &mdash; no link on the page</li>\n' "$n"
+        ;;
+    esac
   done <<< "$links"
+
+  printf '</ol>\n</main>\n</body>\n</html>\n'
 } > "$file"
 
 echo "Saved $found link(s) to: $file"

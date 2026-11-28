@@ -28,8 +28,49 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1MB",
-                  "maximumError": "2MB"
+                  "maximumWarning": "700kb",
+                  "maximumError": "800kb"
+                },
+                {
+                  "type": "anyScript",
+                  "maximumWarning": "350kb",
+                  "maximumError": "400kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "profiles-list",
+                  "maximumWarning": "80kb",
+                  "maximumError": "92kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "profiles-list-desktop-view",
+                  "maximumWarning": "24kb",
+                  "maximumError": "27kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "profiles-list-mobile-view",
+                  "maximumWarning": "10kb",
+                  "maximumError": "11kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "profile",
+                  "maximumWarning": "46kb",
+                  "maximumError": "52kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "profile-wizard",
+                  "maximumWarning": "20kb",
+                  "maximumError": "23kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "login",
+                  "maximumWarning": "9kb",
+                  "maximumError": "10kb"
                 },
                 {
                   "type": "anyComponentStyle",

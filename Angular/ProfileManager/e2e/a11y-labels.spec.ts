@@ -62,6 +62,21 @@ test.describe('select accessible names', () => {
     await expect(sheet.getByRole('combobox', { name: 'Sort' })).toBeVisible();
   });
 
+  test('the page-size select in the pagination is named on desktop and phone', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0)]);
+    await loginAsAdmin();
+    const pageSize = page.getByRole('combobox', { name: 'Profiles per page' });
+    await expect(pageSize).toBeVisible();
+    // It still shows the current size as its value.
+    await expect(pageSize).toContainText('12');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.getByRole('combobox', { name: 'Profiles per page' })).toBeVisible();
+  });
+
   test('the search box has an accessible name on desktop', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
     const search = page.getByRole('textbox', { name: 'Search profiles' });

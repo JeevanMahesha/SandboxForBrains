@@ -30,17 +30,11 @@ const VIEWPORTS = {
  * those elements (and nothing else), so anything NEW still fails the test. Fix the app, then
  * delete the matching entry here.
  *
- * - button-name (critical): the page-size select in the pagination (its trigger just shows "12")
- *   has no accessible name, unlike the status, sort and star-match selects that A11Y-1 named.
  * - label-content-name-mismatch (serious, WCAG 2.5.3): the copy-ID button shows the ID ("M1000")
  *   but is named "Copy matrimony ID of <name>", which does not contain the visible text, so
  *   voice-control users saying "click M1000" cannot reach it.
  */
 const KNOWN_ISSUES = [
-  {
-    marker: 'page-size-select',
-    locator: (page: Page) => page.locator('hlm-select-trigger button').filter({ hasText: /^\d+$/ }),
-  },
   {
     marker: 'copy-id-button',
     locator: (page: Page) => page.getByRole('button', { name: /^Copy matrimony ID/ }),

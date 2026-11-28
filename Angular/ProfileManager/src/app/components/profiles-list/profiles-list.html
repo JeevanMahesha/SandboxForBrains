@@ -55,6 +55,7 @@
       @if (!profiles.isLoading() && !profiles.error()) {
         <hlm-numbered-pagination
           class="glass mt-5 block rounded-2xl p-2"
+          pageSizeLabel="Profiles per page"
           [totalItems]="profileService.totalCount()"
           [pageSizes]="[12, 24, 48]"
           [currentPage]="profileService.pageState().pageIndex + 1"

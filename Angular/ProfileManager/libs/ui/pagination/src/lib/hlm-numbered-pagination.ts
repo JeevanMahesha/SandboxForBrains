@@ -71,8 +71,9 @@ import { HlmPaginationPrevious } from './hlm-pagination-previous';
       </nav>
 
       <!-- Show Page Size selector -->
+      <label [for]="_pageSizeId" class="sr-only">{{ pageSizeLabel() }}</label>
       <hlm-select [(value)]="itemsPerPage" class="ml-auto">
-        <hlm-select-trigger class="w-fit">
+        <hlm-select-trigger class="w-fit" [buttonId]="_pageSizeId">
           <hlm-select-value />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
@@ -125,6 +126,15 @@ export class HlmNumberedPagination {
    * Defaults to [10, 20, 50, 100]
    */
   public readonly pageSizes = input<number[]>([10, 20, 50, 100]);
+
+  /**
+   * Accessible name of the page size select (hand-edited: the upstream trigger shows only the
+   * number, so it had no name). Rendered as a visually hidden label.
+   */
+  public readonly pageSizeLabel = input<string>('Items per page');
+
+  private static _nextId = 0;
+  protected readonly _pageSizeId = `hlm-page-size-${HlmNumberedPagination._nextId++}`;
 
   protected readonly _pageSizesWithCurrent = computed(() => {
     const pageSizes = this.pageSizes();

@@ -1,8 +1,33 @@
-<hlm-sheet [side]="sheetSide()" [state]="isOpened()" (closed)="closeDrawer()">
+<!--
+  Edit mode takes over closing so unsaved edits are never discarded silently: the sheet's own
+  Esc / outside-click close is off (disableClose is read once, when it opens) and Esc and the X
+  below go through requestClose(). View mode keeps the sheet's default close behaviour.
+-->
+<hlm-sheet
+  [side]="sheetSide()"
+  [state]="isOpened()"
+  [disableClose]="!isView()"
+  (closed)="closeDrawer()"
+>
   <hlm-sheet-content
     *brnSheetContent
     class="flex w-full! flex-col gap-0 data-[side=bottom]:h-[88vh] data-[side=bottom]:rounded-t-3xl data-[side=right]:rounded-l-3xl data-[side=right]:sm:max-w-md! data-[side=right]:lg:max-w-120!"
+    [showCloseButton]="isView()"
+    (keydown.escape)="onEscape($event)"
   >
+    @if (!isView()) {
+      <button
+        type="button"
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        class="absolute end-4 top-4"
+        (click)="requestClose()"
+      >
+        <span class="sr-only">Close</span>
+        <ng-icon hlm size="sm" name="lucideX" />
+      </button>
+    }
     @if (sheetSide() === 'bottom') {
       <div class="bg-muted-foreground/30 mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full"></div>
     }

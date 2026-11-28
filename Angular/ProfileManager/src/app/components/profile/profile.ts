@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormRoot } from '@angular/forms/signals';
+import { firstValueFrom } from 'rxjs';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCheck,
@@ -24,6 +25,7 @@ import {
   lucidePhone,
   lucidePlus,
   lucideTrash2,
+  lucideX,
 } from '@ng-icons/lucide';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
 import { toast } from '@spartan-ng/brain/sonner';
@@ -32,6 +34,7 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
@@ -47,6 +50,7 @@ import { MobileUrlPipe } from '../../pipes/mobile-url.pipe';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { ProfilesService } from '../../services/profiles.service';
 import { ViewportService } from '../../services/viewport.service';
+import ConfirmDialog, { ConfirmDialogContext } from '../confirm-dialog/confirm-dialog';
 import { ProfileAvatar } from '../shared/profile-avatar/profile-avatar';
 import { ScoreRing } from '../shared/score-ring/score-ring';
 import { StatusMenu } from '../shared/status-menu/status-menu';
@@ -87,6 +91,7 @@ import { createProfileForm } from './profile-form';
       lucidePhone,
       lucideMessageCircle,
       lucidePencil,
+      lucideX,
     }),
   ],
 })
@@ -94,6 +99,7 @@ export class Profile {
   protected readonly profileService = inject(ProfilesService);
   private readonly viewport = inject(ViewportService);
   private readonly injector = inject(Injector);
+  private readonly dialogService = inject(HlmDialogService);
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
   readonly isView = computed(() => this.userActionType() === TOOLBAR_ACTIONS.view);
@@ -196,6 +202,84 @@ export class Profile {
 
   closeDrawer(): void {
     this.profileService.closeDrawer();
+  }
+
+  /** True in edit mode once a field differs from the stored profile or a typed note is pending. */
+  readonly hasUnsavedChanges = computed(() => {
+    const saved = this.profileResource.value();
+    if (this.isView() || !saved) {
+      return false;
+    }
+    if (this.shared.newComment().trim()) {
+      return true;
+    }
+    const current = this.shared.profileDetail();
+    const fields = [
+      'name',
+      'mobileNumber',
+      'matrimonyId',
+      'profileStatusId',
+      'zodiacSign',
+      'star',
+      'age',
+      'state',
+      'city',
+    ] as const;
+    if (fields.some((field) => (current[field] ?? null) !== (saved[field] ?? null))) {
+      return true;
+    }
+    // Notes are replaced as objects when added or deleted, so identity is enough.
+    const savedNotes = saved.comments ?? [];
+    return (
+      current.comments.length !== savedNotes.length ||
+      current.comments.some((note, index) => note !== savedNotes[index])
+    );
+  });
+
+  private discardPromptOpen = false;
+
+  /** Closes the drawer, first asking whether to throw away unsaved edits. */
+  async requestClose(): Promise<void> {
+    if (!this.hasUnsavedChanges()) {
+      this.closeDrawer();
+      return;
+    }
+    if (this.discardPromptOpen) {
+      return;
+    }
+    this.discardPromptOpen = true;
+    try {
+      const dialogRef = this.dialogService.open(ConfirmDialog, {
+        // Explicit id: the drawer is itself a Brain dialog, and an auto-generated id can collide
+        // with it ("Dialog with ID ... already exists"), which made this prompt silently fail.
+        id: 'discard-profile-changes',
+        context: {
+          title: 'Discard changes?',
+          description: 'Your edits to this profile have not been saved and will be lost.',
+          confirmLabel: 'Discard',
+          destructive: true,
+        } satisfies ConfirmDialogContext,
+        contentClass: 'sm:max-w-md',
+        showCloseButton: false,
+      });
+      if ((await firstValueFrom(dialogRef.closed$, { defaultValue: false })) === true) {
+        this.closeDrawer();
+      }
+    } finally {
+      this.discardPromptOpen = false;
+    }
+  }
+
+  /** Edit mode handles Esc itself (the sheet's own Esc close is off there, see profile.html). */
+  onEscape(event: Event): void {
+    if (this.isView()) {
+      return;
+    }
+    // Handled here: if the same keydown kept bubbling, the overlay dispatcher would hand it to the
+    // discard prompt we are about to open (now the topmost overlay) and dismiss it at once.
+    event.stopPropagation();
+    event.preventDefault();
+    void this.requestClose();
   }
 
   addComment(): void {

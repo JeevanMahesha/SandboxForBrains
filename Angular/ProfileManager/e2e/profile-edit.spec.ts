@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
 import { expect, openNotesTab, profileRows, test } from './support/fixtures';
 
@@ -112,5 +113,73 @@ test.describe('edit profile', () => {
     await dialog.locator('#matrimony').focus();
     await dialog.locator('#matrimony').press('Enter');
     await expect(dialog.locator('#name')).toBeFocused();
+  });
+});
+
+test.describe('closing the edit drawer', () => {
+  const openEdit = async (page: Page) => {
+    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    const drawer = page.getByRole('dialog', { name: 'Edit Profile' });
+    await expect(drawer.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
+    return drawer;
+  };
+  const discardPrompt = (page: Page) => page.getByRole('dialog', { name: 'Discard changes?' });
+
+  test('asks before discarding edits: Cancel keeps them, Discard drops them', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Close Me' })]);
+    await loginAsAdmin();
+
+    const drawer = await openEdit(page);
+    await drawer.locator('#name').fill('Changed Name');
+
+    // Esc must not silently throw the edit away.
+    await drawer.locator('#name').press('Escape');
+    await expect(discardPrompt(page)).toBeVisible();
+    await discardPrompt(page).getByRole('button', { name: 'Cancel' }).click();
+    await expect(discardPrompt(page)).toBeHidden();
+    await expect(drawer.locator('#name')).toHaveValue('Changed Name');
+
+    // Same for the corner X.
+    await drawer.getByRole('button', { name: 'Close' }).click();
+    await expect(discardPrompt(page)).toBeVisible();
+    await discardPrompt(page).getByRole('button', { name: 'Discard' }).click();
+    await expect(drawer.getByRole('heading', { name: 'Edit Profile' })).toBeHidden();
+
+    // Nothing was saved, and reopening starts from the stored profile.
+    await expect(profileRows(page).first()).toContainText('Close Me');
+    const reopened = await openEdit(page);
+    await expect(reopened.locator('#name')).toHaveValue('Close Me');
+  });
+
+  test('closes without asking when nothing was changed', async ({ page, loginAsAdmin }) => {
+    await seedProfiles([makeProfile(0)]);
+    await loginAsAdmin();
+
+    const drawer = await openEdit(page);
+    await drawer.locator('#name').press('Escape');
+    await expect(drawer.getByRole('heading', { name: 'Edit Profile' })).toBeHidden();
+    await expect(discardPrompt(page)).toHaveCount(0);
+
+    const reopened = await openEdit(page);
+    await reopened.getByRole('button', { name: 'Close' }).click();
+    await expect(reopened.getByRole('heading', { name: 'Edit Profile' })).toBeHidden();
+    await expect(discardPrompt(page)).toHaveCount(0);
+  });
+
+  test('an unsaved note counts as a change', async ({ page, loginAsAdmin }) => {
+    await seedProfiles([makeProfile(0)]);
+    await loginAsAdmin();
+
+    const drawer = await openEdit(page);
+    await openNotesTab(page);
+    await drawer.locator('#comment').fill('A note nobody saved');
+    await drawer.getByRole('button', { name: 'Add note' }).click();
+    await expect(drawer.getByText('A note nobody saved')).toBeVisible();
+
+    await drawer.locator('#comment').press('Escape');
+    await expect(discardPrompt(page)).toBeVisible();
   });
 });

@@ -229,45 +229,49 @@ export const PROFILE_STATUS = {
  * it can find as literal strings in the source.
  */
 export const PROFILE_STATUS_STYLES = {
-  NEW: { badge: 'bg-sky-100! text-sky-700!', dot: 'bg-sky-500', border: 'border-l-sky-400' },
+  NEW: {
+    badge: 'bg-sky-100! text-sky-700!',
+    dot: 'status-dot bg-sky-500',
+    border: 'border-l-sky-400',
+  },
   REJECTED: {
     badge: 'bg-rose-100! text-rose-700!',
-    dot: 'bg-rose-500',
+    dot: 'status-dot bg-rose-500',
     border: 'border-l-rose-400',
   },
   CONTACTED: {
     badge: 'bg-indigo-100! text-indigo-700!',
-    dot: 'bg-indigo-500',
+    dot: 'status-dot bg-indigo-500',
     border: 'border-l-indigo-400',
   },
   MEETING_SCHEDULED: {
     badge: 'bg-lime-100! text-lime-700!',
-    dot: 'bg-lime-500',
+    dot: 'status-dot bg-lime-500',
     border: 'border-l-lime-400',
   },
   ACCEPTED: {
     badge: 'bg-emerald-100! text-emerald-700!',
-    dot: 'bg-emerald-500',
+    dot: 'status-dot bg-emerald-500',
     border: 'border-l-emerald-400',
   },
   ON_HOLD: {
     badge: 'bg-amber-100! text-amber-700!',
-    dot: 'bg-amber-500',
+    dot: 'status-dot bg-amber-500',
     border: 'border-l-amber-400',
   },
   PROFILE_SHARED: {
     badge: 'bg-cyan-100! text-cyan-700!',
-    dot: 'bg-cyan-500',
+    dot: 'status-dot bg-cyan-500',
     border: 'border-l-cyan-400',
   },
   SHARE_BY_RM: {
     badge: 'bg-orange-100! text-orange-700!',
-    dot: 'bg-orange-500',
+    dot: 'status-dot bg-orange-500',
     border: 'border-l-orange-400',
   },
   NEED_TO_CONTACT: {
     badge: 'bg-slate-200! text-slate-700!',
-    dot: 'bg-slate-500',
+    dot: 'status-dot bg-slate-500',
     border: 'border-l-slate-400',
   },
 } as const;

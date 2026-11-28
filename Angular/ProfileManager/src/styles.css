@@ -175,6 +175,18 @@ body::before {
   }
 }
 
+/*
+ * Windows High Contrast (forced colors) replaces every background-color with the page colour, so
+ * the coloured status dots and the card's status edge would vanish. They sit next to the status
+ * name, so the colour is only a visual aid: keep them visible as a solid mark in the text colour.
+ */
+@media (forced-colors: active) {
+  .status-dot {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+}
+
 @media (prefers-reduced-transparency: reduce) {
   :root {
     --card: var(--popover);

@@ -58,17 +58,19 @@
           </span>
         </div>
       }
-      <!-- Audit line: exact timestamps are available on hover. -->
+      <!-- Audit line: the exact time is a hover title and also screen-reader-only text. -->
       @if (profileStatusLabel()) {
         @if (profileResource.value(); as profile) {
           <p hlmSheetDescription class="mt-1 text-xs">
             Created
             <span [title]="profile.createdAt | date: DATE_TIME_FORMAT">
               {{ profile.createdAt | date: DATE_FORMAT }}
+              <span class="sr-only">({{ profile.createdAt | date: DATE_TIME_FORMAT }})</span>
             </span>
             · Updated
             <span [title]="profile.updatedAt | date: DATE_TIME_FORMAT">
               {{ profile.updatedAt | timeAgo: DATE_FORMAT }}
+              <span class="sr-only">({{ profile.updatedAt | date: DATE_TIME_FORMAT }})</span>
             </span>
           </p>
         }

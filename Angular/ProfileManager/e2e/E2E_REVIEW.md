@@ -2,9 +2,15 @@
 
 Reviewed: `e2e/*.spec.ts`, `e2e/rules/firestore.rules.spec.ts`, `e2e/support/*.ts`, `playwright.config.ts`.
 
-Current state: **13 tests**, all happy-path. Good foundations (locator discipline, no
-arbitrary sleeps, real security-rules tests), but coverage is thin and a few patterns work
-against "easy to update when something changes."
+**Historical note.** This file is the log of the first review of the suite, written when it had
+13 happy-path tests. Every item below has since been done (one minor style note excepted), and
+the suite has grown a lot: `pnpm exec playwright test --list` prints the current count (229
+tests in 42 files when this note was written). How the suite runs is documented in `CLAUDE.md`
+("Testing"), so the numbers are deliberately not repeated here.
+
+At the time of the review: good foundations (locator discipline, no arbitrary sleeps, real
+security-rules tests), but thin coverage and a few patterns that worked against "easy to update
+when something changes."
 
 Checkboxes are for tracking progress as we go through these one by one — not a reflection of
 difficulty or priority order (see "Suggested order" at the bottom).

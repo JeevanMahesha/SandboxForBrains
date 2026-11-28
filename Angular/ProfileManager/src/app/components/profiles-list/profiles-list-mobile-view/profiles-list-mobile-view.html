@@ -21,13 +21,16 @@
     [attr.aria-busy]="isLoading()"
   >
     @for (profile of pagedData(); track profile.id) {
+      <!--
+        The card is not itself a button (a button wrapping buttons and links is invalid). The View
+        button below is the one control that opens the profile; its ::after stretches over the whole
+        card so a tap anywhere opens it, while the other controls sit above it with z-10. The
+        Button's pressed-state nudge (translate-y-px) is cancelled on it: a transform would make
+        the button the ::after's containing block, shrinking the overlay on press and losing the tap.
+      -->
       <div
-        role="button"
         data-testid="profile-card"
-        tabindex="0"
-        class="glass focus-visible:ring-ring/50 relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-2xl p-4 outline-none focus-visible:ring-[3px]"
-        (click)="userActionEvent('view', profile.id)"
-        (keydown.enter)="userActionEvent('view', profile.id)"
+        class="glass has-[[data-card-view]:focus-visible]:ring-ring/50 relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-2xl p-4 has-[[data-card-view]:focus-visible]:ring-[3px]"
       >
         <span aria-hidden="true" [class]="profile | profileStatusEdge"></span>
 
@@ -40,11 +43,9 @@
             </div>
             <button
               type="button"
-              class="text-muted-foreground relative inline-flex max-w-full items-center gap-1 text-xs leading-4 after:absolute after:-inset-x-2 after:-inset-y-3.5 after:content-['']"
+              class="text-muted-foreground relative z-10 inline-flex max-w-full items-center gap-1 text-xs leading-4 after:absolute after:-inset-x-2 after:-inset-y-3.5 after:content-['']"
               aria-label="Copy matrimony ID"
-              (click)="
-                $event.stopPropagation(); copyToClipboard(profile.matrimonyId, 'Matrimony ID')
-              "
+              (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
             >
               {{ profile.matrimonyId }}
               <ng-icon hlm name="lucideCopy" size="xs" />
@@ -56,10 +57,10 @@
               type="button"
               hlmBtn
               variant="ghost"
-              class="size-11"
+              class="size-11 after:absolute after:inset-0 after:content-[''] active:not-aria-[haspopup]:[translate:none]!"
+              data-card-view
               aria-label="View"
-              (click)="$event.stopPropagation(); userActionEvent('view', profile.id)"
-              (keydown.enter)="$event.stopPropagation()"
+              (click)="userActionEvent('view', profile.id)"
             >
               <ng-icon hlm name="lucideEye" size="sm" />
             </button>
@@ -67,11 +68,9 @@
               type="button"
               hlmBtn
               variant="ghost"
-              class="size-11"
+              class="relative z-10 size-11"
               aria-label="More actions"
               [hlmDropdownMenuTrigger]="profileMenu"
-              (click)="$event.stopPropagation()"
-              (keydown.enter)="$event.stopPropagation()"
             >
               <ng-icon hlm name="lucideMoreVertical" size="sm" />
             </button>
@@ -102,7 +101,7 @@
         <!-- Status, zodiac, city -->
         <div class="flex h-6 items-center gap-3 text-sm">
           <app-status-menu
-            class="inline-flex h-6 shrink-0 items-center"
+            class="relative z-10 inline-flex h-6 shrink-0 items-center"
             [profileId]="`${profile.id}`"
             [statusId]="profile.profileStatusId"
           />
@@ -127,7 +126,7 @@
         <!-- Mobile number + contact actions -->
         <div class="bg-muted/40 flex h-10 items-center justify-between gap-2 rounded-lg px-3">
           <span class="min-w-0 truncate text-sm">{{ profile.mobileNumber }}</span>
-          <div class="-mr-2 flex shrink-0 items-center">
+          <div class="relative z-10 -mr-2 flex shrink-0 items-center">
             <button
               type="button"
               hlmBtn
@@ -135,9 +134,7 @@
               size="icon-sm"
               class="size-11"
               aria-label="Copy mobile number"
-              (click)="
-                $event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')
-              "
+              (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
             >
               <ng-icon hlm name="lucideCopy" size="sm" />
             </button>
@@ -148,7 +145,6 @@
               class="size-11"
               aria-label="Call"
               [href]="profile.mobileNumber | mobileUrl: 'tel'"
-              (click)="$event.stopPropagation()"
             >
               <ng-icon hlm name="lucidePhone" size="sm" />
             </a>
@@ -161,7 +157,6 @@
               rel="noopener noreferrer"
               aria-label="WhatsApp"
               [href]="profile.mobileNumber | mobileUrl: 'whatsapp'"
-              (click)="$event.stopPropagation()"
             >
               <ng-icon hlm name="lucideMessageCircle" size="sm" />
             </a>

@@ -184,6 +184,76 @@ test.describe('mobile tap targets', () => {
   });
 });
 
+test.describe('phone card keyboard and semantics', () => {
+  const viewHeading = (page: Page) =>
+    page.getByRole('dialog').getByRole('heading', { name: 'View Profile' });
+
+  test('the card is not a button wrapping other buttons', async ({ page, loginAsAdmin }) => {
+    await seedProfiles([makeProfile(0, { name: 'Semantics Profile' })]);
+    await loginAsAdmin();
+    const card = page.getByTestId('profile-card').first();
+    await expect(card).toBeVisible();
+
+    // A role=button container with buttons and links inside is invalid nested-interactive markup.
+    await expect(card).not.toHaveAttribute('role', 'button');
+    await expect(card).not.toHaveAttribute('tabindex', /.*/);
+  });
+
+  test('Enter on the controls inside the card does not open the profile', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Keyboard Profile' })]);
+    await loginAsAdmin();
+    const card = page.getByTestId('profile-card').first();
+    await expect(card).toBeVisible();
+
+    // Dispatched keydowns (not real key presses) so the WhatsApp link does not open a new tab.
+    const controls: [string, Locator][] = [
+      ['Copy matrimony ID', card.getByRole('button', { name: 'Copy matrimony ID' })],
+      ['Copy mobile number', card.getByRole('button', { name: 'Copy mobile number' })],
+      ['Call', card.getByRole('link', { name: 'Call' })],
+      ['WhatsApp', card.getByRole('link', { name: 'WhatsApp' })],
+      ['More actions', card.getByRole('button', { name: 'More actions' })],
+    ];
+    for (const [name, control] of controls) {
+      await control.dispatchEvent('keydown', { key: 'Enter' });
+      await expect(page.getByRole('dialog'), `Enter on ${name}`).toHaveCount(0);
+    }
+  });
+
+  test('the View control opens the profile with Enter and with Space', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'View Key Profile' })]);
+    await loginAsAdmin();
+    const card = page.getByTestId('profile-card').first();
+    const view = card.getByRole('button', { name: 'View' });
+
+    for (const key of ['Enter', 'Space']) {
+      await view.focus();
+      await page.keyboard.press(key);
+      await expect(viewHeading(page), `${key} opens View`).toBeVisible();
+      await page.getByRole('dialog').getByRole('button', { name: 'Close' }).first().click();
+      await expect(viewHeading(page)).toBeHidden();
+    }
+  });
+
+  test('tapping the card body, away from its controls, still opens the profile', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Body Tap Profile' })]);
+    await loginAsAdmin();
+    const card = page.getByTestId('profile-card').first();
+
+    // The padding at the card's top-left corner holds no control.
+    await card.click({ position: { x: 8, y: 8 } });
+    await expect(viewHeading(page)).toBeVisible();
+  });
+});
+
 test.describe('phone filters toolbar', () => {
   const search = (page: Page) => page.getByPlaceholder('Search by full ID or phone');
   const filtersButton = (page: Page) =>

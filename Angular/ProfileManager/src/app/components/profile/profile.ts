@@ -187,11 +187,6 @@ export class Profile {
         this.closeDrawer();
         this.profileService.profiles.reload();
       }
-      untracked(() => {
-        if (this.userActionType() === TOOLBAR_ACTIONS.view) {
-          this.profileDetailForm().disabled();
-        }
-      });
     });
   }
 

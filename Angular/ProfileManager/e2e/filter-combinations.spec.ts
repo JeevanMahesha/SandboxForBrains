@@ -95,11 +95,20 @@ test.describe('combined filters', () => {
     await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
     await expect(profileRows(page)).toHaveCount(2);
 
-    await page.getByRole('combobox').filter({ hasText: 'Select Star' }).click();
+    const starMatch = page.getByRole('combobox', { name: 'Star match score' });
+    await expect(starMatch).toHaveText('Star match score');
+    await starMatch.click();
     await page.getByRole('option', { name: '6', exact: true }).click();
 
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Accepted Six');
     await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
+
+    // "Any score" clears only this filter: the status filter stays active.
+    await starMatch.click();
+    await page.getByRole('option', { name: 'Any score', exact: true }).click();
+    await expect(profileRows(page)).toHaveCount(2);
+    await expect(statusFilter(page)).toHaveText(PROFILE_STATUS.ACCEPTED);
+    await expect(starMatch).toHaveText('Star match score');
   });
 });

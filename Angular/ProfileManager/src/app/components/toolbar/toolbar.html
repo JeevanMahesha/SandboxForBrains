@@ -270,7 +270,10 @@
 
       <div class="flex flex-col gap-2">
         <span class="text-muted-foreground text-xs font-semibold uppercase">Star Match Score</span>
-        <app-filter-selects [starMatchScore]="filterForm.starMatchScore" />
+        <app-filter-selects
+          triggerId="star_match_filter_sheet"
+          [starMatchScore]="filterForm.starMatchScore"
+        />
       </div>
     </div>
 

@@ -62,6 +62,39 @@ test.describe('filtering and pagination', () => {
       await expect(row).toContainText(PROFILE_STATUS.ACCEPTED);
     }
   });
+
+  test('a slow response for an earlier filter does not overwrite the newer filter results', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(profilesTotal(page)).toHaveText(/^14 profiles$/);
+
+    // Hold back every Firestore call made for the "New" filter so its response arrives after the
+    // user has already moved on to "Accepted".
+    const isNewFilter = (body: string | null) => (body ?? '').includes('"NEW"');
+    await page.route(/:runQuery|:runAggregationQuery/, async (route) => {
+      if (isNewFilter(route.request().postData())) {
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+      }
+      await route.continue();
+    });
+    const slowCountDone = page.waitForResponse(
+      (response) =>
+        /:runAggregationQuery/.test(response.url()) && isNewFilter(response.request().postData()),
+    );
+
+    await selectStatusFilter(page, PROFILE_STATUS.NEW);
+    await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
+    await expect(profilesTotal(page)).toHaveText(/^6 profiles$/);
+    await expect(profileRows(page)).toHaveCount(6);
+
+    // Let the superseded "New" count land, then give the app a moment to (wrongly) apply it.
+    await slowCountDone;
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 300)));
+    await expect(profilesTotal(page)).toHaveText(/^6 profiles$/);
+    await expect(profileRows(page)).toHaveCount(6);
+  });
 });
 
 test.describe('profile list ordering', () => {

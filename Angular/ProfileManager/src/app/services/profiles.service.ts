@@ -7,6 +7,7 @@ import {
   signal,
   untracked,
   effect,
+  linkedSignal,
 } from '@angular/core';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { toast } from '@spartan-ng/brain/sonner';
@@ -83,9 +84,17 @@ export class ProfilesService {
     this.filterOptions.set({ ...ProfilesService.DEFAULT_FILTER_OPTIONS });
   }
 
-  readonly pageState = signal<{ pageIndex: number; pageSize: number }>({
-    pageIndex: 0,
-    pageSize: 12,
+  /**
+   * Back to the first page whenever the filters change. A linkedSignal makes that part of the same
+   * update as the filter change, so the resource never sees (new filter, old page) and fires a
+   * throwaway load in between. Still writable: the pager and refreshAfterDelete set it directly.
+   */
+  readonly pageState = linkedSignal<SortOption, { pageIndex: number; pageSize: number }>({
+    source: this.filterOptions,
+    computation: (_filter, previous) => ({
+      pageIndex: 0,
+      pageSize: previous?.value.pageSize ?? 12,
+    }),
   });
 
   readonly totalCount = signal<number>(0);
@@ -100,12 +109,6 @@ export class ProfilesService {
   }>({ isOpen: 'closed', actionType: null, selectedProfileId: null });
 
   constructor() {
-    // Reset to page 0 whenever the non-pagination filter options change.
-    effect(() => {
-      this.filterOptions();
-      untracked(() => this.pageState.update((s) => ({ ...s, pageIndex: 0 })));
-    });
-
     // This service outlives the session, so drop everything tied to the signed-in user (filters,
     // page, cursors, cached total, open drawer) as soon as they are signed out. Otherwise the
     // next login starts from the previous user's filters and a stale total.
@@ -134,22 +137,31 @@ export class ProfilesService {
       this.authService.isAuthenticated()
         ? { filter: this.filterOptions(), page: this.pageState() }
         : undefined,
-    loader: async ({ params }) => {
+    loader: async ({ params, abortSignal }) => {
       const { filter, page } = params;
       const filterKey = this.buildFilterKey(filter);
+      const filterChanged = filterKey !== this.lastFilterKey;
 
-      if (filterKey !== this.lastFilterKey) {
-        this.cursorCache.clear();
-        this.totalCount.set(await this.getProfilesCount(filter));
-        // Recorded only once the count succeeded, so a failed count is retried by the next load
-        // (and surfaces as an error) instead of being skipped with a stale total.
-        this.lastFilterKey = filterKey;
-      }
+      // Work on private copies of the shared state. This load may be superseded (a newer filter or
+      // page) while its requests are in flight; publishing straight into the service would let a
+      // slow, stale response overwrite the newer one's total and page cursors.
+      const cursors = filterChanged
+        ? new Map<number, QueryDocumentSnapshot | null>()
+        : new Map(this.cursorCache);
+      const total = filterChanged ? await this.getProfilesCount(filter) : this.totalCount();
 
       const profiles =
         filter.searchQuery.trim() !== ''
           ? await this.getFilteredProfilesBySearch(filter)
-          : await this.getProfilePage(filter, page.pageIndex, page.pageSize);
+          : await this.getProfilePage(filter, page.pageIndex, page.pageSize, cursors);
+
+      // Published only for the current load and only after everything succeeded, so a failed
+      // count or page is retried by the next load instead of leaving a stale total behind.
+      if (!abortSignal.aborted) {
+        this.cursorCache = cursors;
+        this.totalCount.set(total);
+        this.lastFilterKey = filterKey;
+      }
 
       return profiles.map((profile) => this.withStatusDisplay(profile));
     },
@@ -207,13 +219,14 @@ export class ProfilesService {
     filter: SortOption,
     pageIndex: number,
     pageSize: number,
+    cursors: Map<number, QueryDocumentSnapshot | null>,
   ): Promise<ProfileDetail[]> {
-    const cursor = this.cursorCache.get(pageIndex);
+    const cursor = cursors.get(pageIndex);
 
     if (pageIndex > 0 && cursor === undefined) {
       // Cache miss — user jumped to an unvisited page.
       // Fetch all docs up to the target page and build the full cursor chain.
-      return this.fetchAndCacheUpToPage(filter, pageIndex, pageSize);
+      return this.fetchAndCacheUpToPage(filter, pageIndex, pageSize, cursors);
     }
 
     const baseQuery = this.buildBaseQuery(filter);
@@ -224,7 +237,7 @@ export class ProfilesService {
     const snapshot = await getDocs(pagedQuery);
     const lastDoc = snapshot.docs[snapshot.docs.length - 1] ?? null;
     if (lastDoc) {
-      this.cursorCache.set(pageIndex + 1, lastDoc);
+      cursors.set(pageIndex + 1, lastDoc);
     }
 
     return this.sortWithRejectedLast(snapshot.docs.map((d) => this.mapDocToProfile(d)));
@@ -238,6 +251,7 @@ export class ProfilesService {
     filter: SortOption,
     targetPageIndex: number,
     pageSize: number,
+    cursors: Map<number, QueryDocumentSnapshot | null>,
   ): Promise<ProfileDetail[]> {
     const totalToFetch = pageSize * (targetPageIndex + 1);
     const snapshot = await getDocs(query(this.buildBaseQuery(filter), limit(totalToFetch)));
@@ -247,7 +261,7 @@ export class ProfilesService {
     for (let i = 0; i <= targetPageIndex; i++) {
       const lastDocOfPage = docs[Math.min((i + 1) * pageSize, docs.length) - 1];
       if (lastDocOfPage) {
-        this.cursorCache.set(i + 1, lastDocOfPage);
+        cursors.set(i + 1, lastDocOfPage);
       }
     }
 

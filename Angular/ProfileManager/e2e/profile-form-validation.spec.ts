@@ -97,6 +97,26 @@ test.describe('profile form validation', () => {
     await expect(profileRows(page)).toHaveCount(0);
   });
 
+  test('rejects mobile input that has no digits at all', async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+
+    await page.locator('#name').fill('No Digits Mobile Test');
+    await page.locator('#matrimony').fill('M-No-Digits');
+    await pickOption(page, 'hlm-select#profile_status', PROFILE_STATUS.NEW);
+
+    const mobileError = page.locator('#mobile-error');
+    for (const junk of ['N/A', 'abc', '-', '   ']) {
+      await page.locator('#mobile').fill(junk);
+      await page.keyboard.press('Tab');
+      await expect(mobileError, `"${junk}" must be rejected`).toHaveText(
+        'Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)',
+      );
+      await wizardContinue(page);
+      await expect(page.locator('#mobile')).toBeVisible(); // still on step 1
+    }
+  });
+
   test('rejects an invalid mobile number with its own message, then accepts the fix', async ({
     page,
     loginAsAdmin,

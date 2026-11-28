@@ -20,7 +20,6 @@ import {
 import { Comment, ProfileDetail } from '../../models/profile.model';
 import {
   CANONICAL_MOBILE_NUMBER_PATTERN,
-  mobileNumberDigits,
   toCanonicalMobileNumber,
 } from '../../utils/mobile-number.util';
 
@@ -73,10 +72,11 @@ export function createProfileForm(options: ProfileFormOptions) {
       required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
       min(profileForm.age, 18, { message: 'Age must be greater than 18' });
       // Accept any spacing / prefix the user types ("98 76 5 43 21 0", "+91 98765 43210", "0987...").
-      // Empty input is left to the required() rule above.
+      // A truly empty field is left to the required() rule above; anything else (including
+      // input with no digits such as "N/A" or spaces) must be a valid number.
       validate(profileForm.mobileNumber, ({ value }) => {
         const raw = value();
-        return !mobileNumberDigits(raw) || toCanonicalMobileNumber(raw)
+        return !raw || toCanonicalMobileNumber(raw)
           ? null
           : patternError(CANONICAL_MOBILE_NUMBER_PATTERN, {
               message: 'Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)',

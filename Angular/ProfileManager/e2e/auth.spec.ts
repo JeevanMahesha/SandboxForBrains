@@ -28,6 +28,33 @@ test.describe('authentication', () => {
     await expect(page).toHaveURL(/\/profiles\/new$/);
   });
 
+  test('keeps the query string and hash of the page the visitor asked for', async ({ page }) => {
+    await page.goto('/profiles/new?source=email#top');
+    await expect(page).toHaveURL(/\/login\?returnUrl=/);
+    expect(new URL(page.url()).searchParams.get('returnUrl')).toBe(
+      '/profiles/new?source=email#top',
+    );
+
+    await submitLogin(page);
+
+    await expect(page).toHaveURL(/\/profiles\/new\?source=email#top$/);
+    await expect(page.getByRole('heading', { name: 'Add New Profile' })).toBeVisible();
+  });
+
+  test('bounces a signed-in user who opens the login page back to the list', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(profilesTotal(page)).toBeVisible();
+
+    await page.goto('/login');
+
+    await expect(page).toHaveURL(/127\.0\.0\.1:4300\/$/);
+    await expect(profilesTotal(page)).toBeVisible();
+    await expect(page.locator('#login-email')).toHaveCount(0);
+  });
+
   test('ignores a returnUrl that points outside the app', async ({ page }) => {
     for (const external of ['https://evil.example/phish', '//evil.example', '/\\evil.example']) {
       await page.goto(`/login?returnUrl=${encodeURIComponent(external)}`);

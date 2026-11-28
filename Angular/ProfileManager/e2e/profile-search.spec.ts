@@ -189,37 +189,152 @@ test.describe('toolbar search', () => {
     await expect(profileRows(page).first()).toContainText('Retry Profile');
   });
 
-  test('Enter searches immediately, without waiting for the debounce', async ({
-    page,
-    loginAsAdmin,
-  }) => {
-    await seedProfiles([
-      makeProfile(0, { name: 'Enter Target', matrimonyId: 'ENTER-001' }),
-      makeProfile(1, { name: 'Enter Other', matrimonyId: 'ENTER-002' }),
-    ]);
-    await loginAsAdmin();
-    await expect(profileRows(page)).toHaveCount(2);
+  test.describe('debounce (fake clock)', () => {
+    // SEARCH_DEBOUNCE_MS in toolbar.ts.
+    const DEBOUNCE_MS = 350;
 
-    await searchBox(page).fill('ENTER-001');
-    // Still inside the 350ms debounce window: nothing has been searched yet.
-    await page.waitForTimeout(80);
-    await expect(profileRows(page)).toHaveCount(2, { timeout: 100 });
-    await searchBox(page).press('Enter');
-    await expect(profileRows(page)).toHaveCount(1, { timeout: 250 });
-    await expect(profileRows(page).first()).toContainText('Enter Target');
-  });
+    /** Counts the Firestore `:runQuery` calls the page sends. One search is one per field. */
+    const trackQueries = (page: Page) => {
+      let count = 0;
+      page.on('request', (request) => {
+        if (request.method() === 'POST' && /:runQuery/.test(request.url())) count++;
+      });
+      return { count: () => count };
+    };
 
-  test('clearing the box restores the list immediately', async ({ page, loginAsAdmin }) => {
-    await seedProfiles([
-      makeProfile(0, { matrimonyId: 'CLEAR-001' }),
-      makeProfile(1, { matrimonyId: 'CLEAR-002' }),
-    ]);
-    await loginAsAdmin();
-    await searchBox(page).fill('CLEAR-001');
-    await searchBox(page).press('Enter');
-    await expect(profileRows(page)).toHaveCount(1);
-    await searchBox(page).fill('');
-    await expect(profileRows(page)).toHaveCount(2, { timeout: 250 });
+    /**
+     * Takes over the page's timers after login (login and the Firebase token run on real time) and
+     * freezes them, so only `clock.runFor` moves time. Angular's zoneless scheduler also runs on
+     * timers, so anything that has to render needs the clock advanced after it.
+     */
+    const freezeClock = async (page: Page) => {
+      await page.clock.install();
+      await page.clock.pauseAt(new Date(Date.now() + 10_000));
+    };
+
+    /** Advances the clock in small steps until `done()`; returns how many ms that took. */
+    const advanceUntil = async (page: Page, done: () => boolean, stepMs = 10, maxSteps = 30) => {
+      let elapsed = 0;
+      for (let step = 0; step < maxSteps && !done(); step++) {
+        await page.clock.runFor(stepMs);
+        elapsed += stepMs;
+        // Let the request this step started leave the page before it is counted.
+        await page.waitForLoadState('networkidle');
+      }
+      return elapsed;
+    };
+
+    /** Advances the clock until the list has `rows` rows (rendering runs on the fake timers). */
+    const expectRows = (page: Page, rows: number) =>
+      expect
+        .poll(async () => {
+          await page.clock.runFor(25);
+          return profileRows(page).count();
+        })
+        .toBe(rows);
+
+    const seedAndLogin = async (page: Page, loginAsAdmin: () => Promise<void>) => {
+      await seedProfiles([
+        makeProfile(0, { name: 'Enter Target', matrimonyId: 'ENTER-001' }),
+        makeProfile(1, { name: 'Enter Other', matrimonyId: 'ENTER-002' }),
+      ]);
+      await loginAsAdmin();
+      await expect(profileRows(page)).toHaveCount(2);
+      await page.waitForLoadState('networkidle');
+    };
+
+    test('sends nothing before 350 ms after the last keystroke, then exactly one search', async ({
+      page,
+      loginAsAdmin,
+    }) => {
+      await seedAndLogin(page, loginAsAdmin);
+      await freezeClock(page);
+      const queries = trackQueries(page);
+
+      await searchBox(page).fill('ENTER-001');
+      await page.clock.runFor(DEBOUNCE_MS - 50);
+      expect(queries.count()).toBe(0);
+
+      // Crossing the 350 ms mark runs the search once: one query per searched field (ID, phone).
+      await page.clock.runFor(100);
+      await expect.poll(() => queries.count()).toBe(2);
+      await expectRows(page, 1);
+      await expect(profileRows(page).first()).toContainText('Enter Target');
+
+      // Nothing else follows (no second, delayed search).
+      await page.clock.runFor(2 * DEBOUNCE_MS);
+      await page.waitForLoadState('networkidle');
+      expect(queries.count()).toBe(2);
+    });
+
+    test('typing again inside the window restarts the 350 ms wait', async ({
+      page,
+      loginAsAdmin,
+    }) => {
+      await seedAndLogin(page, loginAsAdmin);
+      await freezeClock(page);
+      const queries = trackQueries(page);
+
+      await searchBox(page).fill('ENTER-00');
+      await page.clock.runFor(DEBOUNCE_MS - 50);
+      await searchBox(page).fill('ENTER-001');
+      // 600 ms after the first keystroke, but only 300 ms after the last one.
+      await page.clock.runFor(DEBOUNCE_MS - 50);
+      expect(queries.count()).toBe(0);
+
+      await page.clock.runFor(100);
+      await expect.poll(() => queries.count()).toBe(2);
+      await expectRows(page, 1);
+      // The stale first value never got a search of its own.
+      await page.clock.runFor(2 * DEBOUNCE_MS);
+      await page.waitForLoadState('networkidle');
+      expect(queries.count()).toBe(2);
+    });
+
+    test('Enter searches immediately, without waiting for the debounce', async ({
+      page,
+      loginAsAdmin,
+    }) => {
+      await seedAndLogin(page, loginAsAdmin);
+      await freezeClock(page);
+      const queries = trackQueries(page);
+
+      await searchBox(page).fill('ENTER-001');
+      await page.clock.runFor(80);
+      expect(queries.count()).toBe(0);
+
+      await searchBox(page).press('Enter');
+      const elapsed = await advanceUntil(page, () => queries.count() >= 2);
+      expect(queries.count()).toBe(2);
+      // Far below the debounce: it was Enter that searched, not the timer.
+      expect(80 + elapsed).toBeLessThan(DEBOUNCE_MS);
+      await expectRows(page, 1);
+      await expect(profileRows(page).first()).toContainText('Enter Target');
+
+      // The pending debounce does not search a second time when it finally runs.
+      await page.clock.runFor(2 * DEBOUNCE_MS);
+      await page.waitForLoadState('networkidle');
+      expect(queries.count()).toBe(2);
+    });
+
+    test('clearing the box restores the list immediately, not after the debounce', async ({
+      page,
+      loginAsAdmin,
+    }) => {
+      await seedAndLogin(page, loginAsAdmin);
+      await searchBox(page).fill('ENTER-001');
+      await searchBox(page).press('Enter');
+      await expect(profileRows(page)).toHaveCount(1);
+      await page.waitForLoadState('networkidle');
+
+      await freezeClock(page);
+      const queries = trackQueries(page);
+      await searchBox(page).fill('');
+      const elapsed = await advanceUntil(page, () => queries.count() > 0);
+      expect(queries.count()).toBeGreaterThan(0);
+      expect(elapsed).toBeLessThan(DEBOUNCE_MS);
+      await expectRows(page, 2);
+    });
   });
 
   test('shows a spinner inside the search box while the search query is loading', async ({

@@ -79,7 +79,7 @@ test.describe('profile form validation', () => {
     // Age has a second validator (min 18) beyond required: below the minimum surfaces a
     // different message than "required", and it clears live as soon as the value is fixed.
     await page.locator('#age').fill('10');
-    await expect(ageError).toHaveText('Age must be greater than 18');
+    await expect(ageError).toHaveText('Age must be at least 18');
 
     await page.locator('#age').fill('27');
     await expect(ageError).toHaveCount(0);

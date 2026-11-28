@@ -70,7 +70,7 @@ export function createProfileForm(options: ProfileFormOptions) {
       required(profileForm.city, { message: 'City is required' });
       required(profileForm.profileStatusId, { message: 'Profile status is required' });
       required(profileForm.matrimonyId, { message: 'Matrimony ID is required' });
-      min(profileForm.age, 18, { message: 'Age must be greater than 18' });
+      min(profileForm.age, 18, { message: 'Age must be at least 18' });
       // Accept any spacing / prefix the user types ("98 76 5 43 21 0", "+91 98765 43210", "0987...").
       // A truly empty field is left to the required() rule above; anything else (including
       // input with no digits such as "N/A" or spaces) must be a valid number.

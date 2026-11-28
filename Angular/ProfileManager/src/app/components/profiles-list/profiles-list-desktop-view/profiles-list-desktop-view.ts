@@ -37,7 +37,7 @@ import { ProfileAvatar } from '../../shared/profile-avatar/profile-avatar';
 import { StatusMenu } from '../../shared/status-menu/status-menu';
 import { ScoreRing } from '../../shared/score-ring/score-ring';
 import { ProfileStatusEdgePipe } from '../profile-status-edge.pipe';
-import { ProfilesService } from '../../../services/profiles.service';
+import { ProfileActionsService } from '../../../services/profile-actions.service';
 
 @Component({
   selector: 'app-profiles-list-desktop-view',
@@ -83,7 +83,7 @@ import { ProfilesService } from '../../../services/profiles.service';
   ],
 })
 export class ProfilesListDesktopView {
-  private profileService = inject(ProfilesService);
+  private profileActions = inject(ProfileActionsService);
   readonly pagedData = input.required<ProfileDetail[]>();
   readonly isLoading = input.required<boolean>();
   /** A failed load is not an empty list: the parent shows the error, so no empty state here. */
@@ -91,13 +91,13 @@ export class ProfilesListDesktopView {
   readonly skeletonRows = Array.from({ length: 6 });
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {
-    this.profileService.userActionEvent(
+    this.profileActions.userActionEvent(
       userActionType,
       profileId != null ? String(profileId) : null,
     );
   }
 
   copyToClipboard(value: string | null | undefined, label: string): void {
-    this.profileService.copyToClipboard(value, label);
+    this.profileActions.copyToClipboard(value, label);
   }
 }

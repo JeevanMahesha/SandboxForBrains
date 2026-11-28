@@ -256,7 +256,7 @@
           hlmBtn
           class="flex-1"
           (click)="
-            profileService.userActionEvent('edit', profileService.drawerState().selectedProfileId)
+            profileService.openDrawer('edit', profileService.drawerState().selectedProfileId)
           "
         >
           <ng-icon hlm name="lucidePencil" size="sm" />

@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormRoot } from '@angular/forms/signals';
-import { firstValueFrom } from 'rxjs';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideCheck,
@@ -34,7 +33,6 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmInput } from '@spartan-ng/helm/input';
-import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
@@ -48,9 +46,10 @@ import { TOOLBAR_ACTIONS } from '../../constant/toolbar.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
 import { MobileUrlPipe } from '../../pipes/mobile-url.pipe';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { ConfirmService } from '../../services/confirm.service';
+import { ProfileActionsService } from '../../services/profile-actions.service';
 import { ProfilesService } from '../../services/profiles.service';
 import { ViewportService } from '../../services/viewport.service';
-import ConfirmDialog, { ConfirmDialogContext } from '../confirm-dialog/confirm-dialog';
 import { ProfileAvatar } from '../shared/profile-avatar/profile-avatar';
 import { ScoreRing } from '../shared/score-ring/score-ring';
 import { StatusMenu } from '../shared/status-menu/status-menu';
@@ -97,10 +96,11 @@ import { createProfileForm } from './profile-form';
 })
 export class Profile {
   protected readonly profileService = inject(ProfilesService);
+  private readonly profileActions = inject(ProfileActionsService);
   private readonly viewport = inject(ViewportService);
   private readonly injector = inject(Injector);
   private readonly document = inject(DOCUMENT);
-  private readonly dialogService = inject(HlmDialogService);
+  private readonly confirmService = inject(ConfirmService);
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
   readonly isView = computed(() => this.userActionType() === TOOLBAR_ACTIONS.view);
@@ -206,7 +206,7 @@ export class Profile {
   }
 
   copyToClipboard(value: string | null | undefined, label: string): void {
-    this.profileService.copyToClipboard(value, label);
+    this.profileActions.copyToClipboard(value, label);
   }
 
   closeDrawer(): void {
@@ -258,20 +258,16 @@ export class Profile {
     }
     this.discardPromptOpen = true;
     try {
-      const dialogRef = this.dialogService.open(ConfirmDialog, {
+      const discard = await this.confirmService.confirm({
         // Explicit id: the drawer is itself a Brain dialog, and an auto-generated id can collide
         // with it ("Dialog with ID ... already exists"), which made this prompt silently fail.
         id: 'discard-profile-changes',
-        context: {
-          title: 'Discard changes?',
-          description: 'Your edits to this profile have not been saved and will be lost.',
-          confirmLabel: 'Discard',
-          destructive: true,
-        } satisfies ConfirmDialogContext,
-        contentClass: 'sm:max-w-md',
-        showCloseButton: false,
+        title: 'Discard changes?',
+        description: 'Your edits to this profile have not been saved and will be lost.',
+        confirmLabel: 'Discard',
+        destructive: true,
       });
-      if ((await firstValueFrom(dialogRef.closed$, { defaultValue: false })) === true) {
+      if (discard) {
         this.closeDrawer();
       }
     } finally {

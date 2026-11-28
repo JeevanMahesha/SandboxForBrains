@@ -10,8 +10,6 @@ import {
   linkedSignal,
 } from '@angular/core';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
-import { toast } from '@spartan-ng/brain/sonner';
-import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import {
   DocumentData,
   DocumentSnapshot,
@@ -35,7 +33,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore/lite';
-import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import { PROFILE_STATUS, PROFILE_STATUS_STYLES } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
 import { Comment, ProfileDetail } from '../models/profile.model';
@@ -53,7 +50,6 @@ export interface DuplicateOwner {
 export class ProfilesService {
   private authService = inject(AuthService);
   private firestore = inject(FIRESTORE);
-  private readonly dialogService = inject(HlmDialogService);
 
   private profilesCollection = collection(this.firestore, 'profiles');
 
@@ -109,7 +105,7 @@ export class ProfilesService {
   private lastFilterKey = '';
 
   /** How long a confirmed delete stays undoable before the document is really deleted. */
-  private static readonly DELETE_UNDO_MS = 6000;
+  static readonly DELETE_UNDO_MS = 6000;
 
   /**
    * Confirmed deletes still inside their undo window, keyed by profile id. `timer` is null once the
@@ -389,28 +385,11 @@ export class ProfilesService {
     });
   }
 
-  /** Opens a confirmation dialog and deletes the profile when the user confirms. */
-  deleteProfile(id: string): void {
-    const target = this.profiles.hasValue()
+  /** A profile of the currently loaded list (what the user is looking at), if it is in there. */
+  findLoadedProfile(id: string): ProfileDetail | undefined {
+    return this.profiles.hasValue()
       ? this.profiles.value().find((profile) => String(profile.id) === id)
       : undefined;
-    const dialogRef = this.dialogService.open(ConfirmDialog, {
-      context: {
-        title: target ? `Delete ${target.name} (${target.matrimonyId})?` : 'Confirm Delete',
-        description: target ? "This can't be undone." : 'Do you want to delete this record?',
-        confirmLabel: 'Delete',
-        destructive: true,
-      } satisfies ConfirmDialogContext,
-      contentClass: 'sm:max-w-md',
-      // Cancel is right there (and Esc works); the corner X only collides with a long title.
-      showCloseButton: false,
-    });
-
-    dialogRef.closed$.subscribe((confirmed) => {
-      if (confirmed) {
-        this.scheduleDelete(id, target);
-      }
-    });
   }
 
   /**
@@ -488,15 +467,24 @@ export class ProfilesService {
   }
 
   /**
-   * Delayed delete: the row disappears at once and a toast offers Undo for DELETE_UNDO_MS; only
-   * then is the document really deleted. Closing the tab or signing out inside the window simply
-   * means it is not deleted (the safe direction).
+   * Delayed delete: the row disappears at once and stays hidden for DELETE_UNDO_MS, during which the
+   * returned `undo()` brings it back; only then is the document really deleted. Closing the tab or
+   * signing out inside the window simply means it is not deleted (the safe direction). Asking the
+   * user, and telling them (Undo toast, failure toast), is the caller's job: `onFailed` runs when
+   * the real delete fails, after which the row is back. Returns null if this id is already pending.
    */
-  private scheduleDelete(id: string, profile: ProfileDetail | undefined): void {
+  scheduleDelete(
+    id: string,
+    profile: ProfileDetail | undefined,
+    onFailed: () => void,
+  ): { undo: () => boolean } | null {
     if (this.pendingDeletes.has(id)) {
-      return;
+      return null;
     }
-    const timer = setTimeout(() => void this.finishDelete(id), ProfilesService.DELETE_UNDO_MS);
+    const timer = setTimeout(
+      () => void this.finishDelete(id, onFailed),
+      ProfilesService.DELETE_UNDO_MS,
+    );
     this.pendingDeletes.set(id, { timer, profile, pageIndex: this.pageState().pageIndex });
 
     if (this.profiles.hasValue()) {
@@ -505,37 +493,32 @@ export class ProfilesService {
     this.totalCount.update((total) => Math.max(0, total - 1));
     this.stepBackIfPastLastPage();
 
-    toast.success(
-      profile ? `Deleted ${profile.name} (${profile.matrimonyId})` : 'Profile deleted',
-      {
-        duration: ProfilesService.DELETE_UNDO_MS,
-        action: { label: 'Undo', onClick: () => this.undoDelete(id) },
-      },
-    );
+    return { undo: () => this.undoDelete(id) };
   }
 
-  private undoDelete(id: string): void {
+  /** Cancels a delete still inside its undo window. False when it is too late or already reset. */
+  private undoDelete(id: string): boolean {
     const pending = this.pendingDeletes.get(id);
     // Nothing to undo once the real delete has started (timer is null) or the session was reset.
     if (!pending || pending.timer === null) {
-      return;
+      return false;
     }
     clearTimeout(pending.timer);
     this.pendingDeletes.delete(id);
-    toast.success('Profile restored');
     // Nothing was deleted, so the cursors are intact. Give back the one the delete took off the
     // total when the profile belongs in the current list; without its data, recount to be safe.
     if (!pending.profile) {
       this.refreshProfiles();
-      return;
+      return true;
     }
     if (this.matchesFilter(pending.profile, this.filterOptions())) {
       this.totalCount.update((total) => total + 1);
     }
     this.profiles.reload();
+    return true;
   }
 
-  private async finishDelete(id: string): Promise<void> {
+  private async finishDelete(id: string, onFailed: () => void): Promise<void> {
     const pending = this.pendingDeletes.get(id);
     if (!pending) {
       return;
@@ -545,7 +528,7 @@ export class ProfilesService {
       await deleteDoc(doc(this.firestore, 'profiles', id));
     } catch {
       this.pendingDeletes.delete(id);
-      toast.error('Failed to delete profile');
+      onFailed();
       // The row comes back on the reload (and the total is recounted).
       this.refreshProfiles();
       return;
@@ -713,32 +696,16 @@ export class ProfilesService {
     return null;
   }
 
-  userActionEvent(userActionType: ToolbarAction, profileId: string | null): void {
-    if (userActionType === 'delete') {
-      this.deleteProfile(profileId!);
-      return;
-    }
+  openDrawer(actionType: ToolbarAction, profileId: string | null): void {
     this.drawerState.set({
       isOpen: 'open',
-      actionType: userActionType,
+      actionType,
       selectedProfileId: profileId,
     });
   }
 
   closeDrawer(): void {
     this.drawerState.set({ isOpen: 'closed', actionType: null, selectedProfileId: null });
-  }
-
-  copyToClipboard(value: string | null | undefined, label: string): void {
-    if (!value) return;
-    navigator.clipboard.writeText(value).then(
-      () => {
-        toast.success(`${label} copied to clipboard!`);
-      },
-      () => {
-        toast.error(`Failed to copy ${label.toLowerCase()}`);
-      },
-    );
   }
 
   private mapDocToProfile(doc: QueryDocumentSnapshot | DocumentSnapshot): ProfileDetail {

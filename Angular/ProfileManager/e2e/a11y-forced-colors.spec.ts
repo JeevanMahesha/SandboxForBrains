@@ -1,6 +1,13 @@
 import type { Locator, Page } from '@playwright/test';
 import { makeProfile, seedProfiles } from './support/emulator';
-import { expect, openNewProfileWizard, profileRows, statusFilter, test } from './support/fixtures';
+import {
+  expect,
+  openNewProfileWizard,
+  openProfileDrawer,
+  profileRows,
+  statusFilter,
+  test,
+} from './support/fixtures';
 
 // Windows High Contrast ("forced colors") replaces every background-color with the system
 // Canvas colour, so anything that shows state only through a background fill disappears.
@@ -91,7 +98,7 @@ test.describe('forced colors (Windows High Contrast)', () => {
   }) => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const drawer = page.getByRole('dialog', { name: 'View Profile' });
 
     const audit = drawer.locator('p', { hasText: 'Created' });

@@ -1,4 +1,5 @@
-import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { ARIES_LABEL } from './support/constants';
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import {
   expect,
   openNewProfileWizard,
@@ -7,10 +8,6 @@ import {
   test,
   wizardContinue,
 } from './support/fixtures';
-
-// The select lists options as "<tanglish> (<english>)" (see zodiacToLabel in
-// profile-form-fields.ts) — same derivation as profile-create.spec.ts.
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 
 test.describe('profile form validation', () => {
   test('shows inline errors for empty required fields and gates every step until fixed', async ({

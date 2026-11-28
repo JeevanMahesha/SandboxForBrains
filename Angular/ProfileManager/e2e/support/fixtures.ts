@@ -70,6 +70,11 @@ export function profileRows(page: Page) {
   return page.getByTestId('profile-card');
 }
 
+/** Opens the first listed profile in the View or Edit drawer through its card button. */
+export async function openProfileDrawer(page: Page, action: 'View' | 'Edit'): Promise<void> {
+  await profileRows(page).first().getByRole('button', { name: action }).click();
+}
+
 /** The "N profile(s) count next to the pager." footer cell. */
 export function profilesTotal(page: Page) {
   return page.getByTestId('profiles-total');

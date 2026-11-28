@@ -1,5 +1,6 @@
+import { ARIES_LABEL } from './support/constants';
 import type { Page } from '@playwright/test';
-import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import { toCanonicalMobileNumber } from '../src/app/utils/mobile-number.util';
 import {
   expect,
@@ -10,10 +11,6 @@ import {
   test,
   wizardContinue,
 } from './support/fixtures';
-
-// The select lists options as "<tanglish> (<english>)" (see zodiacToLabel in
-// profile-form-fields.ts) — same derivation as profile-create.spec.ts.
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 
 /** Fills every required field with a fixed valid value except mobile number, which is the one
  *  under test here. Ends on the last wizard step. */

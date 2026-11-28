@@ -1,3 +1,4 @@
+import { PROFILE_STATUS_COUNT } from './support/constants';
 import type { Page } from '@playwright/test';
 import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import {
@@ -6,7 +7,13 @@ import {
   seedProfiles,
   storedProfileStatus,
 } from './support/emulator';
-import { expect, profileRows, selectStatusFilter, test } from './support/fixtures';
+import {
+  expect,
+  openProfileDrawer,
+  profileRows,
+  selectStatusFilter,
+  test,
+} from './support/fixtures';
 
 const trigger = (scope: Page | ReturnType<Page['locator']>, current: string) =>
   scope.getByRole('button', { name: `Change status, currently ${current}` });
@@ -23,8 +30,8 @@ test.describe('inline status change (desktop)', () => {
     await expect(trigger(row, 'New')).toHaveAttribute('aria-haspopup', 'menu');
     await trigger(row, 'New').click();
 
-    // All 9 statuses are listed, the current one is marked.
-    await expect(page.getByRole('menuitem')).toHaveCount(9);
+    // Every status is listed, the current one is marked.
+    await expect(page.getByRole('menuitem')).toHaveCount(PROFILE_STATUS_COUNT);
     await expect(page.getByRole('menuitem', { name: 'New' })).toHaveAttribute(
       'aria-current',
       'true',
@@ -161,7 +168,7 @@ test.describe('inline status change (desktop)', () => {
     await seedProfiles([makeProfile(0, { name: 'Drawer Subject', profileStatusId: 'NEW' })]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
 

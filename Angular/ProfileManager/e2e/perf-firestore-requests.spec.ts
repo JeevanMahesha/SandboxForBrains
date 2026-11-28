@@ -1,5 +1,6 @@
+import { ARIES_LABEL } from './support/constants';
 import type { Page } from '@playwright/test';
-import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import { makeProfile, seedProfiles } from './support/emulator';
 import {
   expect,
@@ -13,8 +14,6 @@ import {
 
 /** How long a confirmed delete stays undoable (ProfilesService.DELETE_UNDO_MS). */
 const UNDO_WINDOW_MS = 6000;
-
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 
 /**
  * Counts the Firestore requests the app sends. Firestore Lite talks REST, so a page of results is

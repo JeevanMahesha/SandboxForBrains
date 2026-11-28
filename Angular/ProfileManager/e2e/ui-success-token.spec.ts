@@ -4,6 +4,7 @@ import {
   expect,
   fillWizardProfile,
   openNewProfileWizard,
+  openProfileDrawer,
   profileRows,
   test,
 } from './support/fixtures';
@@ -51,7 +52,7 @@ for (const theme of ['light', 'dark'] as const) {
     test('the drawer WhatsApp action uses the token colour', async ({ page, loginAsAdmin }) => {
       await seedProfiles([makeProfile(0, { name: 'Token Drawer' })]);
       await loginAsAdmin();
-      await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+      await openProfileDrawer(page, 'View');
       const link = page.getByRole('dialog').getByRole('link', { name: 'WhatsApp' });
       await expect(link).toBeVisible();
 

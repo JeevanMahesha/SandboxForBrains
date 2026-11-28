@@ -1,17 +1,17 @@
+import { ARIES_LABEL } from './support/constants';
 import type { Page } from '@playwright/test';
-import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
 import {
   expect,
   fillWizardProfile,
   leaveWizardAndDiscard,
   openNewProfileWizard,
+  openProfileDrawer,
   profileRows,
   profilesTotal,
   test,
 } from './support/fixtures';
-
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 
 /**
  * Makes the next Firestore write fail. Firestore Lite sends every write (create, update, note,
@@ -91,7 +91,7 @@ test.describe('failure toasts', () => {
   }) => {
     await seedProfiles([makeProfile(0, { name: 'Original Name' })]);
     await loginAsAdmin();
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await expect(page.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
     await page.locator('#name').fill('Changed Name');
     const refused = await failNextWrite(page);
@@ -114,7 +114,7 @@ test.describe('failure toasts', () => {
   test('a failed quick note says so and keeps the typed note', async ({ page, loginAsAdmin }) => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
     const input = dialog.locator('#quick-note');

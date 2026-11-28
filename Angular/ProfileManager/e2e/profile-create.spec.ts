@@ -1,21 +1,18 @@
-import { PROFILE_STATUS, STAR_SCORES, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { ARIES_LABEL } from './support/constants';
+import { PROFILE_STATUS, STAR_SCORES } from '../src/app/constant/common.const';
 import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
 import {
   expect,
   fillWizardProfile,
   leaveWizardAndDiscard,
   openNewProfileWizard,
+  openProfileDrawer,
   profileRows,
   profilesTotal,
   selectStatusFilter,
   statusFilter,
   test,
 } from './support/fixtures';
-
-// The select lists its options as "<tanglish> (<english>)" (see zodiacToLabel in
-// profile-form-fields.ts); derive the expected label from the same source data rather than
-// hardcoding it, so a wording change to either name doesn't silently desync this test.
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 
 test.describe('create profile', () => {
   test('saves a new profile through the wizard and lists it', async ({ page, loginAsAdmin }) => {
@@ -85,7 +82,7 @@ test.describe('create profile', () => {
     expect(JSON.stringify(stored['comments'])).toContain('First call went well');
 
     // What the app shows back: the same values in the read-only View drawer.
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
     await expect(dialog.getByText('Round Trip').first()).toBeVisible();

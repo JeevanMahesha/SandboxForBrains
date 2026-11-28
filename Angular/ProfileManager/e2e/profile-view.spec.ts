@@ -1,8 +1,8 @@
-import { PROFILE_STATUS, STAR_SCORES, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { ARIES_LABEL } from './support/constants';
+import { PROFILE_STATUS, STAR_SCORES } from '../src/app/constant/common.const';
 import { clearFirestore, makeProfile, seedProfiles } from './support/emulator';
-import { expect, profileRows, test } from './support/fixtures';
+import { expect, openProfileDrawer, profileRows, test } from './support/fixtures';
 
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 const ASHWINI_LABEL = `Ashwini (${STAR_SCORES.Ashwini})`;
 
 test.describe('view profile drawer', () => {
@@ -13,7 +13,7 @@ test.describe('view profile drawer', () => {
     await seedProfiles([makeProfile(0, { mobileNumber: '+919876543210' })]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
 
@@ -43,7 +43,7 @@ test.describe('view profile drawer', () => {
     ]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     // Not scoped by accessible name: it tracks the heading, which changes to "Edit Profile" below.
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
@@ -82,7 +82,7 @@ test.describe('view profile drawer', () => {
 
     // Delete behind the app's back: the list still shows the stale row.
     await clearFirestore();
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
 
     await expect(page.getByText('Profile not found')).toBeVisible();
     await expect(page.getByRole('dialog')).toBeHidden();

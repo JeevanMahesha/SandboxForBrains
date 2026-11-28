@@ -5,7 +5,7 @@ import {
   fillWizardProfile,
   openNewProfileWizard,
   openNotesTab,
-  profileRows,
+  openProfileDrawer,
   test,
 } from './support/fixtures';
 
@@ -14,7 +14,7 @@ test.describe('profile comments', () => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await expect(page.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
 
     await openNotesTab(page);
@@ -29,7 +29,7 @@ test.describe('profile comments', () => {
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
 
     // Reopen to prove the comment round-tripped through Firestore, not just held in form state.
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await openNotesTab(page);
     await expect(page.getByText('Called, will follow up next week')).toBeVisible();
 
@@ -39,7 +39,7 @@ test.describe('profile comments', () => {
     await page.getByRole('button', { name: 'Update Profile' }).click();
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await openNotesTab(page);
     await expect(page.getByText('No notes yet.')).toBeVisible();
   });
@@ -52,7 +52,7 @@ test.describe('profile comments', () => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await openNotesTab(page);
     for (const note of [sameText, 'A different note', sameText]) {
       await page.locator('#comment').fill(note);
@@ -70,7 +70,7 @@ test.describe('profile comments', () => {
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
 
     // Persisted: the surviving duplicate is still there after reopening.
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await openNotesTab(page);
     await expect(page.getByText(sameText)).toHaveCount(1);
     await expect(page.getByText('A different note')).toBeVisible();
@@ -83,7 +83,7 @@ test.describe('profile comments', () => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await openNotesTab(page);
     await page.locator('#comment').fill('Typed but never clicked Add');
     // Back on Details: the typed note lives in shared form state and is still saved.
@@ -92,7 +92,7 @@ test.describe('profile comments', () => {
 
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await openNotesTab(page);
     await expect(page.getByText('Typed but never clicked Add')).toBeVisible();
   });
@@ -130,7 +130,7 @@ test.describe('note wording', () => {
 
 test.describe('quick note in the view drawer', () => {
   const openView = async (page: Page) => {
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
     return dialog;

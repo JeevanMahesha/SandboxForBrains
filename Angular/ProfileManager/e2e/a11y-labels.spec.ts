@@ -2,8 +2,8 @@ import { makeProfile, seedProfiles } from './support/emulator';
 import {
   expect,
   openNewProfileWizard,
+  openProfileDrawer,
   pickOption,
-  profileRows,
   test,
   wizardContinue,
 } from './support/fixtures';
@@ -40,7 +40,7 @@ test.describe('select accessible names', () => {
   test('every select in the edit drawer is named', async ({ page, loginAsAdmin }) => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
 
     const drawer = page.getByRole('dialog', { name: 'Edit Profile' });
     for (const label of ['Profile Status', 'Zodiac Sign', 'Star Sign', 'State', 'City']) {

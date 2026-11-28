@@ -1,3 +1,4 @@
+import { ARIES_LABEL } from './support/constants';
 import {
   NOT_SPECIFIED_LABEL,
   PROFILE_STATUS,
@@ -7,16 +8,12 @@ import {
 import {
   expect,
   openNewProfileWizard,
+  openProfileDrawer,
   pickOption,
-  profileRows,
   test,
   wizardContinue,
 } from './support/fixtures';
 
-// The select lists Zodiac/Star options as "<tanglish> (<english>)" / "<star> (<score>)" (see
-// profile-form-fields.ts); derive expected labels/scores from the same source data rather than
-// hardcoding them, so a wording or scoring change doesn't silently desync this test.
-const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
 const [firstStar, secondStar] = ZODIAC_LIST.aries.stars;
 const firstStarLabel = `${firstStar} (${STAR_SCORES[firstStar]})`;
 const secondStarLabel = `${secondStar} (${STAR_SCORES[secondStar]})`;
@@ -78,7 +75,7 @@ test.describe('star match score auto-calc', () => {
     // Reopen it read-only: per profile-form-fields.html, this is the only place the literal
     // "Not specified" text is actually rendered — once for the Star Sign field, once for the
     // Star Match Score field (both fall back to NOT_SPECIFIED_LABEL when null).
-    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    await openProfileDrawer(page, 'View');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
     await expect(dialog.getByText(NOT_SPECIFIED_LABEL, { exact: true })).toHaveCount(2);

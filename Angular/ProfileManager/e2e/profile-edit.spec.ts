@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
-import { expect, openNotesTab, profileRows, test } from './support/fixtures';
+import { expect, openNotesTab, openProfileDrawer, profileRows, test } from './support/fixtures';
 
 test.describe('edit profile', () => {
   test('updates an existing profile from the drawer', async ({ page, loginAsAdmin }) => {
@@ -28,7 +28,7 @@ test.describe('edit profile', () => {
     const [before] = await readStoredProfiles();
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     await page.locator('#name').fill('Renamed Profile');
     await page.getByRole('button', { name: 'Update Profile' }).click();
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
@@ -48,7 +48,7 @@ test.describe('edit profile', () => {
     await seedProfiles([makeProfile(0, { name: 'Tabbed Profile' })]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('tab', { name: 'Details' })).toHaveAttribute(
       'aria-selected',
@@ -82,7 +82,7 @@ test.describe('edit profile', () => {
     await seedProfiles([makeProfile(0, { name: 'No City Profile', city: '' })]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     const dialog = page.getByRole('dialog');
     await openNotesTab(page);
 
@@ -109,7 +109,7 @@ test.describe('edit profile', () => {
     await seedProfiles([makeProfile(0)]);
     await loginAsAdmin();
 
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     const dialog = page.getByRole('dialog');
     await dialog.locator('#name').fill('');
     await dialog.locator('#matrimony').focus();
@@ -120,7 +120,7 @@ test.describe('edit profile', () => {
 
 test.describe('closing the edit drawer', () => {
   const openEdit = async (page: Page) => {
-    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openProfileDrawer(page, 'Edit');
     const drawer = page.getByRole('dialog', { name: 'Edit Profile' });
     await expect(drawer.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
     return drawer;

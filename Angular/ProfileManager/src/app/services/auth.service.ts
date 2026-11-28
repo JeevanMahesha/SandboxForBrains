@@ -7,7 +7,7 @@ import {
   UserCredential,
 } from 'firebase/auth';
 
-import { authState$, idToken$ } from '../firebase/firebase-rx';
+import { authState$ } from '../firebase/firebase-rx';
 import { FIREBASE_AUTH } from '../firebase/provide-firebase';
 
 @Service()
@@ -15,7 +15,6 @@ export class AuthService {
   private auth = inject(FIREBASE_AUTH);
 
   readonly user = toSignal(authState$(this.auth), { initialValue: null });
-  readonly idToken = toSignal(idToken$(this.auth), { initialValue: null });
 
   readonly authInitialized = signal<boolean>(false);
 

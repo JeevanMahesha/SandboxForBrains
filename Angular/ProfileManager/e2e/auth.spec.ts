@@ -45,6 +45,55 @@ test.describe('authentication', () => {
     }
   });
 
+  test('shows one inline message for a wrong password and for an unknown email', async ({
+    page,
+  }) => {
+    await page.goto('/login');
+    await expect(page.locator('#login-email')).toBeEnabled();
+    const error = page.locator('#login-error');
+
+    // Wrong password for a real account.
+    await page.locator('#login-email').fill(ADMIN_USER.email);
+    await page.locator('#login-password').fill('not-the-password');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(error).toHaveText('Incorrect email or password');
+    await expect(error).toHaveAttribute('role', 'alert');
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.locator('#login-password')).toBeFocused();
+
+    // Unknown email: the identical message, so the form never reveals which accounts exist.
+    await page.locator('#login-email').fill('nobody@example.com');
+    await page.locator('#login-password').fill('whatever-123');
+    await expect(error).toHaveCount(0); // typing cleared the previous message
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(error).toHaveText('Incorrect email or password');
+    await expect(page).toHaveURL(/\/login$/);
+  });
+
+  test('clears the login error as soon as the user edits a field', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator('#login-email')).toBeEnabled();
+    await page.locator('#login-email').fill(ADMIN_USER.email);
+    await page.locator('#login-password').fill('not-the-password');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(page.locator('#login-error')).toBeVisible();
+
+    await page.locator('#login-password').press('a');
+    await expect(page.locator('#login-error')).toHaveCount(0);
+  });
+
+  test('says so when the sign-in request cannot reach the server', async ({ page }) => {
+    await page.route(/identitytoolkit|accounts:signInWithPassword/, (route) => route.abort());
+    await page.goto('/login');
+    await expect(page.locator('#login-email')).toBeEnabled();
+    await page.locator('#login-email').fill(ADMIN_USER.email);
+    await page.locator('#login-password').fill(ADMIN_USER.password);
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(page.locator('#login-error')).toHaveText(
+      'Cannot reach the server. Check your connection and try again.',
+    );
+  });
+
   test('logs the admin in and shows the empty profiles list', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
 

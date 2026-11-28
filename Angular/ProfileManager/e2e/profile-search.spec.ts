@@ -1,13 +1,13 @@
 import type { Page, Route } from '@playwright/test';
 import { toCanonicalMobileNumber } from '../src/app/utils/mobile-number.util';
 import { makeProfile, seedProfiles } from './support/emulator';
-import { expect, profileRows, profilesTotal, test } from './support/fixtures';
+import { expect, profileRows, profilesTotal, selectStatusFilter, test } from './support/fixtures';
 
 // The toolbar search box (`filterForm.searchQuery` in toolbar.ts) debounces input by 350ms
 // before it reaches `ProfilesService.filterOptions`, so every assertion below relies on
 // Playwright's auto-retrying `expect` rather than a fixed wait.
 function searchBox(page: Page) {
-  return page.getByPlaceholder('Search by ID or phone');
+  return page.getByPlaceholder('Search by full ID or phone');
 }
 
 // Firestore's REST count endpoint: `.../documents:runAggregationQuery?key=...`.
@@ -110,6 +110,37 @@ test.describe('toolbar search', () => {
     await searchBox(page).fill('');
     await expect(profileRows(page)).toHaveCount(1);
     await expect(page.getByText('No profiles found.')).toHaveCount(0);
+  });
+
+  test('explains that search needs the full value when a partial search finds nothing', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([
+      makeProfile(0, { name: 'Search Target', matrimonyId: 'SEARCH-001' }),
+      makeProfile(1, { name: 'Accepted One', matrimonyId: 'ACC-001', profileStatusId: 'ACCEPTED' }),
+    ]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(2);
+
+    const hint = page.getByText('Search matches the full Matrimony ID or phone number exactly.');
+    await expect(searchBox(page)).toHaveAttribute('placeholder', 'Search by full ID or phone');
+
+    // A partial id finds nothing, and the empty state says why.
+    await searchBox(page).fill('SEARCH-0');
+    await expect(page.getByText('No profiles found.')).toBeVisible();
+    await expect(hint).toBeVisible();
+
+    // The exact value still finds it, with no hint.
+    await searchBox(page).fill('SEARCH-001');
+    await expect(profileRows(page)).toHaveCount(1);
+    await expect(hint).toHaveCount(0);
+
+    // An empty result caused only by a status filter is not about search: no search hint.
+    await searchBox(page).fill('');
+    await selectStatusFilter(page, 'Rejected');
+    await expect(page.getByText('No profiles found.')).toBeVisible();
+    await expect(hint).toHaveCount(0);
   });
 
   test('shows the error message with Retry when the query fails, and Retry recovers', async ({

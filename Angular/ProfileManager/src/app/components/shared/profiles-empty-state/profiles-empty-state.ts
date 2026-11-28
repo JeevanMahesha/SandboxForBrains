@@ -10,35 +10,7 @@ import { ProfilesService } from '../../../services/profiles.service';
 @Component({
   selector: 'app-profiles-empty-state',
   imports: [HlmButton, NgIcon, ...HlmIconImports],
-  template: `
-    <div class="flex flex-col items-center gap-3 px-4 py-10 text-center" role="status">
-      <span
-        class="bg-muted text-muted-foreground grid size-14 place-items-center rounded-full"
-        aria-hidden="true"
-      >
-        <ng-icon [name]="isNarrowed() ? 'lucideSearchX' : 'lucideUsers'" size="26" />
-      </span>
-      @if (isNarrowed()) {
-        <p class="text-lg font-semibold">No profiles found.</p>
-        <p class="text-muted-foreground max-w-sm text-sm break-words">
-          {{ matchMessage() }}. Try a different search or clear the filters.
-        </p>
-        <button type="button" hlmBtn variant="outline" (click)="clearFilters()">
-          <ng-icon hlm name="lucideFilterX" size="sm" />
-          Clear filters
-        </button>
-      } @else {
-        <p class="text-lg font-semibold">No profiles yet</p>
-        <p class="text-muted-foreground max-w-sm text-sm">
-          Add your first profile to start tracking matches.
-        </p>
-        <button type="button" hlmBtn (click)="addProfile()">
-          <ng-icon hlm name="lucideUserPlus" size="sm" />
-          Add Profile
-        </button>
-      }
-    </div>
-  `,
+  templateUrl: './profiles-empty-state.html',
   providers: [provideIcons({ lucideFilterX, lucideSearchX, lucideUserPlus, lucideUsers })],
   host: { class: 'col-span-full block' },
 })
@@ -47,6 +19,9 @@ export class ProfilesEmptyState {
   private readonly profileService = inject(ProfilesService);
 
   protected readonly isNarrowed = this.profileService.isNarrowed;
+  protected readonly hasSearchQuery = computed(
+    () => this.profileService.filterOptions().searchQuery.trim() !== '',
+  );
   protected readonly matchMessage = computed(() => {
     const query = this.profileService.filterOptions().searchQuery.trim();
     return query ? `No profiles match "${query}"` : 'No profiles match these filters';

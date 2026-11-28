@@ -1,0 +1,32 @@
+<div class="flex flex-col items-center gap-3 px-4 py-10 text-center" role="status">
+  <span
+    class="bg-muted text-muted-foreground grid size-14 place-items-center rounded-full"
+    aria-hidden="true"
+  >
+    <ng-icon size="26" [name]="isNarrowed() ? 'lucideSearchX' : 'lucideUsers'" />
+  </span>
+  @if (isNarrowed()) {
+    <p class="text-lg font-semibold">No profiles found.</p>
+    <p class="text-muted-foreground max-w-sm text-sm break-words">
+      {{ matchMessage() }}. Try a different search or clear the filters.
+    </p>
+    @if (hasSearchQuery()) {
+      <p class="text-muted-foreground max-w-sm text-sm">
+        Search matches the full Matrimony ID or phone number exactly.
+      </p>
+    }
+    <button type="button" hlmBtn variant="outline" (click)="clearFilters()">
+      <ng-icon hlm name="lucideFilterX" size="sm" />
+      Clear filters
+    </button>
+  } @else {
+    <p class="text-lg font-semibold">No profiles yet</p>
+    <p class="text-muted-foreground max-w-sm text-sm">
+      Add your first profile to start tracking matches.
+    </p>
+    <button type="button" hlmBtn (click)="addProfile()">
+      <ng-icon hlm name="lucideUserPlus" size="sm" />
+      Add Profile
+    </button>
+  }
+</div>

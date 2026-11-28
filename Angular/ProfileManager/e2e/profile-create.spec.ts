@@ -67,8 +67,8 @@ test.describe('create profile', () => {
     await expect(profilesTotal(page)).toHaveText(/^2 profiles$/);
 
     // The search box trims what is typed and matches matrimonyId exactly.
-    await page.getByPlaceholder('Search by ID or phone').fill('M-PAD-1');
-    await page.getByPlaceholder('Search by ID or phone').press('Enter');
+    await page.getByPlaceholder('Search by full ID or phone').fill('M-PAD-1');
+    await page.getByPlaceholder('Search by full ID or phone').press('Enter');
     await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Padded Name');

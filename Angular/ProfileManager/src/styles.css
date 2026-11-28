@@ -204,7 +204,10 @@ body::before {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  :root {
+  /* `:root.dark` also sets --card (higher specificity than a bare `:root`), so name it here too or
+     dark mode keeps its 6% white card. Placed after the dark block so it wins on order. */
+  :root,
+  :root.dark {
     --card: var(--popover);
     --glass-blur: 0px;
   }

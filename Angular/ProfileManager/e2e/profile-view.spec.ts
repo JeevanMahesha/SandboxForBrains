@@ -6,6 +6,27 @@ const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english}
 const ASHWINI_LABEL = `Ashwini (${STAR_SCORES.Ashwini})`;
 
 test.describe('view profile drawer', () => {
+  test('call and WhatsApp links use the stored number and a neutral, unprefilled chat', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { mobileNumber: '+919876543210' })]);
+    await loginAsAdmin();
+
+    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
+
+    await expect(dialog.getByRole('link', { name: 'WhatsApp' })).toHaveAttribute(
+      'href',
+      'https://wa.me/919876543210',
+    );
+    await expect(dialog.getByRole('link', { name: 'Call' })).toHaveAttribute(
+      'href',
+      'tel:+919876543210',
+    );
+  });
+
   test('shows every field as read-only text, with no edit controls', async ({
     page,
     loginAsAdmin,

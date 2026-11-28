@@ -1,28 +1,11 @@
 import type { Page } from '@playwright/test';
-import { FIRESTORE_EMULATOR_URL, PROJECT_ID, makeProfile, seedProfiles } from './support/emulator';
+import {
+  deleteAllProfileDocs,
+  makeProfile,
+  seedProfiles,
+  storedProfileStatus,
+} from './support/emulator';
 import { expect, profileRows, selectStatusFilter, test } from './support/fixtures';
-
-const DOCS_URL = `${FIRESTORE_EMULATOR_URL}/v1/projects/${PROJECT_ID}/databases/(default)/documents/profiles`;
-const OWNER = { Authorization: 'Bearer owner' };
-
-/** Status stored in Firestore for the profile with the given name (read straight from the emulator). */
-async function storedStatus(name: string): Promise<string | undefined> {
-  const { documents = [] } = (await (await fetch(DOCS_URL, { headers: OWNER })).json()) as {
-    documents?: { fields: Record<string, { stringValue?: string }> }[];
-  };
-  return documents.find((d) => d.fields['name']?.stringValue === name)?.fields['profileStatusId']
-    ?.stringValue;
-}
-
-/** Deletes every profile document behind the app's back (the list still shows its stale rows). */
-async function deleteAllProfileDocs(): Promise<void> {
-  const { documents = [] } = (await (await fetch(DOCS_URL, { headers: OWNER })).json()) as {
-    documents?: { name: string }[];
-  };
-  for (const d of documents) {
-    await fetch(`${FIRESTORE_EMULATOR_URL}/v1/${d.name}`, { method: 'DELETE', headers: OWNER });
-  }
-}
 
 const trigger = (scope: Page | ReturnType<Page['locator']>, current: string) =>
   scope.getByRole('button', { name: `Change status, currently ${current}` });
@@ -51,13 +34,13 @@ test.describe('inline status change (desktop)', () => {
     await expect(page.getByText('Status changed to Accepted')).toBeVisible();
     // Picking a status must not have opened the view drawer.
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    await expect.poll(() => storedStatus('Status Subject')).toBe('ACCEPTED');
+    await expect.poll(() => storedProfileStatus('Status Subject')).toBe('ACCEPTED');
     // Focus goes back to the trigger when the menu closes.
     await expect(trigger(row, 'Accepted')).toBeFocused();
 
     await page.getByRole('button', { name: 'Undo' }).click();
     await expect(trigger(row, 'New')).toBeVisible();
-    await expect.poll(() => storedStatus('Status Subject')).toBe('NEW');
+    await expect.poll(() => storedProfileStatus('Status Subject')).toBe('NEW');
 
     await page.reload();
     await expect(trigger(profileRows(page).first(), 'New')).toBeVisible();
@@ -96,7 +79,7 @@ test.describe('inline status change (desktop)', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await expect(page.getByText(/Status changed to/)).toBeVisible();
-    await expect.poll(() => storedStatus('Keyboard Subject')).not.toBe('NEW');
+    await expect.poll(() => storedProfileStatus('Keyboard Subject')).not.toBe('NEW');
     // Keyboard activation on the pill must not open the drawer either.
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
@@ -119,7 +102,7 @@ test.describe('inline status change (desktop)', () => {
     await page.getByRole('menuitem', { name: 'Rejected' }).click();
     await expect(trigger(profileRows(page).first(), 'Rejected')).toBeVisible();
     await expect(profileRows(page).first()).toContainText('Newest');
-    await expect.poll(() => storedStatus('Newest')).toBe('REJECTED');
+    await expect.poll(() => storedProfileStatus('Newest')).toBe('REJECTED');
 
     await page.reload();
     await expect(profileRows(page).last()).toContainText('Newest');
@@ -180,7 +163,7 @@ test.describe('inline status change (desktop)', () => {
     await trigger(dialog, 'New').click();
     await page.getByRole('menuitem', { name: 'Contacted' }).click();
     await expect(trigger(dialog, 'Contacted')).toBeVisible();
-    await expect.poll(() => storedStatus('Drawer Subject')).toBe('CONTACTED');
+    await expect.poll(() => storedProfileStatus('Drawer Subject')).toBe('CONTACTED');
 
     // Edit mode keeps the plain badge: its status is part of the form being edited.
     await dialog.getByRole('button', { name: 'Edit' }).first().click();
@@ -215,11 +198,11 @@ test.describe('inline status change (mobile bottom sheet)', () => {
     await expect(trigger(card, 'Accepted')).toBeVisible();
     await expect(page.getByText('Status changed to Accepted')).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    await expect.poll(() => storedStatus('Mobile Status')).toBe('ACCEPTED');
+    await expect.poll(() => storedProfileStatus('Mobile Status')).toBe('ACCEPTED');
 
     await page.getByRole('button', { name: 'Undo' }).click();
     await expect(trigger(card, 'New')).toBeVisible();
-    await expect.poll(() => storedStatus('Mobile Status')).toBe('NEW');
+    await expect.poll(() => storedProfileStatus('Mobile Status')).toBe('NEW');
   });
 
   test('card kebab is a 44px target and View is a visible button', async ({

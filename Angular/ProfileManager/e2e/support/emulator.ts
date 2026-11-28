@@ -147,6 +147,25 @@ export async function readStoredProfiles(): Promise<Record<string, Record<string
   return documents.map((d) => d.fields);
 }
 
+/** Status stored in Firestore for the profile with the given name (read straight from the emulator). */
+export async function storedProfileStatus(name: string): Promise<string | undefined> {
+  const response = await request(`${FIRESTORE_DOCS}/profiles`, { method: 'GET' });
+  const { documents = [] } = (await response.json()) as {
+    documents?: { fields: Record<string, { stringValue?: string }> }[];
+  };
+  return documents.find((d) => d.fields['name']?.stringValue === name)?.fields['profileStatusId']
+    ?.stringValue;
+}
+
+/** Deletes every profile document behind the app's back (a loaded list still shows its stale rows). */
+export async function deleteAllProfileDocs(): Promise<void> {
+  const response = await request(`${FIRESTORE_DOCS}/profiles`, { method: 'GET' });
+  const { documents = [] } = (await response.json()) as { documents?: { name: string }[] };
+  for (const d of documents) {
+    await request(`${FIRESTORE_EMULATOR_URL}/v1/${d.name}`, { method: 'DELETE' });
+  }
+}
+
 /**
  * Polls the Auth and Firestore emulators until both accept HTTP requests. Playwright's
  * `webServer.url` can only watch one endpoint and the emulators come up in no fixed order.

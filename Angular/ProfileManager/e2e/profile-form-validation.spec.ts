@@ -57,7 +57,8 @@ test.describe('profile form validation', () => {
     await expect(page.locator('#mobile-error')).toHaveText(
       'Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)',
     );
-    await expect(page.locator('#profile_status-error')).toHaveText('Profile status is required');
+    // Status starts as New, so it has nothing to complain about.
+    await expect(page.locator('#profile_status-error')).toHaveCount(0);
 
     // Fixing one field clears only that field's error; errors are independent.
     await page.locator('#name').fill('Validation Test');

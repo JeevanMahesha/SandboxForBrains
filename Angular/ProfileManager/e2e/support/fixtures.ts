@@ -85,7 +85,8 @@ export interface WizardProfile {
   name: string;
   mobile: string;
   matrimonyId: string;
-  status: string;
+  /** Status option label; omitted keeps the wizard's default (New). */
+  status?: string;
   zodiac: string;
   /** Star option label; omitted leaves the star unset. */
   star?: string;
@@ -102,7 +103,9 @@ export async function fillWizardProfile(page: Page, profile: WizardProfile): Pro
   await page.locator('#name').fill(profile.name);
   await page.locator('#mobile').fill(profile.mobile);
   await page.locator('#matrimony').fill(profile.matrimonyId);
-  await pickOption(page, 'hlm-select#profile_status', profile.status);
+  if (profile.status) {
+    await pickOption(page, 'hlm-select#profile_status', profile.status);
+  }
   await wizardContinue(page);
 
   await pickOption(page, 'hlm-select#zodiac_sign', profile.zodiac);

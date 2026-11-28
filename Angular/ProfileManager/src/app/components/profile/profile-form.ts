@@ -30,6 +30,9 @@ export interface ProfileFormOptions {
   save: (profile: ProfileDetail) => Promise<void>;
 }
 
+/** Status a brand-new profile starts with. */
+export const DEFAULT_PROFILE_STATUS = 'NEW' satisfies keyof typeof PROFILE_STATUS;
+
 export const blankProfile = (): ProfileDetail => ({
   name: '',
   mobileNumber: '+91',
@@ -39,7 +42,8 @@ export const blankProfile = (): ProfileDetail => ({
   starMatchScore: null,
   state: null,
   city: null,
-  profileStatusId: null,
+  // A new profile starts as New; loaded profiles (edit/view) overwrite this with their own value.
+  profileStatusId: DEFAULT_PROFILE_STATUS,
   matrimonyId: '',
   comments: [],
 });

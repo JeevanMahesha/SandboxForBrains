@@ -32,7 +32,7 @@ import { NOT_SPECIFIED_LABEL } from '../../constant/common.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
 import { ProfilesService } from '../../services/profiles.service';
 import { toCanonicalMobileNumber } from '../../utils/mobile-number.util';
-import { createProfileForm } from '../profile/profile-form';
+import { createProfileForm, DEFAULT_PROFILE_STATUS } from '../profile/profile-form';
 import {
   FieldGroup,
   ProfileFormFieldsComponent,
@@ -123,7 +123,7 @@ export default class ProfileWizard {
   /** Set once the profile is saved so the post-save navigation is never treated as discarding. */
   private saved = false;
 
-  /** True when something was typed or chosen (the untouched "+91" prefix does not count). */
+  /** True when something was typed or chosen (the untouched "+91" prefix and default status do not count). */
   private readonly isDirty = computed(() => {
     const f = this.profileDetailForm;
     const mobile = f.mobileNumber().value().trim();
@@ -131,7 +131,7 @@ export default class ProfileWizard {
       f.name().value() ||
       f.matrimonyId().value() ||
       (mobile && mobile !== '+91') ||
-      f.profileStatusId().value() ||
+      f.profileStatusId().value() !== DEFAULT_PROFILE_STATUS ||
       f.zodiacSign().value() ||
       f.star().value() ||
       f.age().value() !== null ||

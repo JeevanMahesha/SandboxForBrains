@@ -1,11 +1,10 @@
 import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
-import { makeProfile, seedProfiles } from './support/emulator';
+import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
 import {
   expect,
   fillWizardProfile,
   leaveWizardAndDiscard,
   openNewProfileWizard,
-  pickOption,
   profileRows,
   profilesTotal,
   test,
@@ -73,6 +72,25 @@ test.describe('create profile', () => {
     await expect(profileRows(page).first()).toContainText('Padded Name');
   });
 
+  test('saves status New when the status is never touched', async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, {
+      name: 'Default Status',
+      mobile: '98765 43210',
+      matrimonyId: 'M-DEFAULT',
+      zodiac: ARIES_LABEL,
+      age: '27',
+      state: 'Tamil Nadu',
+      city: 'Chennai',
+    });
+    await page.getByRole('button', { name: 'Create profile' }).click();
+    await expect(page.getByText('Profile added successfully')).toBeVisible();
+
+    const [stored] = await readStoredProfiles();
+    expect(stored['profileStatusId']).toEqual({ stringValue: 'NEW' });
+  });
+
   test('does not carry an abandoned draft into the next Add Profile', async ({
     page,
     loginAsAdmin,
@@ -87,13 +105,15 @@ test.describe('create profile', () => {
 
     await openNewProfileWizard(page);
     await expect(page.locator('#name')).toHaveValue('');
+    await expect(page.locator('hlm-select#profile_status')).toContainText(PROFILE_STATUS.NEW);
   });
 
   test('leaves without a prompt when nothing was typed', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
     await openNewProfileWizard(page);
-    // The untouched "+91" prefix does not count as input.
+    // The untouched "+91" prefix and the default status do not count as input.
     await expect(page.locator('#mobile')).toHaveValue('+91');
+    await expect(page.locator('hlm-select#profile_status')).toContainText(PROFILE_STATUS.NEW);
     await page.getByRole('link', { name: 'Back to profiles' }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -129,15 +149,14 @@ test.describe('create profile', () => {
     await loginAsAdmin();
     await openNewProfileWizard(page);
     const rail = page.getByRole('navigation', { name: 'Profile creation steps' });
-    await expect(rail.getByText('0 of 4 required fields done')).toBeVisible();
+    // Status starts as New, so it already counts as done.
+    await expect(rail.getByText('1 of 4 required fields done')).toBeVisible();
     await expect(rail.getByText('0 of 2 required fields done')).toHaveCount(2);
 
     await page.locator('#name').fill('Counter Test');
-    await expect(rail.getByText('1 of 4 required fields done')).toBeVisible();
+    await expect(rail.getByText('2 of 4 required fields done')).toBeVisible();
     await page.locator('#mobile').fill('98765 43210');
     await page.locator('#matrimony').fill('M-COUNT');
-    await expect(rail.getByText('3 of 4 required fields done')).toBeVisible();
-    await pickOption(page, 'hlm-select#profile_status', PROFILE_STATUS.NEW);
     await expect(rail.getByText('4 of 4 required fields done')).toBeVisible();
 
     // Required labels carry an asterisk after the text.

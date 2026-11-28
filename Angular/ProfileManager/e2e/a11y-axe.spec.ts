@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { makeProfile, seedProfiles } from './support/emulator';
 import {
   expect,
@@ -26,20 +26,12 @@ const VIEWPORTS = {
 } as const;
 
 /**
- * Real violations axe found when this spec was written. They are fenced off by tagging exactly
- * those elements (and nothing else), so anything NEW still fails the test. Fix the app, then
- * delete the matching entry here.
- *
- * - label-content-name-mismatch (serious, WCAG 2.5.3): the copy-ID button shows the ID ("M1000")
- *   but is named "Copy matrimony ID of <name>", which does not contain the visible text, so
- *   voice-control users saying "click M1000" cannot reach it.
+ * Known violations are fenced off by tagging exactly those elements (and nothing else), so anything
+ * NEW still fails the test. Both violations found when this spec was written (the unnamed page-size
+ * select and the copy-ID button whose name lacked its visible text) are fixed, so the list is
+ * empty. To fence a future known issue, add `{ marker, locator }` here and delete it once fixed.
  */
-const KNOWN_ISSUES = [
-  {
-    marker: 'copy-id-button',
-    locator: (page: Page) => page.getByRole('button', { name: /^Copy matrimony ID/ }),
-  },
-];
+const KNOWN_ISSUES: { marker: string; locator: (page: Page) => Locator }[] = [];
 
 /** Violations axe reports, flattened to something readable in a failing test's diff. */
 async function seriousViolations(page: Page): Promise<string[]> {

@@ -12,6 +12,28 @@ async function seedTwoProfiles(): Promise<void> {
   ]);
 }
 
+// makeProfile(index) gives each profile the matrimony ID shown on its copy button.
+const PEOPLE = [
+  { who: 'Ravi Kumar', id: 'M1000' },
+  { who: 'Meena Priya', id: 'M1001' },
+];
+
+/**
+ * WCAG 2.5.3 (Label in Name): the copy-ID button shows the ID as its text, so its accessible name
+ * must contain that text or a voice-control user saying "click M1000" cannot target it.
+ */
+async function expectCopyIdNameHasVisibleText(page: Page): Promise<void> {
+  for (const { who, id } of PEOPLE) {
+    const button = profileRows(page)
+      .filter({ hasText: who })
+      .getByRole('button', {
+        name: /copy matrimony ID/i,
+      });
+    await expect(button).toHaveText(new RegExp(id));
+    await expect(button).toHaveAccessibleName(new RegExp(`^${id}\\b.*${who}`));
+  }
+}
+
 /** Every name below must exist exactly once on the page, i.e. be unique across the two cards. */
 async function expectUniqueNames(
   page: Page,
@@ -29,12 +51,13 @@ test.describe('desktop card control names', () => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(2);
 
-    for (const who of ['Ravi Kumar', 'Meena Priya']) {
+    await expectCopyIdNameHasVisibleText(page);
+    for (const { who, id } of PEOPLE) {
       await expectUniqueNames(page, 'button', [
         `View ${who}`,
         `Edit ${who}`,
         `Delete ${who}`,
-        `Copy matrimony ID of ${who}`,
+        `${id}, copy matrimony ID of ${who}`,
         `Copy mobile number of ${who}`,
       ]);
       await expectUniqueNames(page, 'link', [`Call ${who}`, `WhatsApp ${who}`]);
@@ -50,11 +73,12 @@ test.describe('phone card control names', () => {
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(2);
 
-    for (const who of ['Ravi Kumar', 'Meena Priya']) {
+    await expectCopyIdNameHasVisibleText(page);
+    for (const { who, id } of PEOPLE) {
       await expectUniqueNames(page, 'button', [
         `View ${who}`,
         `More actions for ${who}`,
-        `Copy matrimony ID of ${who}`,
+        `${id}, copy matrimony ID of ${who}`,
         `Copy mobile number of ${who}`,
       ]);
       await expectUniqueNames(page, 'link', [`Call ${who}`, `WhatsApp ${who}`]);

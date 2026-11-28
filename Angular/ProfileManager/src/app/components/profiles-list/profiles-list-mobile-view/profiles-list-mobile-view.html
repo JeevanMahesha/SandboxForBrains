@@ -44,7 +44,7 @@
             <button
               type="button"
               class="text-muted-foreground relative z-10 inline-flex max-w-full items-center gap-1 text-xs leading-4 after:absolute after:-inset-x-2 after:-inset-y-3.5 after:content-['']"
-              [attr.aria-label]="`Copy matrimony ID of ${profile.name}`"
+              [attr.aria-label]="`${profile.matrimonyId}, copy matrimony ID of ${profile.name}`"
               (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
             >
               {{ profile.matrimonyId }}

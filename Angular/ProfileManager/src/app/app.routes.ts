@@ -20,4 +20,7 @@ export const routes: Routes = [
     loadComponent: () => import('./components/profiles-list/profiles-list'),
     canActivate: [authGuard, legacyCreateRedirectGuard],
   },
+  // Unknown URLs (a mistyped link) go to the list instead of a blank screen. The list's auth guard
+  // still sends signed-out visitors to /login, and returnUrl is then "/", not the bad URL.
+  { path: '**', redirectTo: '' },
 ];

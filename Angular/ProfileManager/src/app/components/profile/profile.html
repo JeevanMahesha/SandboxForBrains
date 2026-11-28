@@ -119,6 +119,7 @@
                   hlmBtn
                   variant="ghost"
                   size="icon-sm"
+                  class="relative after:absolute after:-inset-2 after:content-['']"
                   aria-label="Copy mobile number"
                   (click)="
                     copyToClipboard(profileDetailForm.mobileNumber().value(), 'Mobile Number')
@@ -137,6 +138,7 @@
                   hlmBtn
                   variant="ghost"
                   size="icon-sm"
+                  class="relative after:absolute after:-inset-2 after:content-['']"
                   aria-label="Copy matrimony ID"
                   (click)="copyToClipboard(profileDetailForm.matrimonyId().value(), 'Matrimony ID')"
                 >

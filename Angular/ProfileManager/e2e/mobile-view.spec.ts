@@ -1,3 +1,4 @@
+import type { Locator } from '@playwright/test';
 import { makeProfile, seedProfiles } from './support/emulator';
 import {
   expect,
@@ -132,5 +133,54 @@ test.describe('phone Filters sheet status buttons', () => {
     await expect(sheetStatusButton(page, 'Accepted')).toHaveAttribute('aria-pressed', 'true');
     await expect(sheetStatusButton(page, 'All')).toHaveAttribute('aria-pressed', 'false');
     await expect(page.getByTestId('profile-card')).toHaveCount(1);
+  });
+});
+
+test.describe('mobile tap targets', () => {
+  /**
+   * The tappable size of a control: its own box, or the box of an invisible `::after` hit area
+   * when it enlarges one (the matrimony-ID and drawer copy buttons keep their small look).
+   */
+  const tapSize = (control: Locator) =>
+    control.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const after = getComputedStyle(element, '::after');
+      const afterWidth = after.position === 'absolute' ? parseFloat(after.width) || 0 : 0;
+      const afterHeight = after.position === 'absolute' ? parseFloat(after.height) || 0 : 0;
+      return {
+        width: Math.max(box.width, afterWidth),
+        height: Math.max(box.height, afterHeight),
+      };
+    });
+
+  test('card and drawer copy/call/WhatsApp controls are at least 44x44 to tap', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Tap Target Profile' })]);
+    await loginAsAdmin();
+    const card = page.getByTestId('profile-card').first();
+    await expect(card).toBeVisible();
+
+    const cardControls = [
+      card.getByRole('button', { name: 'Copy matrimony ID' }),
+      card.getByRole('button', { name: 'Copy mobile number' }),
+      card.getByRole('link', { name: 'Call' }),
+      card.getByRole('link', { name: 'WhatsApp' }),
+    ];
+    for (const control of cardControls) {
+      const size = await tapSize(control);
+      expect(size.width, await control.getAttribute('aria-label')).toBeGreaterThanOrEqual(44);
+      expect(size.height, await control.getAttribute('aria-label')).toBeGreaterThanOrEqual(44);
+    }
+
+    await card.click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
+    for (const name of ['Copy mobile number', 'Copy matrimony ID']) {
+      const size = await tapSize(dialog.getByRole('button', { name }));
+      expect(size.width, name).toBeGreaterThanOrEqual(44);
+      expect(size.height, name).toBeGreaterThanOrEqual(44);
+    }
   });
 });

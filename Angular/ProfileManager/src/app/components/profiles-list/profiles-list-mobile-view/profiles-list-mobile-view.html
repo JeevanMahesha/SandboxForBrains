@@ -40,7 +40,7 @@
             </div>
             <button
               type="button"
-              class="text-muted-foreground inline-flex max-w-full items-center gap-1 text-xs leading-4"
+              class="text-muted-foreground relative inline-flex max-w-full items-center gap-1 text-xs leading-4 after:absolute after:-inset-x-2 after:-inset-y-3.5 after:content-['']"
               aria-label="Copy matrimony ID"
               (click)="
                 $event.stopPropagation(); copyToClipboard(profile.matrimonyId, 'Matrimony ID')
@@ -133,6 +133,7 @@
               hlmBtn
               variant="ghost"
               size="icon-sm"
+              class="size-11"
               aria-label="Copy mobile number"
               (click)="
                 $event.stopPropagation(); copyToClipboard(profile.mobileNumber, 'Mobile Number')
@@ -144,6 +145,7 @@
               hlmBtn
               variant="ghost"
               size="icon-sm"
+              class="size-11"
               aria-label="Call"
               [href]="profile.mobileNumber | mobileUrl: 'tel'"
               (click)="$event.stopPropagation()"
@@ -154,7 +156,7 @@
               hlmBtn
               variant="ghost"
               size="icon-sm"
-              class="text-green-700 dark:text-green-400"
+              class="size-11 text-green-700 dark:text-green-400"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"

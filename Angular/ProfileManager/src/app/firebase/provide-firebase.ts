@@ -1,4 +1,4 @@
-import { InjectionToken, makeEnvironmentProviders } from '@angular/core';
+import { ErrorHandler, InjectionToken, makeEnvironmentProviders } from '@angular/core';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import {
   Auth,
@@ -50,14 +50,14 @@ export function provideFirebase(config: FirebaseOptions, options: ProvideFirebas
     },
     {
       provide: FIREBASE_AUTH,
-      deps: [FIREBASE_APP],
-      useFactory: (app: FirebaseApp) => {
+      deps: [FIREBASE_APP, ErrorHandler],
+      useFactory: (app: FirebaseApp, errorHandler: ErrorHandler) => {
         const auth = getAuth(app);
         if (useEmulators) {
           connectAuthEmulator(auth, EMULATOR_HOSTS.auth, { disableWarnings: true });
         }
         setPersistence(auth, browserSessionPersistence).catch((error) => {
-          console.error('Error setting auth persistence:', error);
+          errorHandler.handleError(error);
         });
         return auth;
       },

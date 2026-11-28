@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   ElementRef,
+  ErrorHandler,
   inject,
   Injector,
   input,
@@ -45,6 +46,7 @@ type StatusId = keyof typeof PROFILE_STATUS;
 })
 export class StatusMenu {
   private readonly profileService = inject(ProfilesService);
+  private readonly errorHandler = inject(ErrorHandler);
   protected readonly mobile = inject(ViewportService).isMobile;
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
@@ -88,7 +90,8 @@ export class StatusMenu {
     this.statusChange.emit(next);
     try {
       await this.profileService.updateProfileStatus(this.profileId(), next);
-    } catch {
+    } catch (error) {
+      this.errorHandler.handleError(error);
       if (previous) this.statusChange.emit(previous);
       toast.error('Failed to update status');
       return;
@@ -124,7 +127,8 @@ export class StatusMenu {
     try {
       await this.profileService.updateProfileStatus(id, previous);
       toast.success(`Status restored to ${PROFILE_STATUS[previous]}`);
-    } catch {
+    } catch (error) {
+      this.errorHandler.handleError(error);
       this.statusChange.emit(current);
       toast.error('Failed to undo status change');
     }

@@ -1,4 +1,12 @@
-import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  Component,
+  ErrorHandler,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { debounce, Debouncer, form, FormField } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
@@ -89,6 +97,7 @@ const searchDebouncer: Debouncer<string> = ({ state }, abortSignal) => {
 })
 export class Toolbar {
   private readonly router = inject(Router);
+  private readonly errorHandler = inject(ErrorHandler);
   private readonly profileService = inject(ProfilesService);
   protected readonly authService = inject(AuthService);
   protected readonly themeService = inject(ThemeService);
@@ -195,7 +204,7 @@ export class Toolbar {
       })
       .catch((error) => {
         toast.error('Failed to log out');
-        console.error('Error logging out:', error);
+        this.errorHandler.handleError(error);
       });
   }
 

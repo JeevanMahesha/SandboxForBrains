@@ -2,6 +2,7 @@ import { DatePipe, DOCUMENT } from '@angular/common';
 import {
   Component,
   ElementRef,
+  ErrorHandler,
   Injector,
   afterNextRender,
   computed,
@@ -97,6 +98,7 @@ import { createProfileForm } from './profile-form';
 export class Profile {
   protected readonly profileService = inject(ProfilesService);
   private readonly profileActions = inject(ProfileActionsService);
+  private readonly errorHandler = inject(ErrorHandler);
   private readonly viewport = inject(ViewportService);
   private readonly injector = inject(Injector);
   private readonly document = inject(DOCUMENT);
@@ -324,7 +326,8 @@ export class Profile {
       this.quickNote.set('');
       toast.success('Note added');
       this.profileService.refreshAfterWrite();
-    } catch {
+    } catch (error) {
+      this.errorHandler.handleError(error);
       toast.error('Failed to add note');
     } finally {
       this.noteSaving.set(false);
@@ -366,7 +369,8 @@ export class Profile {
         this.profileService.refreshAfterWrite();
         this.closeDrawer();
       })
-      .catch(() => {
+      .catch((error) => {
+        this.errorHandler.handleError(error);
         toast.error('Failed to update profile');
       });
   }

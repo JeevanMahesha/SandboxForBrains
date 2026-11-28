@@ -4,6 +4,7 @@ import {
   computed,
   DestroyRef,
   ElementRef,
+  ErrorHandler,
   inject,
   signal,
   viewChild,
@@ -89,6 +90,7 @@ const STEPS: readonly WizardStep[] = [
 })
 export default class ProfileWizard {
   private readonly profileService = inject(ProfilesService);
+  private readonly errorHandler = inject(ErrorHandler);
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -331,7 +333,8 @@ export default class ProfileWizard {
         this.profileService.showFirstPageUnfiltered();
         void this.router.navigate(['/']);
       })
-      .catch(() => {
+      .catch((error) => {
+        this.errorHandler.handleError(error);
         toast.error('Failed to add profile');
       });
   }

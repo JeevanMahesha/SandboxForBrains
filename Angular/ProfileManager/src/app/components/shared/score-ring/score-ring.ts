@@ -1,7 +1,11 @@
 import { booleanAttribute, Component, computed, input } from '@angular/core';
 import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
 
-/** Circular star-match score; scores run 0–10 so the ring fill is `score * 10`%. */
+/**
+ * Circular star-match score; scores run 0–10 so the ring fill is `score * 10`%. Only the coloured
+ * band is painted (its centre is masked out), so the hole shows whatever surface the ring sits on
+ * (translucent glass card, drawer, login hero) instead of a flat disc.
+ */
 @Component({
   selector: 'app-score-ring',
   template: `
@@ -11,9 +15,10 @@ import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
         class="relative grid place-items-center rounded-full"
         [attr.aria-label]="'Star match score ' + score() + ' of 10'"
         [attr.aria-describedby]="describedBy()"
-        [style]="ringStyle()"
+        [style.width.px]="size()"
+        [style.height.px]="size()"
       >
-        <span class="bg-background absolute inset-[3px] rounded-full"></span>
+        <span class="absolute inset-0 rounded-full" [style]="ringStyle()"></span>
         <span class="relative text-xs font-semibold" [style.font-size.px]="size() * 0.3">
           {{ score() }}
         </span>
@@ -46,11 +51,18 @@ export class ScoreRing {
 
   protected readonly notSpecified = NOT_SPECIFIED_LABEL;
 
+  /** Band thickness: 10% of the size (min 3px), so larger rings keep their weight. */
+  protected readonly thickness = computed(() => Math.max(3, +(this.size() * 0.1).toFixed(1)));
+
   protected readonly ringStyle = computed(() => {
     const percent = Math.min(Math.max((this.score() ?? 0) * 10, 0), 100);
+    const edge = this.thickness();
+    // Transparent up to (radius - thickness), opaque from there out; 1px of blend keeps the inner
+    // edge as smooth as the old disc's border-radius was.
+    const mask = `radial-gradient(circle closest-side, transparent calc(100% - ${edge}px - 0.5px), #000 calc(100% - ${edge}px + 0.5px))`;
     return (
-      `width:${this.size()}px;height:${this.size()}px;` +
-      `background:conic-gradient(var(--score-fill) ${percent}%, var(--score-track) 0)`
+      `background:conic-gradient(var(--score-fill) ${percent}%, var(--score-track) 0);` +
+      `-webkit-mask-image:${mask};mask-image:${mask}`
     );
   });
 }

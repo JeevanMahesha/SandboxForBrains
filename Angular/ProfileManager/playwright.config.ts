@@ -32,7 +32,10 @@ export default defineConfig({
   globalSetup: './e2e/support/global-setup.ts',
   use: {
     baseURL: process.env['PLAYWRIGHT_TEST_BASE_URL'] ?? 'http://127.0.0.1:4300',
-    trace: 'on-first-retry',
+    // Keep evidence of every failure, also locally where retries are off (on-first-retry would
+    // never record anything there).
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
   projects: [
     {
@@ -54,7 +57,10 @@ export default defineConfig({
     // Resolved from node_modules/.bin, which `ng e2e`, `pnpm exec` and `npx` all put on PATH.
     // Deliberately not wrapped in `pnpm exec`: the wrapper detaches the emulator processes,
     // so Playwright could not terminate them and would hang on shutdown.
-    command: 'firebase emulators:start --only auth,firestore --project demo-profilemanager',
+    // Output goes to emulator-debug.log (git-ignored by `*-debug.log`), so a failure that looks like
+    // a Firestore/Auth emulator problem can be read afterwards instead of being thrown away.
+    command:
+      'firebase emulators:start --only auth,firestore --project demo-profilemanager > emulator-debug.log 2>&1',
     // Only one readiness URL is supported; global-setup.ts then waits for every emulator.
     url: 'http://127.0.0.1:8080/',
     reuseExistingServer: !process.env['CI'],

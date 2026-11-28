@@ -66,8 +66,9 @@
           </hlm-select-content>
         </hlm-select>
       </div>
+      <label for="sort_order_filter" class="sr-only">Sort order</label>
       <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
-        <hlm-select-trigger class="w-36">
+        <hlm-select-trigger class="w-36" buttonId="sort_order_filter">
           <hlm-select-value placeholder="Sort order" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
@@ -267,9 +268,13 @@
 
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <span class="text-muted-foreground text-xs font-semibold uppercase">Sort</span>
+        <label
+          for="sort_order_filter_sheet"
+          class="text-muted-foreground text-xs font-semibold uppercase"
+          >Sort</label
+        >
         <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
-          <hlm-select-trigger class="w-full">
+          <hlm-select-trigger class="w-full" buttonId="sort_order_filter_sheet">
             <hlm-select-value placeholder="Sort order" />
           </hlm-select-trigger>
           <hlm-select-content *hlmSelectPortal>

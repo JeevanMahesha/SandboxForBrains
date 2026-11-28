@@ -71,14 +71,14 @@
   </div>
 
   <div hlmField>
-    <label hlmFieldLabel for="profile_status">Profile Status</label>
+    <label hlmFieldLabel for="profile_status_trigger">Profile Status</label>
     <hlm-select
       id="profile_status"
       class="w-full"
       [itemToString]="statusToLabel"
       [formField]="profileDetailForm().profileStatusId"
     >
-      <hlm-select-trigger class="w-full">
+      <hlm-select-trigger class="w-full" buttonId="profile_status_trigger">
         <hlm-select-value placeholder="Select Profile Status" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
@@ -110,14 +110,14 @@
   }
 
   <div hlmField>
-    <label hlmFieldLabel for="zodiac_sign">Zodiac Sign</label>
+    <label hlmFieldLabel for="zodiac_sign_trigger">Zodiac Sign</label>
     <hlm-select
       id="zodiac_sign"
       class="w-full"
       [itemToString]="zodiacToLabel"
       [formField]="profileDetailForm().zodiacSign"
     >
-      <hlm-select-trigger class="w-full">
+      <hlm-select-trigger class="w-full" buttonId="zodiac_sign_trigger">
         <hlm-select-value placeholder="Select Zodiac Sign" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
@@ -136,14 +136,14 @@
   </div>
 
   <div hlmField>
-    <label hlmFieldLabel for="star_sign">Star Sign</label>
+    <label hlmFieldLabel for="star_sign_trigger">Star Sign</label>
     <hlm-select
       id="star_sign"
       class="w-full"
       [itemToString]="starToLabel"
       [formField]="profileDetailForm().star"
     >
-      <hlm-select-trigger class="w-full">
+      <hlm-select-trigger class="w-full" buttonId="star_sign_trigger">
         <hlm-select-value [placeholder]="starPlaceholder()" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
@@ -206,9 +206,9 @@
 
 @if (shows('place')) {
   <div hlmField>
-    <label hlmFieldLabel for="state">State</label>
+    <label hlmFieldLabel for="state_trigger">State</label>
     <hlm-select id="state" class="w-full" [formField]="profileDetailForm().state">
-      <hlm-select-trigger class="w-full">
+      <hlm-select-trigger class="w-full" buttonId="state_trigger">
         <hlm-select-value placeholder="Select State" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>
@@ -224,9 +224,9 @@
   </div>
 
   <div hlmField>
-    <label hlmFieldLabel for="city">City</label>
+    <label hlmFieldLabel for="city_trigger">City</label>
     <hlm-select id="city" class="w-full" [formField]="profileDetailForm().city">
-      <hlm-select-trigger class="w-full">
+      <hlm-select-trigger class="w-full" buttonId="city_trigger">
         <hlm-select-value [placeholder]="cityPlaceholder()" />
       </hlm-select-trigger>
       <hlm-select-content *hlmSelectPortal>

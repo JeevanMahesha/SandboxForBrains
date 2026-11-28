@@ -24,7 +24,7 @@ import {
   count,
   deleteDoc,
   doc,
-  getAggregateFromServer,
+  getAggregate,
   getDoc,
   getDocs,
   limit,
@@ -34,7 +34,7 @@ import {
   startAfter,
   updateDoc,
   where,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import ConfirmDialog, { ConfirmDialogContext } from '../components/confirm-dialog/confirm-dialog';
 import { PROFILE_STATUS, PROFILE_STATUS_STYLES } from '../constant/common.const';
 import { FIRESTORE } from '../firebase/provide-firebase';
@@ -232,7 +232,7 @@ export class ProfilesService {
       const results = await this.getFilteredProfilesBySearch(filter);
       return results.length;
     }
-    const snapshot = await getAggregateFromServer(this.buildBaseQuery(filter), {
+    const snapshot = await getAggregate(this.buildBaseQuery(filter), {
       total: count(),
     });
     return snapshot.data().total;

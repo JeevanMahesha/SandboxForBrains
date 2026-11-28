@@ -7,12 +7,7 @@ import {
   getAuth,
   setPersistence,
 } from 'firebase/auth';
-import {
-  Firestore,
-  connectFirestoreEmulator,
-  initializeFirestore,
-  memoryLocalCache,
-} from 'firebase/firestore';
+import { Firestore, connectFirestoreEmulator, getFirestore } from 'firebase/firestore/lite';
 
 export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FirebaseApp');
 export const FIREBASE_AUTH = new InjectionToken<Auth>('FirebaseAuth');
@@ -71,11 +66,10 @@ export function provideFirebase(config: FirebaseOptions, options: ProvideFirebas
       provide: FIRESTORE,
       deps: [FIREBASE_APP],
       useFactory: (app: FirebaseApp) => {
-        // In-memory cache only, for the real project and the emulators alike. A persistent
-        // (IndexedDB) cache would keep every profile it read on disk after logout and tab close,
-        // while the auth session ends with the tab. The app issues one-shot reads, so the cache
-        // buys little; it also keeps e2e runs on the same cache the production build uses.
-        const firestore = initializeFirestore(app, { localCache: memoryLocalCache() });
+        // Firestore Lite: the app only issues one-shot reads and writes, never listeners, and Lite
+        // keeps no cache at all, so no profile is ever stored in the browser. It is also a
+        // fraction of the size of the full SDK.
+        const firestore = getFirestore(app);
         if (useEmulators) {
           connectFirestoreEmulator(
             firestore,

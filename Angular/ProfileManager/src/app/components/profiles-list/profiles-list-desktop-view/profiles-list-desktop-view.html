@@ -47,7 +47,16 @@
             class="flex shrink-0"
             hlmTooltip="Compatibility score between the couple's star signs. Higher is better."
           >
-            <app-score-ring showEmpty [score]="profile.starMatchScore ?? null" [size]="44" />
+            <app-score-ring
+              showEmpty
+              [score]="profile.starMatchScore ?? null"
+              [size]="44"
+              [describedBy]="`score-help-${profile.id}`"
+            />
+            <!-- The tooltip text, kept readable for keyboard and screen-reader users (not hover-only) -->
+            <span class="sr-only" [id]="`score-help-${profile.id}`">
+              Compatibility score between the couple's star signs. Higher is better.
+            </span>
           </span>
         </div>
 

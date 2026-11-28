@@ -6,7 +6,13 @@ import { NOT_SPECIFIED_LABEL } from '../../../constant/common.const';
   selector: 'app-score-ring',
   template: `
     @if (score() !== null) {
-      <span class="relative grid place-items-center rounded-full" [style]="ringStyle()">
+      <span
+        role="img"
+        class="relative grid place-items-center rounded-full"
+        [attr.aria-label]="'Star match score ' + score() + ' of 10'"
+        [attr.aria-describedby]="describedBy()"
+        [style]="ringStyle()"
+      >
         <span class="bg-background absolute inset-[3px] rounded-full"></span>
         <span class="relative text-xs font-semibold" [style.font-size.px]="size() * 0.3">
           {{ score() }}
@@ -35,6 +41,8 @@ export class ScoreRing {
   readonly size = input(40);
   /** Card views: render an empty dashed ring instead of "Not specified" text when unscored. */
   readonly showEmpty = input(false, { transform: booleanAttribute });
+  /** Id of an element that explains the score; exposed as the ring's accessible description. */
+  readonly describedBy = input<string | null>(null);
 
   protected readonly notSpecified = NOT_SPECIFIED_LABEL;
 

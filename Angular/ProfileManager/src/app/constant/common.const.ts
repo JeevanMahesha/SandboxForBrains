@@ -230,47 +230,47 @@ export const PROFILE_STATUS = {
  */
 export const PROFILE_STATUS_STYLES = {
   NEW: {
-    badge: 'bg-sky-100! text-sky-700!',
+    badge: 'bg-sky-100! text-sky-700! dark:bg-sky-500/20! dark:text-sky-300!',
     dot: 'status-dot bg-sky-500',
     border: 'border-l-sky-400',
   },
   REJECTED: {
-    badge: 'bg-rose-100! text-rose-700!',
+    badge: 'bg-rose-100! text-rose-700! dark:bg-rose-500/20! dark:text-rose-300!',
     dot: 'status-dot bg-rose-500',
     border: 'border-l-rose-400',
   },
   CONTACTED: {
-    badge: 'bg-indigo-100! text-indigo-700!',
+    badge: 'bg-indigo-100! text-indigo-700! dark:bg-indigo-500/20! dark:text-indigo-300!',
     dot: 'status-dot bg-indigo-500',
     border: 'border-l-indigo-400',
   },
   MEETING_SCHEDULED: {
-    badge: 'bg-lime-100! text-lime-700!',
+    badge: 'bg-lime-100! text-lime-700! dark:bg-lime-500/20! dark:text-lime-300!',
     dot: 'status-dot bg-lime-500',
     border: 'border-l-lime-400',
   },
   ACCEPTED: {
-    badge: 'bg-emerald-100! text-emerald-700!',
+    badge: 'bg-emerald-100! text-emerald-700! dark:bg-emerald-500/20! dark:text-emerald-300!',
     dot: 'status-dot bg-emerald-500',
     border: 'border-l-emerald-400',
   },
   ON_HOLD: {
-    badge: 'bg-amber-100! text-amber-700!',
+    badge: 'bg-amber-100! text-amber-700! dark:bg-amber-500/20! dark:text-amber-300!',
     dot: 'status-dot bg-amber-500',
     border: 'border-l-amber-400',
   },
   PROFILE_SHARED: {
-    badge: 'bg-cyan-100! text-cyan-700!',
+    badge: 'bg-cyan-100! text-cyan-700! dark:bg-cyan-500/20! dark:text-cyan-300!',
     dot: 'status-dot bg-cyan-500',
     border: 'border-l-cyan-400',
   },
   SHARE_BY_RM: {
-    badge: 'bg-orange-100! text-orange-700!',
+    badge: 'bg-orange-100! text-orange-700! dark:bg-orange-500/20! dark:text-orange-300!',
     dot: 'status-dot bg-orange-500',
     border: 'border-l-orange-400',
   },
   NEED_TO_CONTACT: {
-    badge: 'bg-slate-200! text-slate-700!',
+    badge: 'bg-slate-200! text-slate-700! dark:bg-slate-500/25! dark:text-slate-200!',
     dot: 'status-dot bg-slate-500',
     border: 'border-l-slate-400',
   },

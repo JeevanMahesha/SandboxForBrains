@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -99,6 +99,7 @@ export class Profile {
   protected readonly profileService = inject(ProfilesService);
   private readonly viewport = inject(ViewportService);
   private readonly injector = inject(Injector);
+  private readonly document = inject(DOCUMENT);
   private readonly dialogService = inject(HlmDialogService);
   readonly userActionType = computed(() => this.profileService.drawerState().actionType);
   readonly isOpened = computed(() => this.profileService.drawerState().isOpen);
@@ -348,7 +349,17 @@ export class Profile {
       return;
     }
     this.editTab.set('details');
-    afterNextRender(() => first.fieldTree().focusBoundControl(), { injector: this.injector });
+    afterNextRender(
+      () => {
+        // Through the DOM, not focusBoundControl(): that would focus a Spartan select's host
+        // element, which is not focusable, so a select as the first invalid field got no focus.
+        // Controls showing an error carry aria-invalid; they are in DOM order inside the drawer.
+        this.document
+          .querySelector<HTMLElement>('hlm-sheet-content [aria-invalid="true"]')
+          ?.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   private async updateProfile(profileData: Partial<ProfileDetail>): Promise<void> {

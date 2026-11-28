@@ -95,6 +95,8 @@ test.describe('edit profile', () => {
       'true',
     );
     await expect(dialog.getByText('City is required')).toBeVisible();
+    // City is a select: focus must really land on it (the select's host element can't take focus).
+    await expect(dialog.getByRole('combobox', { name: /^City/ })).toBeFocused();
     await expect(page.getByText('Profile updated successfully')).toHaveCount(0);
     // Still editing: nothing was saved and the drawer stayed open.
     await expect(dialog.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();

@@ -298,13 +298,13 @@ export default class ProfileWizard {
    * silent no-op. The submit itself marks every field touched, which reveals the messages.
    */
   onSubmitAttempt(): void {
-    const first = this.profileDetailForm().errorSummary()[0];
-    if (!first) return;
+    if (!this.profileDetailForm().errorSummary().length) return;
     const stepWithError = [0, 1, 2].find((index) =>
       this.stepFields(index).some((field) => field().invalid() && !field().disabled()),
     );
-    this.setStep(stepWithError ?? this.stepIndex());
-    afterNextRender(() => first.fieldTree().focusBoundControl(), { injector: this.injector });
+    const target = stepWithError ?? this.stepIndex();
+    this.setStep(target);
+    this.focusFirstInvalid(target);
   }
 
   /** Enter in a text input advances the wizard instead of submitting a half-filled form. */

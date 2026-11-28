@@ -98,6 +98,8 @@ test.describe('profile form validation', () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
     await expect(page.locator('#state-error')).toHaveText('State is required');
+    // State is a select: focus must really land on it.
+    await expect(page.getByRole('combobox', { name: /^State/ })).toBeFocused();
     await expect(heading('Location & notes')).toBeVisible();
     await expect(profileRows(page)).toHaveCount(0);
   });

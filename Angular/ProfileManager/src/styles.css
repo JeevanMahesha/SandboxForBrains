@@ -145,6 +145,16 @@ body::before {
   background-image: var(--gradient-primary);
 }
 
+/* Small uppercase caption above a group of fields, filters or stars. */
+@utility section-label {
+  font-size: var(--text-xs);
+  line-height: var(--tw-leading, var(--text-xs--line-height));
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
 @layer components {
   [data-slot='card'],
   [data-slot='sheet-content'],

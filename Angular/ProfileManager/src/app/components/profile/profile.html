@@ -110,7 +110,7 @@
 
         <!-- Contact -->
         <section class="glass flex flex-col gap-3 rounded-2xl p-4">
-          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Contact</h4>
+          <h4 class="section-label">Contact</h4>
           <dl class="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
             <div class="min-w-0">
               <dt class="text-xs text-muted-foreground">Mobile Number</dt>
@@ -153,9 +153,7 @@
 
         <!-- Horoscope -->
         <section class="glass flex flex-col gap-3 rounded-2xl p-4">
-          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            Horoscope
-          </h4>
+          <h4 class="section-label">Horoscope</h4>
           <div class="flex items-center gap-4">
             <app-score-ring [score]="profileDetailForm.starMatchScore().value()" [size]="56" />
             <p class="text-sm font-medium">Star Match Score</p>
@@ -182,9 +180,7 @@
 
         <!-- Location -->
         <section class="glass flex flex-col gap-3 rounded-2xl p-4">
-          <h4 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            Location
-          </h4>
+          <h4 class="section-label">Location</h4>
           <dl class="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
             <div class="col-span-2">
               <dt class="text-xs text-muted-foreground">State and City</dt>
@@ -195,12 +191,7 @@
 
         <!-- Notes timeline -->
         <section class="flex flex-col gap-3" aria-labelledby="notes-heading">
-          <h4
-            id="notes-heading"
-            class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
-          >
-            Notes · {{ noteCount() }}
-          </h4>
+          <h4 id="notes-heading" class="section-label">Notes · {{ noteCount() }}</h4>
 
           <!-- Quick note: saved immediately, without entering edit mode. -->
           <div hlmField>

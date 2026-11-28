@@ -269,11 +269,7 @@
 
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label
-          for="sort_order_filter_sheet"
-          class="text-muted-foreground text-xs font-semibold uppercase"
-          >Sort</label
-        >
+        <label for="sort_order_filter_sheet" class="section-label">Sort</label>
         <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
           <hlm-select-trigger class="w-full" buttonId="sort_order_filter_sheet">
             <hlm-select-value placeholder="Sort order" />
@@ -286,12 +282,12 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <span class="text-muted-foreground text-xs font-semibold uppercase">Profile Status</span>
+        <span class="section-label">Profile Status</span>
         <app-status-chips [profileStatus]="filterForm.profileStatus" />
       </div>
 
       <div class="flex flex-col gap-2">
-        <span class="text-muted-foreground text-xs font-semibold uppercase">Star Match Score</span>
+        <span class="section-label">Star Match Score</span>
         <app-filter-selects
           triggerId="star_match_filter_sheet"
           [starMatchScore]="filterForm.starMatchScore"

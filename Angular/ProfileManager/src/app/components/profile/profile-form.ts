@@ -167,15 +167,10 @@ export function createProfileForm(options: ProfileFormOptions) {
 
   function deleteComment(comment: Comment): void {
     const currentComments = profileDetailForm.comments().value();
+    // Remove exactly the clicked note (same object), not every note sharing its text or timestamp.
     profileDetailForm
       .comments()
-      .value.set(
-        currentComments.filter(
-          (eachComment) =>
-            eachComment.createDateAndTime !== comment.createDateAndTime &&
-            eachComment.value !== comment.value,
-        ),
-      );
+      .value.set(currentComments.filter((eachComment) => eachComment !== comment));
   }
 
   /** Back to a blank, untouched form (also clears touched/dirty so no stale errors show). */

@@ -37,6 +37,38 @@ test.describe('profile comments', () => {
     await expect(page.getByText('No comments yet.')).toBeVisible();
   });
 
+  test('deleting one note keeps other notes that have the same text', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    const sameText = 'Called, no answer';
+    await seedProfiles([makeProfile(0)]);
+    await loginAsAdmin();
+
+    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openNotesTab(page);
+    for (const note of [sameText, 'A different note', sameText]) {
+      await page.locator('#comment').fill(note);
+      await page.getByRole('button', { name: 'Add note' }).click();
+    }
+    await expect(page.getByRole('button', { name: 'Delete comment' })).toHaveCount(3);
+
+    // Delete only the first "Called, no answer"; the second one must survive.
+    await page.getByRole('button', { name: 'Delete comment' }).first().click();
+    await expect(page.getByRole('button', { name: 'Delete comment' })).toHaveCount(2);
+    await expect(page.getByText(sameText)).toHaveCount(1);
+    await expect(page.getByText('A different note')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Update Profile' }).click();
+    await expect(page.getByText('Profile updated successfully')).toBeVisible();
+
+    // Persisted: the surviving duplicate is still there after reopening.
+    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await openNotesTab(page);
+    await expect(page.getByText(sameText)).toHaveCount(1);
+    await expect(page.getByText('A different note')).toBeVisible();
+  });
+
   test('saves a comment that was typed but never explicitly added', async ({
     page,
     loginAsAdmin,

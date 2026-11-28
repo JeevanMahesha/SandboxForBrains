@@ -1,11 +1,18 @@
 import { expect, type Page, test as base } from '@playwright/test';
-import { ADMIN_USER, clearFirestore } from './emulator';
+import { ADMIN_USER, AUTH_SESSION_KEY, adminSessionEntry, clearFirestore } from './emulator';
 
 interface Fixtures {
   /** Auto fixture: every browser test starts from an empty Firestore. */
   resetFirestore: void;
-  /** Logs in through the real login form. Session persistence is per-tab, so this runs per test. */
+  /**
+   * Starts the test signed in as the admin without touching the login form: the Firebase session
+   * entry is written to `sessionStorage` before the app boots (session persistence is per-tab,
+   * so this runs per test) and the app opens on the list. Use `loginThroughForm` where the login
+   * form itself is under test.
+   */
   loginAsAdmin: () => Promise<void>;
+  /** Logs in through the real login form. */
+  loginThroughForm: () => Promise<void>;
 }
 
 export const test = base.extend<Fixtures>({
@@ -18,6 +25,24 @@ export const test = base.extend<Fixtures>({
     { auto: true },
   ],
   loginAsAdmin: async ({ page }, use) => {
+    await use(async () => {
+      const entry = await adminSessionEntry();
+      // The flag makes this a one-off per tab: after the app logs out (or a reload) the entry
+      // must stay gone instead of being written back on the next navigation.
+      await page.addInitScript(
+        ([key, value]) => {
+          if (!sessionStorage.getItem('e2e-session-seeded')) {
+            sessionStorage.setItem('e2e-session-seeded', '1');
+            sessionStorage.setItem(key, value);
+          }
+        },
+        [AUTH_SESSION_KEY, entry],
+      );
+      await page.goto('/');
+      await expect(page).toHaveURL(/\/$/);
+    });
+  },
+  loginThroughForm: async ({ page }, use) => {
     await use(async () => {
       await page.goto('/login');
       await page.locator('#login-email').fill(ADMIN_USER.email);

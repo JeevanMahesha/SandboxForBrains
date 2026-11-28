@@ -6,6 +6,8 @@
  * start with `demo-`: the Firebase SDK and CLI treat such ids as emulator-only.
  */
 
+import { randomUUID } from 'node:crypto';
+
 import type { ProfileDetail } from '../../src/app/models/profile.model';
 
 export const PROJECT_ID = 'demo-profilemanager';
@@ -52,6 +54,53 @@ export async function createAdminUser(): Promise<void> {
   await request(`${AUTH_API}/accounts:update`, {
     method: 'POST',
     body: JSON.stringify({ localId, customAttributes: JSON.stringify({ admin: true }) }),
+  });
+}
+
+/** Key the Firebase Auth SDK stores the signed-in user under (session persistence). */
+export const AUTH_SESSION_KEY = 'firebase:authUser:demo-api-key:[DEFAULT]';
+
+/**
+ * Signs the admin in through the Auth emulator's REST API and returns the value the Firebase
+ * SDK would keep in `sessionStorage` after a real login, so a test can start already signed in
+ * without driving the login form. Emulator-only: the API key and tokens are the emulator's.
+ */
+export async function adminSessionEntry(): Promise<string> {
+  const response = await request(
+    `${AUTH_EMULATOR_URL}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=demo-api-key`,
+    { method: 'POST', body: JSON.stringify({ ...ADMIN_USER, returnSecureToken: true }) },
+  );
+  const { localId, idToken, refreshToken, expiresIn } = (await response.json()) as {
+    localId: string;
+    idToken: string;
+    refreshToken: string;
+    expiresIn: string;
+  };
+  const now = Date.now();
+  return JSON.stringify({
+    uid: localId,
+    email: ADMIN_USER.email,
+    emailVerified: true,
+    isAnonymous: false,
+    providerData: [
+      {
+        providerId: 'password',
+        uid: ADMIN_USER.email,
+        displayName: null,
+        email: ADMIN_USER.email,
+        phoneNumber: null,
+        photoURL: null,
+      },
+    ],
+    stsTokenManager: {
+      refreshToken,
+      accessToken: idToken,
+      expirationTime: now + Number(expiresIn) * 1000,
+    },
+    createdAt: String(now),
+    lastLoginAt: String(now),
+    apiKey: 'demo-api-key',
+    appName: '[DEFAULT]',
   });
 }
 
@@ -125,15 +174,30 @@ function toFirestoreValue(value: SeedValue): Record<string, unknown> {
   }
 }
 
-/** Writes the given profiles to the `profiles` collection, bypassing security rules. */
+/** Documents per `:commit` request (the Firestore limit is 500 writes per commit). */
+const SEED_BATCH_SIZE = 400;
+
+/**
+ * Writes the given profiles to the `profiles` collection, bypassing security rules. Profiles go
+ * in as a few `:commit` batches rather than one request each: the larger specs seed 60+ rows.
+ */
 export async function seedProfiles(profiles: SeedProfile[]): Promise<void> {
-  for (const profile of profiles) {
-    const fields = Object.fromEntries(
-      Object.entries(profile).map(([key, value]) => [key, toFirestoreValue(value as SeedValue)]),
-    );
-    await request(`${FIRESTORE_DOCS}/profiles`, {
+  const documentsPath = `projects/${PROJECT_ID}/databases/(default)/documents/profiles`;
+  for (let start = 0; start < profiles.length; start += SEED_BATCH_SIZE) {
+    const writes = profiles.slice(start, start + SEED_BATCH_SIZE).map((profile) => ({
+      update: {
+        name: `${documentsPath}/${randomUUID().replaceAll('-', '').slice(0, 20)}`,
+        fields: Object.fromEntries(
+          Object.entries(profile).map(([key, value]) => [
+            key,
+            toFirestoreValue(value as SeedValue),
+          ]),
+        ),
+      },
+    }));
+    await request(`${FIRESTORE_DOCS}:commit`, {
       method: 'POST',
-      body: JSON.stringify({ fields }),
+      body: JSON.stringify({ writes }),
     });
   }
 }

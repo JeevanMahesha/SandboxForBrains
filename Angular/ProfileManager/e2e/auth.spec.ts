@@ -121,8 +121,11 @@ test.describe('authentication', () => {
     );
   });
 
-  test('logs the admin in and shows the empty profiles list', async ({ page, loginAsAdmin }) => {
-    await loginAsAdmin();
+  test('logs the admin in and shows the empty profiles list', async ({
+    page,
+    loginThroughForm,
+  }) => {
+    await loginThroughForm();
 
     await expect(page.getByText('Login successful')).toBeVisible();
     await expect(profilesTotal(page)).toHaveText(/^0 profiles$/);

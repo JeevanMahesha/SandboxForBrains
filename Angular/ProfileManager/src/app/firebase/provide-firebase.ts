@@ -12,8 +12,6 @@ import {
   connectFirestoreEmulator,
   initializeFirestore,
   memoryLocalCache,
-  persistentLocalCache,
-  persistentSingleTabManager,
 } from 'firebase/firestore';
 
 export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FirebaseApp');
@@ -65,22 +63,19 @@ export function provideFirebase(config: FirebaseOptions, options: ProvideFirebas
       provide: FIRESTORE,
       deps: [FIREBASE_APP],
       useFactory: (app: FirebaseApp) => {
+        // In-memory cache only, for the real project and the emulators alike. A persistent
+        // (IndexedDB) cache would keep every profile it read on disk after logout and tab close,
+        // while the auth session ends with the tab. The app issues one-shot reads, so the cache
+        // buys little; it also keeps e2e runs on the same cache the production build uses.
+        const firestore = initializeFirestore(app, { localCache: memoryLocalCache() });
         if (useEmulators) {
-          // In-memory cache only: e2e runs must not carry IndexedDB state between tests.
-          const firestore = initializeFirestore(app, { localCache: memoryLocalCache() });
           connectFirestoreEmulator(
             firestore,
             EMULATOR_HOSTS.firestore.host,
             EMULATOR_HOSTS.firestore.port,
           );
-          return firestore;
         }
-        // persistentSingleTabManager pairs well with browserSessionPersistence:
-        // each tab owns its own session, and IndexedDB cache speeds up repeat reads
-        // within that same tab without leaking data across tabs.
-        return initializeFirestore(app, {
-          localCache: persistentLocalCache({ tabManager: persistentSingleTabManager(undefined) }),
-        });
+        return firestore;
       },
     },
   ]);

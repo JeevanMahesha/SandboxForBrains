@@ -62,8 +62,9 @@ test.describe('hosting security headers', () => {
     const connect = policy.get('connect-src') ?? [];
     expect(connect).toContain('https://*.googleapis.com');
     expect(connect).toContain('wss://*.googleapis.com');
-    expect(policy.get('font-src')).toContain('https://fonts.gstatic.com');
-    expect(policy.get('style-src')).toContain('https://fonts.googleapis.com');
+    // No third-party fonts any more (PERF-5): the policy must not re-open the Google font hosts.
+    expect(policy.get('font-src')).toEqual(["'self'", 'data:']);
+    expect(policy.get('style-src')).toEqual(["'self'", "'unsafe-inline'"]);
     // frame-ancestors is ignored (and warned about) in a report-only policy, so it is not repeated.
     expect(policy.has('frame-ancestors')).toBe(false);
   });

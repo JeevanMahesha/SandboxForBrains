@@ -1,4 +1,5 @@
 import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { makeProfile, seedProfiles } from './support/emulator';
 import {
   expect,
   fillWizardProfile,
@@ -39,6 +40,37 @@ test.describe('create profile', () => {
     // The loosely typed number is persisted in the canonical +91 form.
     await expect(profileRows(page).first()).toContainText('+919876543210');
     await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
+  });
+
+  test('stores name and matrimony ID without stray spaces so exact search finds them', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    // A second profile makes the search discriminating: it must narrow 2 down to 1.
+    await seedProfiles([makeProfile(0, { name: 'Other Profile', matrimonyId: 'M-OTHER-1' })]);
+    await loginAsAdmin();
+
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, {
+      name: '  Padded Name  ',
+      mobile: '98765 43210',
+      matrimonyId: '  M-PAD-1  ',
+      status: PROFILE_STATUS.NEW,
+      zodiac: ARIES_LABEL,
+      age: '27',
+      state: 'Tamil Nadu',
+      city: 'Chennai',
+    });
+    await page.getByRole('button', { name: 'Create profile' }).click();
+    await expect(page.getByText('Profile added successfully')).toBeVisible();
+    await expect(profilesTotal(page)).toHaveText(/^2 profiles$/);
+
+    // The search box trims what is typed and matches matrimonyId exactly.
+    await page.getByPlaceholder('Search by ID or phone').fill('M-PAD-1');
+    await page.getByPlaceholder('Search by ID or phone').press('Enter');
+    await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
+    await expect(profileRows(page)).toHaveCount(1);
+    await expect(profileRows(page).first()).toContainText('Padded Name');
   });
 
   test('does not carry an abandoned draft into the next Add Profile', async ({

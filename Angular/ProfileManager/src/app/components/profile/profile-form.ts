@@ -101,8 +101,12 @@ export function createProfileForm(options: ProfileFormOptions) {
           // Persist the canonical "+91XXXXXXXXXX" form regardless of how the user typed it.
           // Validation guarantees a canonical form exists here; the fallback only satisfies the type.
           const rawMobileNumber = formRef().value().mobileNumber;
+          // Trim name and matrimonyId: search trims its input and matches matrimonyId exactly,
+          // so a stored "M123 " could never be found.
           const profileData: ProfileDetail = {
             ...formRef().value(),
+            name: formRef().value().name.trim(),
+            matrimonyId: formRef().value().matrimonyId.trim(),
             mobileNumber: toCanonicalMobileNumber(rawMobileNumber) ?? rawMobileNumber,
           };
           return options.save(profileData);

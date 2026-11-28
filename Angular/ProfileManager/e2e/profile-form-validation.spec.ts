@@ -220,3 +220,71 @@ async function fillRemainingAndSave(page: import('@playwright/test').Page): Prom
   await expect(page).toHaveURL(/\/$/);
   await expect(profileRows(page)).toHaveCount(1);
 }
+
+test.describe('wizard focus and landmarks', () => {
+  const stepRail = (page: import('@playwright/test').Page) =>
+    page.getByRole('navigation', { name: 'Profile creation steps' });
+
+  test('a blocked Continue moves focus to the first invalid field of that step', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+
+    // Step 1, nothing filled: focus goes to Name (not left on the Continue button).
+    await wizardContinue(page);
+    await expect(page.locator('#name-error')).toHaveText('Name is required');
+    await expect(page.locator('#name')).toBeFocused();
+
+    await page.locator('#name').fill('Focus Test');
+    await page.locator('#matrimony').fill('M-Focus');
+    await page.locator('#mobile').fill('98765 43210');
+    await wizardContinue(page);
+    await expect(page.getByRole('heading', { name: 'Horoscope' })).toBeFocused();
+
+    // Step 2, nothing filled: the first invalid field is the zodiac select.
+    await wizardContinue(page);
+    await expect(page.locator('#zodiac_sign-error')).toHaveText('Zodiac sign is required');
+    await expect(page.locator('hlm-select#zodiac_sign').getByRole('combobox')).toBeFocused();
+
+    // Zodiac chosen, age still empty: now the age input gets focus.
+    await pickOption(page, 'hlm-select#zodiac_sign', ARIES_LABEL);
+    await wizardContinue(page);
+    await expect(page.locator('#age-error')).toHaveText('Age is required');
+    await expect(page.locator('#age')).toBeFocused();
+  });
+
+  test('jumping ahead from the step rail stops at the invalid step and focuses its field', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+
+    await stepRail(page)
+      .getByRole('button', { name: /Location/ })
+      .click();
+
+    await expect(stepRail(page).locator('[aria-current="step"]')).toContainText('Contact');
+    await expect(page.locator('#name-error')).toHaveText('Name is required');
+    await expect(page.locator('#name')).toBeFocused();
+  });
+
+  test('the live preview is exposed as a landmark at every width', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+
+    // Wide: the sidebar preview is the complementary landmark; the compact one is hidden.
+    await expect(page.getByRole('complementary', { name: 'Live preview' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Live preview' })).toHaveCount(0);
+
+    // Phone: the compact preview must be a named region, not an unlabelled div.
+    await page.setViewportSize({ width: 390, height: 800 });
+    await expect(page.getByRole('region', { name: 'Live preview' })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Live preview' })).toHaveCount(0);
+  });
+});

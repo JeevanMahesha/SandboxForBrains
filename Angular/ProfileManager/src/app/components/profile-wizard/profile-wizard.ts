@@ -91,6 +91,7 @@ export default class ProfileWizard {
   private readonly profileService = inject(ProfilesService);
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly steps = STEPS;
@@ -232,8 +233,33 @@ export default class ProfileWizard {
     }
   }
 
+  /**
+   * After a step was refused because of an invalid field, put keyboard and screen-reader focus on
+   * the first invalid one (the messages are already announced, but focus would stay on the button).
+   * Runs after any step change, so it also overrides the new step heading's focus.
+   */
+  private focusFirstInvalid(index: number): void {
+    const hasInvalid = this.stepFields(index).some(
+      (field) => field().invalid() && !field().disabled(),
+    );
+    if (!hasInvalid) return;
+    afterNextRender(
+      () => {
+        // The controls that show an error carry aria-invalid, in DOM order, and only the current
+        // step is rendered. Going through the DOM (not focusBoundControl) matters for the Spartan
+        // selects: Signal Forms would focus their non-focusable host element and nothing happens.
+        this.host.nativeElement.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      },
+      { injector: this.injector },
+    );
+  }
+
   async next(): Promise<void> {
-    if (this.isLastStep() || !this.stepValid(this.stepIndex())) return;
+    if (this.isLastStep()) return;
+    if (!this.stepValid(this.stepIndex())) {
+      this.focusFirstInvalid(this.stepIndex());
+      return;
+    }
     if (this.stepIndex() === 0 && !(await this.stepOneIsFree())) return;
     this.setStep(this.stepIndex() + 1);
   }
@@ -251,6 +277,7 @@ export default class ProfileWizard {
     for (let i = this.stepIndex(); i < target; i++) {
       if (!this.stepValid(i)) {
         this.setStep(i);
+        this.focusFirstInvalid(i);
         return;
       }
     }

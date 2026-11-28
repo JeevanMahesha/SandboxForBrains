@@ -327,12 +327,29 @@ export class ProfilesService {
     this.profiles.reload();
   }
 
+  /**
+   * After a delete, step back to the new last page when the deleted row was the only one on the
+   * current last page, instead of reloading a page index that no longer exists (an empty page
+   * that the pager then has to correct with a second load).
+   */
+  private refreshAfterDelete(): void {
+    const { pageIndex, pageSize } = this.pageState();
+    const lastPageIndex = Math.max(0, Math.ceil((this.totalCount() - 1) / pageSize) - 1);
+    if (pageIndex > lastPageIndex) {
+      // Changing the page re-runs the loader; clearing the key makes it recount and drop cursors.
+      this.lastFilterKey = '';
+      this.pageState.update((state) => ({ ...state, pageIndex: lastPageIndex }));
+    } else {
+      this.refreshProfiles();
+    }
+  }
+
   private removeProfile(id: string): void {
     const docRef = doc(this.firestore, 'profiles', id);
     deleteDoc(docRef)
       .then(() => {
         toast.success('Profile deleted successfully');
-        this.refreshProfiles();
+        this.refreshAfterDelete();
       })
       .catch(() => {
         toast.error('Failed to delete profile');

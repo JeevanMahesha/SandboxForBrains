@@ -17,6 +17,20 @@ test.describe('authentication', () => {
     await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
   });
 
+  test('the redirect to login replaces the guarded URL instead of adding a history entry', async ({
+    page,
+  }) => {
+    await page.goto('about:blank');
+    await page.goto('/profiles/new');
+    await expect(page).toHaveURL(/\/login\?returnUrl=%2Fprofiles%2Fnew$/);
+
+    // One step back leaves the app. If the guard pushed /login on top of /profiles/new, Back would
+    // land on the guarded URL and bounce straight back to the login page (a back button trap).
+    await page.goBack();
+
+    await expect(page).toHaveURL('about:blank');
+  });
+
   test('returns to the page the visitor originally asked for after logging in', async ({
     page,
   }) => {

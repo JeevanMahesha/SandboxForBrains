@@ -12,8 +12,9 @@ export const authGuard: CanActivateFn = async (route, state) => {
     return true;
   }
 
-  router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-  return false;
+  // Returning a UrlTree makes this a redirect, so the guarded URL is replaced in the history
+  // instead of leaving a back-button trap behind it.
+  return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 };
 
 export const loginGuard: CanActivateFn = async (_route, _state) => {
@@ -26,6 +27,5 @@ export const loginGuard: CanActivateFn = async (_route, _state) => {
     return true;
   }
 
-  router.navigate(['/']);
-  return false;
+  return router.createUrlTree(['/']);
 };

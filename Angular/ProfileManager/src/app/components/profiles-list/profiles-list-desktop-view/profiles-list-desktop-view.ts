@@ -86,6 +86,8 @@ export class ProfilesListDesktopView {
   private profileService = inject(ProfilesService);
   readonly pagedData = input.required<ProfileDetail[]>();
   readonly isLoading = input.required<boolean>();
+  /** A failed load is not an empty list: the parent shows the error, so no empty state here. */
+  readonly hasError = input(false);
   readonly skeletonRows = Array.from({ length: 6 });
 
   userActionEvent(userActionType: ToolbarAction, profileId: ProfileDetail['id']): void {

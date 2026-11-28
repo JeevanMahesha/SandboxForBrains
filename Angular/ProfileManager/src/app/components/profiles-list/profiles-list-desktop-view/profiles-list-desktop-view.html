@@ -156,7 +156,9 @@
         </div>
       </article>
     } @empty {
-      <app-profiles-empty-state />
+      @if (!hasError()) {
+        <app-profiles-empty-state />
+      }
     }
   }
 </div>

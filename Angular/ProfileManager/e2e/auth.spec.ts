@@ -50,6 +50,8 @@ test.describe('authentication', () => {
 
     await expect(page.getByText('Login successful')).toBeVisible();
     await expect(profilesTotal(page)).toHaveText(/^0 profiles$/);
+    // A genuinely empty list still gets the first-profile prompt.
+    await expect(page.getByText('No profiles yet')).toBeVisible();
   });
 
   test('logs the admin out and clears the session', async ({ page, loginAsAdmin }) => {

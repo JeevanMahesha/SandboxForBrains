@@ -14,7 +14,11 @@
       }
       <div class="hidden md:block">
         @defer (on viewport) {
-          <app-profiles-list-desktop-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
+          <app-profiles-list-desktop-view
+            [pagedData]="rows()"
+            [isLoading]="profiles.isLoading()"
+            [hasError]="!!profiles.error()"
+          />
         } @placeholder {
           <div
             class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
@@ -32,7 +36,11 @@
       }
       <div class="block md:hidden">
         @defer (on viewport) {
-          <app-profiles-list-mobile-view [pagedData]="rows()" [isLoading]="profiles.isLoading()" />
+          <app-profiles-list-mobile-view
+            [pagedData]="rows()"
+            [isLoading]="profiles.isLoading()"
+            [hasError]="!!profiles.error()"
+          />
         } @placeholder {
           <div class="mt-5 flex flex-col gap-5" aria-hidden="true">
             @for (card of [0, 1, 2, 3]; track card) {

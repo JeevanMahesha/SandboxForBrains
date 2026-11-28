@@ -145,6 +145,10 @@ test.describe('toolbar search', () => {
     await expect(alert).toContainText('Something went wrong while loading profiles.');
     await expect(alert).toContainText('The query requires an index.');
     await expect(page.locator('nav[aria-label="pagination"]')).toHaveCount(0);
+    // A failed load is not an empty list: no "No profiles yet / Add Profile" under the error.
+    await expect(page.getByText('No profiles yet')).toHaveCount(0);
+    await expect(page.getByText('No profiles found.')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Add Profile' }).first()).toBeVisible();
 
     await page.unroute(AGGREGATION_URL, failAggregation);
     await alert.getByRole('button', { name: 'Retry' }).click();

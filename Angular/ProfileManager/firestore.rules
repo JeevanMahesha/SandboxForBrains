@@ -5,11 +5,87 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.admin == true;
     }
 
+    // Statuses the app knows (PROFILE_STATUS keys in src/app/constant/common.const.ts).
+    function isKnownStatus(value) {
+      return value in [
+        'NEW', 'REJECTED', 'CONTACTED', 'MEETING_SCHEDULED', 'ACCEPTED',
+        'ON_HOLD', 'PROFILE_SHARED', 'NEED_TO_CONTACT', 'SHARE_BY_RM'
+      ];
+    }
+
+    // The fields of a stored profile (ProfileDetail in src/app/models/profile.model.ts).
+    function profileFields() {
+      return [
+        'name', 'mobileNumber', 'matrimonyId', 'profileStatusId', 'zodiacSign', 'star',
+        'starMatchScore', 'age', 'state', 'city', 'comments', 'createdAt', 'updatedAt'
+      ];
+    }
+
+    // Every field except createdAt, which is set once on create and never changes.
+    function editableFields() {
+      return [
+        'name', 'mobileNumber', 'matrimonyId', 'profileStatusId', 'zodiacSign', 'star',
+        'starMatchScore', 'age', 'state', 'city', 'comments', 'updatedAt'
+      ];
+    }
+
+    // Optional text: absent-as-null or a string of at most `max` characters.
+    function isNullOrText(value, max) {
+      return value == null || (value is string && value.size() <= max);
+    }
+
+    function isText(value, max) {
+      return value is string && value.size() > 0 && value.size() <= max;
+    }
+
+    // "+91" followed by 10 digits starting 6-9: the one format the app stores.
+    function isCanonicalMobile(value) {
+      return value is string && value.matches('^[+]91[6-9][0-9]{9}$');
+    }
+
+    // Validates each field of `data` that is listed in `keys`. Fields outside `keys` are not
+    // looked at, so a legacy document can still get a status change or a note while its old
+    // values stay as they are; on create `keys` is every key of the new document.
+    function fieldsAreValid(data, keys) {
+      return (!keys.hasAny(['name']) || isText(data.name, 100))
+        && (!keys.hasAny(['matrimonyId']) || isText(data.matrimonyId, 64))
+        && (!keys.hasAny(['mobileNumber']) || isCanonicalMobile(data.mobileNumber))
+        && (!keys.hasAny(['profileStatusId'])
+          || (data.profileStatusId is string && isKnownStatus(data.profileStatusId)))
+        && (!keys.hasAny(['zodiacSign']) || isNullOrText(data.zodiacSign, 64))
+        && (!keys.hasAny(['star']) || isNullOrText(data.star, 64))
+        && (!keys.hasAny(['state']) || isNullOrText(data.state, 100))
+        && (!keys.hasAny(['city']) || isNullOrText(data.city, 100))
+        && (!keys.hasAny(['age'])
+          || data.age == null || (data.age is int && data.age >= 18 && data.age <= 120))
+        && (!keys.hasAny(['starMatchScore'])
+          || data.starMatchScore == null
+          || (data.starMatchScore is int && data.starMatchScore >= 0 && data.starMatchScore <= 36))
+        // Rules cannot loop, so the notes are bounded by count only (1 MB document limit applies).
+        && (!keys.hasAny(['comments']) || (data.comments is list && data.comments.size() <= 200));
+    }
+
     match /profiles/{profileId} {
       allow read, list: if isAdmin();
+
       allow create: if isAdmin()
-        && request.resource.data.keys().hasAll(['matrimonyId', 'createdAt']);
-      allow update: if isAdmin();
+        && request.resource.data.keys().hasOnly(profileFields())
+        && request.resource.data.keys().hasAll(
+          ['name', 'mobileNumber', 'matrimonyId', 'profileStatusId', 'createdAt', 'updatedAt'])
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && fieldsAreValid(request.resource.data, request.resource.data.keys());
+
+      // createdAt never changes, matrimonyId stays, updatedAt is stamped with the server time,
+      // and only the fields that change are validated (legacy documents stay editable).
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(editableFields())
+        && 'matrimonyId' in request.resource.data
+        && request.resource.data.updatedAt == request.time
+        && fieldsAreValid(
+          request.resource.data, request.resource.data.diff(resource.data).affectedKeys());
+
       allow delete: if isAdmin();
     }
     match /{document=**} {

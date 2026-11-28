@@ -43,6 +43,12 @@ import { SortOption, ToolbarAction } from '../models/toolbar.model';
 import { toCanonicalMobileNumber } from '../utils/mobile-number.util';
 import { AuthService } from './auth.service';
 
+/** The existing profile that already uses a Matrimony ID or mobile number. */
+export interface DuplicateOwner {
+  name: string;
+  matrimonyId: string;
+}
+
 @Service()
 export class ProfilesService {
   private authService = inject(AuthService);
@@ -455,6 +461,45 @@ export class ProfilesService {
       updatedAt: serverTimestamp(),
     };
     return addDoc(this.profilesCollection, profileToAdd);
+  }
+
+  /**
+   * Looks for another profile that already uses the given Matrimony ID or mobile number (both
+   * exact matches, so pass them in the stored form: trimmed ID, canonical "+91…" number). The
+   * profile being edited is excluded through `excludeId`. A field that is left out is not checked.
+   *
+   * Fails open: if a lookup errors, that field is reported as free, so a flaky query never stops
+   * someone from saving. This is a client-side check only; two saves at the same moment can still
+   * both pass it.
+   */
+  async findDuplicates(criteria: {
+    matrimonyId?: string;
+    mobileNumber?: string;
+    excludeId?: string | null;
+  }): Promise<{ matrimonyId?: DuplicateOwner; mobileNumber?: DuplicateOwner }> {
+    const lookup = async (
+      field: 'matrimonyId' | 'mobileNumber',
+      value: string | undefined,
+    ): Promise<DuplicateOwner | undefined> => {
+      if (!value) return undefined;
+      try {
+        // limit(2): one of the hits may be the profile being edited.
+        const snapshot = await getDocs(
+          query(this.profilesCollection, where(field, '==', value), limit(2)),
+        );
+        const other = snapshot.docs.find((doc) => doc.id !== criteria.excludeId);
+        if (!other) return undefined;
+        const data = other.data();
+        return { name: String(data['name'] ?? ''), matrimonyId: String(data['matrimonyId'] ?? '') };
+      } catch {
+        return undefined;
+      }
+    };
+    const [matrimonyId, mobileNumber] = await Promise.all([
+      lookup('matrimonyId', criteria.matrimonyId),
+      lookup('mobileNumber', criteria.mobileNumber),
+    ]);
+    return { matrimonyId, mobileNumber };
   }
 
   async getProfileById(id: string): Promise<ProfileDetail | null> {

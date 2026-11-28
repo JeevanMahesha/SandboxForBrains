@@ -18,6 +18,7 @@ import {
   ZodiacKey,
 } from '../../constant/common.const';
 import { Comment, ProfileDetail } from '../../models/profile.model';
+import type { DuplicateOwner } from '../../services/profiles.service';
 import {
   CANONICAL_MOBILE_NUMBER_PATTERN,
   toCanonicalMobileNumber,
@@ -28,6 +29,21 @@ export interface ProfileFormOptions {
   isView?: () => boolean;
   /** Persists the (already canonicalised) profile. Called from the form submission. */
   save: (profile: ProfileDetail) => Promise<void>;
+  /** Finds other profiles that already use an ID or number (`ProfilesService.findDuplicates`). */
+  findDuplicates?: (criteria: {
+    matrimonyId?: string;
+    mobileNumber?: string;
+  }) => Promise<{ matrimonyId?: DuplicateOwner; mobileNumber?: DuplicateOwner }>;
+  /** The stored profile when editing: only an ID or number changed from it is checked. */
+  original?: () => ProfileDetail | null | undefined;
+  /** Called when a check finds a duplicate, so the host can reveal the offending field. */
+  onDuplicate?: () => void;
+}
+
+/** A duplicate found by `checkDuplicates`, tied to the exact value it was found for. */
+interface KnownDuplicate {
+  value: string;
+  message: string;
 }
 
 /** Status a brand-new profile starts with. */
@@ -57,6 +73,11 @@ export function createProfileForm(options: ProfileFormOptions) {
   const isView = options.isView ?? (() => false);
   const profileDetail = signal<ProfileDetail>(blankProfile());
   const newComment = signal<string>('');
+  // Duplicates found by the last check. Each is tied to the value it was found for, so the error
+  // goes away by itself as soon as the user edits that field.
+  const knownDuplicates = signal<{ matrimonyId?: KnownDuplicate; mobileNumber?: KnownDuplicate }>(
+    {},
+  );
 
   const profileDetailForm = form(
     profileDetail,
@@ -86,6 +107,18 @@ export function createProfileForm(options: ProfileFormOptions) {
               message: 'Invalid mobile number (e.g., 98765 43210 or +91 98765 43210)',
             });
       });
+      validate(profileForm.matrimonyId, ({ value }) => {
+        const known = knownDuplicates().matrimonyId;
+        return known && known.value === value().trim()
+          ? { kind: 'duplicate', message: known.message }
+          : null;
+      });
+      validate(profileForm.mobileNumber, ({ value }) => {
+        const known = knownDuplicates().mobileNumber;
+        return known && known.value === (toCanonicalMobileNumber(value()) ?? value())
+          ? { kind: 'duplicate', message: known.message }
+          : null;
+      });
       readonly(profileForm.starMatchScore);
       disabled(profileForm, { when: () => isView() });
       disabled(profileForm.star, {
@@ -98,6 +131,10 @@ export function createProfileForm(options: ProfileFormOptions) {
     {
       submission: {
         action: async (formRef) => {
+          // Safety net: someone may have taken the ID or number since the wizard's step 1 check.
+          if (!(await checkDuplicates())) {
+            return;
+          }
           // Flush a comment the user typed but didn't explicitly add, so it isn't lost on save.
           if (newComment().trim()) {
             addComment();
@@ -118,6 +155,52 @@ export function createProfileForm(options: ProfileFormOptions) {
       },
     },
   );
+
+  /**
+   * Checks whether another profile already uses this ID or number, and marks the field invalid
+   * with a message naming that profile. Resolves to false when one is taken. Editing checks only
+   * a field changed from the stored profile, so a legacy profile that already shares a number
+   * can still be edited. Does nothing when the host gave no `findDuplicates`.
+   */
+  async function checkDuplicates(): Promise<boolean> {
+    if (!options.findDuplicates) {
+      return true;
+    }
+    const current = profileDetail();
+    const original = options.original?.();
+    const matrimonyId = current.matrimonyId.trim();
+    const mobileNumber = toCanonicalMobileNumber(current.mobileNumber);
+    const idChanged = !original || matrimonyId !== (original.matrimonyId ?? '').trim();
+    const mobileChanged =
+      !original ||
+      mobileNumber !== (toCanonicalMobileNumber(original.mobileNumber) ?? original.mobileNumber);
+
+    const found = await options.findDuplicates({
+      matrimonyId: matrimonyId && idChanged ? matrimonyId : undefined,
+      mobileNumber: mobileNumber && mobileChanged ? mobileNumber : undefined,
+    });
+    const ownerName = (owner: DuplicateOwner) => owner.name || 'another profile';
+    knownDuplicates.set({
+      matrimonyId: found.matrimonyId
+        ? {
+            value: matrimonyId,
+            message: `Matrimony ID ${matrimonyId} already belongs to ${ownerName(found.matrimonyId)}`,
+          }
+        : undefined,
+      mobileNumber:
+        found.mobileNumber && mobileNumber
+          ? {
+              value: mobileNumber,
+              message: `This mobile number already belongs to ${ownerName(found.mobileNumber)} (${found.mobileNumber.matrimonyId})`,
+            }
+          : undefined,
+    });
+    const taken = !!found.matrimonyId || !!found.mobileNumber;
+    if (taken) {
+      options.onDuplicate?.();
+    }
+    return !taken;
+  }
 
   const starList = computed(() => {
     const zodiac = profileDetailForm.zodiacSign().value();
@@ -184,6 +267,7 @@ export function createProfileForm(options: ProfileFormOptions) {
   /** Back to a blank, untouched form (also clears touched/dirty so no stale errors show). */
   function resetForm(): void {
     newComment.set('');
+    knownDuplicates.set({});
     profileDetailForm().reset({ ...blankProfile(), comments: [] });
   }
 
@@ -230,6 +314,7 @@ export function createProfileForm(options: ProfileFormOptions) {
     newComment,
     addComment,
     deleteComment,
+    checkDuplicates,
     resetForm,
     profileStatusLabel,
     profileStatusColor,

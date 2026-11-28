@@ -237,3 +237,90 @@ test.describe('after creating a profile', () => {
     await expect(profileRows(page).first()).toContainText('Hidden By Filter');
   });
 });
+
+test.describe('duplicate profiles', () => {
+  const DUPLICATE_MOBILE_MESSAGE = 'This mobile number already belongs to Ravi Kumar (M1000)';
+  const wizardProfile = (overrides: Partial<Parameters<typeof fillWizardProfile>[1]> = {}) => ({
+    name: 'New Person',
+    mobile: '98765 11111',
+    matrimonyId: 'M-NEW-1',
+    status: PROFILE_STATUS.NEW,
+    zodiac: ARIES_LABEL,
+    age: '27',
+    state: 'Tamil Nadu',
+    city: 'Chennai',
+    ...overrides,
+  });
+
+  test.beforeEach(async () => {
+    // Seeded profile 0 has ID M1000 and mobile +919876543200.
+    await seedProfiles([makeProfile(0, { name: 'Ravi Kumar' })]);
+  });
+
+  test('blocks an existing Matrimony ID at Continue and names its owner', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+    await page.locator('#name').fill('New Person');
+    await page.locator('#mobile').fill('98765 11111');
+    await page.locator('#matrimony').fill('M1000');
+
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.locator('#matrimony-error')).toHaveText(
+      'Matrimony ID M1000 already belongs to Ravi Kumar',
+    );
+    await expect(page.locator('#name')).toBeVisible(); // still on step 1
+
+    // Editing the field clears the error and lets the user move on.
+    await page.locator('#matrimony').fill('M-NEW-1');
+    await expect(page.locator('#matrimony-error')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.locator('#age')).toBeVisible();
+  });
+
+  test('blocks an existing mobile number even when typed in another format', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+    await page.locator('#name').fill('New Person');
+    await page.locator('#mobile').fill('98765 43200'); // stored as +919876543200
+    await page.locator('#matrimony').fill('M-NEW-1');
+
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.locator('#mobile-error')).toHaveText(DUPLICATE_MOBILE_MESSAGE);
+    await expect(page.locator('#matrimony-error')).toHaveCount(0);
+    await expect(page.locator('#name')).toBeVisible();
+  });
+
+  test('a profile with a new ID and number still saves', async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, wizardProfile());
+    await page.getByRole('button', { name: 'Create profile' }).click();
+
+    await expect(page.getByText('Profile added successfully')).toBeVisible();
+    await expect(profilesTotal(page)).toHaveText(/^2 profiles$/);
+  });
+
+  test('re-checks on save and jumps back to the field if the ID was taken meanwhile', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, wizardProfile({ matrimonyId: 'M-RACE' }));
+
+    // Someone else registers the same ID while this wizard sits on its last step.
+    await seedProfiles([makeProfile(1, { name: 'Late Arrival', matrimonyId: 'M-RACE' })]);
+
+    await page.getByRole('button', { name: 'Create profile' }).click();
+    await expect(page.locator('#matrimony-error')).toHaveText(
+      'Matrimony ID M-RACE already belongs to Late Arrival',
+    );
+    await expect(page.getByText('Profile added successfully')).toHaveCount(0);
+  });
+});

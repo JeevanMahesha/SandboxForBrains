@@ -103,7 +103,12 @@ export default class ProfileWizard {
 
   private readonly stepHeading = viewChild<ElementRef<HTMLElement>>('stepHeading');
 
-  private readonly shared = createProfileForm({ save: (data) => this.addProfile(data) });
+  private readonly shared = createProfileForm({
+    save: (data) => this.addProfile(data),
+    findDuplicates: (criteria) => this.profileService.findDuplicates(criteria),
+    // On save, a taken ID or number may belong to an earlier step: jump back to it.
+    onDuplicate: () => this.onSubmitAttempt(),
+  });
   readonly profileDetailForm = this.shared.profileDetailForm;
   readonly newComment = this.shared.newComment;
   readonly profileStatusLabel = this.shared.profileStatusLabel;
@@ -213,8 +218,23 @@ export default class ProfileWizard {
     return fields.every((field) => field().valid() || field().disabled());
   }
 
-  next(): void {
+  /** True while the step 1 duplicate lookup runs, so a double click does not start two. */
+  private readonly checkingDuplicates = signal(false);
+
+  /** Step 1 holds the Matrimony ID and mobile number: make sure neither is already taken. */
+  private async stepOneIsFree(): Promise<boolean> {
+    if (this.checkingDuplicates()) return false;
+    this.checkingDuplicates.set(true);
+    try {
+      return await this.shared.checkDuplicates();
+    } finally {
+      this.checkingDuplicates.set(false);
+    }
+  }
+
+  async next(): Promise<void> {
     if (this.isLastStep() || !this.stepValid(this.stepIndex())) return;
+    if (this.stepIndex() === 0 && !(await this.stepOneIsFree())) return;
     this.setStep(this.stepIndex() + 1);
   }
 
@@ -223,7 +243,7 @@ export default class ProfileWizard {
   }
 
   /** Rail navigation: backwards is free, forwards needs every step in between to be valid. */
-  goTo(target: number): void {
+  async goTo(target: number): Promise<void> {
     if (target <= this.stepIndex()) {
       this.setStep(target);
       return;
@@ -234,6 +254,7 @@ export default class ProfileWizard {
         return;
       }
     }
+    if (this.stepIndex() === 0 && !(await this.stepOneIsFree())) return;
     this.setStep(target);
   }
 
@@ -263,7 +284,7 @@ export default class ProfileWizard {
   onEnter(event: Event): void {
     if (this.isLastStep() || !(event.target instanceof HTMLInputElement)) return;
     event.preventDefault();
-    this.next();
+    void this.next();
   }
 
   addComment(): void {

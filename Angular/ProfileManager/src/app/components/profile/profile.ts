@@ -116,6 +116,14 @@ export class Profile {
   private readonly shared = createProfileForm({
     isView: () => this.isView(),
     save: (profileData) => this.updateProfile(profileData),
+    // Only an ID or number changed from the stored profile is checked, and never against itself.
+    original: () => this.profileResource.value(),
+    findDuplicates: (criteria) =>
+      this.profileService.findDuplicates({
+        ...criteria,
+        excludeId: this.profileService.drawerState().selectedProfileId,
+      }),
+    onDuplicate: () => this.onSubmitAttempt(),
   });
   readonly profileDetailForm = this.shared.profileDetailForm;
   readonly newComment = this.shared.newComment;

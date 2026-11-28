@@ -183,3 +183,82 @@ test.describe('closing the edit drawer', () => {
     await expect(discardPrompt(page)).toBeVisible();
   });
 });
+
+test.describe('duplicates when editing', () => {
+  const openEditFor = async (page: Page, name: string) => {
+    await profileRows(page).filter({ hasText: name }).getByRole('button', { name: 'Edit' }).click();
+    const drawer = page.getByRole('dialog', { name: 'Edit Profile' });
+    await expect(drawer.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
+    return drawer;
+  };
+
+  test.beforeEach(async () => {
+    // Profile 0: M1000 / +919876543200. Profile 1 deliberately shares profile 0's number (a
+    // legacy duplicate) and has its own ID, M1001.
+    await seedProfiles([
+      makeProfile(0, { name: 'Ravi Kumar' }),
+      makeProfile(1, { name: 'Divya S', mobileNumber: '+919876543200' }),
+    ]);
+  });
+
+  test("changing the ID to another profile's ID is blocked", async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    const drawer = await openEditFor(page, 'Divya S');
+
+    await drawer.locator('#matrimony').fill('M1000');
+    await drawer.getByRole('button', { name: 'Update Profile' }).click();
+
+    await expect(drawer.locator('#matrimony-error')).toHaveText(
+      'Matrimony ID M1000 already belongs to Ravi Kumar',
+    );
+    await expect(page.getByText('Profile updated successfully')).toHaveCount(0);
+    await expect(drawer.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
+  });
+
+  test('editing unrelated fields still saves when the profile already shares a number', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    const drawer = await openEditFor(page, 'Divya S');
+
+    await drawer.locator('#name').fill('Divya Sundaram');
+    await drawer.getByRole('button', { name: 'Update Profile' }).click();
+
+    await expect(page.getByText('Profile updated successfully')).toBeVisible();
+    await expect(profileRows(page).filter({ hasText: 'Divya Sundaram' })).toHaveCount(1);
+  });
+
+  test("a profile's own ID and number are not duplicates of themselves", async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    const drawer = await openEditFor(page, 'Ravi Kumar');
+
+    // Retyped in a different shape, but the same ID and the same canonical number.
+    await drawer.locator('#matrimony').fill(' M1000 ');
+    await drawer.locator('#mobile').fill('98765 43200');
+    await drawer.getByRole('button', { name: 'Update Profile' }).click();
+
+    await expect(page.getByText('Profile updated successfully')).toBeVisible();
+  });
+
+  test('changing the number to one another profile uses is blocked', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(2, { name: 'Third Person' })]); // +919876543202
+    await loginAsAdmin();
+    const drawer = await openEditFor(page, 'Third Person');
+
+    await drawer.locator('#mobile').fill('98765 43200');
+    await drawer.getByRole('button', { name: 'Update Profile' }).click();
+
+    // Two profiles already use that number; the message names one of them.
+    await expect(drawer.locator('#mobile-error')).toContainText(
+      'This mobile number already belongs to',
+    );
+    await expect(page.getByText('Profile updated successfully')).toHaveCount(0);
+  });
+});

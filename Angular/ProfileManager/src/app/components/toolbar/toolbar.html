@@ -14,8 +14,8 @@
       <ng-icon hlm size="sm" [name]="themeIcon()" />
     </button>
 
-    <!-- Search (desktop only; on mobile it lives in the Filters sheet) -->
-    <div class="relative hidden md:block md:w-56 lg:w-60">
+    <!-- Search: always on the toolbar. On phones it is a full-width row under the buttons. -->
+    <div class="relative order-last w-full md:order-none md:w-56 lg:w-60">
       <ng-icon
         hlm
         name="lucideSearch"
@@ -94,12 +94,19 @@
       hlmBtn
       variant="outline"
       class="relative flex-1 max-md:h-11 md:hidden"
+      [attr.aria-label]="filtersLabel()"
       (click)="filterSheetOpen.set('open')"
     >
       <ng-icon hlm name="lucideSlidersHorizontal" size="sm" />
       Filters
-      @if (filterHasValue()) {
-        <span hlmBadge class="absolute -top-2 -right-2 size-5 rounded-full p-0 text-[10px]">!</span>
+      @if (activeFilterCount() > 0) {
+        <span
+          hlmBadge
+          aria-hidden="true"
+          class="absolute -top-2 -right-2 size-5 rounded-full p-0 text-[10px]"
+        >
+          {{ activeFilterCount() }}
+        </span>
       }
     </button>
 
@@ -202,6 +209,38 @@
       </hlm-dropdown-menu>
     </ng-template>
   </div>
+
+  <!-- Phones: the active filters, each removable without opening the sheet -->
+  @if (activeFilterCount() > 0) {
+    <div class="flex flex-wrap gap-2 md:hidden" role="group" aria-label="Active filters">
+      @if (filterForm.profileStatus().value(); as key) {
+        <button
+          type="button"
+          [class]="filterChipClass"
+          [attr.aria-label]="`Remove filter ${statusToLabel(key)}`"
+          (click)="filterForm.profileStatus().value.set(null)"
+        >
+          <span
+            aria-hidden="true"
+            [class]="`size-2 shrink-0 rounded-full ${statusDot[key]}`"
+          ></span>
+          {{ statusToLabel(key) }}
+          <ng-icon hlm name="lucideX" size="xs" aria-hidden="true" />
+        </button>
+      }
+      @if (filterForm.starMatchScore().value(); as score) {
+        <button
+          type="button"
+          [class]="filterChipClass"
+          [attr.aria-label]="`Remove filter Score ${score}`"
+          (click)="filterForm.starMatchScore().value.set(null)"
+        >
+          Score {{ score }}
+          <ng-icon hlm name="lucideX" size="xs" aria-hidden="true" />
+        </button>
+      }
+    </div>
+  }
 </div>
 
 <!-- Phones: floating Add Profile button (outside .glass: backdrop-filter would trap fixed) -->
@@ -227,29 +266,6 @@
     </hlm-sheet-header>
 
     <div class="flex flex-col gap-4">
-      <div class="relative">
-        <ng-icon
-          hlm
-          name="lucideSearch"
-          size="sm"
-          class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
-        />
-        <input
-          hlmInput
-          type="text"
-          placeholder="Search by full ID or phone"
-          class="w-full pr-8 pl-8"
-          [formField]="filterForm.searchQuery"
-          (keydown.enter)="flushSearch()"
-        />
-        @if (searchLoading()) {
-          <hlm-spinner
-            aria-label="Searching"
-            class="text-muted-foreground absolute top-1/2 right-2.5 -translate-y-1/2 text-base"
-          />
-        }
-      </div>
-
       <div class="flex flex-col gap-2">
         <span class="text-muted-foreground text-xs font-semibold uppercase">Sort</span>
         <hlm-select [formField]="filterForm.viewOrderCheck" [itemToString]="sortOrderToLabel">
@@ -277,17 +293,20 @@
       </div>
     </div>
 
-    <hlm-sheet-footer>
+    <hlm-sheet-footer class="flex flex-row gap-2">
       <button
         type="button"
         hlmBtn
         variant="outline"
-        class="w-full"
-        [disabled]="!filterHasValue()"
-        (click)="clearForm()"
+        class="flex-1"
+        [disabled]="!sheetHasValue()"
+        (click)="clearSheetFilters()"
       >
         <ng-icon hlm name="lucideFilterX" size="sm" />
         Clear
+      </button>
+      <button type="button" hlmBtn class="flex-[2]" (click)="filterSheetOpen.set('closed')">
+        Show {{ totalCount() }} {{ totalCount() === 1 ? 'profile' : 'profiles' }}
       </button>
     </hlm-sheet-footer>
   </hlm-sheet-content>

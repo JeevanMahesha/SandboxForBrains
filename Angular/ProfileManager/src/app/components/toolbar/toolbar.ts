@@ -15,6 +15,7 @@ import {
   lucideSun,
   lucideUser,
   lucideUserPlus,
+  lucideX,
 } from '@ng-icons/lucide';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { BrnSheetContent } from '@spartan-ng/brain/sheet';
@@ -82,6 +83,7 @@ const searchDebouncer: Debouncer<string> = ({ state }, abortSignal) => {
       lucideMonitor,
       lucideSlidersHorizontal,
       lucideUser,
+      lucideX,
     }),
   ],
 })
@@ -130,6 +132,24 @@ export class Toolbar {
   readonly filterSheetOpen = signal<BrnDialogState>('closed');
 
   readonly filterHasValue = this.profileService.filterHasValue;
+  protected readonly totalCount = this.profileService.totalCount;
+
+  /** Filters the phone sheet owns and shows as chips: status and star-match score. */
+  readonly activeFilterCount = computed(() => {
+    const { profileStatus, starMatchScore } = this.profileService.filterOptions();
+    return (profileStatus != null ? 1 : 0) + (starMatchScore != null ? 1 : 0);
+  });
+  readonly filtersLabel = computed(() => {
+    const count = this.activeFilterCount();
+    return count > 0 ? `Filters, ${count} active` : 'Filters';
+  });
+  /** Clear in the sheet is useful while any of its controls (filters or sort) is not default. */
+  readonly sheetHasValue = computed(
+    () =>
+      this.activeFilterCount() > 0 || this.profileService.filterOptions().viewOrderCheck !== true,
+  );
+  protected readonly filterChipClass =
+    'bg-primary/10 text-primary inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium';
 
   constructor() {
     const searchQuery = computed(() => this.profileService.filterOptions().searchQuery);
@@ -181,5 +201,13 @@ export class Toolbar {
 
   clearForm() {
     this.filterForm().reset({ ...ProfilesService.DEFAULT_FILTER_OPTIONS });
+  }
+
+  /** The phone sheet's Clear: resets what the sheet shows (status, score, sort), not the search. */
+  clearSheetFilters() {
+    this.filterForm().reset({
+      ...ProfilesService.DEFAULT_FILTER_OPTIONS,
+      searchQuery: this.filterForm.searchQuery().value(),
+    });
   }
 }

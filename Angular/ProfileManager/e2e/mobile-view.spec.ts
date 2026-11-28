@@ -1,4 +1,4 @@
-import type { Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { makeProfile, seedProfiles } from './support/emulator';
 import {
   expect,
@@ -52,11 +52,10 @@ test.describe('mobile view', () => {
     await loginAsAdmin();
     await expect(page.getByTestId('profile-card')).toHaveCount(1);
 
-    // On mobile the search box lives inside the "Filters" bottom sheet.
-    await page.getByRole('button', { name: 'Filters' }).click();
-    const sheetSearch = page.getByRole('dialog', { name: 'Filters' }).getByRole('textbox');
-    await sheetSearch.click();
-    await sheetSearch.pressSequentially('+91 99999 99999');
+    // On mobile the search box sits on the toolbar itself, no need to open the sheet first.
+    const search = page.getByPlaceholder('Search by full ID or phone');
+    await search.click();
+    await search.pressSequentially('+91 99999 99999');
     await expect(page.getByText('No profiles found.')).toBeVisible();
     await expect(page.getByTestId('profile-card')).toHaveCount(0);
   });
@@ -182,5 +181,138 @@ test.describe('mobile tap targets', () => {
       expect(size.width, name).toBeGreaterThanOrEqual(44);
       expect(size.height, name).toBeGreaterThanOrEqual(44);
     }
+  });
+});
+
+test.describe('phone filters toolbar', () => {
+  const search = (page: Page) => page.getByPlaceholder('Search by full ID or phone');
+  const filtersButton = (page: Page) =>
+    page.locator('app-toolbar').getByRole('button', { name: /^Filters/ });
+  const sheet = (page: Page) => page.getByRole('dialog', { name: 'Filters' });
+  const cards = (page: Page) => page.getByTestId('profile-card');
+
+  test.beforeEach(async () => {
+    await seedProfiles([
+      makeProfile(0, { name: 'Acc Six', profileStatusId: 'ACCEPTED', starMatchScore: 6 }),
+      makeProfile(1, { name: 'Acc Eight', profileStatusId: 'ACCEPTED', starMatchScore: 8 }),
+      makeProfile(2, { name: 'New Six', profileStatusId: 'NEW', starMatchScore: 6 }),
+    ]);
+  });
+
+  async function pickScore(page: Page, score: string) {
+    await sheet(page).getByRole('combobox', { name: 'Star match score' }).click();
+    await page.getByRole('option', { name: score, exact: true }).click();
+  }
+
+  test('search is on the toolbar without opening the sheet, and works', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(cards(page)).toHaveCount(3);
+
+    await expect(search(page)).toBeVisible();
+    await expect(sheet(page)).toHaveCount(0);
+    await search(page).fill('M1001');
+    await search(page).press('Enter');
+    await expect(cards(page)).toHaveCount(1);
+    await expect(cards(page).first()).toContainText('Acc Eight');
+  });
+
+  test('the Filters button counts active filters and hides the count at zero', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(cards(page)).toHaveCount(3);
+    await expect(filtersButton(page)).toHaveAccessibleName('Filters');
+
+    await filtersButton(page).click();
+    await sheetStatusButton(page, 'Accepted').click();
+    await pickScore(page, '6');
+    await expect(cards(page)).toHaveCount(1);
+    await sheet(page)
+      .getByRole('button', { name: /^Show \d+ profile/ })
+      .click();
+    await expect(sheet(page)).toHaveCount(0);
+    await expect(filtersButton(page)).toHaveAccessibleName('Filters, 2 active');
+
+    await page.getByRole('button', { name: 'Remove filter Accepted' }).click();
+    await page.getByRole('button', { name: 'Remove filter Score 6' }).click();
+    await expect(filtersButton(page)).toHaveAccessibleName('Filters');
+  });
+
+  test('active filters show as chips; removing one clears only that filter', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(cards(page)).toHaveCount(3);
+    await expect(page.getByRole('button', { name: /^Remove filter/ })).toHaveCount(0);
+
+    await filtersButton(page).click();
+    await sheetStatusButton(page, 'Accepted').click();
+    await pickScore(page, '6');
+    await sheet(page)
+      .getByRole('button', { name: /^Show \d+ profile/ })
+      .click();
+
+    await expect(page.getByRole('button', { name: 'Remove filter Accepted' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Remove filter Score 6' })).toBeVisible();
+    await expect(cards(page)).toHaveCount(1);
+
+    // Removing the status chip keeps the score filter: Acc Six and New Six both score 6.
+    await page.getByRole('button', { name: 'Remove filter Accepted' }).click();
+    await expect(page.getByRole('button', { name: 'Remove filter Accepted' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Remove filter Score 6' })).toBeVisible();
+    await expect(cards(page)).toHaveCount(2);
+    await expect(filtersButton(page)).toHaveAccessibleName('Filters, 1 active');
+  });
+
+  test('"Show N profiles" follows the live total and closes the sheet', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(cards(page)).toHaveCount(3);
+
+    await filtersButton(page).click();
+    await expect(sheet(page).getByRole('button', { name: 'Show 3 profiles' })).toBeVisible();
+    await sheetStatusButton(page, 'Accepted').click();
+    await expect(sheet(page).getByRole('button', { name: 'Show 2 profiles' })).toBeVisible();
+    await pickScore(page, '6');
+    const show = sheet(page).getByRole('button', { name: 'Show 1 profile' });
+    await expect(show).toBeVisible();
+
+    await show.click();
+    await expect(sheet(page)).toHaveCount(0);
+    await expect(cards(page)).toHaveCount(1);
+  });
+
+  test('Clear resets the sheet filters but keeps the typed search', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await expect(cards(page)).toHaveCount(3);
+    await search(page).fill('M1000');
+    await search(page).press('Enter');
+    await expect(cards(page)).toHaveCount(1);
+
+    await filtersButton(page).click();
+    await sheetStatusButton(page, 'Accepted').click();
+    await pickScore(page, '6');
+    await sheet(page).getByRole('button', { name: 'Clear' }).click();
+
+    await expect(sheetStatusButton(page, 'All')).toHaveAttribute('aria-pressed', 'true');
+    await expect(sheet(page).getByRole('combobox', { name: 'Star match score' })).toHaveText(
+      'Star match score',
+    );
+    await sheet(page)
+      .getByRole('button', { name: /^Show \d+ profile/ })
+      .click();
+    await expect(page.getByRole('button', { name: /^Remove filter/ })).toHaveCount(0);
+    await expect(search(page)).toHaveValue('M1000');
+    await expect(cards(page)).toHaveCount(1);
   });
 });

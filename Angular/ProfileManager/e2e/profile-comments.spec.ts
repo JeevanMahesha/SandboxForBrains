@@ -1,6 +1,13 @@
 import type { Page } from '@playwright/test';
 import { makeProfile, seedProfiles } from './support/emulator';
-import { expect, openNotesTab, profileRows, test } from './support/fixtures';
+import {
+  expect,
+  fillWizardProfile,
+  openNewProfileWizard,
+  openNotesTab,
+  profileRows,
+  test,
+} from './support/fixtures';
 
 test.describe('profile comments', () => {
   test('adds and deletes a comment, persisting both changes', async ({ page, loginAsAdmin }) => {
@@ -26,15 +33,15 @@ test.describe('profile comments', () => {
     await openNotesTab(page);
     await expect(page.getByText('Called, will follow up next week')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Delete comment' }).click();
-    await expect(page.getByText('No comments yet.')).toBeVisible();
+    await page.getByRole('button', { name: 'Delete note' }).click();
+    await expect(page.getByText('No notes yet.')).toBeVisible();
 
     await page.getByRole('button', { name: 'Update Profile' }).click();
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
 
     await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
     await openNotesTab(page);
-    await expect(page.getByText('No comments yet.')).toBeVisible();
+    await expect(page.getByText('No notes yet.')).toBeVisible();
   });
 
   test('deleting one note keeps other notes that have the same text', async ({
@@ -51,11 +58,11 @@ test.describe('profile comments', () => {
       await page.locator('#comment').fill(note);
       await page.getByRole('button', { name: 'Add note' }).click();
     }
-    await expect(page.getByRole('button', { name: 'Delete comment' })).toHaveCount(3);
+    await expect(page.getByRole('button', { name: 'Delete note' })).toHaveCount(3);
 
     // Delete only the first "Called, no answer"; the second one must survive.
-    await page.getByRole('button', { name: 'Delete comment' }).first().click();
-    await expect(page.getByRole('button', { name: 'Delete comment' })).toHaveCount(2);
+    await page.getByRole('button', { name: 'Delete note' }).first().click();
+    await expect(page.getByRole('button', { name: 'Delete note' })).toHaveCount(2);
     await expect(page.getByText(sameText)).toHaveCount(1);
     await expect(page.getByText('A different note')).toBeVisible();
 
@@ -88,6 +95,36 @@ test.describe('profile comments', () => {
     await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
     await openNotesTab(page);
     await expect(page.getByText('Typed but never clicked Add')).toBeVisible();
+  });
+});
+
+test.describe('note wording', () => {
+  test('the create wizard calls them notes, like the edit drawer does', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, {
+      name: 'Wording Test',
+      mobile: '98765 43210',
+      matrimonyId: 'M-Wording',
+      status: 'New',
+      zodiac: 'Mesham (Aries)',
+      age: '27',
+      state: 'Tamil Nadu',
+      city: 'Chennai',
+    });
+
+    await expect(page.getByLabel('Add a note', { exact: true })).toBeVisible();
+    await expect(page.getByPlaceholder('Add a note')).toBeVisible();
+    await expect(page.getByText('No notes yet.')).toBeVisible();
+
+    await page.locator('#comment').fill('First note');
+    await page.getByRole('button', { name: 'Add note' }).click();
+    await expect(page.getByRole('button', { name: 'Delete note' })).toBeVisible();
+    // Wording only: no "comment" left anywhere the user can read it.
+    await expect(page.getByText(/comment/i)).toHaveCount(0);
   });
 });
 

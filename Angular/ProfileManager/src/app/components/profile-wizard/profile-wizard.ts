@@ -60,7 +60,7 @@ const STAR_HELPER =
 const STEPS: readonly WizardStep[] = [
   { title: 'Contact', hint: 'Name, phone, ID', groups: ['contact'] },
   { title: 'Horoscope', hint: 'Zodiac, star, age', groups: ['astro', 'age'] },
-  { title: 'Location & notes', hint: 'State, city, comments', groups: ['place'] },
+  { title: 'Location & notes', hint: 'State, city, notes', groups: ['place'] },
 ];
 
 @Component({

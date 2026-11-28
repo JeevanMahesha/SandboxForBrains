@@ -61,8 +61,8 @@ test.describe('view profile drawer', () => {
       await expect(dialog.locator(id)).toHaveCount(0);
     }
 
-    // No "Add Comment" affordance, and the footer offers Close/Edit, not a save action.
-    await expect(dialog.getByText('Add Comment')).toHaveCount(0);
+    // The footer offers Close/Edit, not a save action. (The edit-form note field, #comment, is
+    // already ruled out above; the quick-note box is the one note input View legitimately has.)
     await expect(dialog.getByRole('button', { name: 'Save Changes' })).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: 'Update Profile' })).toHaveCount(0);
 

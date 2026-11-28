@@ -105,6 +105,24 @@ export class ProfilesService {
       this.filterOptions();
       untracked(() => this.pageState.update((s) => ({ ...s, pageIndex: 0 })));
     });
+
+    // This service outlives the session, so drop everything tied to the signed-in user (filters,
+    // page, cursors, cached total, open drawer) as soon as they are signed out. Otherwise the
+    // next login starts from the previous user's filters and a stale total.
+    effect(() => {
+      if (!this.authService.isAuthenticated()) {
+        untracked(() => this.resetSessionState());
+      }
+    });
+  }
+
+  private resetSessionState(): void {
+    this.clearFilters();
+    this.pageState.set({ pageIndex: 0, pageSize: 12 });
+    this.cursorCache.clear();
+    this.lastFilterKey = '';
+    this.totalCount.set(0);
+    this.closeDrawer();
   }
 
   profiles = resource<

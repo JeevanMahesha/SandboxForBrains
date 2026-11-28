@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
-import { ADMIN_USER } from './support/emulator';
-import { expect, profilesTotal, test } from './support/fixtures';
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
+import { ADMIN_USER, makeProfile, seedProfiles } from './support/emulator';
+import { expect, profilesTotal, selectStatusFilter, statusFilter, test } from './support/fixtures';
 
 const submitLogin = async (page: Page) => {
   await page.locator('#login-email').fill(ADMIN_USER.email);
@@ -64,5 +65,34 @@ test.describe('authentication', () => {
     // redirected rather than showing the profiles list.
     await page.goto('/');
     await expect(page).toHaveURL(/\/login\?returnUrl=%2F$/);
+  });
+
+  test('a new login starts from the default filters, not the previous session', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles(
+      Array.from({ length: 14 }, (_, index) =>
+        makeProfile(index, { profileStatusId: index < 8 ? 'NEW' : 'ACCEPTED' }),
+      ),
+    );
+    await loginAsAdmin();
+    await expect(profilesTotal(page)).toHaveText(/^14 profiles$/);
+    await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
+    await expect(profilesTotal(page)).toHaveText(/^6 profiles$/);
+
+    await page.getByRole('button', { name: 'Account menu' }).click();
+    await page.getByRole('menuitem', { name: 'Log Out' }).click();
+    await expect(page).toHaveURL(/\/login$/);
+
+    // Right after the client-side navigation to /login, an early fill() can reach the form
+    // before its field directive is bound (NG0950) and be lost, so retry the login step.
+    await expect(async () => {
+      await submitLogin(page);
+      await expect(page).toHaveURL(/\/$/, { timeout: 3000 });
+    }).toPass();
+
+    await expect(statusFilter(page)).toHaveText(/All statuses/);
+    await expect(profilesTotal(page)).toHaveText(/^14 profiles$/);
   });
 });

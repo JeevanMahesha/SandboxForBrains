@@ -118,8 +118,20 @@ export class ProfilesService {
    */
   private readonly pendingDeletes = new Map<
     string,
-    { timer: ReturnType<typeof setTimeout> | null; profile: ProfileDetail | undefined }
+    {
+      timer: ReturnType<typeof setTimeout> | null;
+      profile: ProfileDetail | undefined;
+      /** The page the row was on, so the cursors after it can be dropped once it is really gone. */
+      pageIndex: number;
+    }
   >();
+
+  /**
+   * Set when a write may have changed which profiles match the active filters (or left the list
+   * showing a profile that no longer matches). The next `refreshAfterWrite` then recounts and
+   * drops the cursors; otherwise it only re-reads the current page.
+   */
+  private matchesMayBeStale = false;
 
   readonly drawerState = signal<{
     isOpen: BrnDialogState;
@@ -276,8 +288,9 @@ export class ProfilesService {
   }
 
   /**
-   * Handles random page jumps by fetching all documents up to the target page
-   * and caching cursors for every page along the way.
+   * Handles jumps to a page whose cursor is not known: reads from the nearest known cursor before
+   * the target (or from the start when there is none) and caches the cursor of every page it
+   * passes, so only the pages in between are downloaded.
    */
   private async fetchAndCacheUpToPage(
     filter: SortOption,
@@ -285,19 +298,37 @@ export class ProfilesService {
     pageSize: number,
     cursors: Map<number, QueryDocumentSnapshot | null>,
   ): Promise<ProfileDetail[]> {
-    const totalToFetch = pageSize * (targetPageIndex + 1);
-    const snapshot = await getDocs(query(this.buildBaseQuery(filter), limit(totalToFetch)));
-    const docs = snapshot.docs;
-
-    // Populate cursor cache for all pages we now have data for.
-    for (let i = 0; i <= targetPageIndex; i++) {
-      const lastDocOfPage = docs[Math.min((i + 1) * pageSize, docs.length) - 1];
-      if (lastDocOfPage) {
-        cursors.set(i + 1, lastDocOfPage);
+    // The cursor stored for page i is the last document of page i - 1, so pages i, i + 1, ...
+    // follow it.
+    let firstPage = 0;
+    let startCursor: QueryDocumentSnapshot | null = null;
+    for (let i = targetPageIndex - 1; i > 0; i--) {
+      const known = cursors.get(i);
+      if (known) {
+        firstPage = i;
+        startCursor = known;
+        break;
       }
     }
 
-    const pageStart = targetPageIndex * pageSize;
+    const pagesToFetch = targetPageIndex - firstPage + 1;
+    const baseQuery = this.buildBaseQuery(filter);
+    const snapshot = await getDocs(
+      startCursor
+        ? query(baseQuery, startAfter(startCursor), limit(pageSize * pagesToFetch))
+        : query(baseQuery, limit(pageSize * pagesToFetch)),
+    );
+    const docs = snapshot.docs;
+
+    // Populate cursor cache for all pages we now have data for.
+    for (let i = 0; i < pagesToFetch; i++) {
+      const lastDocOfPage = docs[Math.min((i + 1) * pageSize, docs.length) - 1];
+      if (lastDocOfPage) {
+        cursors.set(firstPage + i + 1, lastDocOfPage);
+      }
+    }
+
+    const pageStart = (targetPageIndex - firstPage) * pageSize;
     return this.sortWithRejectedLast(
       docs.slice(pageStart, pageStart + pageSize).map((d) => this.mapDocToProfile(d)),
     );
@@ -383,12 +414,39 @@ export class ProfilesService {
   }
 
   /**
-   * Re-runs the current query after a mutation. Also forces the total count (and the pagination
-   * cursors) to be recomputed, which the loader otherwise only does when the filters change.
+   * Re-runs the current query and recounts. Also drops the pagination cursors, which the loader
+   * otherwise only does when the filters change. Use it when the list or its total may be wrong
+   * (a failed load, a failed delete); writes that cannot change which profiles match use
+   * `refreshAfterWrite` instead.
    */
   refreshProfiles(): void {
     this.lastFilterKey = '';
+    this.matchesMayBeStale = false;
     this.profiles.reload();
+  }
+
+  /**
+   * Refreshes the list after a save or a note. Re-reads the current page, but keeps the total and
+   * the cursors unless the write may have changed which profiles match the filters (a status,
+   * star match, ID or number edit under the filter that uses it): then it recounts like
+   * `refreshProfiles`. A write never changes the sort field (`createdAt`), so the cursors stay
+   * valid when it does not.
+   */
+  refreshAfterWrite(): void {
+    if (this.matchesMayBeStale) {
+      this.refreshProfiles();
+    } else {
+      this.profiles.reload();
+    }
+  }
+
+  /** Forgets the cursors that start a page after `pageIndex`; those up to it are unaffected. */
+  private dropCursorsAfter(pageIndex: number): void {
+    for (const key of [...this.cursorCache.keys()]) {
+      if (key > pageIndex) {
+        this.cursorCache.delete(key);
+      }
+    }
   }
 
   /**
@@ -407,10 +465,13 @@ export class ProfilesService {
    * current last page, instead of reloading a page index that no longer exists (an empty page
    * that the pager then has to correct with a second load).
    */
-  private refreshAfterDelete(): void {
-    // The total already excludes this delete (adjusted when it was confirmed).
+  private refreshAfterDelete(deletedPageIndex: number): void {
+    // The rows after the deleted one moved up, so the cursors that start a later page no longer
+    // sit where they did; the ones up to its own page are before it and still valid. The total
+    // already excludes this delete (adjusted when it was confirmed), so there is no recount.
+    this.dropCursorsAfter(deletedPageIndex);
     if (!this.stepBackIfPastLastPage()) {
-      this.refreshProfiles();
+      this.profiles.reload();
     }
   }
 
@@ -421,8 +482,7 @@ export class ProfilesService {
     if (pageIndex <= lastPageIndex) {
       return false;
     }
-    // Changing the page re-runs the loader; clearing the key makes it recount and drop cursors.
-    this.lastFilterKey = '';
+    // Changing the page re-runs the loader, which reuses the adjusted total.
     this.pageState.update((state) => ({ ...state, pageIndex: lastPageIndex }));
     return true;
   }
@@ -437,7 +497,7 @@ export class ProfilesService {
       return;
     }
     const timer = setTimeout(() => void this.finishDelete(id), ProfilesService.DELETE_UNDO_MS);
-    this.pendingDeletes.set(id, { timer, profile });
+    this.pendingDeletes.set(id, { timer, profile, pageIndex: this.pageState().pageIndex });
 
     if (this.profiles.hasValue()) {
       this.profiles.value.update((rows) => rows.filter((row) => String(row.id) !== id));
@@ -463,8 +523,16 @@ export class ProfilesService {
     clearTimeout(pending.timer);
     this.pendingDeletes.delete(id);
     toast.success('Profile restored');
-    // Recounts and reloads, which puts the card back.
-    this.refreshProfiles();
+    // Nothing was deleted, so the cursors are intact. Give back the one the delete took off the
+    // total when the profile belongs in the current list; without its data, recount to be safe.
+    if (!pending.profile) {
+      this.refreshProfiles();
+      return;
+    }
+    if (this.matchesFilter(pending.profile, this.filterOptions())) {
+      this.totalCount.update((total) => total + 1);
+    }
+    this.profiles.reload();
   }
 
   private async finishDelete(id: string): Promise<void> {
@@ -483,26 +551,30 @@ export class ProfilesService {
       return;
     }
     this.pendingDeletes.delete(id);
-    this.refreshAfterDelete();
+    this.refreshAfterDelete(pending.pageIndex);
   }
 
   /** How many pending deletes would appear in the list for this filter (they are still stored). */
   private pendingDeletesMatching(filter: SortOption): number {
-    const search = filter.searchQuery.trim();
-    const mobileSearch = toCanonicalMobileNumber(search) ?? search;
     let matching = 0;
     for (const { profile } of this.pendingDeletes.values()) {
-      if (!profile) continue;
-      const statusOk = !filter.profileStatus || profile.profileStatusId === filter.profileStatus;
-      const starOk =
-        filter.starMatchScore === null ||
-        filter.starMatchScore === undefined ||
-        profile.starMatchScore === filter.starMatchScore;
-      const searchOk =
-        search === '' || profile.matrimonyId === search || profile.mobileNumber === mobileSearch;
-      if (statusOk && starOk && searchOk) matching++;
+      if (profile && this.matchesFilter(profile, filter)) matching++;
     }
     return matching;
+  }
+
+  /** Whether a profile belongs in the list for this filter (status, star match and exact search). */
+  private matchesFilter(profile: ProfileDetail, filter: SortOption): boolean {
+    const search = filter.searchQuery.trim();
+    const mobileSearch = toCanonicalMobileNumber(search) ?? search;
+    const statusOk = !filter.profileStatus || profile.profileStatusId === filter.profileStatus;
+    const starOk =
+      filter.starMatchScore === null ||
+      filter.starMatchScore === undefined ||
+      profile.starMatchScore === filter.starMatchScore;
+    const searchOk =
+      search === '' || profile.matrimonyId === search || profile.mobileNumber === mobileSearch;
+    return statusOk && starOk && searchOk;
   }
 
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
@@ -510,8 +582,35 @@ export class ProfilesService {
     // document id (derived), and createdAt/updatedAt (immutable creation time, server-set
     // update time). Sending them persisted a stray `id` and rewrote createdAt on every edit.
     const { id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...fields } = profileData;
+    const previous = this.profiles.hasValue()
+      ? this.profiles.value().find((row) => String(row.id) === id)
+      : undefined;
     const docRef = doc(this.firestore, 'profiles', id);
     await updateDoc(docRef, { ...fields, updatedAt: serverTimestamp() });
+    if (this.editMayChangeMatches(previous, fields)) {
+      this.matchesMayBeStale = true;
+    }
+  }
+
+  /**
+   * Whether a write to these fields can add or remove the profile from the current list: only a
+   * field that a filter in use matches on counts. A profile that is not in the loaded rows could
+   * be anything, so that is treated as a possible change.
+   */
+  private editMayChangeMatches(
+    previous: ProfileDetail | undefined,
+    fields: Partial<ProfileDetail>,
+  ): boolean {
+    if (!previous) return true;
+    const filter = this.filterOptions();
+    const changed = (key: keyof ProfileDetail) => key in fields && fields[key] !== previous[key];
+    return (
+      (!!filter.profileStatus && changed('profileStatusId')) ||
+      (filter.starMatchScore !== null &&
+        filter.starMatchScore !== undefined &&
+        changed('starMatchScore')) ||
+      (filter.searchQuery.trim() !== '' && (changed('matrimonyId') || changed('mobileNumber')))
+    );
   }
 
   /**
@@ -528,6 +627,9 @@ export class ProfilesService {
     this.setRowStatus(id, statusId);
     try {
       await this.updateProfile(id, { profileStatusId: statusId });
+      // The list is not reloaded here, so under a status filter the card stays and the total is
+      // off by one until something refreshes it; make that next refresh a recount.
+      if (this.filterOptions().profileStatus) this.matchesMayBeStale = true;
     } catch (error) {
       if (previous) this.setRowStatus(id, previous);
       throw error;

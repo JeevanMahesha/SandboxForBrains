@@ -327,7 +327,7 @@ export class Profile {
       }));
       this.quickNote.set('');
       toast.success('Note added');
-      this.profileService.refreshProfiles();
+      this.profileService.refreshAfterWrite();
     } catch {
       toast.error('Failed to add note');
     } finally {
@@ -367,7 +367,7 @@ export class Profile {
       .updateProfile(this.profileService.drawerState().selectedProfileId!, profileData)
       .then(() => {
         toast.success('Profile updated successfully');
-        this.profileService.refreshProfiles();
+        this.profileService.refreshAfterWrite();
         this.closeDrawer();
       })
       .catch(() => {

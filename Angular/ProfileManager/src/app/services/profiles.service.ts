@@ -108,6 +108,19 @@ export class ProfilesService {
   private cursorCache = new Map<number, QueryDocumentSnapshot | null>();
   private lastFilterKey = '';
 
+  /** How long a confirmed delete stays undoable before the document is really deleted. */
+  private static readonly DELETE_UNDO_MS = 6000;
+
+  /**
+   * Confirmed deletes still inside their undo window, keyed by profile id. `timer` is null once the
+   * real delete has started (too late to undo). Their rows are hidden from every list result until
+   * the entry is removed, whatever filter or page the user moves to meanwhile.
+   */
+  private readonly pendingDeletes = new Map<
+    string,
+    { timer: ReturnType<typeof setTimeout> | null; profile: ProfileDetail | undefined }
+  >();
+
   readonly drawerState = signal<{
     isOpen: BrnDialogState;
     actionType: ToolbarAction | null;
@@ -126,6 +139,9 @@ export class ProfilesService {
   }
 
   private resetSessionState(): void {
+    // Pending deletes are dropped, not performed: signing out must never delete anything.
+    this.pendingDeletes.forEach(({ timer }) => timer !== null && clearTimeout(timer));
+    this.pendingDeletes.clear();
     this.clearFilters();
     this.pageState.set({ pageIndex: 0, pageSize: 12 });
     this.cursorCache.clear();
@@ -154,7 +170,11 @@ export class ProfilesService {
       const cursors = filterChanged
         ? new Map<number, QueryDocumentSnapshot | null>()
         : new Map(this.cursorCache);
-      const total = filterChanged ? await this.getProfilesCount(filter) : this.totalCount();
+      // A fresh count still includes deletes that are pending (their documents exist until the
+      // undo window ends); a reused total was already adjusted when the delete was confirmed.
+      const total = filterChanged
+        ? Math.max(0, (await this.getProfilesCount(filter)) - this.pendingDeletesMatching(filter))
+        : this.totalCount();
 
       const profiles =
         filter.searchQuery.trim() !== ''
@@ -169,7 +189,9 @@ export class ProfilesService {
         this.lastFilterKey = filterKey;
       }
 
-      return profiles.map((profile) => this.withStatusDisplay(profile));
+      return profiles
+        .filter((profile) => !this.pendingDeletes.has(String(profile.id)))
+        .map((profile) => this.withStatusDisplay(profile));
     },
   });
 
@@ -351,7 +373,7 @@ export class ProfilesService {
 
     dialogRef.closed$.subscribe((confirmed) => {
       if (confirmed) {
-        this.removeProfile(id);
+        this.scheduleDelete(id, target);
       }
     });
   }
@@ -382,27 +404,101 @@ export class ProfilesService {
    * that the pager then has to correct with a second load).
    */
   private refreshAfterDelete(): void {
-    const { pageIndex, pageSize } = this.pageState();
-    const lastPageIndex = Math.max(0, Math.ceil((this.totalCount() - 1) / pageSize) - 1);
-    if (pageIndex > lastPageIndex) {
-      // Changing the page re-runs the loader; clearing the key makes it recount and drop cursors.
-      this.lastFilterKey = '';
-      this.pageState.update((state) => ({ ...state, pageIndex: lastPageIndex }));
-    } else {
+    // The total already excludes this delete (adjusted when it was confirmed).
+    if (!this.stepBackIfPastLastPage()) {
       this.refreshProfiles();
     }
   }
 
-  private removeProfile(id: string): void {
-    const docRef = doc(this.firestore, 'profiles', id);
-    deleteDoc(docRef)
-      .then(() => {
-        toast.success('Profile deleted successfully');
-        this.refreshAfterDelete();
-      })
-      .catch(() => {
-        toast.error('Failed to delete profile');
-      });
+  /** Moves to the last page that still exists after the total shrank; true if it moved. */
+  private stepBackIfPastLastPage(): boolean {
+    const { pageIndex, pageSize } = this.pageState();
+    const lastPageIndex = Math.max(0, Math.ceil(this.totalCount() / pageSize) - 1);
+    if (pageIndex <= lastPageIndex) {
+      return false;
+    }
+    // Changing the page re-runs the loader; clearing the key makes it recount and drop cursors.
+    this.lastFilterKey = '';
+    this.pageState.update((state) => ({ ...state, pageIndex: lastPageIndex }));
+    return true;
+  }
+
+  /**
+   * Delayed delete: the row disappears at once and a toast offers Undo for DELETE_UNDO_MS; only
+   * then is the document really deleted. Closing the tab or signing out inside the window simply
+   * means it is not deleted (the safe direction).
+   */
+  private scheduleDelete(id: string, profile: ProfileDetail | undefined): void {
+    if (this.pendingDeletes.has(id)) {
+      return;
+    }
+    const timer = setTimeout(() => void this.finishDelete(id), ProfilesService.DELETE_UNDO_MS);
+    this.pendingDeletes.set(id, { timer, profile });
+
+    if (this.profiles.hasValue()) {
+      this.profiles.value.update((rows) => rows.filter((row) => String(row.id) !== id));
+    }
+    this.totalCount.update((total) => Math.max(0, total - 1));
+    this.stepBackIfPastLastPage();
+
+    toast.success(
+      profile ? `Deleted ${profile.name} (${profile.matrimonyId})` : 'Profile deleted',
+      {
+        duration: ProfilesService.DELETE_UNDO_MS,
+        action: { label: 'Undo', onClick: () => this.undoDelete(id) },
+      },
+    );
+  }
+
+  private undoDelete(id: string): void {
+    const pending = this.pendingDeletes.get(id);
+    // Nothing to undo once the real delete has started (timer is null) or the session was reset.
+    if (!pending || pending.timer === null) {
+      return;
+    }
+    clearTimeout(pending.timer);
+    this.pendingDeletes.delete(id);
+    toast.success('Profile restored');
+    // Recounts and reloads, which puts the card back.
+    this.refreshProfiles();
+  }
+
+  private async finishDelete(id: string): Promise<void> {
+    const pending = this.pendingDeletes.get(id);
+    if (!pending) {
+      return;
+    }
+    this.pendingDeletes.set(id, { ...pending, timer: null });
+    try {
+      await deleteDoc(doc(this.firestore, 'profiles', id));
+    } catch {
+      this.pendingDeletes.delete(id);
+      toast.error('Failed to delete profile');
+      // The row comes back on the reload (and the total is recounted).
+      this.refreshProfiles();
+      return;
+    }
+    this.pendingDeletes.delete(id);
+    this.refreshAfterDelete();
+  }
+
+  /** How many pending deletes would appear in the list for this filter (they are still stored). */
+  private pendingDeletesMatching(filter: SortOption): number {
+    const search = filter.searchQuery.trim();
+    const mobileSearch = toCanonicalMobileNumber(search) ?? search;
+    let matching = 0;
+    for (const { profile } of this.pendingDeletes.values()) {
+      if (!profile) continue;
+      const statusOk = !filter.profileStatus || profile.profileStatusId === filter.profileStatus;
+      const starOk =
+        filter.starMatchScore === null ||
+        filter.starMatchScore === undefined ||
+        profile.starMatchScore === filter.starMatchScore;
+      const searchOk =
+        search === '' || profile.matrimonyId === search || profile.mobileNumber === mobileSearch;
+      if (statusOk && starOk && searchOk) matching++;
+    }
+    return matching;
   }
 
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {

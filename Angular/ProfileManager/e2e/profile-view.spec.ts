@@ -1,5 +1,5 @@
 import { PROFILE_STATUS, STAR_SCORES, ZODIAC_LIST } from '../src/app/constant/common.const';
-import { makeProfile, seedProfiles } from './support/emulator';
+import { clearFirestore, makeProfile, seedProfiles } from './support/emulator';
 import { expect, profileRows, test } from './support/fixtures';
 
 const ARIES_LABEL = `${ZODIAC_LIST.aries.tanglish} (${ZODIAC_LIST.aries.english})`;
@@ -49,5 +49,23 @@ test.describe('view profile drawer', () => {
     await dialog.getByRole('button', { name: 'Edit' }).click();
     await expect(dialog.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
     await expect(dialog.locator('#name')).toHaveValue('Read Only Test');
+  });
+
+  test('closes with a message when the profile was deleted elsewhere', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Deleted Elsewhere' })]);
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(1);
+
+    // Delete behind the app's back: the list still shows the stale row.
+    await clearFirestore();
+    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+
+    await expect(page.getByText('Profile not found')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeHidden();
+    // The stale row is gone once the list refreshes.
+    await expect(profileRows(page)).toHaveCount(0);
   });
 });

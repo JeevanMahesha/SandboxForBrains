@@ -181,6 +181,11 @@ export class Profile {
       if (profileError) {
         toast.error('Failed to fetch profile');
         this.closeDrawer();
+      } else if (this.profileResource.status() === 'resolved' && profileDetail === null) {
+        // Deleted elsewhere (another tab/session) while the list was stale.
+        toast.error('Profile not found');
+        this.closeDrawer();
+        this.profileService.profiles.reload();
       }
       untracked(() => {
         if (this.userActionType() === TOOLBAR_ACTIONS.view) {

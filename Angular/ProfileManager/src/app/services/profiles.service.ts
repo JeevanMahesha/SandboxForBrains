@@ -172,14 +172,23 @@ export class ProfilesService {
         : new Map(this.cursorCache);
       // A fresh count still includes deletes that are pending (their documents exist until the
       // undo window ends); a reused total was already adjusted when the delete was confirmed.
-      const total = filterChanged
-        ? Math.max(0, (await this.getProfilesCount(filter)) - this.pendingDeletesMatching(filter))
-        : this.totalCount();
+      const pendingMatching = () => this.pendingDeletesMatching(filter);
 
-      const profiles =
-        filter.searchQuery.trim() !== ''
-          ? await this.getFilteredProfilesBySearch(filter)
-          : await this.getProfilePage(filter, page.pageIndex, page.pageSize, cursors);
+      let total: number;
+      let profiles: ProfileDetail[];
+      if (filter.searchQuery.trim() !== '') {
+        // A search returns every match at once, so its total is the size of that one result set
+        // (counting it separately used to run the same two queries a second time).
+        profiles = await this.getFilteredProfilesBySearch(filter);
+        total = filterChanged
+          ? Math.max(0, profiles.length - pendingMatching())
+          : this.totalCount();
+      } else {
+        total = filterChanged
+          ? Math.max(0, (await this.getProfilesCount(filter)) - pendingMatching())
+          : this.totalCount();
+        profiles = await this.getProfilePage(filter, page.pageIndex, page.pageSize, cursors);
+      }
 
       // Published only for the current load and only after everything succeeded, so a failed
       // count or page is retried by the next load instead of leaving a stale total behind.
@@ -227,11 +236,6 @@ export class ProfilesService {
 
   /** Total document count for the current filters — uses server-side aggregation (no document download). */
   private async getProfilesCount(filter: SortOption): Promise<number> {
-    if (filter.searchQuery.trim() !== '') {
-      // For search queries, count is the size of the merged result set.
-      const results = await this.getFilteredProfilesBySearch(filter);
-      return results.length;
-    }
     const snapshot = await getAggregate(this.buildBaseQuery(filter), {
       total: count(),
     });

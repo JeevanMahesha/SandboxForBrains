@@ -40,6 +40,14 @@ export function provideFirebase(config: FirebaseOptions, options: ProvideFirebas
     );
   }
 
+  // The reverse also holds: a `demo-` id is not a real project, so without the emulators it would
+  // quietly talk to a backend that does not exist. Fail at startup instead.
+  if (!useEmulators && config.projectId?.startsWith('demo-')) {
+    throw new Error(
+      `provideFirebase: the "demo-" projectId "${config.projectId}" requires useEmulators.`,
+    );
+  }
+
   return makeEnvironmentProviders([
     {
       provide: FIREBASE_APP,

@@ -40,6 +40,8 @@ const asFirestore = (ctx: { firestore(): unknown }) => ctx.firestore() as Firest
 const anonymousDb = () => asFirestore(env.unauthenticatedContext());
 const userDb = () => asFirestore(env.authenticatedContext('regular-user'));
 const adminDb = () => asFirestore(env.authenticatedContext('admin-user', { admin: true }));
+const claimDb = (claims: Record<string, unknown>) =>
+  asFirestore(env.authenticatedContext('claim-user', claims));
 
 test.beforeAll(async () => {
   // Expected PERMISSION_DENIED responses would otherwise be logged as SDK warnings.
@@ -80,6 +82,29 @@ test.describe('profiles collection', () => {
     await assertFails(deleteDoc(doc(userDb(), 'profiles/existing')));
   });
 
+  test('denies anonymous writes and deletes', async () => {
+    await assertFails(setDoc(doc(anonymousDb(), 'profiles/new'), VALID_PROFILE));
+    await assertFails(updateDoc(doc(anonymousDb(), 'profiles/existing'), { name: 'x' }));
+    await assertFails(deleteDoc(doc(anonymousDb(), 'profiles/existing')));
+  });
+
+  // Only the boolean `true` counts: `admin: false` and look-alike values must never pass.
+  for (const [label, claims] of [
+    ['admin: false', { admin: false }],
+    ['admin: "true" (a string)', { admin: 'true' }],
+    ['admin: 1 (a number)', { admin: 1 }],
+    ['a different claim name', { isAdmin: true }],
+  ] as const) {
+    test(`denies a token with ${label}`, async () => {
+      const db = () => claimDb(claims);
+      await assertFails(getDoc(doc(db(), 'profiles/existing')));
+      await assertFails(getDocs(collection(db(), 'profiles')));
+      await assertFails(setDoc(doc(db(), 'profiles/new'), VALID_PROFILE));
+      await assertFails(updateDoc(doc(db(), 'profiles/existing'), { name: 'x' }));
+      await assertFails(deleteDoc(doc(db(), 'profiles/existing')));
+    });
+  }
+
   test('allows admins to read, list, update and delete', async () => {
     const snapshot = await assertSucceeds(getDoc(doc(adminDb(), 'profiles/existing')));
     expect(snapshot.exists()).toBe(true);
@@ -103,5 +128,13 @@ test.describe('everything else', () => {
   test('is denied even for admins', async () => {
     await assertFails(getDoc(doc(adminDb(), 'settings/global')));
     await assertFails(setDoc(doc(adminDb(), 'settings/global'), { any: true }));
+    // A sub-collection under a profile is not covered by the profile rule either.
+    await assertFails(setDoc(doc(adminDb(), 'profiles/existing/notes/n1'), { value: 'x' }));
+  });
+
+  test('is denied for anonymous and non-admin users too', async () => {
+    await assertFails(getDoc(doc(anonymousDb(), 'settings/global')));
+    await assertFails(getDoc(doc(userDb(), 'settings/global')));
+    await assertFails(setDoc(doc(userDb(), 'settings/global'), { any: true }));
   });
 });

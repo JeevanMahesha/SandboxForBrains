@@ -6,17 +6,20 @@ import { legacyCreateRedirectGuard } from './guard/legacy-create.guard';
 export const routes: Routes = [
   {
     path: 'login',
+    title: 'Login · ProfileManager',
     loadComponent: () => import('./components/login/login'),
     canActivate: [loginGuard],
   },
   {
     path: 'profiles/new',
+    title: 'Add New Profile · ProfileManager',
     loadComponent: () => import('./components/profile-wizard/profile-wizard'),
     canActivate: [authGuard],
     canDeactivate: [discardChangesGuard],
   },
   {
     path: '',
+    title: 'Profiles · ProfileManager',
     loadComponent: () => import('./components/profiles-list/profiles-list'),
     canActivate: [authGuard, legacyCreateRedirectGuard],
   },

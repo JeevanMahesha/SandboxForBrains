@@ -1,6 +1,7 @@
 <div class="layout-wrapper">
   <div class="layout-main-container">
-    <div class="layout-main max-md:pb-24!">
+    <main class="layout-main max-md:pb-24!">
+      <h1 class="sr-only">Profiles</h1>
       <app-toolbar />
       @if (profiles.error()) {
         <div
@@ -66,7 +67,7 @@
           >
         </hlm-numbered-pagination>
       }
-    </div>
+    </main>
   </div>
 </div>
 

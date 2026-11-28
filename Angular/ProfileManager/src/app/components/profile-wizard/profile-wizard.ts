@@ -280,7 +280,7 @@ export default class ProfileWizard {
       .then(() => {
         this.saved = true;
         toast.success('Profile added successfully');
-        this.profileService.refreshProfiles();
+        this.profileService.showFirstPageUnfiltered();
         void this.router.navigate(['/']);
       })
       .catch(() => {

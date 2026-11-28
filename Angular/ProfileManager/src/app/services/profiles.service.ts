@@ -360,6 +360,17 @@ export class ProfilesService {
   }
 
   /**
+   * Shows the list from the top with no filters, e.g. right after a create, so the new profile
+   * (newest first) is on screen whatever page or filter the user left the list on. Clearing the
+   * filters publishes a new filter object, which also resets `pageState` to the first page and
+   * re-runs the loader; the cleared key makes that run recount the total and drop old cursors.
+   */
+  showFirstPageUnfiltered(): void {
+    this.lastFilterKey = '';
+    this.clearFilters();
+  }
+
+  /**
    * After a delete, step back to the new last page when the deleted row was the only one on the
    * current last page, instead of reloading a page index that no longer exists (an empty page
    * that the pager then has to correct with a second load).

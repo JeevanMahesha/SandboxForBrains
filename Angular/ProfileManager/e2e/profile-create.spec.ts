@@ -7,6 +7,8 @@ import {
   openNewProfileWizard,
   profileRows,
   profilesTotal,
+  selectStatusFilter,
+  statusFilter,
   test,
 } from './support/fixtures';
 
@@ -174,5 +176,64 @@ test.describe('create profile', () => {
     expect(box).not.toBeNull();
     // Continue sits in the fixed bar at the very bottom of the viewport, not under the fields.
     expect(box!.y + box!.height).toBeGreaterThan(700 - 40);
+  });
+});
+
+test.describe('after creating a profile', () => {
+  const newProfile = (name: string, status: string) => ({
+    name,
+    mobile: '98765 43299',
+    matrimonyId: 'M-AFTER-CREATE',
+    status,
+    zodiac: ARIES_LABEL,
+    age: '27',
+    state: 'Tamil Nadu',
+    city: 'Chennai',
+  });
+
+  test.beforeEach(async () => {
+    // 14 profiles: 8 NEW and 6 ACCEPTED. Page size is 12, so page 2 holds the last 2.
+    await seedProfiles(
+      Array.from({ length: 14 }, (_, index) =>
+        makeProfile(index, { profileStatusId: index < 8 ? 'NEW' : 'ACCEPTED' }),
+      ),
+    );
+  });
+
+  test('returns to the first page with the new profile on top', async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(12);
+
+    const pagination = page.getByRole('navigation', { name: 'pagination' });
+    await pagination.getByText('2', { exact: true }).click();
+    await expect(profileRows(page)).toHaveCount(2);
+
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, newProfile('Fresh Arrival', PROFILE_STATUS.NEW));
+    await page.getByRole('button', { name: 'Create profile' }).click();
+    await expect(page.getByText('Profile added successfully')).toBeVisible();
+
+    await expect(profilesTotal(page)).toHaveText(/^15 profiles$/);
+    await expect(pagination.locator('[aria-current="page"]')).toHaveText('1');
+    await expect(profileRows(page)).toHaveCount(12);
+    await expect(profileRows(page).first()).toContainText('Fresh Arrival');
+  });
+
+  test('clears an active filter that would hide the new profile', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+    await selectStatusFilter(page, PROFILE_STATUS.ACCEPTED);
+    await expect(profilesTotal(page)).toHaveText(/^6 profiles$/);
+
+    await openNewProfileWizard(page);
+    await fillWizardProfile(page, newProfile('Hidden By Filter', PROFILE_STATUS.NEW));
+    await page.getByRole('button', { name: 'Create profile' }).click();
+    await expect(page.getByText('Profile added successfully')).toBeVisible();
+
+    await expect(statusFilter(page)).toContainText('All statuses');
+    await expect(profilesTotal(page)).toHaveText(/^15 profiles$/);
+    await expect(profileRows(page).first()).toContainText('Hidden By Filter');
   });
 });

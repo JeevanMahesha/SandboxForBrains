@@ -1,4 +1,4 @@
-import { PROFILE_STATUS, ZODIAC_LIST } from '../src/app/constant/common.const';
+import { PROFILE_STATUS, STAR_SCORES, ZODIAC_LIST } from '../src/app/constant/common.const';
 import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
 import {
   expect,
@@ -41,6 +41,65 @@ test.describe('create profile', () => {
     // The loosely typed number is persisted in the canonical +91 form.
     await expect(profileRows(page).first()).toContainText('+919876543210');
     await expect(profilesTotal(page)).toHaveText(/^1 profile$/);
+  });
+
+  test('round-trips every field to Firestore and the View drawer', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await loginAsAdmin();
+
+    await openNewProfileWizard(page);
+    // A non-default value for every field that has a default, so a dropped field cannot hide
+    // behind the wizard's initial state.
+    await fillWizardProfile(page, {
+      name: 'Round Trip',
+      mobile: '98 765 43 210',
+      matrimonyId: 'M-ROUND-1',
+      status: PROFILE_STATUS.MEETING_SCHEDULED,
+      zodiac: ARIES_LABEL,
+      star: `Bharani (${STAR_SCORES.Bharani})`,
+      age: '31',
+      state: 'Kerala',
+      city: 'Ernakulam',
+    });
+    await page.locator('#comment').fill('First call went well');
+    await page.getByRole('button', { name: 'Add note' }).click();
+    await expect(page.getByRole('button', { name: 'Delete note' })).toHaveCount(1);
+    await page.getByRole('button', { name: 'Create profile' }).click();
+    await expect(page.getByText('Profile added successfully')).toBeVisible();
+
+    // What reached Firestore: every field, the canonical number and the derived score.
+    const [stored] = await readStoredProfiles();
+    expect(stored['name']).toEqual({ stringValue: 'Round Trip' });
+    expect(stored['mobileNumber']).toEqual({ stringValue: '+919876543210' });
+    expect(stored['matrimonyId']).toEqual({ stringValue: 'M-ROUND-1' });
+    expect(stored['profileStatusId']).toEqual({ stringValue: 'MEETING_SCHEDULED' });
+    expect(stored['zodiacSign']).toEqual({ stringValue: 'aries' });
+    expect(stored['star']).toEqual({ stringValue: 'Bharani' });
+    expect(stored['starMatchScore']).toEqual({ integerValue: String(STAR_SCORES.Bharani) });
+    expect(stored['age']).toEqual({ integerValue: '31' });
+    expect(stored['state']).toEqual({ stringValue: 'Kerala' });
+    expect(stored['city']).toEqual({ stringValue: 'Ernakulam' });
+    expect(stored['createdAt']).toHaveProperty('timestampValue');
+    expect(JSON.stringify(stored['comments'])).toContain('First call went well');
+
+    // What the app shows back: the same values in the read-only View drawer.
+    await profileRows(page).first().getByRole('button', { name: 'View' }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: 'View Profile' })).toBeVisible();
+    await expect(dialog.getByText('Round Trip').first()).toBeVisible();
+    await expect(dialog.getByText('M-ROUND-1').first()).toBeVisible();
+    await expect(dialog.getByText('+919876543210').first()).toBeVisible();
+    await expect(dialog.getByText(PROFILE_STATUS.MEETING_SCHEDULED).first()).toBeVisible();
+    await expect(dialog.getByText(ARIES_LABEL)).toBeVisible();
+    await expect(dialog.getByText(`Bharani (${STAR_SCORES.Bharani})`)).toBeVisible();
+    await expect(dialog.getByText('Ernakulam')).toBeVisible();
+    await expect(dialog.getByText('Kerala')).toBeVisible();
+    await expect(dialog.getByText('First call went well')).toBeVisible();
+    await expect(
+      dialog.getByRole('img', { name: `Star match score ${STAR_SCORES.Bharani}` }),
+    ).toBeVisible();
   });
 
   test('stores name and matrimony ID without stray spaces so exact search finds them', async ({

@@ -90,13 +90,11 @@ test.describe('phone Filters sheet: open, close and focus', () => {
 });
 
 test.describe('phone Filters sheet: keyboard', () => {
-  // KNOWN DEFECT (reported, not fixed here): once a select inside the sheet has been used, Esc no
-  // longer closes the sheet (even after the listbox is gone and focus is on the trigger). Esc does
-  // close it when no select was touched (see the first test). Remove `fixme` once that is fixed.
-  test.fixme('Esc still closes the sheet after a select inside it was used', async ({
-    page,
-    loginAsAdmin,
-  }) => {
+  // Esc closes the sheet however many of its selects were used, as long as the listbox is gone. Esc
+  // pressed during the listbox's own exit animation (~150 ms after picking an option) is swallowed:
+  // Brain keeps that overlay topmost while it animates out and nobody handles the key. That window
+  // is inside Spartan, so each test waits for the listbox to leave the DOM before pressing Esc.
+  test('Esc closes the sheet after the Sort select was used', async ({ page, loginAsAdmin }) => {
     await seedMixed();
     await loginAsAdmin();
     await expect(profileRows(page)).toHaveCount(3);
@@ -106,6 +104,51 @@ test.describe('phone Filters sheet: keyboard', () => {
     await page.getByRole('option', { name: 'Oldest First', exact: true }).click();
     await expect(page.getByRole('listbox')).toHaveCount(0);
 
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test('Esc closes the sheet after the Star Match Score select was used', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedMixed();
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(3);
+
+    const dialog = await openSheet(page);
+    await dialog.getByRole('combobox', { name: 'Star match score' }).click();
+    await page.getByRole('option', { name: '8', exact: true }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test('Esc closes the sheet after both selects were used, and again after reopening it', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedMixed();
+    await loginAsAdmin();
+    await expect(profileRows(page)).toHaveCount(3);
+
+    let dialog = await openSheet(page);
+    await dialog.getByRole('combobox', { name: 'Sort' }).click();
+    await page.getByRole('option', { name: 'Oldest First', exact: true }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await dialog.getByRole('combobox', { name: 'Star match score' }).click();
+    await page.getByRole('option', { name: '8', exact: true }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(filtersButton(page)).toBeFocused();
+
+    // A second visit: the selects keep working and Esc still closes the sheet.
+    dialog = await openSheet(page);
+    await dialog.getByRole('combobox', { name: 'Sort' }).click();
+    await page.getByRole('option', { name: 'Newest First', exact: true }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
   });

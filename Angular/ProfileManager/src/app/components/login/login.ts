@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideEye, lucideEyeOff, lucideHeart, lucideLoaderCircle } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
@@ -11,6 +11,11 @@ import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { ProfileAvatar } from '../shared/profile-avatar/profile-avatar';
 import { ScoreRing } from '../shared/score-ring/score-ring';
 import { AuthService } from '../../services/auth.service';
+
+/** Only in-app paths ("/profiles/new"); never "//host", "/\\host" or absolute URLs. */
+function isInternalPath(url: string | null): url is string {
+  return url !== null && /^\/(?![/\\])/.test(url);
+}
 
 interface Login {
   email: string;
@@ -36,6 +41,7 @@ interface Login {
 export default class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   readonly showPassword = signal(false);
   readonly loginModel = signal<Login>({
     email: '',
@@ -56,7 +62,9 @@ export default class LoginComponent {
             .login(email().value(), password().value())
             .then(() => {
               toast.success('Login successful');
-              this.router.navigate(['/']);
+              // The auth guard sends visitors here with the page they asked for.
+              const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+              this.router.navigateByUrl(isInternalPath(returnUrl) ? returnUrl : '/');
             })
             .catch(() => {
               toast.error('Login failed');

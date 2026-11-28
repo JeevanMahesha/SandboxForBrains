@@ -61,4 +61,18 @@ test.describe('select accessible names', () => {
     const sheet = page.getByRole('dialog', { name: 'Filters' });
     await expect(sheet.getByRole('combobox', { name: 'Sort' })).toBeVisible();
   });
+
+  test('the search box has an accessible name on desktop', async ({ page, loginAsAdmin }) => {
+    await loginAsAdmin();
+    const search = page.getByRole('textbox', { name: 'Search profiles' });
+    await expect(search).toBeVisible();
+    // The placeholder stays as the hint, and the 'Searching' spinner is not part of the name.
+    await expect(search).toHaveAttribute('placeholder', 'Search by full ID or phone');
+  });
+
+  test('the search box has an accessible name on a phone', async ({ page, loginAsAdmin }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await loginAsAdmin();
+    await expect(page.getByRole('textbox', { name: 'Search profiles' })).toBeVisible();
+  });
 });

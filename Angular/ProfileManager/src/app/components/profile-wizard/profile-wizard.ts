@@ -244,6 +244,21 @@ export default class ProfileWizard {
     afterNextRender(() => this.stepHeading()?.nativeElement.focus(), { injector: this.injector });
   }
 
+  /**
+   * Runs on every submit attempt. If validation fails, show the first step that holds an error
+   * (it may not be the visible one) and focus the first invalid field, so the click is never a
+   * silent no-op. The submit itself marks every field touched, which reveals the messages.
+   */
+  onSubmitAttempt(): void {
+    const first = this.profileDetailForm().errorSummary()[0];
+    if (!first) return;
+    const stepWithError = [0, 1, 2].find((index) =>
+      this.stepFields(index).some((field) => field().invalid() && !field().disabled()),
+    );
+    this.setStep(stepWithError ?? this.stepIndex());
+    afterNextRender(() => first.fieldTree().focusBoundControl(), { injector: this.injector });
+  }
+
   /** Enter in a text input advances the wizard instead of submitting a half-filled form. */
   onEnter(event: Event): void {
     if (this.isLastStep() || !(event.target instanceof HTMLInputElement)) return;

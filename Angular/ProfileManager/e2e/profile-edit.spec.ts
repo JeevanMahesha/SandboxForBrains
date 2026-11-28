@@ -63,13 +63,40 @@ test.describe('edit profile', () => {
     await expect(dialog.getByRole('tab', { name: 'Details (has errors)' })).toBeVisible();
     await openNotesTab(page);
     await expect(dialog.getByRole('tab', { name: 'Details (has errors)' })).toBeVisible();
-    await expect(dialog.getByRole('button', { name: 'Update Profile' })).toBeDisabled();
+    // Save stays clickable so a submit can explain what is wrong, instead of a dead button.
+    await expect(dialog.getByRole('button', { name: 'Update Profile' })).toBeEnabled();
 
     // Fixing the field clears the dot.
     await dialog.getByRole('tab', { name: /^Details/ }).click();
     await expect(dialog.getByText('Name is required')).toBeVisible();
     await dialog.locator('#name').fill('Fixed Name');
     await expect(dialog.getByRole('tab', { name: 'Details', exact: true })).toBeVisible();
+  });
+
+  test('Save on the Notes tab of an invalid profile shows what is wrong on the Details tab', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    // A legacy profile with no city: invalid from the start, and the Notes tab hides the cause.
+    await seedProfiles([makeProfile(0, { name: 'No City Profile', city: '' })]);
+    await loginAsAdmin();
+
+    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    const dialog = page.getByRole('dialog');
+    await openNotesTab(page);
+
+    const save = dialog.getByRole('button', { name: 'Update Profile' });
+    await expect(save).toBeEnabled();
+    await save.click();
+
+    await expect(dialog.getByRole('tab', { name: /^Details/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(dialog.getByText('City is required')).toBeVisible();
+    await expect(page.getByText('Profile updated successfully')).toHaveCount(0);
+    // Still editing: nothing was saved and the drawer stayed open.
+    await expect(dialog.getByRole('heading', { name: 'Edit Profile' })).toBeVisible();
   });
 
   test('submitting an invalid form from the Details tab focuses the first invalid field', async ({

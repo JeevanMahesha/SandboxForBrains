@@ -329,7 +329,7 @@
           type="button"
           hlmBtn
           class="w-full"
-          [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
+          [disabled]="profileDetailForm().submitting()"
           (click)="submitButton.click()"
         >
           @if (profileDetailForm().submitting()) {

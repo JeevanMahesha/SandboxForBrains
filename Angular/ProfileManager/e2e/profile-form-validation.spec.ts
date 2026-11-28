@@ -91,9 +91,13 @@ test.describe('profile form validation', () => {
     await pickOption(page, 'hlm-select#zodiac_sign', ARIES_LABEL);
     await wizardContinue(page);
 
-    // Step 3 (Location & notes): Save is still disabled while state and city are unset.
+    // Step 3 (Location & notes): Save stays clickable while state and city are unset; clicking
+    // it explains what is missing instead of silently doing nothing, and creates nothing.
     await expect(heading('Location & notes')).toBeVisible();
-    await expect(saveButton).toBeDisabled();
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+    await expect(page.locator('#state-error')).toHaveText('State is required');
+    await expect(heading('Location & notes')).toBeVisible();
     await expect(profileRows(page)).toHaveCount(0);
   });
 

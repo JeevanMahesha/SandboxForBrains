@@ -113,7 +113,12 @@
     </nav>
 
     <!-- Step panel -->
-    <form [class]="formClass" [formRoot]="profileDetailForm" (keydown.enter)="onEnter($event)">
+    <form
+      [class]="formClass"
+      [formRoot]="profileDetailForm"
+      (submit)="onSubmitAttempt()"
+      (keydown.enter)="onEnter($event)"
+    >
       <h2
         #stepHeading
         tabindex="-1"
@@ -268,7 +273,7 @@
     <button
       type="button"
       hlmBtn
-      [disabled]="profileDetailForm().submitting() || profileDetailForm().invalid()"
+      [disabled]="profileDetailForm().submitting()"
       (click)="submitButton.click()"
     >
       @if (profileDetailForm().submitting()) {

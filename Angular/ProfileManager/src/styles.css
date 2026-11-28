@@ -173,6 +173,22 @@ body::before {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  /*
+   * The rule above also freezes loading spinners (a one-iteration, 0.01ms spin looks like a
+   * static icon) and the Spartan spinner only spins under `motion-safe`, so it shows nothing at
+   * all. Spinning is large-scale motion; a slow fade is not, and it still says "working".
+   */
+  .animate-spin,
+  hlm-spinner {
+    animation: reduced-motion-pulse 1.8s ease-in-out infinite !important;
+  }
+
+  @keyframes reduced-motion-pulse {
+    50% {
+      opacity: 0.4;
+    }
+  }
 }
 
 /*

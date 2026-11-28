@@ -37,6 +37,19 @@ export default class ProfilesList {
     return error instanceof Error ? error.message : '';
   });
 
+  /**
+   * What a screen reader hears after each load ("12 profiles"). Empty while loading or failed, so a
+   * stale count is never read out. Also empty for zero results: the empty state is already a
+   * status region and says so, and announcing it here too would read it twice.
+   */
+  readonly resultAnnouncement = computed(() => {
+    const total = this.profileService.totalCount();
+    if (this.profiles.isLoading() || this.profiles.error() || total === 0) {
+      return '';
+    }
+    return `${total} ${total === 1 ? 'profile' : 'profiles'}`;
+  });
+
   constructor() {
     this.profiles = this.profileService.profiles;
   }

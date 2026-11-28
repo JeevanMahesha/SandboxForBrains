@@ -2,6 +2,7 @@
   <div class="layout-main-container">
     <main class="layout-main max-md:pb-24!">
       <h1 class="sr-only">Profiles</h1>
+      <div class="sr-only" role="status" aria-atomic="true">{{ resultAnnouncement() }}</div>
       <app-toolbar />
       @if (profiles.error()) {
         <div

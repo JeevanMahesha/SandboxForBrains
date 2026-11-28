@@ -30,6 +30,8 @@
   --accent-foreground: oklch(0.25 0.08 290);
   /* L 0.577 -> 0.55: error text on the bare page background was 4.36:1, now 4.7:1 (needs 4.5). */
   --destructive: oklch(0.55 0.245 27.325);
+  /* Positive / contact actions (WhatsApp, finished wizard steps): Tailwind green-700 on light. */
+  --success: oklch(52.7% 0.154 150.069);
   --border: oklch(0.25 0.05 280 / 13%);
   /* Control boundary and focus colour must be 3:1 against the surface (WCAG 1.4.11): the border was
      1.4:1 (16% ink) and the focus border 2.5:1 (ring at 60% alpha). Border now 52% ink (about
@@ -76,6 +78,8 @@
   --accent: oklch(1 0 0 / 10%);
   --accent-foreground: oklch(0.97 0.01 285);
   --destructive: oklch(0.704 0.191 22.216);
+  /* Tailwind green-400 on dark. */
+  --success: oklch(79.2% 0.209 151.711);
   --border: oklch(1 0 0 / 12%);
   /* Dark: border was 1.7-1.8:1 (15% white), now 30% (about 3.2:1); ring opaque. Inputs also use
      this token at 30% as their fill (dark:bg-input/30), so that fill is slightly lighter. */
@@ -96,6 +100,10 @@
   --aurora-3: oklch(0.42 0.17 350 / 40%);
   --score-track: oklch(1 0 0 / 14%);
   --score-fill: oklch(0.8 0.13 210);
+}
+
+@theme inline {
+  --color-success: var(--success);
 }
 
 @layer base {

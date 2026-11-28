@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { PROFILE_STATUS } from '../src/app/constant/common.const';
 import {
   deleteAllProfileDocs,
   makeProfile,
@@ -74,12 +75,16 @@ test.describe('inline status change (desktop)', () => {
 
     await page.keyboard.press('Enter');
     await expect(page.getByRole('menu')).toBeVisible();
-    // The first item (New) is focused by the menu; arrow down moves to the next status.
+    // The menu lists the statuses in PROFILE_STATUS order and focuses the first one (New), so two
+    // arrow-downs land on the third status. Assert exactly that one, not just "something else".
+    const [, , thirdId] = Object.keys(PROFILE_STATUS) as (keyof typeof PROFILE_STATUS)[];
+    const thirdLabel = PROFILE_STATUS[thirdId];
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
-    await expect(page.getByText(/Status changed to/)).toBeVisible();
-    await expect.poll(() => storedProfileStatus('Keyboard Subject')).not.toBe('NEW');
+    await expect(page.getByText(`Status changed to ${thirdLabel}`)).toBeVisible();
+    await expect(trigger(row, thirdLabel)).toBeVisible();
+    await expect.poll(() => storedProfileStatus('Keyboard Subject')).toBe(thirdId);
     // Keyboard activation on the pill must not open the drawer either.
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });

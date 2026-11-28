@@ -121,7 +121,7 @@ test.describe('delete profile', () => {
 
     await profileRows(page)
       .filter({ hasText: 'Delete Me' })
-      .getByRole('button', { name: 'Delete' })
+      .getByRole('button', { name: 'Delete Delete Me', exact: true })
       .click();
     await page.locator('app-confirm-dialog').getByRole('button', { name: 'Delete' }).click();
     await expect(profileRows(page)).toHaveCount(1);

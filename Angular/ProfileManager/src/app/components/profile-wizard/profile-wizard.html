@@ -187,7 +187,7 @@
                       variant="ghost"
                       size="icon-sm"
                       class="text-destructive"
-                      aria-label="Delete note"
+                      [attr.aria-label]="`Delete note from ${(comment.createDateAndTime | date: 'dd/MMM/yy HH:mm')}: ${comment.value}`"
                       (click)="deleteComment(comment)"
                     >
                       <ng-icon hlm name="lucideTrash2" size="sm" />

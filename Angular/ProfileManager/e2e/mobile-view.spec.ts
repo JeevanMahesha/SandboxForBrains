@@ -229,7 +229,7 @@ test.describe('phone card keyboard and semantics', () => {
     await seedProfiles([makeProfile(0, { name: 'View Key Profile' })]);
     await loginAsAdmin();
     const card = page.getByTestId('profile-card').first();
-    const view = card.getByRole('button', { name: 'View' });
+    const view = card.getByRole('button', { name: 'View View Key Profile', exact: true });
 
     for (const key of ['Enter', 'Space']) {
       await view.focus();

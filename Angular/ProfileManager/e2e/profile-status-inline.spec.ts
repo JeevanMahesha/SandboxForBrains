@@ -234,7 +234,7 @@ test.describe('inline status change (mobile bottom sheet)', () => {
     expect(kebab!.width).toBeGreaterThanOrEqual(44);
     expect(kebab!.height).toBeGreaterThanOrEqual(44);
 
-    const view = card.getByRole('button', { name: 'View', exact: true });
+    const view = card.getByRole('button', { name: 'View Tap Targets', exact: true });
     await expect(view).toBeVisible();
     expect((await view.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     await view.click();

@@ -36,7 +36,7 @@
             <button
               type="button"
               class="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex max-w-full items-center gap-1 rounded text-xs leading-4 outline-none focus-visible:ring-[3px]"
-              aria-label="Copy matrimony ID"
+              [attr.aria-label]="`Copy matrimony ID of ${profile.name}`"
               (click)="copyToClipboard(profile.matrimonyId, 'Matrimony ID')"
             >
               {{ profile.matrimonyId }}
@@ -95,7 +95,7 @@
               hlmTooltip="Copy"
               variant="ghost"
               size="icon-sm"
-              aria-label="Copy mobile number"
+              [attr.aria-label]="`Copy mobile number of ${profile.name}`"
               (click)="copyToClipboard(profile.mobileNumber, 'Mobile Number')"
             >
               <ng-icon hlm name="lucideCopy" size="sm" />
@@ -105,7 +105,7 @@
               hlmTooltip="Call"
               variant="ghost"
               size="icon-sm"
-              aria-label="Call"
+              [attr.aria-label]="`Call ${profile.name}`"
               [href]="profile.mobileNumber | mobileUrl: 'tel'"
             >
               <ng-icon hlm name="lucidePhone" size="sm" />
@@ -117,8 +117,8 @@
               size="icon-sm"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="WhatsApp"
               class="text-green-700 dark:text-green-400"
+              [attr.aria-label]="`WhatsApp ${profile.name}`"
               [href]="profile.mobileNumber | mobileUrl: 'whatsapp'"
             >
               <ng-icon hlm name="lucideMessageCircle" size="sm" />
@@ -133,7 +133,7 @@
             hlmBtn
             variant="outline"
             size="sm"
-            aria-label="View"
+            [attr.aria-label]="`View ${profile.name}`"
             (click)="userActionEvent('view', profile.id)"
           >
             <ng-icon hlm name="lucideEye" size="sm" />
@@ -144,7 +144,7 @@
             hlmBtn
             variant="outline"
             size="sm"
-            aria-label="Edit"
+            [attr.aria-label]="`Edit ${profile.name}`"
             (click)="userActionEvent('edit', profile.id)"
           >
             <ng-icon hlm name="lucideSquarePen" size="sm" />
@@ -156,8 +156,8 @@
             hlmTooltip="Delete profile"
             variant="ghost"
             size="icon-sm"
-            aria-label="Delete"
             class="text-destructive hover:text-destructive ml-auto"
+            [attr.aria-label]="`Delete ${profile.name}`"
             (click)="userActionEvent('delete', profile.id)"
           >
             <ng-icon hlm name="lucideTrash2" size="sm" />

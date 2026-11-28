@@ -138,6 +138,15 @@ export async function seedProfiles(profiles: SeedProfile[]): Promise<void> {
   }
 }
 
+/** Raw stored `profiles` documents (Firestore REST field maps), read straight from the emulator. */
+export async function readStoredProfiles(): Promise<Record<string, Record<string, unknown>>[]> {
+  const response = await request(`${FIRESTORE_DOCS}/profiles`, { method: 'GET' });
+  const { documents = [] } = (await response.json()) as {
+    documents?: { fields: Record<string, Record<string, unknown>> }[];
+  };
+  return documents.map((d) => d.fields);
+}
+
 /**
  * Polls the Auth and Firestore emulators until both accept HTTP requests. Playwright's
  * `webServer.url` can only watch one endpoint and the emulators come up in no fixed order.

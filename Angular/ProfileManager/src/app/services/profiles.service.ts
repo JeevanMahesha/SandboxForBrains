@@ -340,8 +340,12 @@ export class ProfilesService {
   }
 
   async updateProfile(id: string, profileData: Partial<ProfileDetail>): Promise<void> {
+    // The loaded profile also carries values that are not stored fields to write back: the
+    // document id (derived), and createdAt/updatedAt (immutable creation time, server-set
+    // update time). Sending them persisted a stray `id` and rewrote createdAt on every edit.
+    const { id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...fields } = profileData;
     const docRef = doc(this.firestore, 'profiles', id);
-    await updateDoc(docRef, { ...profileData, updatedAt: serverTimestamp() });
+    await updateDoc(docRef, { ...fields, updatedAt: serverTimestamp() });
   }
 
   /**

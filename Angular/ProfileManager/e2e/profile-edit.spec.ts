@@ -1,4 +1,4 @@
-import { makeProfile, seedProfiles } from './support/emulator';
+import { makeProfile, readStoredProfiles, seedProfiles } from './support/emulator';
 import { expect, openNotesTab, profileRows, test } from './support/fixtures';
 
 test.describe('edit profile', () => {
@@ -17,6 +17,27 @@ test.describe('edit profile', () => {
     await expect(page.getByText('Profile updated successfully')).toBeVisible();
     await expect(profileRows(page)).toHaveCount(1);
     await expect(profileRows(page).first()).toContainText('Renamed Profile');
+  });
+
+  test('saving an edit changes only the form fields, not id or createdAt', async ({
+    page,
+    loginAsAdmin,
+  }) => {
+    await seedProfiles([makeProfile(0, { name: 'Original Name' })]);
+    const [before] = await readStoredProfiles();
+    await loginAsAdmin();
+
+    await profileRows(page).first().getByRole('button', { name: 'Edit' }).click();
+    await page.locator('#name').fill('Renamed Profile');
+    await page.getByRole('button', { name: 'Update Profile' }).click();
+    await expect(page.getByText('Profile updated successfully')).toBeVisible();
+
+    const [after] = await readStoredProfiles();
+    expect(after['name']).toEqual({ stringValue: 'Renamed Profile' });
+    // The document id is derived client-side and must never be persisted as a field.
+    expect(after).not.toHaveProperty('id');
+    // Creation time is immutable.
+    expect(after['createdAt']).toEqual(before['createdAt']);
   });
 
   test('flags a Details error on its tab and focuses the invalid field on submit', async ({
